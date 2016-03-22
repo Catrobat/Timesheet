@@ -8,7 +8,7 @@ AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
     //restBaseUrl = "/rest/timesheet/latest/";
-
+    
     fetchData();
     fetchTeamData();
 });
@@ -197,7 +197,7 @@ function populateTable(timesheetDataReply) {
     var visualizationTable = AJS.$("#visualization-table");
     visualizationTable.empty();
 
-    visualizationTable.append(Confluence.Templates.Visualization.visualizationHeader(
+    visualizationTable.append(Jira.Templates.Visualization.visualizationHeader(
         {teams: timesheetData.teams}
     ));
 
@@ -294,7 +294,7 @@ function appendEntriesToTable(timesheetData) {
             dataArray.push(newVisualizationEntry);
             index = index + 1;
 
-            var viewRow = AJS.$(Confluence.Templates.Visualization.visualizationEntry(
+            var viewRow = AJS.$(Jira.Templates.Visualization.visualizationEntry(
                 {entry: newVisualizationEntry, teams: timesheetData.teams}));
             visualizationTable.append(viewRow);
 
@@ -325,7 +325,7 @@ function appendEntriesToTable(timesheetData) {
 
     dataArray.push(newVisualizationEntry);
 
-    var viewRow = AJS.$(Confluence.Templates.Visualization.visualizationEntry(
+    var viewRow = AJS.$(Jira.Templates.Visualization.visualizationEntry(
         {entry: newVisualizationEntry, teams: timesheetData.teams}));
     visualizationTable.append(viewRow);
 
@@ -348,7 +348,7 @@ function appendEntriesToTable(timesheetData) {
 
     dataArray.push(newVisualizationEntry);
 
-    var viewRow = AJS.$(Confluence.Templates.Visualization.visualizationEntry(
+    var viewRow = AJS.$(Jira.Templates.Visualization.visualizationEntry(
         {entry: newVisualizationEntry, teams: timesheetData.teams}));
     visualizationTable.append(viewRow);
 
@@ -360,7 +360,6 @@ function appendEntriesToTable(timesheetData) {
 //reverse order of the table from bottom to top
 function assignCategoryDiagramData(timesheetData) {
 
-    var visualizationTable = AJS.$("#visualization-table");
     var availableEntries = timesheetData.entries;
 
     var pos = availableEntries.length - 1;
@@ -504,7 +503,6 @@ function categoryDiagram(sortedDataArray, numberOfCategories) {
 
         tempData = [];
     }
-    //console.log(dataJSON);
     drawCategoryDiagram(dataJSON, data['label']);
 }
 
@@ -581,7 +579,7 @@ function prepareViewRow(timesheetData, entry) {
     //todo: dont augment entry twice.
     var augmentedEntry = augmentEntry(timesheetData, entry);
 
-    var viewRow = AJS.$(Confluence.Templates.Visualization.visualizationEntry(
+    var viewRow = AJS.$(Jira.Templates.Visualization.visualizationEntry(
         {entry: augmentedEntry, teams: timesheetData.teams}));
 
     viewRow.find('span.aui-icon-wait').hide();
@@ -616,41 +614,4 @@ function toDateString(date) {
 function calculateDuration(begin, end, pause) {
     var pauseDate = new Date(pause);
     return new Date(end - begin - (pauseDate.getHours() * 60 + pauseDate.getMinutes()) * 60 * 1000);
-}
-
-function countDefinedElementsInArray(array) {
-    return array.filter(function (v) {
-        return v !== undefined
-    }).length;
-}
-
-/**
- * Check if date is a valid Date
- * source: http://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript
- * @param {type} date
- * @returns {boolean} true, if date is valid
- */
-function isValidDate(date) {
-    if (Object.prototype.toString.call(date) === "[object Date]") {
-        if (isNaN(date.getTime())) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-    else {
-        return false;
-    }
-}
-
-function getMinutesFromTimeString(timeString) {
-    var pieces = timeString.split(":");
-    if (pieces.length === 2) {
-        var hours = parseInt(pieces[0]);
-        var minutes = parseInt(pieces[1]);
-        return hours * 60 + minutes;
-    } else {
-        return 0;
-    }
 }

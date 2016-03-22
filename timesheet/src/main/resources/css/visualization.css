@@ -1,3 +1,9 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
 .table {
     display: table;
 }
@@ -84,8 +90,26 @@ code {
     overflow-x: scroll;
 }
 
-.tabs-pane div {
-    position: relative;
-    width: inherit;
-    display: inline-block;
+#piChartDiagram {
+    width: 150px;
+    height: 150px;
+    margin-left: 10px;
+}
+
+#lineDiagram {
+    width: 800px;
+    height: 250px;
+    margin-left: 10px;
+}
+
+#categoryLineDiagram {
+    width: 800px;
+    height: 250px;
+    margin-left: 10px;
+}
+
+#teamLineDiagram {
+    width: 800px;
+    height: 250px;
+    margin-left: 10px;
 }
