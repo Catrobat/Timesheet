@@ -1,0 +1,165 @@
+<html>
+<head>
+    <title>Timesheet</title>
+    <meta name="decorator" content="atl.admin">
+    <meta name="decorator" content="atl.userprofile">
+    $webResourceManager.requireResource("org.catrobat.jira.timesheet:timesheet-resources")
+</head>
+
+<body>
+<script type="text/javascript">
+    var timesheetID = $timesheetid;
+    var isAdmin = $isadmin;
+</script>
+<a name="top"></a>
+<div id="aui-message-bar"></div>
+<div class="aui-tabs horizontal-tabs">
+    <ul class="tabs-menu">
+        <li class="menu-item active-tab">
+            <a href="#tabs-timesheet"><strong>Timesheet Sheet Entries</strong></a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-timesheet-information"><strong>Additional Timesheet Information</strong></a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-timesheet-settings"><strong>Timesheet Settings</strong></a>
+        </li>
+    </ul>
+
+    <div class="tabs-pane" id="tabs-timesheet-information">
+        <p>
+        <form id="timesheet-information" class="aui">
+            <div class="field-group">
+                <label for="timesheet-hours-remain">Remaining Timesheet Hours</label>
+                <input readonly class="text" type="text" id="timesheet-hours-remain" name="timesheet-hours-remain"
+                       title="timesheet-hours-remain">
+
+                <div class="description">
+                    Shows your remaining timesheet hours.
+                </div>
+            </div>
+
+            <div class="field-group" id="substractTimesheetHours"></div>
+
+            <div class="field-group">
+                <label for="timesheet-hours-practical">Practical Hours</label>
+                <input readonly class="text" type="text" id="timesheet-hours-practical" name="timesheet-hours-practical"
+                       title="timesheet-hours-practical">
+
+                <div class="description">
+                    Shows your finished practical hours.
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="timesheet-hours-theory">Theory Hours</label>
+                <input readonly class="text" type="text" id="timesheet-hours-theory" name="timesheet-hours-theory"
+                       title="timesheet-hours-theory">
+
+                <div class="description">
+                    Shows your finished theory hours.
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="timesheet-hours-ects">ECTS</label>
+                <input class="text" type="text" id="timesheet-hours-ects" name="timesheet-hours-ects"
+                       title="timesheet-hours-ects">
+
+                <div class="description">
+                    Shows your ECTS.
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="timesheet-hours-lectures">Lectures</label>
+                <input class="text" type="text" id="timesheet-hours-lectures" name="timesheet-hours-lectures"
+                       title="timesheet-hours-lectures">
+
+                <div class="description">
+                    Shows your lectures.
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="timesheet-hours-text">Timesheet Hours</label>
+                <input class="text" type="text" id="timesheet-hours-text" name="timesheet-hours-text"
+                       title="timesheet-hours-text">
+
+                <div class="description">
+                    Shows your timesheet hours.
+                </div>
+
+                <div class="timesheet-hours">
+                    <input type="submit" value="Save" class="aui-button aui-button-primary">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="tabs-pane" id="tabs-timesheet-settings">
+        <p></p>
+        <form id="timesheet-settings" class="aui">
+            <div id="coordinatorTimesheetSelect"></div>
+            <div id="approvedUserTimesheetSelect"></div>
+        </form>
+    </div>
+
+    <div class="tabs-pane active-pane" id="tabs-timesheet">
+
+        <div id="button-wrapper">
+            <button class="aui-button aui-button-subtle import-google-docs"><span
+                    class="aui-icon aui-icon-small aui-iconfont-devtools-checkout"></span> Import from Google Docs
+            </button>
+        </div>
+
+        <section role="dialog" class="import-dialog aui-layer aui-dialog2 aui-dialog2-large" aria-hidden="true">
+            <header class="aui-dialog2-header">
+                <h2 class="aui-dialog2-header-main">Import from Google Docs</h2>
+                <!-- Close icon -->
+                <a class="aui-dialog2-header-close">
+                    <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
+                </a>
+            </header>
+
+            <div class="aui-dialog2-content">
+                <ol>
+                    <li>
+                        Make sure the columns of your Google Doc Timesheet are in the following order:
+                        <code>Date</code>, <code>From</code>, <code>To</code>, <code>Duration in h</code>,
+                        <code>Pause</code>, <code>Theory? Ja = j</code>, <code>Description</code>
+                    </li>
+                    <li>
+                        Make sure the values in column <code>Datum</code> is formatted this way: <code>YYYY-MM-DD</code>
+                        (e.g. <code>2015-09-21</code>). You can achieve this by
+                        <ol>
+                            <li>Select Fields in column <code>Datum</code></li>
+                            <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
+                                Formats</strong> > <strong>Number Format</strong></li>
+                            <li>Paste <code>yyyy"-"mm"-"dd</code> and confirm</li>
+                        </ol>
+                    </li>
+                    <li>Select the rows you want to import</li>
+                    <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
+                    <li>Paste content in the text box below</li>
+                </ol>
+                <i>(tested with Google Chrome)</i>
+
+                <form class="aui import-form">
+                    <!--<input type="text" name="import-text" class="text" />-->
+                    <textarea name="import-text" class="import-text"></textarea>
+                </form>
+
+                <footer class="aui-dialog2-footer">
+                    <div class="aui-dialog2-footer-actions">
+                        <button class="aui-button aui-button-primary start-import">Import</button>
+                    </div>
+                </footer>
+        </section>
+
+        <div id="timesheet-table" class="aui aui-table-interactive aui-table-sortable table">
+            <div class="tr"><span class="td"><span class="aui-icon aui-icon-wait">Loading...</span></span></div>
+        </div>
+    </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,555 @@
+/* styles copied from form.aui*/
+
+.aui-form
+{
+    margin: 10px 0 0 0;
+}
+
+/* No top margin to interfere with box padding */
+.aui-form:first-child {
+    margin-top: 0;
+}
+
+.aui-page-focused .aui-page-panel-content > .aui-form .buttons-container {
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.aui-form .hidden,
+.aui-form .field-group.hidden,
+.aui-form fieldset.hidden {
+    display: none;
+}
+
+.aui-form legend.assistive {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+/* Form icons - deprecated */
+.aui-form .icon-date{
+    /* icon-date.png */
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAElBMVEVwcHA7c6/e297////d3d3QRDeta2PvAAAANElEQVR42o3NMQoAMAgDwFrj/7+sNB2EOHhkCgaPMrqkxcAdLVOBLwrQLuJFCp3sv9BqIhIVkgJPMGXvIwAAAABJRU5ErkJggg==);
+}
+.aui-form .icon-range{
+    /* icon-range.png */
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAD1BMVEVwcHA7c6/d3d3////QRDegIdLtAAAANUlEQVR42oWOsQkAMBAC8/r7zxyIjaCQw+pQ8CQjIFIUSFiaANZ4jbU0saJOQIbwiZ7+jwUX+3ECESZGRrwAAAAASUVORK5CYII=);
+}
+.aui-form .icon-required {
+    /* icon-required.png */
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXklEQVR42u3MsQ2AIBSEYZnHAVjACZzkNUxA6yCOY2HhNnoXn6EggVxjRfHnQh75pmOJX/e7JTPrxo8JRQK+SQUyugj4ZhUIaCPgG1RgRida0c63ClQpQOs4gAH8Bzy5KFqGk8PBaQAAAABJRU5ErkJggg==);
+}
+.aui-form .icon-users{
+    /* icon-users.png */
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAtUlEQVR42t2RMQrCQBBF9xparK138ATJaRYEPVWwj0o6m1zAJl1IOgvXJtX4ix9YZsKK2Fk8kn18HmHjQgg/sSh3+5MHNYh8+m8DZyAJTS5QgIEUDEQVmOAXt44HIUP+C+xWy5EBz8iLzw283TJQ8tDz3YmIAd5sc5e4BlcwgQtYffoLWzIHKnUHFbzdMnAAQo4MPFUgwtstA2MiHwyIBt5uGRBFLiCKfwncE9Ex0KrAjQGzfQN6A+Z5DlYHhgAAAABJRU5ErkJggg==);
+}
+.aui-form .icon-help,
+.aui-icon-help,
+.aui-form .icon-inline-help,
+.aui-icon-inline-help {
+    /* icon-help.png */
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABOklEQVR42mXTv0rDUBTH8atDqYPi4mDRya3pAziIz+ETCDpoVt9BbKFRlFqfQGfBCukkODgIpREcddeiiCbR+A38ApfT4RNy/tzDzU3iwjC0mjjCGN8yVq5p+/1gDifIkWGIrgyVyxXX7IAaBihwgQac0UBfPTeo+QO6Kux7zZeYIMU11lTbVW9UDQiQa7qTe7xjG1t4wTNmVe9pTVAGbWRYVnEJBQ7g5FC5FTj1pmg7nXAM51lHXfcbeMNDtQOJkTi9pjMlrU184dEerNb8uPLiDbAGeMWiYjvgo7xJvEew7nBl8xJjNHWIxqrdujnEThm0kKNnmuYxkYUqb15jq0pEKLAHJ3UkUoeTHfzh2H7KtxrSN9uegVPuXD0DrZn6mU7xiwwxuhIjUy2yP5MVoIMnpPjESLnA9v8DHHysLnlPp3QAAAAASUVORK5CYII=);
+}
+
+.aui-form {
+    margin: 20px 0 0 0;
+    position: relative;
+}
+.aui-form:first-child {
+    margin-top: 0;
+}
+
+/* Field styles */
+.aui-form .text,
+.aui-form .password,
+.aui-form .upfile,
+.aui-form .textarea,
+.aui-form .select,
+.aui-form .multi-select,
+.aui-form .aui-select2-container {
+    color: #333;
+    font-family: inherit;
+    font-size: 14px;
+}
+.aui-form .text,
+.aui-form .password,
+.aui-form .textarea,
+.aui-form .select,
+.aui-form .multi-select,
+.aui-form .aui-select2-container .select2-choices {
+    border: 1px solid #ccc;
+    border-radius: 3.01px;
+    box-shadow: inset 0 1px 3px #ccc;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: inherit;
+    margin: 0;
+    max-width: 250px;
+    vertical-align: baseline;
+    width: 100%;
+}
+.aui-form .text,
+.aui-form .password,
+.aui-form .select,
+.aui-form .aui-select2-container .select2-choices {
+    height: 2.1428571428571em; /* 30px - using ems so the fields increase in line with user specified font-sizes */
+    line-height: 1.4285714285714; /* Required for IE8. Causes misaligned placeholder text in Safari 5 - fixed in Safari 6 though */
+    padding: 4px 5px;
+}
+.aui-form .select {
+    padding: 6px 5px 5px 5px; /* Firefox doesn't allow line-height to be adjusted and selects break horribly when the font-family is changed. Using padding instead */
+}
+.aui-form .textarea,
+.aui-form .select[size],
+.aui-form .multi-select {
+    height: auto;
+    line-height: 1.4285714285714;
+    margin: 0;
+    padding: 4px 5px;
+}
+.aui-form .textarea {
+    overflow-y: auto;
+}
+/* Ensure AUI Select2's do not show as regular text fields */
+.aui-form .aui-select2-container {
+    border: 0;
+    box-shadow: none;
+    height: auto;
+    max-width: 250px;
+    padding: 0 !important; /* !important because padding is applied to `.aui-form .select` in forms-ie.css */
+    vertical-align: baseline;
+    width: 100%;
+}
+.aui-form .aui-select2-container .select2-choices {
+    height: auto;
+    max-width: none;
+}
+/* Do not give file inputs a height or width because they break horribly in certain browsers. */
+.aui-form .upfile {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    margin: 5px 0;
+    padding: 0;
+}
+.aui-form optgroup {
+    background-color: #f5f5f5;
+    color: #707070;
+    font-style: normal;
+    font-weight: normal;
+}
+.aui-form option,
+.aui-form optgroup option {
+    background-color: #fff;
+    color: #333;
+}
+
+/* Disabled form element styles */
+.aui-form .text[disabled],
+.aui-form .password[disabled],
+.aui-form .textarea[disabled],
+.aui-form .select[disabled],
+.aui-form .multi-select[disabled],
+.aui-form .select[disabled] option,
+.aui-form .select[disabled] optgroup,
+.aui-form .multi-select[disabled] option,
+.aui-form .multi-select[disabled] optgroup {
+    background-color: #f5f5f5;
+    color: #999;
+}
+.aui-form .text[disabled],
+.aui-form .password[disabled],
+.aui-form .textarea[disabled],
+.aui-form .select[disabled],
+.aui-form .multi-select[disabled] {
+    box-shadow: none;
+    color: #999;
+}
+.aui-form .text[disabled],
+.aui-form .password[disabled],
+.aui-form .textarea[disabled],
+.aui-form .select[disabled],
+.aui-form .multi-select[disabled],
+.aui-form .radio[disabled],
+.aui-form .checkbox[disabled] {
+    cursor: not-allowed;
+}
+
+/* Placeholder styling
+ * - You have to use two rules, because user agents are required to ignore a rule with an unknown selector.
+ *   Since WebKit doesn’t know the proprietary Mozilla selector and vice versa, you have to include them separately.
+ *   See http://stackoverflow.com/questions/2610497/change-an-inputs-html5-placeholder-color-with-css#answer-2610741
+ */
+.aui-form .text::-webkit-input-placeholder,
+.aui-form .password::-webkit-input-placeholder,
+.aui-form .textarea::-webkit-input-placeholder {
+    color: #707070;
+}
+.aui-form .text::-moz-placeholder,
+.aui-form .password::-moz-placeholder,
+.aui-form .textarea::-moz-placeholder {
+    color: #707070;
+    opacity: 1;
+}
+
+/* Field widths
+ * - don't add widths to file inputs - they break horribly
+ */
+.aui-form .short-field {
+    max-width: 75px;
+}
+.aui-form .medium-field {
+    max-width: 165px;
+}
+.aui-form .long-field {
+    max-width: 500px;
+}
+.aui-form .full-width-field {
+    max-width: none;
+}
+
+/* Structural elements */
+.aui-form fieldset {
+    border: 0;
+    clear: both;
+    display: block;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+.aui-form legend,
+.aui-form label {
+    color: #707070;
+}
+.aui-form .icon-required {
+    left: 100%;
+    position: absolute;
+    top: 5px;
+}
+.aui-form div.description {
+    color: #707070;
+    font-size: 12px;
+    line-height: 1.66666666666667;
+    margin: 5px 0 0 0;
+}
+.aui-form div.description:first-child {
+    margin-top: 0;
+}
+.aui-form .field-value {
+    display: inline-block;
+    font-weight: bold;
+    padding-top: 5px;
+}
+/* TODO: don't support this in AUI Forms 2 */
+.aui-form legend {
+    display: none;
+}
+.aui-form .field-group,
+.aui-form .group,
+.aui-form .date-select {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    clear: both;
+    padding: 4px 0 4px 145px;
+    position: relative;
+    margin: 1px 0;
+    width: 100%;
+}
+.aui-form .group {
+    padding-top: 0;
+}
+.aui-form .field-group:before,
+.aui-form .field-group:after,
+.aui-form .group:before,
+.aui-form .group:after,
+.aui-form .date-select:before,
+.aui-form .date-select:after {
+    content: " ";
+    display: table;
+}
+.aui-form .field-group:after,
+.aui-form .group:after,
+.aui-form .date-select:after {
+    clear: both;
+}
+.aui-form legend,
+.aui-form .field-group > label {
+    float: left;
+    margin-left: -145px;
+    padding: 5px 0 0 0;
+    position: relative;
+    text-align: right;
+    width: 130px;
+    word-wrap: break-word;
+}
+
+.aui-form .checkbox > label,
+.aui-form .radio > label {
+    color: #333;
+}
+.aui-form div.checkbox > .checkbox[disabled] + label,
+.aui-form div.radio > .radio[disabled] + label {
+    color: #999;
+    cursor: not-allowed;
+}
+.aui-form .field-group .error,
+.aui-form .group .error,
+.aui-form .checkbox .error,
+.aui-form .radio .error {
+    clear: both;
+    color: #D04437;
+    display: block;
+    margin: 5px 0 0 0;
+}
+.aui-form .field-group .error:first-child,
+.aui-form .checkbox .error:first-child,
+.aui-form .radio .error:first-child {
+    margin-top: 0;
+}
+.aui-form .group legend,
+.aui-form .date-select legend {
+    display: block;
+}
+.aui-form .group .field-group,
+.aui-form .date-select .field-group {
+    clear: none;
+    padding-left: 0;
+    padding-top: 0;
+}
+.aui-form .date-select .field-group label {
+    display: none;
+}
+.aui-form div.checkbox,
+.aui-form div.radio {
+    margin: 5px 0 0 0;
+    padding: 0 0 0 20px;
+    position: relative;
+}
+.aui-form legend + .field-group,
+.aui-form legend + .checkbox,
+.aui-form legend + .radio {
+    margin-top: 0;
+    padding-top: 5px;
+}
+.aui-form div.checkbox:first-child,
+.aui-form div.radio:first-child {
+    margin-top: 0;
+}
+.aui-form .matrix {
+    padding-top: 5px;
+}
+.aui-form div.radio input.radio,
+.aui-form div.checkbox input.checkbox {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 14px;
+    height: 1.4285714285714em;
+    left: 0;
+    margin: 0;
+    padding: 2px;
+    position: absolute;
+    vertical-align: baseline;
+}
+/* Buttons */
+.aui-form .buttons-container {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    clear: both;
+    margin: 1px 0 0 0;
+    padding: 4px 0 4px 145px;
+    position: relative;
+    width: 100%;
+}
+
+/* Long Labels
+ * add long-label class to form eg: <form class="aui long-label">
+ */
+.aui-form.long-label .field-group,
+.aui-form.long-label .group,
+.aui-form.long-label .date-select,
+.aui-form.long-label .buttons-container {
+    padding-left: 250px;
+}
+.aui-form.long-label .field-group > label,
+.aui-form.long-label .group > legend {
+    margin-left: -250px;
+    width: 235px;
+}
+.aui-form.long-label .group .field-group,
+.aui-form.long-label .date-select .field-group {
+    padding-left: 0;
+}
+/* End Long Labels */
+
+
+/* Top Labels
+ * add top-label class to form eg: <form class="aui top-label">
+ */
+.aui-form.top-label .field-group {
+    padding-left: 0;
+}
+.aui-form.top-label .field-group > label {
+    display: block;
+    float: none;
+    margin: 0 0 5px 0;
+    padding: 0;
+    text-align: left;
+    width: auto;
+}
+.aui-form.top-label .icon-required {
+    left: 0;
+    position: static;
+    top: 0;
+}
+.aui-form.top-label .group,
+.aui-form.top-label .date-select {
+    padding-left: 0;
+}
+.aui-form.top-label .group legend,
+.aui-form.top-label .date-select legend {
+    float: none;
+    margin: 0;
+    text-align: left;
+    width: auto;
+}
+.aui-form.top-label .date-select label {
+    display: none;
+}
+.aui-form.top-label .buttons-container {
+    padding-left: 0;
+}
+/* End Top Labels */
+
+/* Deprecated button styling - use the new aui-button component */
+
+/* Basic Button Style */
+.aui-form .button {
+    background: #f2f2f2;
+    background: -webkit-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+    background:    -moz-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+    background:     -ms-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+    background:      -o-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+    background:         linear-gradient(to bottom, #fff 0%, #f2f2f2 100%);
+    border: 1px solid #ccc;
+    border-radius: 3.01px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #333;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-variant: normal;
+    font-weight: normal;
+    height: 2.1428571428571em; /* 30px - using ems so the fields increase in line with user specified font-sizes */
+    line-height: 1.4285714285714;
+    margin: 0;
+    padding: 4px 10px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 white;
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+.aui-form .cancel  {
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+    padding: 5px 10px;
+    vertical-align: baseline;
+}
+
+/* Create 10px effective gap; backwards compat for old and new buttons */
+/* zero font size hack to stop 4px magic number problems. */
+.aui-form .buttons-container > .buttons {
+  font-size: 0;
+}
+/* ensure zero font size hack doesn't kill other elements. */
+.aui-form .buttons-container > .buttons > * {
+    font-size: 14px;
+}
+.aui-form .buttons-container .button + .button,
+.aui-form .buttons-container .button + .aui-button,
+.aui-form .buttons-container .aui-button + .button,
+.aui-form .buttons-container .aui-button + .aui-button {
+    margin-left: 10px;
+}
+.aui-form .buttons-container .aui-button + .aui-button-link {
+    margin-left: 9px; /* 1px diff due to border */
+}
+
+
+/* Control button height in Firefox. See http://www.experimentgarden.com/2010/11/firefox-buttontext-height-and-padding.html */
+.aui-form .button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+.aui-form .button:focus,
+.aui-form .button:hover {
+    background: #f7f7f7;
+    background: -webkit-linear-gradient(top, #fff 0%, #f7f7f7 100%);
+    background:    -moz-linear-gradient(top, #fff 0%, #f7f7f7 100%);
+    background:     -ms-linear-gradient(top, #fff 0%, #f7f7f7 100%);
+    background:      -o-linear-gradient(top, #fff 0%, #f7f7f7 100%);
+    background:         linear-gradient(to bottom, #fff 0%, #f7f7f7 100%);
+    border-color: #999;
+    color: #000;
+    text-decoration:none;
+}
+
+.aui-form .button:active,
+.aui-form .button.active {
+    background-image: none;
+    background-color: #f2f2f2;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,.1);
+    text-shadow: none;
+    text-decoration:none;
+}
+
+.aui-form .button[disabled],
+.aui-form .button[disabled]:hover,
+.aui-form .button[disabled]:focus,
+.aui-form .button[disabled]:active {
+    background: #f2f2f2;
+    background: -webkit-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+    background:    -moz-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+    background:     -ms-linear-gradient(top, #fff 0%, #f2f2f2 100%); 
+    background:      -o-linear-gradient(top, #fff 0%, #f2f2f2 100%); 
+    background:         linear-gradient(to bottom, #fff 0%, #f2f2f2 100%);
+    border-color: #ccc;
+    box-shadow: none;
+    color: #999;
+    text-shadow: none;
+}
+
+
+/* Message Interops */
+.aui-form .aui-message + .field-group,
+.aui-form .aui-message + .group,
+.aui-form .aui-message + .date-select {
+    margin-top: 10px;
+}
+/* Deprecated */
+.aui-form span.content {
+    left: -9999px;
+    position: absolute;
+    top: -9999px;
+}
+.aui-form pre.aui-form {
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.66666666666667; /* 20px */
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 15px;
+}

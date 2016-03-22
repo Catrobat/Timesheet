@@ -1,0 +1,75 @@
+.table {
+	display:table;
+}
+
+.th {
+	font-weight: bold;
+}
+
+.tr {
+	display:table-row;
+}
+
+.th, .td {
+	display:table-cell;
+}
+
+#timesheet-table .time-picker, 
+#timesheet-table .range, 
+#timesheet-table .pause, 
+#timesheet-table .duration 
+{
+  text-align:center;
+}
+
+#timesheet-table .time {
+  width: 50px;
+}
+
+#timesheet-table input.duration {
+  width: 50px;
+  border: none;
+  background-color: inherit;
+  cursor: inherit;
+  color: inherit;
+}
+
+#timesheet-table .date     {width:87px;}
+#timesheet-table .range    {width:115px;}
+#timesheet-table .pause, 
+#timesheet-table .duration {width:55px;}
+#timesheet-table .team,
+#timesheet-table .category {min-width:150px;}
+
+#timesheet-table .team aui-select2-container,
+#timesheet-table .category aui-select2-container{width:200px;}
+
+#timesheet-table button
+{
+  visibility:hidden; 
+}
+
+#timesheet-table .tr:hover button,
+#timesheet-table button.save 
+{
+  visibility:visible; 
+}
+
+#button-wrapper {
+	width: 100%;
+	text-align: right;
+}
+
+code {
+	font-weight: bold;
+}
+
+.import-form {
+	text-align: center;
+}
+
+.import-text {
+	width: 100%;
+	height: 80px;
+	overflow-x:scroll;
+}

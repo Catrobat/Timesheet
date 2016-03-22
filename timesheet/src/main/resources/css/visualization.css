@@ -1,0 +1,91 @@
+.table {
+    display: table;
+}
+
+.th {
+    font-weight: bold;
+}
+
+.tr {
+    display: table-row;
+}
+
+.th, .td {
+    display: table-cell;
+}
+
+#visualization-table .time-picker,
+#visualization-table .range,
+#visualization-table .pause,
+#visualization-table .duration {
+    text-align: center;
+}
+
+#visualization-table .time {
+    width: 50px;
+}
+
+#visualization-table input.duration {
+    width: 50px;
+    border: none;
+    background-color: inherit;
+    cursor: inherit;
+    color: inherit;
+}
+
+#visualization-table .date {
+    width: 87px;
+}
+
+#visualization-table .range {
+    width: 115px;
+}
+
+#visualization-table .pause,
+#visualization-table .duration {
+    width: 55px;
+}
+
+#visualization-table .team,
+#visualization-table .category {
+    min-width: 150px;
+}
+
+#visualization-table .team aui-select2-container,
+#visualization-table .category aui-select2-container {
+    width: 200px;
+}
+
+#visualization-table button {
+    visibility: hidden;
+}
+
+#visualization-table .tr:hover button,
+#visualization-table button.save {
+    visibility: visible;
+}
+
+#button-wrapper {
+    width: 100%;
+    text-align: right;
+}
+
+code {
+    font-weight: bold;
+}
+
+.import-form {
+    text-align: center;
+}
+
+.import-text {
+    width: 100%;
+    height: 80px;
+    overflow-x: scroll;
+}
+
+.tabs-pane div {
+    position: relative;
+    width: inherit;
+    display: inline-block;
+}

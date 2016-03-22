@@ -1,0 +1,11 @@
+<html>
+  <head>
+    <title>Error</title>
+    <meta name="decorator" content="atl.general">
+  </head>
+  <body>
+    <div>
+       $messageWithHtml
+    </div>
+  </body>
+</html>

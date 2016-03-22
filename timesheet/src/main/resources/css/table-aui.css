@@ -1,0 +1,87 @@
+.table.aui { margin: 10px 0 0 0;}
+.table.aui:first-child {margin-top: 0;}
+
+.table.aui {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table.aui .table.aui {
+    margin: 0;
+}
+.table.aui > caption {
+    color: #707070;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ccc;
+    caption-side: top;
+    padding: 7px 10px;
+    text-align: left;
+}
+.table.aui > .tr {
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    color: #333;
+}
+
+.table.aui > .tr > .th {
+    background: #fff;
+    color: #333;
+}
+
+.table.aui > .tr > .th,
+.table.aui > .tr > .td {
+    padding: 7px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+/*.table.aui > thead {
+    border-bottom: 1px solid #ccc;
+}*/
+
+/* Borders on TBODY and TFOOT don't work in IE - whereas these at least work in IE7 & IE8 */
+.table.aui > .tr:first-child > .td,
+.table.aui > .tr:first-child > .th,
+.table.aui > .tr:first-child > .td {
+    border-top: 1px solid #ccc;
+}
+
+.table.aui > .tr > .th > ul.menu,
+.table.aui > .tr > .td > ul.menu {
+    list-style-type: none;
+    margin: 0; 
+    padding: 0;
+}
+.table.aui > .tr > .th > ul.menu > li,
+.table.aui > .tr > .td > ul.menu > li {
+    float: left;
+    margin: 0 10px 0 0;
+    width: auto;
+}
+
+/* Interactive Tables */
+.table.aui.aui-table-interactive > .tr:hover {
+    background: #f5f5f5;
+}
+
+/* End Interactive Tables */
+
+/* stripes - deprecated */
+.table.aui.aui-zebra .tr {
+    border-bottom: 0;
+}
+.table.aui.aui-zebra > .tr:nth-child(even)
+.table.aui-zebra > .tr:nth-child(even) > .th {
+    background: #f5f5f5;
+    color: #333;
+}
+/* must be a separate rule for IE */
+.table.aui-zebra .tr.aui-zebra {
+    background: #e6e6e6;
+    color: #333;
+}
+
+.table.aui-zebra .tr.aui-zebra .th {
+    background: #f5f5f5;
+    color: #333;
+}

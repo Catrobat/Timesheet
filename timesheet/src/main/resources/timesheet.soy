@@ -1,0 +1,98 @@
+{namespace Jira.Templates.Timesheet}
+
+/**
+ * @param teams
+ */
+{template .timesheetHeader}
+  <div class="tr">
+    <span class="th date">Date</span>
+    <span class="th range">Start - End</span>
+    <span class="th pause">Pause</span>
+    <span class="th duration">Duration</span>
+    {if length(keys($teams)) > 1}
+      <span class="th team">Team</span>
+    {/if}
+    <span class="th category">Category</span>
+    <span class="th">Task Description</span>
+    <span class="th"></span>
+  </div>
+{/template}
+
+/**
+ * Renders a table of selected AJS.params
+ * @param entry
+ * @param teams
+ */
+{template .timesheetEntry}
+   <div class="tr entry-view" data-id="{$entry.entryID}">
+    <span class="td date">{$entry.date}</span>
+    <span class="td range">{$entry.begin} - {$entry.end}</span>
+    <span class="td pause">{$entry.pause}</span>
+    <span class="td duration">{$entry.duration}</span>
+    {if length(keys($teams)) > 1}
+      <span class="td">{$entry.team}</span>
+    {/if}
+    <span class="td">{$entry.category}</span>
+    <span class="td">{$entry.description}</span>
+    <span class="td">
+      <button class="aui-button aui-button-subtle edit">
+        {call aui.icons.icon}
+          {param useIconFont: true /}
+          {param icon: 'edit' /}
+        {/call}
+      </button>
+      <button class="aui-button aui-button-subtle delete">
+        {call aui.icons.icon} 
+          {param useIconFont: true /} 
+          {param icon: 'remove-label' /} 
+        {/call} 
+      </button>
+      <span class="aui-icon aui-icon-wait">Loading...</span>
+    </span>
+  </div>
+{/template}
+
+/**
+ * Renders a table of selected AJS.params
+ * @param entry
+ * @param teams
+ */
+{template .timesheetEntryForm}
+  <form class="entry-form aui tr" data-id="{$entry.entryID}">
+    <span class="td">
+      <input class="date aui-date-picker text" type="date" value="{$entry.date}">
+    </span>
+    <span class="td time-picker">
+      <input class="time start text" type="text" value="{$entry.begin}"> &nbsp;
+      <input class="time end text" type="text" value="{$entry.end}">
+    </span>
+    <span class="td pause">
+      <input class="time pause text" type="text" value="{$entry.pause}">
+    </span>
+    <span class="td">
+      <input class="duration text" type="text" disabled="disabled" value="{$entry.duration}" />
+    </span>
+    <span class="td team">
+      <select class="team">
+        {foreach $key in keys($teams)}
+          <option value="{$key}">{$teams[$key].teamName}</option>
+        {/foreach}
+      </select>
+    </span>
+    <span class="td">
+      <span class="category"></span>
+    </span>
+    <span class="td">
+      <input class="description text" type="text" value="{$entry.description}"/> 
+    </span>
+    <span class="td">
+      <button class="aui-button aui-button-subtle save">
+        {call aui.icons.icon}
+          {param useIconFont: true /}
+          {param icon: 'success' /}
+        {/call}
+      </button>
+      <span class="aui-icon aui-icon-wait">Loading...</span>
+    </span>
+  </form>
+{/template}

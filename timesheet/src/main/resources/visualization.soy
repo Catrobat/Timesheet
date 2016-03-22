@@ -1,0 +1,30 @@
+{namespace Confluence.Templates.Visualization}
+
+/**
+ * @param teams
+ */
+{template .visualizationHeader}
+  <div class="tr">
+    <span class="th date">Date</span>
+    <span class="th range">Duration</span>
+    <span class="th pause"></span>
+    {if length(keys($teams)) > 1}
+      <span class="th team"></span>
+    {/if}
+  </div>
+{/template}
+
+/**
+ * Renders a table of selected AJS.params
+ * @param entry
+ * @param teams
+ */
+{template .visualizationEntry}
+   <div class="tr entry-view" data-id="{$entry.entryID}">
+    <span class="td date">{$entry.date}</span>
+    <span class="td range">{$entry.begin}</span>
+    {if length(keys($teams)) > 1}
+      <span class="td"></span>
+    {/if}
+  </div>
+{/template}
