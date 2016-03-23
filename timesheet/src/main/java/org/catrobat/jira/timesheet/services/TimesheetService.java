@@ -86,5 +86,4 @@ public interface TimesheetService {
      */
     @Nullable
     Timesheet getTimesheetByID(int id) throws ServiceException;
-
 }

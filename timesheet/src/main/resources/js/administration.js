@@ -560,35 +560,38 @@ AJS.toInit(function () {
     AJS.$("#modify-scheduling").submit(function (e) {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Activity Verification') {
-            trigger();
+            triggerJobManually("trigger/activity/verification", "Activity-Verification");
         } else if (AJS.$(document.activeElement).val() === 'Activity Notification') {
-            //call function from the server
+            triggerJobManually("trigger/activity/notification", "Activity-Notification");
         } else {
-            //call function from the server
+            triggerJobManually("trigger/out/of/time/notification", "Out-Of-Time-Notification");
         }
     });
 
-    function trigger() {
-        AJS.$(".loadingDiv").show();
-        AJS.$.ajax({
-            url: restBaseUrl + 'config/trigger',
-            type: "GET",
-            contentType: "application/json",
-            success: function () {
+    function triggerJobManually(restUrl, jobName) {
+        var callREST = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'scheduling/' + restUrl,
+            contentType: "application/json"
+        });
+
+        AJS.$.when(callREST)
+            .done(function (success){
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Job triggered successfull!"
+                    body: jobName + " Job triggered successfully."
                 });
+                fetchData();
                 AJS.$(".loadingDiv").hide();
-            },
-            error: function (error) {
+        })
+            .fail(function (error) {
                 AJS.messages.error({
-                    title: "Error!",
-                    body: "Something went wrong during Job Triggering!<br />" + error.responseText
+                    title: 'There was an error while triggering the Job REST url: ' + restUrl,
+                    body: '<p>Reason: ' + error.responseText + '</p>'
                 });
+                console.log(error);
                 AJS.$(".loadingDiv").hide();
-            }
-        });
+            });
     }
 
     AJS.$("a[href='#tabs-general']").click(function () {

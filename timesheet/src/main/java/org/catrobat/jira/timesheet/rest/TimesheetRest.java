@@ -27,7 +27,6 @@ import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.jobs.ActivityVerificationJobDetail;
 import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
 import org.joda.time.DateTime;
@@ -671,15 +670,14 @@ public class TimesheetRest {
             entry = entryService.getEntryByID(entryID);
             category = categoryService.getCategoryByID(jsonEntry.getCategoryID());
             team = teamService.getTeamByID(jsonEntry.getTeamID());
-            sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(user.getUsername()));
+            sheet = entry.getTimeSheet();
             checkIfCategoryIsAssociatedWithTeam(team, category);
             permissionService.userCanEditTimesheetEntry(user, entry.getTimeSheet(), jsonEntry);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
 
-        if (sheet.getIsEnabled()) {
+        if (sheet.getIsEnabled() || permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
             entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(),
                     jsonEntry.getEndDate(), category, jsonEntry.getDescription(),
                     jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport());

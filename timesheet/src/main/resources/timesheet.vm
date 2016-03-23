@@ -46,13 +46,13 @@
 <div class="aui-tabs horizontal-tabs">
     <ul class="tabs-menu">
         <li class="menu-item active-tab">
-            <a href="#tabs-timesheet"><strong>Timesheet Sheet Entries</strong></a>
+            <a href="#tabs-timesheet"><strong>Timesheet Table</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-timesheet-information"><strong>Additional Timesheet Information</strong></a>
+            <a href="#tabs-timesheet-information"><strong>Information</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-timesheet-settings"><strong>Timesheet Settings</strong></a>
+            <a href="#tabs-timesheet-settings"><strong>Coordinator Settings</strong></a>
         </li>
         <li class="menu-item">
             <a href="#tabs-overview" onclick="showOverview();">Overview</a>

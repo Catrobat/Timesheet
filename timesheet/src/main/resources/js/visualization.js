@@ -225,11 +225,16 @@ function appendEntriesToVisTable(timesheetData) {
     var totalMinutes = 0;
     var totalTimeHours = 0;
     var totalTimeMinutes = 0;
+    var timeLastSixMonthHours = 0;
+    var timeLastSixMonthMinutes = 0;
     //save data in an additional array
     var count = 0;
     var dataPoints = [];
     //pi chart variables
     var theoryHours = 0;
+
+    //spent time within the last six months
+    var sixMonthAgo = new Date().getMonth() - 6;
 
     while (i < availableEntries.length) {
         var referenceEntryDate = new Date(availableEntries[pos].beginDate);
@@ -257,6 +262,13 @@ function appendEntriesToVisTable(timesheetData) {
             //calculate theory time in minutes
             if (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory")
                 theoryHours = theoryHours + calculatedTime;
+
+            //date within the last six months
+            var compareEntryMonth = compareToDate.getMonth()  - 6;
+            if(compareEntryMonth <= sixMonthAgo) {
+                timeLastSixMonthHours = timeLastSixMonthHours + hours;
+                timeLastSixMonthMinutes = timeLastSixMonthMinutes + minutes;
+            }
 
         } else {
             pos = i;
@@ -296,6 +308,7 @@ function appendEntriesToVisTable(timesheetData) {
 
     var totalTime = totalTimeHours * 60 + totalTimeMinutes;
 
+    //append total time
     AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Total Spent Time" + "</td>" +
         "<td headers=\"basic-time\" class=\"time\">" + totalTimeHours + "h" + totalTimeMinutes + "min" + "</td>" +
         "</tr>");
@@ -311,8 +324,14 @@ function appendEntriesToVisTable(timesheetData) {
         averageTimeMinutes = averageMinutesPerMonth - minutesToFullHours * 60;
     }
 
+    //append avg time
     AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"avg-time\">" + "Time / Month" + "</td>" +
         "<td headers=\"basic-time\" class=\"time\">" + averageTimeHours + "h" + averageTimeMinutes + "min" + "</td>" +
+        "</tr>");
+
+    //append time last 6 month
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Overall Time Last 6 Month" + "</td>" +
+        "<td headers=\"basic-time\" class=\"time\">" + timeLastSixMonthHours + "h" + timeLastSixMonthMinutes + "min" + "</td>" +
         "</tr>");
 
     //draw line graph

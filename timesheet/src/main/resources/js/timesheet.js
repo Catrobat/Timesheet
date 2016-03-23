@@ -202,18 +202,23 @@ function getExistingTimesheetHours(timesheetID) {
         });
 }
 
+function toFixed(value, precision) {
+    var power = Math.pow(10, precision || 0);
+    return Math.round(value * power) / power;
+}
+
 function updateTimesheetHours(existingTimesheetData) {
     var timesheetUpdateData = {
         timesheetID: existingTimesheetData.timesheetID,
         lectures: AJS.$("#timesheet-hours-lectures").val(),
         reason: AJS.$("#timesheet-substract-hours-text").val(),
         ects: AJS.$("#timesheet-hours-ects").val(),
-        targetHourPractice: AJS.$("#timesheet-hours-theory").val(),
-        targetHourTheory: AJS.$("#timesheet-hours-practical").val(),
+        targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 1),
+        targetHourTheory: toFixed(AJS.$("#timesheet-hours-theory").val(), 1),
         targetHours: AJS.$("#timesheet-hours-text").val(),
-        targetHoursCompleted: AJS.$("#timesheet-hours-theory").val()
-        - (- AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val(),
-        targetHoursRemoved: AJS.$("#timesheet-hours-substract").val(),
+        targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
+        - (- AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 1),
+        targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 1),
         isActive: existingTimesheetData.isActive
     };
 

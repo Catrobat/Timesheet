@@ -24,19 +24,16 @@ import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.catrobat.jira.timesheet.jobs.ActivityVerificationJob;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.*;
-import org.quartz.CronTrigger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -307,27 +304,5 @@ public class ConfigResourceRest {
             return Response.noContent().build();
 
         return Response.serverError().build();
-    }
-
-    @POST
-    @Path("/scheduling/changeVerificationInterval")
-    public Response changeVerificationJobInterval(final String croneString, @Context HttpServletRequest request) {
-        CronTrigger cronTrigger = new CronTrigger();
-        try {
-            cronTrigger.setCronExpression(croneString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return Response.serverError().build();
-    }
-
-    @GET
-    @Path("/trigger")
-    public Response trigger(@Context HttpServletRequest request) {
-        ActivityVerificationJob abc = ComponentAccessor.getComponent(ActivityVerificationJob.class);
-        if (abc == null)
-            abc = new ActivityVerificationJob(sheetService, entryService);
-        return Response.ok("Job triggered").build();
     }
 }
