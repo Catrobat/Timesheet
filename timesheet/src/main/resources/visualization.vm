@@ -11,41 +11,70 @@
     var timesheetID = $timesheetid;
 </script>
 
+<script type="application/javascript">
+    function showLineDiagram() {
+        document.getElementById("lineDiagram").style.visibility = "visible";
+        document.getElementById("lineDiagramTag").style.visibility = "visible";
+    }
+</script>
+
+<script type="application/javascript">
+    function showCategoryDiagram() {
+        document.getElementById("categoryLineDiagram").style.visibility = "visible";
+        document.getElementById("categoryLineDiagramTag").style.visibility = "visible";
+    }
+</script>
+
+<script type="application/javascript">
+    function showTeamDiagram() {
+        document.getElementById("teamLineDiagram").style.visibility = "visible";
+        document.getElementById("teamLineDiagramTag").style.visibility = "visible";
+    }
+</script>
+
 <h3>User Statistics</h3>
 
 <div class="aui-tabs horizontal-tabs">
     <ul class="tabs-menu">
-        <li class="menu-item">
+        <li class="menu-item active-tab">
             <a href="#tabs-overview">Overview</a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-line">Time - Visualization</a>
+            <a href="#tabs-line" onclick="showLineDiagram();">Time - Visualization</a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-category">Category - Visualization</a>
+            <a href="#tabs-category" onclick="showCategoryDiagram();">Category - Visualization</a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-team">Team - Visualization</a>
+            <a href="#tabs-team" onclick="showTeamDiagram();">Team - Visualization</a>
         </li>
     </ul>
     <div class="tabs-pane active-pane" id="tabs-overview">
-        <div id="visualization-table" class="aui aui-table-interactive aui-table-sortable table">
-            <div class="tr"><span class="td"><span class="aui-icon aui-icon-wait">Loading...</span></span></div>
-        </div>
+        <table id="visualization-table" class="aui aui-table-interactive aui-table-sortable">
+            <thead>
+            <tr>
+                <th id="basic-date">Description</th>
+                <th id="basic-time">Value</th>
+            </tr>
+            </thead>
+            <tbody class="list" id="visualization-table-content">
+            #* will be filled out by JavaScript *#
+            </tbody>
+        </table>
 
         <h3>Visualization of your theory - practical hours distribution</h3>
         <div id="piChartDiagram" style="height: 200px;"></div>
     </div>
     <div class="tabs-pane active-pane" id="tabs-line">
-        <h3>Visualization of your spent time</h3>
+        <h3 id="lineDiagramTag">Visualization of your spent time</h3>
         <div id="lineDiagram" style="height:250px;"></div>
     </div>
     <div class="tabs-pane active-pane" id="tabs-category">
-        <h3>Visualization of your spent time on categories</h3>
+        <h3 id="categoryLineDiagramTag">Visualization of your spent time on categories</h3>
         <div id="categoryLineDiagram"></div>
     </div>
     <div class="tabs-pane active-pane" id="tabs-team">
-        <h3>Team Visualization</h3>
+        <h3 id="teamLineDiagramTag">Team Visualization</h3>
         <div id="teamLineDiagram" style="height: 250px;"></div>
     </div>
 </div>

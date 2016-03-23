@@ -8,7 +8,7 @@ AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
     //restBaseUrl = "/rest/timesheet/latest/";
-    
+
     fetchData();
     fetchTeamData();
 });
@@ -194,22 +194,11 @@ function assignTeamData(timesheetDataReply) {
 
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
-    var visualizationTable = AJS.$("#visualization-table");
-    visualizationTable.empty();
+    AJS.$("#visualization-table-content").empty();
 
-    visualizationTable.append(Jira.Templates.Visualization.visualizationHeader(
-        {teams: timesheetData.teams}
-    ));
 
     appendEntriesToTable(timesheetData);
     assignCategoryDiagramData(timesheetData);
-}
-
-Array.prototype.contains = function (k) {
-    for (var p in this)
-        if (this[p] === k)
-            return true;
-    return false;
 }
 
 function appendTimeToPiChart(theoryTime, practicalTime, totalTime) {
@@ -227,7 +216,6 @@ function appendTimeToPiChart(theoryTime, practicalTime, totalTime) {
 
 function appendEntriesToTable(timesheetData) {
 
-    var visualizationTable = AJS.$("#visualization-table");
     var availableEntries = timesheetData.entries;
 
     var pos = 0;
@@ -238,8 +226,7 @@ function appendEntriesToTable(timesheetData) {
     var totalTimeHours = 0;
     var totalTimeMinutes = 0;
     //save data in an additional array
-    var index = 0;
-    var dataArray = [];
+    var count = 0;
     var dataPoints = [];
     //pi chart variables
     var theoryHours = 0;
@@ -277,12 +264,6 @@ function appendEntriesToTable(timesheetData) {
         }
 
         if (oldPos != pos || i == availableEntries.length - 1) {
-            //create a new table entry and add it to the table
-            var newVisualizationEntry = {
-                entryID: index,
-                date: referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1),
-                begin: totalHours + "h" + totalMinutes + "min",
-            };
 
             //add points to line diagram
             var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
@@ -290,13 +271,12 @@ function appendEntriesToTable(timesheetData) {
             dataPoints.push(dataX);
             dataPoints.push(dataY);
 
-            //add entry to table
-            dataArray.push(newVisualizationEntry);
-            index = index + 1;
+            AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"date\">" +
+                "Time Spent: " + referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1) + "</td>" +
+                "<td headers=\"basic-time\" class=\"time\">" + totalHours + "h" + totalMinutes + "min" + "</td>" +
+                "</tr>");
 
-            var viewRow = AJS.$(Jira.Templates.Visualization.visualizationEntry(
-                {entry: newVisualizationEntry, teams: timesheetData.teams}));
-            visualizationTable.append(viewRow);
+            count++;
 
             //overall sum of spent time
             totalTimeHours = totalTimeHours + totalHours;
@@ -316,21 +296,12 @@ function appendEntriesToTable(timesheetData) {
 
     var totalTime = totalTimeHours * 60 + totalTimeMinutes;
 
-    //entry for whole time
-    var newVisualizationEntry = {
-        entryID: index,
-        date: "Total Time",
-        begin: totalTimeHours + "h" + totalTimeMinutes + "min",
-    };
-
-    dataArray.push(newVisualizationEntry);
-
-    var viewRow = AJS.$(Jira.Templates.Visualization.visualizationEntry(
-        {entry: newVisualizationEntry, teams: timesheetData.teams}));
-    visualizationTable.append(viewRow);
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Total Spent Time" + "</td>" +
+        "<td headers=\"basic-time\" class=\"time\">" + totalTimeHours + "h" + totalTimeMinutes + "min" + "</td>" +
+        "</tr>");
 
     //entry for average time
-    var averageMinutesPerMonth = (totalTimeHours * 60 + totalTimeMinutes) / (dataArray.length - 1);
+    var averageMinutesPerMonth = (totalTimeHours * 60 + totalTimeMinutes) / count;
     var averageTimeHours = 0;
     var averageTimeMinutes = 0;
 
@@ -340,17 +311,9 @@ function appendEntriesToTable(timesheetData) {
         averageTimeMinutes = averageMinutesPerMonth - minutesToFullHours * 60;
     }
 
-    newVisualizationEntry = {
-        entryID: index,
-        date: "Time / Month",
-        begin: averageTimeHours + "h" + averageTimeMinutes + "min",
-    };
-
-    dataArray.push(newVisualizationEntry);
-
-    var viewRow = AJS.$(Jira.Templates.Visualization.visualizationEntry(
-        {entry: newVisualizationEntry, teams: timesheetData.teams}));
-    visualizationTable.append(viewRow);
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"avg-time\">" + "Time / Month" + "</td>" +
+        "<td headers=\"basic-time\" class=\"time\">" + averageTimeHours + "h" + averageTimeMinutes + "min" + "</td>" +
+        "</tr>");
 
     //draw line graph
     diagram(dataPoints);
@@ -528,90 +491,15 @@ function drawPiChartDiagram(dataPoints) {
     drawPiChart(data);
 }
 
-/**
- * Finds and returns the form row that belongs to a view row
- * @param {jQuery} viewRow
- * @returns {jQuery} formRow or undefined if not found
- */
-function getFormRow(viewRow) {
-    var formRow = viewRow.next(".entry-form");
-    if (formRow.data("id") === viewRow.data("id")) {
-        return formRow;
-    }
-}
-
-/**
- * Augments an entry object wth a few attributes by deriving them from its
- * original attributes
- * @param {Object} timesheetData
- * @param {Object} entry
- * @returns {Object} augmented entry
- */
-function augmentEntry(timesheetData, entry) {
-
-    var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
-
-    return {
-        date: toDateString(new Date(entry.beginDate)),
-        begin: toTimeString(new Date(entry.beginDate)),
-        end: toTimeString(new Date(entry.endDate)),
-        pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
-        duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
-        category: timesheetData.categories[entry.categoryID].categoryName,
-        team: timesheetData.teams[entry.teamID].teamName,
-        entryID: entry.entryID,
-        beginDate: entry.beginDate,
-        endDate: entry.endDate,
-        description: entry.description,
-        pauseMinutes: entry.pauseMinutes,
-        teamID: entry.teamID,
-        categoryID: entry.categoryID
-    };
-}
-
-/**
- * Creates the viewrow
- * @param {Object} timesheetData
- * @param {Object} entry
- */
-function prepareViewRow(timesheetData, entry) {
-
-    //todo: dont augment entry twice.
-    var augmentedEntry = augmentEntry(timesheetData, entry);
-
-    var viewRow = AJS.$(Jira.Templates.Visualization.visualizationEntry(
-        {entry: augmentedEntry, teams: timesheetData.teams}));
-
-    viewRow.find('span.aui-icon-wait').hide();
-
-    return viewRow;
-}
-
-function toUTCTimeString(date) {
-    var h = date.getUTCHours(), m = date.getUTCMinutes();
-    var string =
-        ((h < 10) ? "0" : "") + h + ":" +
-        ((m < 10) ? "0" : "") + m;
-    return string;
-}
-
-function toTimeString(date) {
-    var h = date.getHours(), m = date.getMinutes();
-    var string =
-        ((h < 10) ? "0" : "") + h + ":" +
-        ((m < 10) ? "0" : "") + m;
-    return string;
-}
-
-function toDateString(date) {
-    var y = date.getFullYear(), d = date.getDate(), m = date.getMonth() + 1;
-    var string = y + "-" +
-        ((m < 10) ? "0" : "") + m + "-" +
-        ((d < 10) ? "0" : "") + d;
-    return string;
-}
-
 function calculateDuration(begin, end, pause) {
     var pauseDate = new Date(pause);
     return new Date(end - begin - (pauseDate.getHours() * 60 + pauseDate.getMinutes()) * 60 * 1000);
+}
+
+
+Array.prototype.contains = function (k) {
+    for (var p in this)
+        if (this[p] === k)
+            return true;
+    return false;
 }

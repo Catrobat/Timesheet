@@ -100,16 +100,32 @@ code {
     width: 800px;
     height: 250px;
     margin-left: 10px;
+    visibility: hidden;
+}
+
+#lineDiagramTag {
+    visibility: hidden;
 }
 
 #categoryLineDiagram {
     width: 800px;
     height: 250px;
     margin-left: 10px;
+    visibility: hidden;
+}
+
+#categoryLineDiagramTag {
+    visibility: hidden;
 }
 
 #teamLineDiagram {
     width: 800px;
     height: 250px;
     margin-left: 10px;
+    visibility: hidden;
 }
+
+#teamLineDiagramTag {
+    visibility: hidden;
+}
+
