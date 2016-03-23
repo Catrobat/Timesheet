@@ -59,6 +59,9 @@ AJS.toInit(function () {
         users = allUsers[0];
         timesheet = allTimesheets[0];
 
+        console.log(users.length);
+        console.log(timesheet.length);
+
         AJS.$(".loadingDiv").show();
         AJS.$("#user-body").empty();
         for (var i = 0; i < users.length; i++) {

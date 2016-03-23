@@ -41,6 +41,7 @@ function fetchVisData() {
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetVisData)
         .done(populateVisTable)
+        .done(computeCategoryDiagramData)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching data.',
@@ -199,6 +200,10 @@ function populateVisTable(timesheetDataReply) {
 
     appendEntriesToVisTable(timesheetData);
     assignCategoryDiagramData(timesheetData);
+}
+
+function computeCategoryDiagramData(timesheetDataReply) {
+    assignCategoryDiagramData(timesheetData[0]);
 }
 
 function appendTimeToPiChart(theoryTime, practicalTime, totalTime) {

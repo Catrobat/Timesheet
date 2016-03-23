@@ -9,6 +9,12 @@ AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
+    if (isAdmin) {
+        document.getElementById("tabs-line").style.display = "none";
+        document.getElementById("tabs-category").style.display = "none";
+        document.getElementById("tabs-team").style.display = "none";
+    }
+
     initUserSaveButton();
     fetchUsers();
     fetchData();
@@ -107,7 +113,7 @@ function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
                 listOfUsers.push(userList[0][j]['userName']);
         }
     }
-    if(isAdmin)
+    if (isAdmin)
         for (var j = 0; j < userList[0].length; j++)
             listOfUsers.push(userList[0][j]['userName']);
 
@@ -165,6 +171,43 @@ function fetchUserTimesheetData(timesheetID) {
         });
 }
 
+function fetchUserVisData(timesheetID) {
+    var timesheetFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheets/' + timesheetID,
+        contentType: "application/json"
+    });
+
+    var entriesFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheets/' + timesheetID + '/entries',
+        contentType: "application/json"
+    });
+
+    var categoriesFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'categories',
+        contentType: "application/json"
+    });
+
+    var teamsFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'teams',
+        contentType: "application/json"
+    });
+
+    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
+        .done(assembleTimesheetVisData)
+        .done(populateVisTable)
+        .fail(function (error) {
+            AJS.messages.error({
+                title: 'There was an error while fetching data.',
+                body: '<p>Reason: ' + error.responseText + '</p>'
+            });
+            console.log(error);
+        });
+}
+
 function getTimesheetOfUser(selectedUser) {
     var timesheetIDFetched = AJS.$.ajax({
         type: 'GET',
@@ -174,6 +217,7 @@ function getTimesheetOfUser(selectedUser) {
 
     AJS.$.when(timesheetIDFetched)
         .done(fetchUserTimesheetData)
+        .done(fetchUserVisData)
         .done(initAdminSaveButton)
         .fail(function (error) {
             AJS.messages.error({
@@ -217,7 +261,7 @@ function updateTimesheetHours(existingTimesheetData) {
         targetHourTheory: toFixed(AJS.$("#timesheet-hours-theory").val(), 1),
         targetHours: AJS.$("#timesheet-hours-text").val(),
         targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
-        - (- AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 1),
+        - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 1),
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 1),
         isActive: existingTimesheetData.isActive
     };
@@ -362,7 +406,7 @@ function initTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
     AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
 
-    if(isAdmin) {
+    if (isAdmin) {
         AJS.$("#substractTimesheetHours").empty();
         AJS.$("#substractTimesheetHours").append("<fieldset>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
@@ -401,7 +445,7 @@ function updateTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-theory").val(calculateTheoryTime(timesheetData));
     AJS.$("#timesheet-hours-practical").val(calculateTime(timesheetData) - calculateTheoryTime(timesheetData));
     AJS.$("#timesheet-hours-remain").val(AJS.$("#timesheet-hours-text").val() - AJS.$("#timesheet-hours-theory").val()
-        - AJS.$("#timesheet-hours-practical").val() - (- AJS.$("#timesheet-hours-substract").val()));
+        - AJS.$("#timesheet-hours-practical").val() - (-AJS.$("#timesheet-hours-substract").val()));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
     AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
 }

@@ -246,7 +246,7 @@ public class TimesheetRest {
             user = permissionService.checkIfUserExists(request);
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
         }
 
         if (sheet == null || !permissionService.userCanViewTimesheet(user, sheet)) {
@@ -271,7 +271,7 @@ public class TimesheetRest {
             user = permissionService.checkIfUserExists(request);
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
         }
 
         if (sheet == null || !permissionService.userCanViewTimesheet(user, sheet)) {
@@ -302,11 +302,7 @@ public class TimesheetRest {
             sheet = sheetService.getTimesheetByID(timesheetID);
             user = permissionService.checkIfUserExists(request);
         } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
-        }
-
-        if (sheet == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
         }
 
         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
@@ -336,11 +332,7 @@ public class TimesheetRest {
         try {
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
-        }
-
-        if (sheet == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
         }
 
         JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
@@ -363,11 +355,7 @@ public class TimesheetRest {
             user = permissionService.checkIfUserExists(request);
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
-        }
-
-        if (sheet == null || !permissionService.userCanViewTimesheet(user, sheet)) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
         }
 
         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
@@ -396,13 +384,10 @@ public class TimesheetRest {
     @Path("timesheets/getTimesheets")
     public Response getTimesheets(@Context HttpServletRequest request) throws ServiceException {
 
-        List<Timesheet> timesheetList = new LinkedList<Timesheet>();
+        List<Timesheet> timesheetList = sheetService.all();
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<JsonTimesheet>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        UserProfile userProfile;
-
-        userProfile = permissionService.checkIfUserExists(request);
-        timesheetList = sheetService.all();
+        UserProfile userProfile = permissionService.checkIfUserExists(request);
 
         if (timesheetList == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -418,7 +403,7 @@ public class TimesheetRest {
 
             for (Timesheet timesheet : timesheetList) {
                 if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
-                        getUserByName(user.getName()).getKey().toString())) {
+                        getUserByName(user.getName()).getKey())) {
                     isActive = timesheet.getIsActive();
                     isEnabled = timesheet.getIsEnabled();
                     latestEntryDate = timesheet.getLatestEntryDate();
@@ -426,7 +411,7 @@ public class TimesheetRest {
                 }
             }
 
-            if (user.getName().compareTo("admin") != 0) {
+            if (!user.getName().equals("admin")) {
                 jsonTimesheet.setActive(isActive);
                 jsonTimesheet.setEnabled(isEnabled);
                 jsonTimesheet.setLatestEntryDate(latestEntryDate);
