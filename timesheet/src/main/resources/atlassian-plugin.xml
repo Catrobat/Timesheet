@@ -21,13 +21,23 @@
 
         <resource type="download" name="timesheet.css" location="/css/timesheet.css"/>
         <resource type="download" name="table-aui.css" location="/css/table-aui.css"/>
+
+        <resource type="download" name="visualization.css" location="/css/visualization.css"/>
+
         <resource type="download" name="timesheet.js" location="/js/timesheet.js"/>
+        <resource type="download" name="visualization.js" location="/js/visualization.js"/>
+
         <resource type="download" name="jquery.datepair.min.js" location="/js/jquery.datepair.min.js"/>
         <resource type="download" name="datepair.min.js" location="/js/datepair.min.js"/>
         <resource type="download" name="jquery.timepicker.min.js" location="/js/jquery.timepicker.min.js"/>
         <resource type="download" name="jquery.timepicker.css" location="/css/jquery.timepicker.css"/>
         <resource type="download" name="autosize.js" location="/js/autosize.js"/>
         <resource type="download" name="images/" location="/images"/>
+
+        <!-- add additional web resources -->
+        <resource type="download" name="morris.css" location="/library/morris/morris.css"/>
+        <resource type="download" name="morris.min.js" location="/library/morris/morris.min.js"/>
+        <resource type="download" name="raphael-min.js" location="/library/raphael/raphael-min.js"/>
 
         <transformation extension="soy">
             <transformer key="soyTransformer">
@@ -38,6 +48,7 @@
         <context>timesheet</context>
     </web-resource>
 
+    <!--
     <web-resource key="visualization-resources" name="Visualization Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.auiplugin:aui-select</dependency>
@@ -55,19 +66,13 @@
         <resource type="download" name="autosize.js" location="/js/autosize.js"/>
         <resource type="download" name="images/" location="/images"/>
 
-        <!-- add additional web resources -->
         <resource type="download" name="morris.css" location="/library/morris/morris.css"/>
         <resource type="download" name="morris.min.js" location="/library/morris/morris.min.js"/>
         <resource type="download" name="raphael-min.js" location="/library/raphael/raphael-min.js"/>
 
-        <transformation extension="soy">
-            <transformer key="soyTransformer">
-                <functions>com.atlassian.jira.plugins.soy:soy-core-functions</functions>
-            </transformer>
-        </transformation>
-        <resource name="visualization-template-soy.js" type="download" location="/visualization.soy"/>
         <context>visualization</context>
     </web-resource>
+    -->
 
     <web-resource key="administration-resources" name="Admin Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
@@ -94,9 +99,13 @@
     <servlet key="timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.TimesheetServlet">
         <url-pattern>/timesheet</url-pattern>
     </servlet>
+
+    <!--
     <servlet key="visualization-servlet" class="org.catrobat.jira.timesheet.servlet.VisualizationServlet">
         <url-pattern>/timesheet/visualization</url-pattern>
     </servlet>
+    -->
+
     <servlet key="teammanagement-servlet" class="org.catrobat.jira.timesheet.servlet.TeamManagementServlet">
         <url-pattern>/teams</url-pattern>
     </servlet>

@@ -9,11 +9,11 @@ AJS.toInit(function () {
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
     //restBaseUrl = "/rest/timesheet/latest/";
 
-    fetchData();
-    fetchTeamData();
+    fetchVisData();
+    fetchTeamVisData();
 });
 
-function fetchData() {
+function fetchVisData() {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheets/' + timesheetID,
@@ -39,8 +39,8 @@ function fetchData() {
     });
 
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
-        .done(assembleTimesheetData)
-        .done(populateTable)
+        .done(assembleTimesheetVisData)
+        .done(populateVisTable)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching data.',
@@ -50,7 +50,7 @@ function fetchData() {
         });
 }
 
-function fetchTeamData() {
+function fetchTeamVisData() {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
@@ -76,8 +76,8 @@ function fetchTeamData() {
     });
 
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
-        .done(assembleTimesheetData)
-        .done(assignTeamData)
+        .done(assembleTimesheetVisData)
+        .done(assignTeamVisData)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching data.',
@@ -87,7 +87,7 @@ function fetchTeamData() {
         });
 }
 
-function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
+function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
     var timesheetData = timesheetReply[0];
 
     timesheetData.entries = entriesReply[0];
@@ -109,7 +109,7 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     return timesheetData;
 }
 
-function assignTeamData(timesheetDataReply) {
+function assignTeamVisData(timesheetDataReply) {
     var availableEntries = timesheetDataReply[0].entries;
     var availableTeams = timesheetDataReply[0].teams;
 
@@ -192,12 +192,12 @@ function assignTeamData(timesheetDataReply) {
     drawTeamDiagram(dataJSON, data['label']);
 }
 
-function populateTable(timesheetDataReply) {
+function populateVisTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
     AJS.$("#visualization-table-content").empty();
 
 
-    appendEntriesToTable(timesheetData);
+    appendEntriesToVisTable(timesheetData);
     assignCategoryDiagramData(timesheetData);
 }
 
@@ -214,7 +214,7 @@ function appendTimeToPiChart(theoryTime, practicalTime, totalTime) {
     drawPiChartDiagram(piChartDataPoints);
 }
 
-function appendEntriesToTable(timesheetData) {
+function appendEntriesToVisTable(timesheetData) {
 
     var availableEntries = timesheetData.entries;
 
