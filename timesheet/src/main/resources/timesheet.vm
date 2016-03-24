@@ -72,6 +72,11 @@
         <p>
         <form id="timesheet-information" class="aui">
             <div class="field-group">
+                <h2>Export</h2>
+                Download timesheets as <a href="download/timesheet">CSV</a>.
+            </div>
+
+            <div class="field-group">
                 <label for="timesheet-hours-remain">Remaining Timesheet Hours</label>
                 <input readonly class="text" type="text" id="timesheet-hours-remain" name="timesheet-hours-remain"
                        title="timesheet-hours-remain">
@@ -85,7 +90,8 @@
 
             <div class="field-group">
                 <label for="timesheet-hours-practical">Practical Hours</label>
-                <input readonly class="text" type="text" id="timesheet-hours-practical" name="timesheet-hours-practical"
+                <input readonly class="text" type="text" id="timesheet-hours-practical"
+                       name="timesheet-hours-practical"
                        title="timesheet-hours-practical">
 
                 <div class="description">
@@ -131,6 +137,7 @@
                 <div class="timesheet-hours">
                     <input type="submit" value="Save" class="aui-button aui-button-primary">
                 </div>
+
             </div>
         </form>
     </div>
@@ -213,7 +220,7 @@
             </tbody>
         </table>
 
-        <h3  id="piChartDiagramTag">Visualization of your theory - practical hours distribution</h3>
+        <h3 id="piChartDiagramTag">Visualization of your theory - practical hours distribution</h3>
         <div id="piChartDiagram" style="height: 200px;"></div>
     </div>
     <div class="tabs-pane active-pane" id="tabs-line">

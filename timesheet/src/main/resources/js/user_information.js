@@ -59,9 +59,6 @@ AJS.toInit(function () {
         users = allUsers[0];
         timesheet = allTimesheets[0];
 
-        console.log(users.length);
-        console.log(timesheet.length);
-
         AJS.$(".loadingDiv").show();
         AJS.$("#user-body").empty();
         for (var i = 0; i < users.length; i++) {
@@ -70,20 +67,29 @@ AJS.toInit(function () {
             var state = obj['active'] ? "active" : "inactive";
             var timesheetState = timesheet[i]['isActive'] ? "active" : "inactive";
 
-            if(timesheet[i]['isEnabled']) {
+            if (!obj['active']) {
                 AJS.$("#user-body").append("<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
-                    "<td headers=\"basic-email\" class=\"email\">" + obj['email'] + "</td>" +
+                    "<td headers=\"basic-email\" class=\"email\"><del>" + obj['email'] + "</td>" +
                     "<td headers=\"basic-state\" class=\"account\">" + state + "</td>" +
-                    "<td headers=\"basic-timesheet-state\" class=\"timesheet\">" + timesheetState + "</td>" +
-                    "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + timesheet[i]['latestEntryDate'] + "</td>" +
-                    "<td headers=\"basic-timesheet-disable\" class=\"disable\"><input class=\"checkbox\" type=\"checkbox\" name=\""+ username +"checkBox\" id=\""+ username +"checkBox\" checked></td></tr>");
+                    "<td headers=\"basic-timesheet-state\" class=\"timesheet\"><del>" + "active" + "</td>" +
+                    "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + "Not Available" + "</td>" +
+                    "<td headers=\"basic-timesheet-disable\" class=\"disable\"></td></tr>");
             } else {
-                AJS.$("#user-body").append("<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
-                    "<td headers=\"basic-email\" class=\"email\">" + obj['email'] + "</td>" +
-                    "<td headers=\"basic-state\" class=\"account\">" + state + "</td>" +
-                    "<td headers=\"basic-timesheet-state\" class=\"timesheet\">" + timesheetState + "</td>" +
-                    "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + timesheet[i]['latestEntryDate'] + "</td>" +
-                    "<td headers=\"basic-timesheet-disable\" class=\"disable\"><input class=\"checkbox\" type=\"checkbox\" name=\""+ username +"checkBox\" id=\""+ username +"checkBox\"></td></tr>");
+                if (timesheet[i]['isEnabled']) {
+                    AJS.$("#user-body").append("<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
+                        "<td headers=\"basic-email\" class=\"email\">" + obj['email'] + "</td>" +
+                        "<td headers=\"basic-state\" class=\"account\">" + state + "</td>" +
+                        "<td headers=\"basic-timesheet-state\" class=\"timesheet\">" + timesheetState + "</td>" +
+                        "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + timesheet[i]['latestEntryDate'] + "</td>" +
+                        "<td headers=\"basic-timesheet-disable\" class=\"disable\"><input class=\"checkbox\" type=\"checkbox\" name=\"" + username + "checkBox\" id=\"" + username + "checkBox\" checked></td></tr>");
+                } else {
+                    AJS.$("#user-body").append("<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
+                        "<td headers=\"basic-email\" class=\"email\">" + obj['email'] + "</td>" +
+                        "<td headers=\"basic-state\" class=\"account\">" + state + "</td>" +
+                        "<td headers=\"basic-timesheet-state\" class=\"timesheet\">" + timesheetState + "</td>" +
+                        "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + timesheet[i]['latestEntryDate'] + "</td>" +
+                        "<td headers=\"basic-timesheet-disable\" class=\"disable\"><input class=\"checkbox\" type=\"checkbox\" name=\"" + username + "checkBox\" id=\"" + username + "checkBox\"></td></tr>");
+                }
             }
         }
 
@@ -94,7 +100,7 @@ AJS.toInit(function () {
         });
 
         userList.on('updated', function () {
-            if(AJS.$("#search-filter-overview").val() === "") {
+            if (AJS.$("#search-filter-overview").val() === "") {
                 AJS.$("#update-timesheet-button").show();
             } else {
                 AJS.$("#update-timesheet-button").hide();
@@ -109,11 +115,13 @@ AJS.toInit(function () {
         var data = [];
 
         for (var i = 0; i < timesheet.length; i++) {
-            var tempData = {};
-            tempData.timesheetID = timesheet[i]['timesheetID'];
-            tempData.isActive = timesheet[i]['isActive'];
-            tempData.isEnabled = AJS.$("#" + users[i]['userName'] + "checkBox")[0].checked;
-            data.push(tempData);
+            if (users[i]['active']) {
+                var tempData = {};
+                tempData.timesheetID = timesheet[i]['timesheetID'];
+                tempData.isActive = timesheet[i]['isActive'];
+                tempData.isEnabled = AJS.$("#" + users[i]['userName'] + "checkBox")[0].checked;
+                data.push(tempData);
+            }
         }
 
         AJS.$(".loadingDiv").show();
@@ -126,7 +134,7 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Timesheet 'enabled' status updated!"
+                    body: "Timesheet 'enabled states' updated."
                 });
                 AJS.$(".loadingDiv").hide();
             },

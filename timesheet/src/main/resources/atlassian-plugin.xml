@@ -89,6 +89,10 @@
     <servlet key="download-all-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllAsCSVServlet">
         <url-pattern>/timesheet/administration/download/all</url-pattern>
     </servlet>
+
+    <servlet key="download-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsCSVServlet">
+        <url-pattern>/download/timesheet</url-pattern>
+    </servlet>
     <!-- end of servlets -->
 
     <!-- import from the product container -->
@@ -164,7 +168,7 @@
     <!-- web-items -->
     <!-- user timesheet -->
     <web-item key="timesheet_view" name="Link to Timsheet View" section="system.user.options/personal" weight="30">
-        <label>Timesheet</label>
+        <label>TimePunch - Timesheet</label>
         <link linkId="timesheet_view_link">/plugins/servlet/timesheet</link>
     </web-item>
 

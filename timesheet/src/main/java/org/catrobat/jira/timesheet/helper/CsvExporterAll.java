@@ -41,16 +41,28 @@ public class CsvExporterAll {
 
         for (Timesheet timesheet : timesheetList) {
             sb.append("User Key" + DELIMITER +
-                    "Practise Hours" + DELIMITER +
+                    "Practical Hours" + DELIMITER +
                     "Theory Hours" + DELIMITER +
+                    "Hours Done" + DELIMITER +
+                    "Substracted Hours" + DELIMITER +
+                    "Total Hours" + DELIMITER +
+                    "Remaining Hours" + DELIMITER +
+                    "Penalty Text" + DELIMITER +
+                    "ECTS" + DELIMITER +
                     "Lecture" + NEW_LINE);
 
             sb.append(timesheet.getUserKey()).append(DELIMITER);
-            sb.append(timesheet.getTargetHoursPractice()).append(DELIMITER);
-            sb.append(timesheet.getTargetHoursTheory()).append(DELIMITER);
+            sb.append(Integer.toString(timesheet.getTargetHoursPractice())).append(DELIMITER);
+            sb.append(Integer.toString(timesheet.getTargetHoursTheory())).append(DELIMITER);
+            sb.append(Integer.toString(timesheet.getTargetHoursCompleted())).append(DELIMITER);
+            sb.append(Integer.toString(timesheet.getTargetHoursRemoved())).append(DELIMITER);
+            sb.append(Integer.toString(timesheet.getTargetHours())).append(DELIMITER);
+            sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getTargetHoursCompleted())).append(DELIMITER);
+            sb.append(timesheet.getReason()).append(DELIMITER);
+            sb.append(Integer.toString(timesheet.getEcts())).append(DELIMITER);
             sb.append(timesheet.getLectures()).append(NEW_LINE);
 
-            for(TimesheetEntry timesheetEntry : timesheet.getEntries()){
+            for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
                 sb.append("Begin Date" + DELIMITER +
                         "End Date" + DELIMITER +
                         "Pause Minutes" + DELIMITER +
@@ -59,12 +71,21 @@ public class CsvExporterAll {
                         "Category" + DELIMITER +
                         "Description" + NEW_LINE);
 
+                Integer hours = 0;
+                Integer minutes = timesheetEntry.getDurationMinutes();
+
+                while(minutes - 60 >= 0) {
+                    minutes = minutes - 60;
+                    hours++;
+                }
+                String duration = hours + ":" + minutes;
+
                 sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(DELIMITER);
                 sb.append(unescape(timesheetEntry.getEndDate().toString())).append(DELIMITER);
                 sb.append(unescape(Integer.toString(timesheetEntry.getPauseMinutes()))).append(DELIMITER);
-                sb.append(unescape(Integer.toString(timesheetEntry.getDurationMinutes()))).append(DELIMITER);
-                sb.append(unescape(timesheetEntry.getTeam().toString())).append(DELIMITER);
-                sb.append(unescape(timesheetEntry.getCategory().toString())).append(DELIMITER);
+                sb.append(unescape(duration)).append(DELIMITER);
+                sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(DELIMITER);
+                sb.append(unescape(timesheetEntry.getCategory().getName())).append(DELIMITER);
                 sb.append(unescape(timesheetEntry.getDescription().toString())).append(NEW_LINE);
             }
         }

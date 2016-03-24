@@ -16,12 +16,14 @@
 
 package org.catrobat.jira.timesheet.helper;
 
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.webfragment.conditions.AbstractPermissionCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 
@@ -54,7 +56,10 @@ public class PermissionCondition extends AbstractPermissionCondition {
     }
 
     public boolean isApproved(ApplicationUser applicationUser) {
-        if (applicationUser == null || !userManager.isSystemAdmin(applicationUser.getUsername())) {
+        UserUtil userUtil = ComponentAccessor.getUserUtil();
+        Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
+
+        if (applicationUser == null || !systemAdmins.contains(applicationUser.getUsername())) {
             return false;
         }
 

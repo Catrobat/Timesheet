@@ -49,7 +49,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException {
-        UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUsername(request));
+        UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUser(request).getUsername());
 
         if (userProfile == null) {
             throw new ServiceException("User does not exist.");
@@ -58,7 +58,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName) {
-        UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUsername(request));
+        UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUser(request).getUsername());
 
         if (userProfile == null) {
             return false;
@@ -94,7 +94,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     public Response checkPermission(HttpServletRequest request) {
         String userKey = ComponentAccessor.
-                getUserKeyService().getKeyForUsername(userManager.getRemoteUsername(request));
+                getUserKeyService().getKeyForUsername(userManager.getRemoteUser(request).getUsername());
 
         if (userKey == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -151,8 +151,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     private boolean userIsAdmin(UserProfile user) {
-        return userManager.isAdmin(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(user.getUsername()));
+        return ComponentAccessor.getUserUtil().getJiraSystemAdministrators().contains(user.getUsername());
+        //userManager.isAdmin(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()));
     }
 
     private boolean dateIsOlderThanAMonth(Date date) {

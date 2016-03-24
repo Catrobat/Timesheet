@@ -53,8 +53,7 @@ public class UserRest extends PermissionServiceImpl {
     @Path("/getUsers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@Context HttpServletRequest request) {
-        if (!isApproved(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(userManager.getRemoteUsername(request)))) {
+        if (!isApproved(userManager.getRemoteUser().getUsername())) {
             Response unauthorized = checkPermission(request);
             if (unauthorized != null) {
                 return unauthorized;
@@ -66,14 +65,10 @@ public class UserRest extends PermissionServiceImpl {
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
         Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
         for (User user : allUsers) {
+
             if (systemAdmins.contains(user)) {
                 continue;
             }
-            /*
-            if (userIsAdmin(user.getName())) {
-                continue;
-            }
-            */
 
             JsonUser jsonUser = new JsonUser();
             jsonUser.setEmail(user.getEmailAddress());

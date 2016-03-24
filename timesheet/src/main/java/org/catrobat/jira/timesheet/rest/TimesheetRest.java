@@ -22,6 +22,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.preferences.UserPreferencesManager;
+import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.sal.api.user.UserManager;
@@ -362,7 +363,7 @@ public class TimesheetRest {
 
         //update latest entry date value
         if (entries.length > 0) {
-            sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
+            sheet = sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
                     sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                     sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
                     sheet.getReason(), sheet.getEcts(), entries[0].getBeginDate().toString(), sheet.getIsActive(),
@@ -393,7 +394,14 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
+        UserUtil userUtil = ComponentAccessor.getUserUtil();
+        Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
+
         for (User user : allUsers) {
+            if (systemAdmins.contains(user)) {
+                continue;
+            }
+
             JsonTimesheet jsonTimesheet = new JsonTimesheet();
 
             boolean isActive = false;
@@ -411,13 +419,11 @@ public class TimesheetRest {
                 }
             }
 
-            if (!user.getName().equals("admin")) {
-                jsonTimesheet.setActive(isActive);
-                jsonTimesheet.setEnabled(isEnabled);
-                jsonTimesheet.setLatestEntryDate(latestEntryDate);
-                jsonTimesheet.setTimesheetID(timesheetID);
-                jsonTimesheetList.add(jsonTimesheet);
-            }
+            jsonTimesheet.setActive(isActive);
+            jsonTimesheet.setEnabled(isEnabled);
+            jsonTimesheet.setLatestEntryDate(latestEntryDate);
+            jsonTimesheet.setTimesheetID(timesheetID);
+            jsonTimesheetList.add(jsonTimesheet);
         }
 
         return Response.ok(jsonTimesheetList).build();
@@ -521,14 +527,14 @@ public class TimesheetRest {
 
                 //update latest timesheet entry date if latest entry date is < new latest entry in the table
                 if (sheet.getEntries().length == 1) {
-                    sheetService.editTimesheet(ComponentAccessor.
+                    sheet = sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                             df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
                             sheet.getIsEnabled());
                 } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
-                    sheetService.editTimesheet(ComponentAccessor.
+                    sheet = sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
@@ -575,18 +581,17 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
         }
 
-        if (userManager.isAdmin(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(user.getUsername()))) {
-            sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
+        if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+            sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
                     jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                    jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), sheet.getIsActive(), sheet.getIsEnabled());
+                    jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isEnabled());
         } else {
-            sheetService.editTimesheet(ComponentAccessor.
+            sheet = sheetService.editTimesheet(ComponentAccessor.
                             getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
                     jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                    jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), sheet.getIsActive(), sheet.getIsEnabled());
+                    jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isEnabled());
         }
 
 
@@ -619,7 +624,7 @@ public class TimesheetRest {
 
             if (sheet != null) {
 
-                sheetService.updateTimesheetEnableState(jsonTimesheet.getTimesheetID(), jsonTimesheet.isEnabled());
+                sheet = sheetService.updateTimesheetEnableState(jsonTimesheet.getTimesheetID(), jsonTimesheet.isEnabled());
 
                 JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
                         sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
@@ -668,14 +673,14 @@ public class TimesheetRest {
                     jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport());
 
             if (sheet.getEntries().length == 1) {
-                sheetService.editTimesheet(ComponentAccessor.
+                sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                         df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
                         sheet.getIsEnabled());
             } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
-                sheetService.editTimesheet(ComponentAccessor.
+                sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
@@ -719,7 +724,7 @@ public class TimesheetRest {
         //update latest timesheet entry date if latest entry date is < new latest entry in the table
         if (sheet.getEntries().length > 0) {
             if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
-                sheetService.editTimesheet(ComponentAccessor.
+                sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
@@ -727,7 +732,7 @@ public class TimesheetRest {
                         sheet.getIsEnabled());
             }
         } else {
-            sheetService.editTimesheet(ComponentAccessor.
+            sheet = sheetService.editTimesheet(ComponentAccessor.
                             getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                     sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                     sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
@@ -740,7 +745,7 @@ public class TimesheetRest {
     @Path("cleanandinitdb")
     public Response cleanAndInitDB() {
 
-        if (userManager.isAdmin(userManager.getRemoteUsername())) {
+        if (userManager.isAdmin(userManager.getRemoteUser().getUserKey())) {
             dbfiller.printDBStatus();
             dbfiller.cleanDB();
             dbfiller.printDBStatus();

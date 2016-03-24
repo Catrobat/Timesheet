@@ -19,6 +19,7 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.groups.GroupManager;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -56,13 +57,14 @@ public class TeamManagementServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userManager.getRemoteUsername(request));
+        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userManager.getRemoteUser(request).getUsername());
+        ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser(request).getUsername());
         UserProfile userProfile = userManager.getUserProfile(userKey);
         String loggedInUsername = (userProfile != null) ? userProfile.getUsername() : null;
 
         if (loggedInUsername == null) {
             redirectToLogin(request, response);
-        } else if (userManager.isSystemAdmin(userKey)) {
+        } else if (ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators")) {
             Map<String, Object> paramMap = Maps.newHashMap();
             Map<String, Object> entryMap = Maps.newTreeMap();
 
