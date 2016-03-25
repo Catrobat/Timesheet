@@ -19,7 +19,8 @@ package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.mail.Email;
+import com.atlassian.mail.queue.SingleMailQueueItem;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.*;
 import org.joda.time.DateTime;
@@ -38,13 +39,15 @@ public class SchedulingRest {
     private final PermissionService permissionService;
     private final TimesheetEntryService entryService;
     private final TimesheetService sheetService;
+    private final TeamService teamService;
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
-                          final TimesheetEntryService entryService, final TimesheetService sheetService) {
+                          final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.entryService = entryService;
         this.sheetService = sheetService;
+        this.teamService = teamService;
     }
 
     @GET
@@ -58,22 +61,32 @@ public class SchedulingRest {
 
         List<Timesheet> timesheetList = sheetService.all();
         Collection<User> userList = ComponentAccessor.getUserManager().getAllUsers();
+        Config config = configService.getConfiguration();
 
         for (User user : userList) {
             for (Timesheet timesheet : timesheetList) {
                 if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
                         getUserByName(user.getName()).getKey())) {
                     if (!timesheet.getIsActive()) {
-                        //email to admin + coordinators
-                        //MailQueueItem item = new ConfluenceMailQueueItem(emailTo, mailSubject, mailBody, MIME_TYPE_TEXT);
-                        //jobDetail.getMailService().sendEmail(item);
-                        // https://answers.atlassian.com/questions/266166/jira-doesnt-show-plugin-job-on-scheduled-jobs-page
+                        //Email to users coodinators
+                        for(String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+                            sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
+                                    config.getMailBodyInactive()));
+                        }
+
+                        //Email to admins
+                        for(User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
+                            sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
+                                    , config.getMailBodyInactive()));
+                        }
                     } else {
                         if (entryService.getEntriesBySheet(timesheet).length > 0)
                             if (dateIsOlderThanTwoMonths(entryService.getEntriesBySheet(timesheet)[0].getBeginDate())) {
-                                //email to admin after 2 monts
-                                //MailQueueItem item = new ConfluenceMailQueueItem(emailTo, mailSubject, mailBody, MIME_TYPE_TEXT);
-                                //jobDetail.getMailService().sendEmail(item);
+                                //Email to admins
+                                for(User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
+                                    sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
+                                            , config.getMailBodyInactive()));
+                                }
                             }
                     }
                 }
@@ -81,6 +94,28 @@ public class SchedulingRest {
         }
 
         return Response.noContent().build();
+    }
+
+    private List<String> getCoordinatorsMailAddress(User user) {
+        List<String> coordinatorMailAddressList = new LinkedList<String>();
+        for(Team team : teamService.getTeamsOfUser(user.getName())) {
+            for(String coordinator : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
+                coordinatorMailAddressList.add(ComponentAccessor.getUserManager().getUserByName(coordinator).getEmailAddress());
+        }
+
+        return coordinatorMailAddressList;
+    }
+
+    private Email createEmail(String emailAddress, String emailSubject, String emailBody) {
+        Email email = new Email(emailAddress);
+        email.setSubject(emailSubject);
+        email.setBody(emailBody);
+        return email;
+    }
+
+    private void sendMail (Email email) {
+        SingleMailQueueItem item = new SingleMailQueueItem(email);
+        ComponentAccessor.getMailQueue().addItem(item);
     }
 
     @GET
@@ -125,15 +160,19 @@ public class SchedulingRest {
 
         List<Timesheet> timesheetList = sheetService.all();
         Collection<User> userList = ComponentAccessor.getUserManager().getAllUsers();
+        Config config = configService.getConfiguration();
 
         for (User user : userList) {
             for (Timesheet timesheet : timesheetList) {
                 if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
                         getUserByName(user.getName()).getKey().toString())) {
-                    //if ((timesheet.getHours() - timesheet.getHoursDone) < 80) {
-                    //MailQueueItem item = new ConfluenceMailQueueItem(emailTo, mailSubject, mailBody, MIME_TYPE_TEXT);
-                    //jobDetail.getMailService().sendEmail(item);
-                    //}
+                    if ((timesheet.getTargetHours() - timesheet.getTargetHoursCompleted()) <= 80) {
+                        Email email = new Email(user.getEmailAddress());
+                        email.setSubject(config.getMailSubjectTime());
+                        email.setBody(config.getMailBodyTime());
+                        SingleMailQueueItem item = new SingleMailQueueItem(email);
+                        ComponentAccessor.getMailQueue().addItem(item);
+                    }
                 }
             }
         }

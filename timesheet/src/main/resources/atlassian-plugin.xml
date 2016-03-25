@@ -18,6 +18,7 @@
         <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
         <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-banner</dependency>
 
         <resource type="download" name="timesheet.css" location="/css/timesheet.css"/>
         <resource type="download" name="table-aui.css" location="/css/table-aui.css"/>
@@ -86,8 +87,12 @@
         <url-pattern>/timesheet/user/information</url-pattern>
     </servlet>
 
-    <servlet key="download-all-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllAsCSVServlet">
-        <url-pattern>/timesheet/administration/download/all</url-pattern>
+    <servlet key="download-config-servlet" class="org.catrobat.jira.timesheet.servlet.ExportConfigAsCSVServlet">
+        <url-pattern>/timesheet/download/config</url-pattern>
+    </servlet>
+
+    <servlet key="download-all-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet">
+        <url-pattern>/timesheet/download/timesheets</url-pattern>
     </servlet>
 
     <servlet key="download-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsCSVServlet">

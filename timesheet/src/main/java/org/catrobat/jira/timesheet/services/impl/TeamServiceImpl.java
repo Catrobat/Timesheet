@@ -92,26 +92,6 @@ public class TeamServiceImpl implements TeamService {
     return (found.length > 0) ? found[0] : null;
   }
 
-  //LDAP access
-  /*
-  @Override
-  public Set<Team> getTeamsOfUser(String userName) {
-
-    Set<Team> teams = new HashSet<Team>();
-
-    for (String groupName : userAccessor.getGroupNamesForUserName(userName)) {
-
-      String teamName = groupName.split("-")[0];
-      Team team = getTeamByName(teamName);
-      if (team != null) {
-        teams.add(team);
-      }
-    }
-    return teams;
-  }
-  */
-
-  //Config access
   @Override
   public Set<Team> getTeamsOfUser(String userName) {
 
@@ -124,7 +104,7 @@ public class TeamServiceImpl implements TeamService {
       List<String> developerList = configService.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER);
 
       for(String developerName : developerList) {
-        if(developerName.compareTo(userName) == 0) {
+        if(developerName.equals(userName)) {
           if (team != null) {
             teams.add(team);
           }
@@ -134,33 +114,6 @@ public class TeamServiceImpl implements TeamService {
     return teams;
   }
 
-  //LDAP access
-  /*
-  @Override
-  public Set<Team> getCoordinatorTeamsOfUser(String userName) {
-    Set<Team> teams = new HashSet<Team>();
-    for (String groupName : userAccessor.getGroupNamesForUserName(userName)) {
-      String[] pieces = groupName.split("-");
-
-      String teamName = pieces[0];
-      String roleName = (pieces.length > 1) ? pieces[1].toLowerCase() : "";
-
-      if (!roleName.equalsIgnoreCase("administrators")
-              && !roleName.equalsIgnoreCase("coordinators")) {
-        continue;
-      }
-
-      Team team = getTeamByName(teamName);
-      if (team != null) {
-        teams.add(team);
-      }
-    }
-
-    return teams;
-  }
-  */
-
-  //Config access
   @Override
   public Set<Team> getCoordinatorTeamsOfUser(String userName) {
 
@@ -173,7 +126,7 @@ public class TeamServiceImpl implements TeamService {
       List<String> coordinatorList = configService.getGroupsForRole(teamName, TeamToGroup.Role.COORDINATOR);
 
       for(String coordinatorName : coordinatorList) {
-        if(coordinatorName.compareTo(userName) == 0) {
+        if(coordinatorName.equals(userName)) {
           if (team != null) {
             teams.add(team);
           }

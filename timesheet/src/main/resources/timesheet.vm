@@ -41,6 +41,8 @@
     }
 </script>
 
+<header id="inactive-header" role="banner"></header>
+
 <a name="top"></a>
 <div id="aui-message-bar"></div>
 <div class="aui-tabs horizontal-tabs">

@@ -150,9 +150,14 @@ public class PermissionServiceImpl implements PermissionService {
         return sheetKey.equals(userKey);
     }
 
-    private boolean userIsAdmin(UserProfile user) {
-        return ComponentAccessor.getUserUtil().getJiraSystemAdministrators().contains(user.getUsername());
-        //userManager.isAdmin(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()));
+    private boolean userIsAdmin(UserProfile userProfile) {
+        Collection<User> approvedUsers = ComponentAccessor.getUserUtil().getJiraSystemAdministrators();
+        for (User user : approvedUsers)
+            if (user.getName().equals(userProfile.getUsername()))
+                return true;
+
+        return false;
+        //return userManager.isAdmin(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()));
     }
 
     private boolean dateIsOlderThanAMonth(Date date) {

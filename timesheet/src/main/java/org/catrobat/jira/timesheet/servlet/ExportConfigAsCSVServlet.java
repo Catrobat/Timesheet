@@ -21,8 +21,10 @@ import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
+import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.helper.CsvConfigExporter;
 import org.catrobat.jira.timesheet.helper.CsvTimesheetExporterSingle;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
@@ -33,41 +35,33 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
 
-public class ExportTimesheetAsCSVServlet extends HelperServlet {
+public class ExportConfigAsCSVServlet extends HelperServlet {
 
-    private final TimesheetService timesheetService;
-    private final UserManager userManager;
     private final ConfigService configService;
+    private final UserManager userManager;
 
-    public ExportTimesheetAsCSVServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                       GroupManager groupManager, ConfigService configurationService,
-                                       TimesheetService timesheetService, ConfigService configService) {
+    public ExportConfigAsCSVServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
+                                    GroupManager groupManager, ConfigService configurationService, ConfigService configService) {
         super(userManager, loginUriProvider, webSudoManager, groupManager, configurationService);
-        this.timesheetService = timesheetService;
-        this.userManager = userManager;
         this.configService = configService;
+        this.userManager = userManager;
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        String filename = "attachment; filename=\"" + new Date().toString() + "_" +
-                userManager.getRemoteUser(request).getUsername() + "_TimePunch_Timesheet.csv\"";
+        String filename = "attachment; filename=\"" +
+                new Date().toString() + "_TimePunch_Config.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);
 
-        Timesheet timesheet = null;
-        try {
-            timesheet = timesheetService.getTimesheetByUser(userManager.getRemoteUser(request).getUserKey().getStringValue());
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
+        Config config = configService.getConfiguration();
 
-        CsvTimesheetExporterSingle csvTimesheetExporterSingle = new CsvTimesheetExporterSingle(configService);
+        CsvConfigExporter csvConfigExporter = new CsvConfigExporter(configService);
         PrintStream printStream = new PrintStream(response.getOutputStream(), false, "UTF-8");
-        printStream.print(csvTimesheetExporterSingle.getTimesheetCsvData(timesheet));
+        printStream.print(csvConfigExporter.getConfigCsvData(config));
         printStream.flush();
         printStream.close();
     }

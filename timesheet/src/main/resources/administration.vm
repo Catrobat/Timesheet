@@ -158,7 +158,8 @@
             </fieldset>
 
             <h2>Export</h2>
-            <p>Download all user timesheets as <a href="download/all">CSV</a>.</p>
+            <p>Download 'All Timesheets' as <a href="download/timesheets">CSV</a>.</p>
+            <p>Download 'Config' as <a href="download/config">CSV</a>.</p>
 
             <h2>Team Configuration</h2>
             <p>

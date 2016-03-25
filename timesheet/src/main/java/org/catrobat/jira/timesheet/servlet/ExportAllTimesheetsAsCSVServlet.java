@@ -17,13 +17,12 @@
 package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.security.groups.GroupManager;
-import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.helper.CsvTimesheetExporterSingle;
+import org.catrobat.jira.timesheet.helper.CsvTimesheetExporterAll;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import javax.servlet.ServletException;
@@ -32,19 +31,18 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.List;
 
-public class ExportTimesheetAsCSVServlet extends HelperServlet {
+public class ExportAllTimesheetsAsCSVServlet extends HelperServlet {
 
     private final TimesheetService timesheetService;
-    private final UserManager userManager;
     private final ConfigService configService;
 
-    public ExportTimesheetAsCSVServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                       GroupManager groupManager, ConfigService configurationService,
-                                       TimesheetService timesheetService, ConfigService configService) {
+    public ExportAllTimesheetsAsCSVServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
+                                           GroupManager groupManager, ConfigService configurationService,
+                                           TimesheetService timesheetService, ConfigService configService) {
         super(userManager, loginUriProvider, webSudoManager, groupManager, configurationService);
         this.timesheetService = timesheetService;
-        this.userManager = userManager;
         this.configService = configService;
     }
 
@@ -52,22 +50,17 @@ public class ExportTimesheetAsCSVServlet extends HelperServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        String filename = "attachment; filename=\"" + new Date().toString() + "_" +
-                userManager.getRemoteUser(request).getUsername() + "_TimePunch_Timesheet.csv\"";
+        String filename = "attachment; filename=\"" +
+                new Date().toString() + "_TimePunch_ALL_Timesheets.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);
 
-        Timesheet timesheet = null;
-        try {
-            timesheet = timesheetService.getTimesheetByUser(userManager.getRemoteUser(request).getUserKey().getStringValue());
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
+        List<Timesheet> timesheetList = timesheetService.all();
 
-        CsvTimesheetExporterSingle csvTimesheetExporterSingle = new CsvTimesheetExporterSingle(configService);
+        CsvTimesheetExporterAll csvTimesheetExporterAll = new CsvTimesheetExporterAll(configService);
         PrintStream printStream = new PrintStream(response.getOutputStream(), false, "UTF-8");
-        printStream.print(csvTimesheetExporterSingle.getTimesheetCsvData(timesheet));
+        printStream.print(csvTimesheetExporterAll.getTimesheetCsvDataAll(timesheetList));
         printStream.flush();
         printStream.close();
     }

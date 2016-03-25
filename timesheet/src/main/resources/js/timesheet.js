@@ -264,6 +264,7 @@ function updateTimesheetHours(existingTimesheetData) {
         - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 1),
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 1),
         isActive: existingTimesheetData.isActive,
+        isEnabled: existingTimesheetData.isEnabled
     };
 
     AJS.$.ajax({
@@ -476,6 +477,27 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
 
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
+    if (!timesheetData.isActive) {
+        require(['aui/banner'], function (banner) {
+            banner({
+                body: 'Your TimePunch - Timesheet is marked as <strong>inactive</strong>.'
+            });
+        });
+    } else if (!timesheetData.isEnabled) {
+        require(['aui/banner'], function (banner) {
+            banner({
+                body: 'Your TimePunch - Timesheet has been <strong>disabled</strong> by an Administrator.'
+            });
+        });
+    } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80){
+        require(['aui/banner'], function (banner) {
+            banner({
+                body: 'TimePunch Timesheet - You have <strong>less than 80 hours</strong> left, please contact ' +
+                'your Team - Coordinator and/or an Administrator.'
+            });
+        });
+    }
+
     var timesheetTable = AJS.$("#timesheet-table");
     timesheetTable.empty();
 
@@ -652,7 +674,7 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     var date = form.dateField.val();
     var validDateFormat = new Date(date);
 
-    if ((date == "") || (isValidDate(validDateFormat) === false)) {
+    if ((date == "") || (!isValidDate(validDateFormat))) {
         date = new Date().toJSON().slice(0, 10);
     }
 
