@@ -298,8 +298,8 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        if (sheet.getTargetHoursTheory() < 10) {
-            sendEmailNotification(user.getEmail(), "time", sheet, user);
+        if (sheet.getTargetHoursTheory() <= 80) {
+            buildEmailOutOfTime(user.getEmail(), sheet, user);
         }
 
         JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
@@ -328,7 +328,7 @@ public class TimesheetRest {
         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
 
         if (dateIsOlderThanTwoWeeks(entries[0].getBeginDate())) {
-            sendEmailNotification(user.getEmail(), "inactive", sheet, user);
+            buildEmailInactive(user.getEmail(), sheet, user);
         }
 
         List<JsonTimesheetEntry> jsonEntries = new ArrayList<JsonTimesheetEntry>(entries.length);
@@ -691,6 +691,10 @@ public class TimesheetRest {
                     jsonEntry.getEndDate(), category, jsonEntry.getDescription(),
                     jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport());
 
+            //inform user about Administrator changes
+            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators"))
+                buildEmailAdministratorChangedEntry(user.getEmail(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry, jsonEntry);
+
             if (sheet.getEntries().length == 1) {
                 sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
@@ -738,6 +742,9 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
+        if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators"))
+            buildEmailAdministratorDeletedEntry(user.getEmail(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry);
+
         entryService.delete(entry);
 
         //update latest timesheet entry date if latest entry date is < new latest entry in the table
@@ -776,58 +783,105 @@ public class TimesheetRest {
         }
     }
 
-    private void sendEmailNotification(String emailTo, String reason, Timesheet sheet, UserProfile user) {
+    private void buildEmailOutOfTime(String emailTo, Timesheet sheet, UserProfile user) {
         Config config = configService.getConfiguration();
 
-        //for testing only!
-        //emailTo = config.getMailFrom();
-        emailTo = "test@test123.com";
+        String mailSubject = config.getMailSubjectTime() != null && config.getMailSubjectTime().length() != 0
+                ? config.getMailSubjectTime() : "[TimePunch - Timesheet Out Of Time Notification]";
+        String mailBody = config.getMailBodyTime() != null && config.getMailBodyTime().length() != 0
+                ? config.getMailBodyTime() : "Hi " + user.getFullName() + ",\n" +
+                "you have only" + sheet.getTargetHoursTheory() + " hours left! \n" +
+                "Please contact you coordinator, or one of the administrators\n\n" +
+                "Best regards,\n" +
+                "Catrobat-Admins";
 
-        String mailBody = "";
-        String mailSubject = "";
-
-        if (reason == "time") {
-            mailSubject = config.getMailSubjectTime() != null && config.getMailSubjectTime().length() != 0
-                    ? config.getMailSubjectTime() : "Out Of Time Notification";
-            mailBody = config.getMailBodyTime() != null && config.getMailBodyTime().length() != 0
-                    ? config.getMailBodyTime() : "Hi " + user.getFullName() + ",\n" +
-                    "you have only" + sheet.getTargetHoursTheory() + " hours left! \n" +
-                    "Please contact you coordinator, or one of the administrators\n\n" +
-                    "Best regards,\n" +
-                    "Catrobat-Admins";
-        } else if (reason == "inactive") {
-            mailSubject = config.getMailSubjectInactive() != null && config.getMailSubjectInactive().length() != 0
-                    ? config.getMailSubjectInactive() : "Inactive Notification";
-            mailBody = config.getMailBodyInactive() != null && config.getMailBodyInactive().length() != 0
-                    ? config.getMailBodyInactive() : "Hi " + user.getFullName() + ",\n" +
-                    "we could not see any activity in your timesheet since the last two weeks.\n" +
-                    "Information: an inactive entry was created automatically.\n\n" +
-                    "Best regards,\n" +
-                    "Catrobat-Admins";
-        } else if (reason == "entry") {
-            mailSubject = config.getMailSubjectEntry() != null &&
-                    config.getMailSubjectEntry().length() != 0
-                    ? config.getMailSubjectEntry() : "Timesheet Entry Changed Notification";
-            mailBody = config.getMailBodyEntry() != null &&
-                    config.getMailBodyEntry().length() != 0
-                    ? config.getMailBodyEntry() : "Hi " + user.getFullName() + ",\n" +
-                    "External changes were applied to your timesheet\n" +
-                    "Information: OLD ENTRY + NEW ENTRY.\n\n" +
-                    "Best regards,\n" +
-                    "Catrobat-Admins";
-        }
 
         mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getFullName());
         mailBody = mailBody.replaceAll("\\{\\{time\\}\\}", Integer.toString(sheet.getTargetHoursTheory()));
 
-        if (sheet.getEntries().length > 0) {
+        sendEmail(emailTo, mailSubject, mailBody);
+    }
+
+    private void buildEmailInactive(String emailTo, Timesheet sheet, UserProfile user) {
+        Config config = configService.getConfiguration();
+
+        String mailSubject = config.getMailSubjectInactive() != null && config.getMailSubjectInactive().length() != 0
+                ? config.getMailSubjectInactive() : "[TimePunch - Timesheet Inactive Notification]";
+        String mailBody = config.getMailBodyInactive() != null && config.getMailBodyInactive().length() != 0
+                ? config.getMailBodyInactive() : "Hi " + user.getFullName() + ",\n" +
+                "we could not see any activity in your timesheet since the last two weeks.\n" +
+                "Information: an inactive entry was created automatically.\n\n" +
+                "Best regards,\n" +
+                "Catrobat-Admins";
+
+        mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getFullName());
+        if (sheet.getEntries().length > 0)
             mailBody = mailBody.replaceAll("\\{\\{date\\}\\}", sheet.getEntries()[0].getBeginDate().toString());
-        }
 
-        mailBody = mailBody.replaceAll("\\{\\{original\\}\\}", "OLD ENTRY");
-        mailBody = mailBody.replaceAll("\\{\\{actual\\}\\}", "NEW ENTRY");
+        sendEmail(emailTo, mailSubject, mailBody);
+    }
 
+    private void buildEmailAdministratorChangedEntry(String emailToAdministrator, String emailToUser, TimesheetEntry oldEntry, JsonTimesheetEntry newEntry) throws ServiceException {
+        Config config = configService.getConfiguration();
 
+        String oldEntryData = "Begin Date : " + oldEntry.getBeginDate() + "\n" +
+                "End Date : " + oldEntry.getEndDate() + "\n" +
+                "Pause [Minutes] : " + oldEntry.getPauseMinutes() + "\n" +
+                "Team Name : " + oldEntry.getTeam().getTeamName() + "\n" +
+                "Category Name : " + oldEntry.getCategory().getName() + "\n" +
+                "Description : " + oldEntry.getDescription() + "\n";
+
+        String newEntryData = "Begin Date : " + newEntry.getBeginDate() + "\n" +
+                "End Date : " + newEntry.getEndDate() + "\n" +
+                "Pause [Minutes] : " + newEntry.getPauseMinutes() + "\n" +
+                "Team Name : " + teamService.getTeamByID(newEntry.getTeamID()).getTeamName() + "\n" +
+                "Category Name : " + categoryService.getCategoryByID(newEntry.getCategoryID()).getName() + "\n" +
+                "Description : " + newEntry.getDescription() + "\n";
+
+        String mailSubject = config.getMailSubjectEntry() != null &&
+                config.getMailSubjectEntry().length() != 0
+                ? config.getMailSubjectEntry() : "[TimePunch - Timesheet Entry Changed Notification]";
+
+        String mailBody = config.getMailBodyEntry() != null &&
+                config.getMailBodyEntry().length() != 0
+                ? config.getMailBodyEntry() : "'TimePunch - Timesheet' Entry Changed Information \n\n" +
+                "Your Timesheet-Entry: \n" +
+                oldEntryData +
+                "\n was modyfied by an Administrator to \n" +
+                newEntryData +
+                "If you are not willing to accept those changes, please contact your 'Team-Coordinator', or an 'Administrator'.\n\n" +
+                "Best regards,\n" +
+                "Catrobat-Admins";
+
+        mailBody = mailBody.replaceAll("\\{\\{original\\}\\}", oldEntryData);
+        mailBody = mailBody.replaceAll("\\{\\{actual\\}\\}", newEntryData);
+
+        //send Emails
+        sendEmail(emailToAdministrator, mailSubject, mailBody);
+        sendEmail(emailToUser, mailSubject, mailBody);
+    }
+
+    private void buildEmailAdministratorDeletedEntry(String emailToAdministrator, String emailToUser, TimesheetEntry entry) throws ServiceException {
+        String mailSubject =  "[TimePunch - Timesheet Entry Deleted Notification]";
+
+        String mailBody = "'TimePunch - Timesheet' Entry Deleted Information \n\n" +
+                "Your Timesheet-Entry: \n" +
+                entry.getBeginDate() +
+                entry.getEndDate() +
+                entry.getPauseMinutes() +
+                entry.getTeam().getTeamName() +
+                entry.getCategory().getName() +
+                entry.getDescription() +
+                "\n was deleted by an Administrator.\n" +
+                "If you are not willing to accept those changes, please contact your 'Team-Coordinator', or an 'Administrator'.\n\n" +
+                "Best regards,\n" +
+                "Catrobat-Admins";
+
+        sendEmail(emailToAdministrator, mailSubject, mailBody);
+        sendEmail(emailToUser, mailSubject, mailBody);
+    }
+
+    private void sendEmail(String emailTo, String mailSubject, String mailBody) {
         Email email = new Email(emailTo);
         email.setSubject(mailSubject);
         email.setBody(mailBody);

@@ -246,7 +246,7 @@ function getDataOfTeam(teamName) {
         .done(assignTeamData)
         .fail(function (error) {
             AJS.messages.error({
-                title: 'There was an error while fetching data.',
+                title: 'There was an error while fetching team data.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);
@@ -350,7 +350,7 @@ function fetchUsers() {
         .done(initApprovedUserTimesheetSelect)
         .fail(function (error) {
             AJS.messages.error({
-                title: 'There was an error while fetching data.',
+                title: 'There was an error while fetching user data.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);
@@ -387,7 +387,7 @@ function fetchData() {
         .done(populateTable, prepareImportDialog)
         .fail(function (error) {
             AJS.messages.error({
-                title: 'There was an error while fetching data.',
+                title: 'There was an error while fetching timesheet data.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);

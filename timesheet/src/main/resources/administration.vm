@@ -162,17 +162,15 @@
             <p>Download 'Config' as <a href="download/config">CSV</a>.</p>
 
             <h2>Team Configuration</h2>
-            <p>
-                Provides: change Team name; assign users and/or categories to a team.
-            </p>
+            <p>Provides: change Team name; assign users and/or categories to a team.</p>
+            <p><font color="red">Important Note: always 'save' your applied changes.</font></p>
             <p></p>
 
             <div id="teams"></div>
 
             <h2>Category Management</h2>
-            <p>
-                Provides: change Category name.
-            </p>
+            <p>Provides: change Category name.</p>
+            <p><font color="red">Important Note: please 'save' team modifications before renaming a 'Category'.</font></p>
             <p></p>
 
             <div id="categories"></div>
@@ -184,9 +182,7 @@
     </div>
     <div class="tabs-pane" id="tabs-teams">
         <h2>Team</h2>
-        <p>
-            Removing a team just effects the configuration and no user will be modified.
-        </p>
+        <p>Removing a team just effects the configuration and no user will be modified.</p>
         <form id="modify-team" class="aui">
             <fieldset>
                 <div class="field-group">
@@ -202,9 +198,7 @@
     </div>
     <div class="tabs-pane" id="tabs-categories">
         <h2>Category</h2>
-        <p>
-            Removing a category does not modify any user.
-        </p>
+        <p>Removing a category does not modify any user.</p>
         <form id="modify-categoryList" class="aui">
             <fieldset>
                 <div class="field-group">
