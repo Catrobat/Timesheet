@@ -24,13 +24,13 @@ import net.java.ao.Preload;
 @Preload
 public interface Group extends Entity {
 
-  String getGroupName();
+    String getGroupName();
 
-  void setGroupName(String groupName);
+    void setGroupName(String groupName);
 
-  @OneToMany(reverse = "getGroup")
-  TeamToGroup[] getTeamToGroups();
+    @OneToMany(reverse = "getGroup")
+    TeamToGroup[] getTeamToGroups();
 
-  @ManyToMany(value = TeamToGroup.class, reverse = "getGroup", through = "getTeam")
-  Team[] getTeams();
+    @ManyToMany(value = TeamToGroup.class, reverse = "getGroup", through = "getTeam")
+    Team[] getTeams();
 }

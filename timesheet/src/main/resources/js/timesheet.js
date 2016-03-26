@@ -143,14 +143,12 @@ function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
     AJS.$("#visualizationTeamSelect").append("<div class=\"field-group\"><label for=\"teamSelect\">Visualize Team Data</label><input class=\"text teamSelectField\" type=\"text\" id=\"select-team-select2-field\"></div>");
     AJS.$("#visualizationTeamSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Visualize\" class=\"aui-button aui-button-primary\"></field-group>");
     AJS.$("#visualizationTeamSelect").append("</field-group>");
-
     AJS.$(".teamSelectField").auiSelect2({
         placeholder: "Select Team",
         tags: teamNameList.sort(),
         tokenSeparators: [",", " "],
         maximumSelectionSize: 1
     });
-
     if (isApprovedUser || isAdmin) {
         initSelectTimesheetButton();
         AJS.$("#approvedUserTimesheetSelect").show();
@@ -185,8 +183,6 @@ function fetchUserTimesheetData(timesheetID) {
         url: restBaseUrl + 'teams/' + timesheetID,
         contentType: "application/json"
     });
-
-    console.log("fetchUserTimesheetData");
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
@@ -223,8 +219,6 @@ function fetchUserVisData(timesheetID) {
         url: restBaseUrl + 'teams',
         contentType: "application/json"
     });
-
-    console.log("fetchUserVisData");
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetVisData)
         .done(populateVisTable)
@@ -243,7 +237,6 @@ function getDataOfTeam(teamName) {
         url: restBaseUrl + 'timesheet/' + teamName + '/entries',
         contentType: "application/json"
     });
-
     AJS.$.when(teamData)
         .done(assignTeamData)
         .fail(function (error) {
@@ -261,7 +254,6 @@ function getTimesheetOfUser(selectedUser) {
         url: restBaseUrl + 'timesheetID/fromUser/' + selectedUser[0],
         contentType: "application/json"
     });
-
     AJS.$.when(timesheetIDFetched)
         .done(fetchUserTimesheetData)
         .done(fetchUserVisData)
@@ -313,7 +305,6 @@ function updateTimesheetHours(existingTimesheetData) {
         isActive: existingTimesheetData.isActive,
         isEnabled: existingTimesheetData.isEnabled
     };
-
     AJS.$.ajax({
             type: "post",
             url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
@@ -346,7 +337,6 @@ function fetchUsers() {
         url: restBaseUrl + 'user/getUsers',
         contentType: "application/json"
     });
-
     AJS.$.when(config, jsonUser, userList)
         .done(initCoordinatorTimesheetSelect)
         .done(initApprovedUserTimesheetSelect)
@@ -383,8 +373,6 @@ function fetchData() {
         url: restBaseUrl + 'teams',
         contentType: "application/json"
     });
-
-    console.log("fetchData");
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
@@ -504,8 +492,6 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     timesheetData.entries = entriesReply[0];
     timesheetData.categories = [];
     timesheetData.teams = [];
-
-    console.log(timesheetData);
 
     categoriesReply[0].map(function (category) {
         timesheetData.categories[category.categoryID] = {

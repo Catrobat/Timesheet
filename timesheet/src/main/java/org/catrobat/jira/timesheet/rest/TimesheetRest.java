@@ -204,8 +204,6 @@ public class TimesheetRest {
             }
         }
 
-        System.out.println(teamService.all());
-
         return Response.ok(jsonTimesheetEntries).build();
     }
 
@@ -326,6 +324,9 @@ public class TimesheetRest {
         }
 
         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
+
+        if(entries.length == 0)
+            return Response.serverError().entity("Timesheet has no entries.").build();
 
         if (dateIsOlderThanTwoWeeks(entries[0].getBeginDate())) {
             buildEmailInactive(user.getEmail(), sheet, user);

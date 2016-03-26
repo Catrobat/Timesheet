@@ -14,7 +14,6 @@
     <web-resource key="timesheet-resources" name="Timesheet Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.auiplugin:aui-select2</dependency>
-        <dependency>com.atlassian.auiplugin:aui-label</dependency>
         <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
         <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
