@@ -1,17 +1,6 @@
 "use strict";
 
 //var baseUrl, visualizationTable, timesheetForm, restBaseUrl;
-var restBaseUrl;
-
-AJS.toInit(function () {
-    //var baseUrl = AJS.$("meta[id$='-base-url']").attr("content");
-    var baseUrl = AJS.params.baseURL;
-    restBaseUrl = baseUrl + "/rest/timesheet/latest/";
-    //restBaseUrl = "/rest/timesheet/latest/";
-
-    fetchVisData();
-    fetchTeamVisData();
-});
 
 function fetchVisData() {
     var timesheetFetched = AJS.$.ajax({
@@ -107,7 +96,62 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
             teamCategories: team.teamCategories
         };
     });
+
     return timesheetData;
+}
+
+function assignTeamData(entries) {
+    AJS.$("#teamDataDiagram").empty();
+    var availableEntries = entries;
+
+    var pos = availableEntries.length - 1;
+    //variables for the time calculation
+    var totalHours = 0;
+    var totalMinutes = 0;
+
+    //data array
+    var dataPoints = [];
+
+    for (var i = availableEntries.length - 1; i >= 0; i--) {
+        //calculate spent time for team
+        var referenceEntryDate = new Date(availableEntries[pos].beginDate);
+        var compareToDate = new Date(availableEntries[i].beginDate);
+        var oldPos = pos;
+
+        if ((referenceEntryDate.getFullYear() == compareToDate.getFullYear()) &&
+            (referenceEntryDate.getMonth() == compareToDate.getMonth())) {
+            //add all times for the same year-month pairs
+            var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
+                availableEntries[i].pauseMinutes).getHours();
+            var minutes = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
+                availableEntries[i].pauseMinutes).getMinutes();
+            var pause = availableEntries[i].pauseMinutes;
+            var calculatedTime = hours * 60 + minutes - pause;
+
+            totalMinutes = totalMinutes + calculatedTime;
+
+            if (totalMinutes >= 60) {
+                var minutesToFullHours = Math.floor(totalMinutes / 60); //get only full hours
+                totalHours = totalHours + minutesToFullHours;
+                totalMinutes = totalMinutes - minutesToFullHours * 60;
+            }
+        } else {
+            pos = i;
+            i = i + 1;
+        }
+
+        if (oldPos != pos || i == 0) {
+            var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
+            var dataY = totalHours + totalMinutes / 60;
+            dataPoints.push(dataX);
+            dataPoints.push(dataY);
+            totalHours = 0;
+            totalMinutes = 0;
+        }
+    }
+
+    //assign JSON data for line graph
+    teamDiagram(dataPoints);
 }
 
 function assignTeamVisData(timesheetDataReply) {
@@ -160,7 +204,8 @@ function assignTeamVisData(timesheetDataReply) {
         if (oldPos != pos || i == availableEntries.length - 1) {
             data['year'].push(referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1));
             data['team'].push((totalHours + totalMinutes / 60));
-            data['label'].push(availableTeams[actualTeamID].teamName);
+            if (!data['label'].contains(availableTeams[actualTeamID].teamName))
+                data['label'].push(availableTeams[actualTeamID].teamName);
             totalHours = 0;
             totalMinutes = 0;
         }
@@ -196,8 +241,6 @@ function assignTeamVisData(timesheetDataReply) {
 function populateVisTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
     AJS.$("#visualization-table-content").empty();
-
-
     appendEntriesToVisTable(timesheetData);
 }
 
@@ -268,19 +311,17 @@ function appendEntriesToVisTable(timesheetData) {
                 theoryHours = theoryHours + calculatedTime;
 
             //date within the last six months
-            var compareEntryMonth = compareToDate.getMonth()  - 6;
-            if(compareEntryMonth <= sixMonthAgo) {
+            var compareEntryMonth = compareToDate.getMonth() - 6;
+            if (compareEntryMonth <= sixMonthAgo) {
                 timeLastSixMonthHours = timeLastSixMonthHours + hours;
                 timeLastSixMonthMinutes = timeLastSixMonthMinutes + minutes;
             }
-
         } else {
             pos = i;
             i = i - 1;
         }
 
         if (oldPos != pos || i == availableEntries.length - 1) {
-
             //add points to line diagram
             var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
             var dataY = totalHours + totalMinutes / 60;
@@ -338,7 +379,7 @@ function appendEntriesToVisTable(timesheetData) {
         "<td headers=\"basic-time\" class=\"time\">" + timeLastSixMonthHours + "hours " + timeLastSixMonthMinutes + "mins" + "</td>" +
         "</tr>");
 
-    //draw line graph
+    //assign JSON data for line graph
     diagram(dataPoints);
     appendTimeToPiChart(theoryHours, totalTime - theoryHours, totalTime);
 }
@@ -512,6 +553,17 @@ function drawPiChartDiagram(dataPoints) {
         });
     }
     drawPiChart(data);
+}
+
+function teamDiagram(dataPoints) {
+    var data = [];
+    for (var i = 0; i < dataPoints.length; i = i + 2) {
+        data.push({
+            year: dataPoints[i],
+            value: dataPoints[i + 1]
+        });
+    }
+    drawSelectedTeamDiagram(data);
 }
 
 function calculateDuration(begin, end, pause) {

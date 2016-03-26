@@ -1,11 +1,8 @@
 "use strict";
 
-//var baseUrl, timesheetTable, timesheetForm, restBaseUrl;
 var restBaseUrl;
 
 AJS.toInit(function () {
-    //var baseUrl = AJS.$("meta[name='application-base-url']").attr("content");
-    //var baseUrl = AJS.$("meta[id$='-base-url']").attr("content");
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
@@ -13,11 +10,17 @@ AJS.toInit(function () {
         document.getElementById("tabs-line").style.display = "none";
         document.getElementById("tabs-category").style.display = "none";
         document.getElementById("tabs-team").style.display = "none";
+        fetchUsers();
+    } else {
+        //init coordinator/administrator/approved user Seetings
+        initUserSaveButton();
+        //fetch timesheet table data
+        fetchUsers();
+        fetchData()
+        //fetch visualization data
+        fetchVisData();
+        fetchTeamVisData();
     }
-
-    initUserSaveButton();
-    fetchUsers();
-    fetchData();
 });
 
 function initUserSaveButton() {
@@ -49,6 +52,10 @@ function initSelectTimesheetButton() {
             var selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
             if (selectedUser[0] !== "")
                 getTimesheetOfUser(selectedUser);
+        } else if (AJS.$(document.activeElement).val() === 'Visualize') {
+            var selectedTeam = AJS.$("#select-team-select2-field").val().split(',');
+            if (selectedTeam[0] !== "")
+                getDataOfTeam(selectedTeam[0]);
         }
     });
 }
@@ -71,7 +78,8 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
             if (team['coordinatorGroups'][j].localeCompare(userName) == 0) {
                 //add users of that team to the select2
                 for (var j = 0; j < team['developerGroups'].length; j++) {
-                    listOfUsers.push(team['developerGroups'][j]);
+                    if (!listOfUsers.contains(team['developerGroups'][j]))
+                        listOfUsers.push(team['developerGroups'][j]);
                 }
                 isTeamCoordinator = true;
             }
@@ -99,6 +107,7 @@ function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
     var isApprovedUser = false;
     var listOfUsers = [];
 
+    //Select User
     AJS.$("#approvedUserTimesheetSelect").append("<field-group>");
     AJS.$("#approvedUserTimesheetSelect").append("<h3>Approved User Space</h3>");
     AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><label for=\"approvedUserSelect\">Timesheet Of</label><input class=\"text approvedUserSelectTimesheetOfUserField\" type=\"text\" id=\"approved-user-select2-field\"></div>");
@@ -120,6 +129,24 @@ function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
     AJS.$(".approvedUserSelectTimesheetOfUserField").auiSelect2({
         placeholder: "Select User",
         tags: listOfUsers.sort(),
+        tokenSeparators: [",", " "],
+        maximumSelectionSize: 1
+    });
+
+    //Team Visualization
+    var teamNameList = [];
+    for (var i = 0; i < config.teams.length; i++)
+        teamNameList.push(config.teams[i]['teamName']);
+
+    AJS.$("#visualizationTeamSelect").append("<field-group>");
+    AJS.$("#visualizationTeamSelect").append("<h3>Team</h3>");
+    AJS.$("#visualizationTeamSelect").append("<div class=\"field-group\"><label for=\"teamSelect\">Visualize Team Data</label><input class=\"text teamSelectField\" type=\"text\" id=\"select-team-select2-field\"></div>");
+    AJS.$("#visualizationTeamSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Visualize\" class=\"aui-button aui-button-primary\"></field-group>");
+    AJS.$("#visualizationTeamSelect").append("</field-group>");
+
+    AJS.$(".teamSelectField").auiSelect2({
+        placeholder: "Select Team",
+        tags: teamNameList.sort(),
         tokenSeparators: [",", " "],
         maximumSelectionSize: 1
     });
@@ -199,6 +226,24 @@ function fetchUserVisData(timesheetID) {
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetVisData)
         .done(populateVisTable)
+        .fail(function (error) {
+            AJS.messages.error({
+                title: 'There was an error while fetching data.',
+                body: '<p>Reason: ' + error.responseText + '</p>'
+            });
+            console.log(error);
+        });
+}
+
+function getDataOfTeam(teamName) {
+    var teamData = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheet/' + teamName + '/entries',
+        contentType: "application/json"
+    });
+
+    AJS.$.when(teamData)
+        .done(assignTeamData)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching data.',
@@ -477,25 +522,28 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
 
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
-    if (!timesheetData.isActive) {
-        require(['aui/banner'], function (banner) {
-            banner({
-                body: 'Your TimePunch - Timesheet is marked as <strong>inactive</strong>.'
+
+    if (!isAdmin) {
+        if (!timesheetData.isActive) {
+            require(['aui/banner'], function (banner) {
+                banner({
+                    body: 'Your TimePunch - Timesheet is marked as <strong>inactive</strong>.'
+                });
             });
-        });
-    } else if (!timesheetData.isEnabled) {
-        require(['aui/banner'], function (banner) {
-            banner({
-                body: 'Your TimePunch - Timesheet has been <strong>disabled</strong> by an Administrator.'
+        } else if (!timesheetData.isEnabled) {
+            require(['aui/banner'], function (banner) {
+                banner({
+                    body: 'Your TimePunch - Timesheet has been <strong>disabled</strong> by an Administrator.'
+                });
             });
-        });
-    } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80){
-        require(['aui/banner'], function (banner) {
-            banner({
-                body: 'TimePunch Timesheet - You have <strong>less than 80 hours</strong> left, please contact ' +
-                'your Team - Coordinator and/or an Administrator.'
+        } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
+            require(['aui/banner'], function (banner) {
+                banner({
+                    body: 'TimePunch Timesheet - You have <strong>less than 80 hours</strong> left, please contact ' +
+                    'your Team - Coordinator and/or an Administrator.'
+                });
             });
-        });
+        }
     }
 
     var timesheetTable = AJS.$("#timesheet-table");
@@ -1121,4 +1169,11 @@ function getMinutesFromTimeString(timeString) {
     } else {
         return 0;
     }
+}
+
+Array.prototype.contains = function (k) {
+    for (var p in this)
+        if (this[p] === k)
+            return true;
+    return false;
 }

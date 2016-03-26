@@ -178,14 +178,12 @@ public class TimesheetRest {
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<JsonTimesheetEntry>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        UserProfile userProfile;
-
-        userProfile = permissionService.checkIfUserExists(request);
+        UserProfile userProfile = permissionService.checkIfUserExists(request);
 
         for (User user : allUsers) {
             //get user name
             if (sheetService.getTimesheetByID(timesheetID).getUserKey().equals(ComponentAccessor.getUserManager().
-                    getUserByName(user.getName()).getKey().toString())) {
+                    getUserByName(user.getName()).getKey())) {
                 //get all teams of that user
                 for (Team team : teamService.getTeamsOfUser(user.getName())) {
                     //get all team members
@@ -193,7 +191,7 @@ public class TimesheetRest {
                         if (user.getName().compareTo(teamMember) == 0) {
                             //collect all timesheet entries of those team members
                             Timesheet sheet = sheetService.getTimesheetByUser(
-                                    ComponentAccessor.getUserManager().getUserByName(teamMember).getKey().toString());
+                                    ComponentAccessor.getUserManager().getUserByName(teamMember).getKey());
                             //all entries of each user
                             TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
                             for (TimesheetEntry entry : entries) {
@@ -205,6 +203,27 @@ public class TimesheetRest {
                         }
                     }
                 }
+            }
+        }
+
+        return Response.ok(jsonTimesheetEntries).build();
+    }
+
+    @GET
+    @Path("timesheet/{teamName}/entries")
+    public Response getAllTeamTimesheetEntries(@Context HttpServletRequest request,
+                                               @PathParam("teamName") String teamName) throws ServiceException {
+
+        List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<JsonTimesheetEntry>();
+        UserProfile userProfile = permissionService.checkIfUserExists(request);
+
+        for (String developerTeamMemberName : configService.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER)) {
+            for (TimesheetEntry timesheetEntry : sheetService.getTimesheetByUser(ComponentAccessor.
+                    getUserKeyService().getKeyForUsername(developerTeamMemberName)).getEntries()) {
+                if (timesheetEntry.getTeam().getTeamName().equals(teamName))
+                    jsonTimesheetEntries.add(new JsonTimesheetEntry(timesheetEntry.getID(), timesheetEntry.getBeginDate(),
+                            timesheetEntry.getEndDate(), timesheetEntry.getPauseMinutes(), timesheetEntry.getDescription(),
+                            timesheetEntry.getTeam().getID(), timesheetEntry.getCategory().getID(), timesheetEntry.getIsGoogleDocImport()));
             }
         }
 

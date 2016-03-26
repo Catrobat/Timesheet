@@ -70,7 +70,8 @@ public abstract class HelperServlet extends HttpServlet {
         if (username == null) {
             redirectToLogin(request, response);
             return;
-        } else if (!ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators")) {
+        } else if (!ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators") &&
+                !ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Timesheet")) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
