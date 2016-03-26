@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.rest;
 
-
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.user.UserManager;
@@ -79,9 +78,7 @@ public class ConfigResourceRest {
     public Response getTeams(@Context HttpServletRequest request) throws ServiceException {
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
-        UserProfile user;
-
-        user = permissionService.checkIfUserExists(request);
+        UserProfile user = permissionService.checkIfUserExists(request);
 
         for (Team team : teamService.all()) {
             Category[] categories = team.getCategories();
@@ -161,7 +158,6 @@ public class ConfigResourceRest {
 
         if (jsonConfig.getTeams() != null) {
             for (JsonTeam jsonTeam : jsonConfig.getTeams()) {
-
                 configService.editTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
                         jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
             }
@@ -196,7 +192,7 @@ public class ConfigResourceRest {
     }
 
     @PUT
-    @Path("/editTeamPermission")
+    @Path("/editTeamName")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editTeamPermission(final String[] teams, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkPermission(request);
@@ -208,14 +204,14 @@ public class ConfigResourceRest {
             return Response.serverError().build();
         } else if (teams[1].trim().isEmpty()) {
             return Response.serverError().entity("Team name must not be empty.").build();
-        } else if (teams[1].compareTo(teams[0]) == 0) {
+        } else if (teams[1].equals(teams[0])) {
             return Response.serverError().entity("New team name must be different.").build();
         }
 
         boolean successful = configService.editTeamName(teams[0], teams[1]) != null;
 
         if (successful)
-            return Response.noContent().build();
+            return Response.ok().build();
 
         return Response.serverError().build();
     }
@@ -271,13 +267,13 @@ public class ConfigResourceRest {
             return Response.serverError().build();
         } else if (categories[1].trim().isEmpty()) {
             return Response.serverError().entity("Category name must not be empty.").build();
-        } else if (categories[1].compareTo(categories[0]) == 0) {
+        } else if (categories[1].equals(categories[0])) {
             return Response.serverError().entity("New category name must be different.").build();
         }
 
         List<Category> categoryNames = categoryService.all();
         for (Category category : categoryNames) {
-            if (category.getName().compareTo(categories[1]) == 0)
+            if (category.getName().equals(categories[1]))
                 return Response.serverError().entity("Category name already exists.").build();
         }
 

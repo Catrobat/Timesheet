@@ -41,8 +41,8 @@ public class ExportConfigAsCSVServlet extends HelperServlet {
     private final UserManager userManager;
 
     public ExportConfigAsCSVServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                    GroupManager groupManager, ConfigService configurationService, ConfigService configService) {
-        super(userManager, loginUriProvider, webSudoManager, groupManager, configurationService);
+                                    GroupManager groupManager, ConfigService configService) {
+        super(userManager, loginUriProvider, webSudoManager, groupManager, configService);
         this.configService = configService;
         this.userManager = userManager;
     }

@@ -19,21 +19,12 @@
 var restBaseUrl;
 
 AJS.toInit(function () {
-    //AJS.$(document).ajaxStart(function () {
-    //    AJS.$(".loadingDiv").show();
-    //});
-    //AJS.$(document).ajaxStop(function () {
-    //    AJS.$(".loadingDiv").hide();
-    //});
-
-    //var baseUrl = AJS.$("meta[name='application-base-url']").attr("content");
-    //var baseUrl = AJS.$("meta[id$='-base-url']").attr("content");
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
     var teams = [];
     var approvedUsers = [];
-    var editNameDialog, editCategoryNameDialog;
+    var editCategoryNameDialog, editTeamNameDialog;
 
     function scrollToAnchor(aid) {
         var aTag = AJS.$("a[name='" + aid + "']");
@@ -311,68 +302,69 @@ AJS.toInit(function () {
 
     function editTeam(teamName) {
         // may be in background and therefore needs to be removed
-        if (editNameDialog) {
+        if (editTeamNameDialog) {
             try {
-                editNameDialog.remove();
+                editTeamNameDialog.remove();
             } catch (err) {
                 // may be removed already
             }
         }
 
-        editNameDialog = new AJS.Dialog({
+        console.log(teamName);
+
+        editTeamNameDialog = new AJS.Dialog({
             width: 600,
             height: 200,
-            id: "edit-name-dialog",
+            id: "edit-team-name-dialog",
             closeOnOutsideClick: true
         });
 
         var content = "<form class=\"aui\">\n" +
             "    <fieldset>\n" +
             "        <div class=\"field-group\">\n" +
-            "            <label for=\"new-name\">New Team Name</label>\n" +
-            "            <input class=\"text\" type=\"text\" id=\"new-name\" name=\"new-name\" title=\"new-name\">\n" +
+            "            <label for=\"new-team-name\">New Team Name</label>\n" +
+            "            <input class=\"text\" type=\"text\" id=\"new-team-name\" name=\"new-team-name\" title=\"new-team-name\">\n" +
             "        </div>\n" +
             "    </fieldset>\n" +
             " </form> ";
 
-        editNameDialog.addHeader("New Team Name for " + teamName);
-        editNameDialog.addPanel("Panel 1", content, "panel-body");
-
-        editNameDialog.addButton("Save", function (dialog) {
-            ajs.$(".loadingdiv").show();
-            ajs.$.ajax({
-                url: restbaseurl + 'config/editteampermission',
-                type: "put",
-                contenttype: "application/json",
-                data: json.stringify([teamname, ajs.$("#new-name").val()]),
-                processdata: false,
+        editTeamNameDialog.addHeader("New Team Name for " + teamName);
+        editTeamNameDialog.addPanel("Panel 1", content, "panel-body");
+        editTeamNameDialog.addButton("Save", function (dialog) {
+            AJS.$(".loadingDiv").show();
+            AJS.$.ajax({
+                url: restBaseUrl + 'config/editTeamName',
+                type: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify([teamName, AJS.$("#new-team-name").val()]),
+                processData: false,
                 success: function () {
-                    ajs.messages.success({
-                        title: "success!",
-                        body: "team edited!"
+                    AJS.messages.success({
+                        title: "Success!",
+                        body: "Team renamed."
                     });
-                    fetchdata();
-                    ajs.$(".loadingdiv").hide();
+                    fetchData();
+                    AJS.$(".loadingDiv").hide();
                 },
                 error: function (error) {
-                    ajs.messages.error({
-                        title: "error!",
-                        body: "something went wrong!<br />" + error.responsetext
+                    AJS.messages.error({
+                        title: "Error!",
+                        body: "Something went wrong!<br />" + error.responseText
                     });
-                    scrolltoanchor('top');
-                    ajs.$(".loadingdiv").hide();
+                    scrollToAnchor('top');
+                    AJS.$(".loadingDiv").hide();
                 }
             });
 
             dialog.remove();
         });
-        editNameDialog.addLink("Cancel", function (dialog) {
+        editTeamNameDialog.addLink("Cancel", function (dialog) {
             dialog.remove();
         }, "#");
 
-        editNameDialog.gotoPage(0);
-        editNameDialog.gotoPanel(0);
-        editNameDialog.show();
+        editTeamNameDialog.gotoPage(0);
+        editTeamNameDialog.gotoPanel(0);
+        editTeamNameDialog.show();
     }
 
     function editCategory(categoryName) {
@@ -417,7 +409,7 @@ AJS.toInit(function () {
                 success: function () {
                     AJS.messages.success({
                         title: "Success!",
-                        body: "Category edited!"
+                        body: "Category renamed."
                     });
                     fetchData();
                     AJS.$(".loadingDiv").hide();
@@ -576,14 +568,14 @@ AJS.toInit(function () {
         });
 
         AJS.$.when(callREST)
-            .done(function (success){
+            .done(function (success) {
                 AJS.messages.success({
                     title: "Success!",
                     body: jobName + " Job triggered successfully."
                 });
                 fetchData();
                 AJS.$(".loadingDiv").hide();
-        })
+            })
             .fail(function (error) {
                 AJS.messages.error({
                     title: 'There was an error while triggering the Job REST url: ' + restUrl,

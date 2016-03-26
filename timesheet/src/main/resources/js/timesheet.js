@@ -186,6 +186,7 @@ function fetchUserTimesheetData(timesheetID) {
         contentType: "application/json"
     });
 
+    console.log("fetchUserTimesheetData");
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
@@ -223,6 +224,7 @@ function fetchUserVisData(timesheetID) {
         contentType: "application/json"
     });
 
+    console.log("fetchUserVisData");
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetVisData)
         .done(populateVisTable)
@@ -382,6 +384,7 @@ function fetchData() {
         contentType: "application/json"
     });
 
+    console.log("fetchData");
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
@@ -501,6 +504,8 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     timesheetData.entries = entriesReply[0];
     timesheetData.categories = [];
     timesheetData.teams = [];
+
+    console.log(timesheetData);
 
     categoriesReply[0].map(function (category) {
         timesheetData.categories[category.categoryID] = {
@@ -794,9 +799,8 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
  */
 function renderFormRow(timesheetData, entry, saveOptions) {
 
-    if (entry.pause === "") {
+    if (entry.pause === "")
         entry.pause = "00:00";
-    }
 
     var form = prepareForm(entry, timesheetData);
 

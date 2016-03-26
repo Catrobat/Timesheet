@@ -119,9 +119,7 @@ public class TimesheetRest {
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        UserProfile userProfile;
-
-        userProfile = permissionService.checkIfUserExists(request);
+        UserProfile userProfile = permissionService.checkIfUserExists(request);
 
         for (User user : allUsers) {
             if (sheetService.getTimesheetByID(timesheetID).getUserKey().equals(ComponentAccessor.getUserManager().
@@ -205,6 +203,8 @@ public class TimesheetRest {
                 }
             }
         }
+
+        System.out.println(teamService.all());
 
         return Response.ok(jsonTimesheetEntries).build();
     }
@@ -594,9 +594,7 @@ public class TimesheetRest {
 
         if (sheet == null || !permissionService.userCanViewTimesheet(user, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-        if (!sheet.getIsEnabled()) {
+        }else if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
         }
 

@@ -39,9 +39,8 @@ public class ExportAllTimesheetsAsCSVServlet extends HelperServlet {
     private final ConfigService configService;
 
     public ExportAllTimesheetsAsCSVServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                           GroupManager groupManager, ConfigService configurationService,
-                                           TimesheetService timesheetService, ConfigService configService) {
-        super(userManager, loginUriProvider, webSudoManager, groupManager, configurationService);
+                                           GroupManager groupManager, TimesheetService timesheetService, ConfigService configService) {
+        super(userManager, loginUriProvider, webSudoManager, groupManager, configService);
         this.timesheetService = timesheetService;
         this.configService = configService;
     }
