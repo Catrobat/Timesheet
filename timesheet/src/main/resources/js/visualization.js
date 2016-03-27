@@ -204,7 +204,7 @@ function assignTeamVisData(timesheetDataReply) {
         if (oldPos != pos || i == availableEntries.length - 1) {
             data['year'].push(referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1));
             data['team'].push((totalHours + totalMinutes / 60));
-            if (!data['label'].contains(availableTeams[actualTeamID].teamName))
+            if (!containsElement(data['label'], availableTeams[actualTeamID].teamName))
                 data['label'].push(availableTeams[actualTeamID].teamName);
             totalHours = 0;
             totalMinutes = 0;
@@ -452,7 +452,7 @@ function assignCategoryDiagramData(timesheetData) {
     for (var i = 0; i < dataPoints.length; i++)
         //read category name at position 3
         if (i % 3 === 2)
-            if (!categories.contains(dataPoints[i]))
+            if (!containsElement(categories, dataPoints[i]))
                 categories.push(dataPoints[i]);
 
 
@@ -491,11 +491,11 @@ function categoryDiagram(sortedDataArray, numberOfCategories) {
     for (var i = 0; i < numberOfCategories; i++) {
         //console.log(sortedDataArray[i]);
         //labels
-        if (!data['label'].contains(sortedDataArray[i][0]))
+        if (!containsElement(data['label'], sortedDataArray[i][0]))
             data['label'].push(sortedDataArray[i][0]);
         //years
         for (var j = 1; j < sortedDataArray[i].length - 1; j = j + 2)
-            if (!data['year'].contains(sortedDataArray[i][j]))
+            if (!containsElement(data['year'], sortedDataArray[i][j]))
                 data['year'].push(sortedDataArray[i][j]);
         //values
         data['category' + i] = [];
@@ -572,9 +572,9 @@ function calculateDuration(begin, end, pause) {
 }
 
 
-Array.prototype.contains = function (k) {
-    for (var p in this)
-        if (this[p] === k)
+function containsElement(array, ele) {
+    for (var p in array)
+        if (array[p] === ele)
             return true;
     return false;
 }

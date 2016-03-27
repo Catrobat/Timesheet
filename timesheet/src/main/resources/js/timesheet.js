@@ -78,7 +78,7 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
             if (team['coordinatorGroups'][j].localeCompare(userName) == 0) {
                 //add users of that team to the select2
                 for (var j = 0; j < team['developerGroups'].length; j++) {
-                    if (!listOfUsers.contains(team['developerGroups'][j]))
+                    if (!containsElement(listOfUsers, team['developerGroups'][j]))
                         listOfUsers.push(team['developerGroups'][j]);
                 }
                 isTeamCoordinator = true;
@@ -1159,11 +1159,4 @@ function getMinutesFromTimeString(timeString) {
     } else {
         return 0;
     }
-}
-
-Array.prototype.contains = function (k) {
-    for (var p in this)
-        if (this[p] === k)
-            return true;
-    return false;
 }
