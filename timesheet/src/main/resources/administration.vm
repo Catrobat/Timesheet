@@ -170,7 +170,8 @@
 
             <h2>Category Management</h2>
             <p>Provides: change Category name.</p>
-            <p><font color="red">Important Note: please 'save' team modifications before renaming a 'Category'.</font></p>
+            <p><font color="red">Important Note: please 'save' team modifications before renaming a 'Category'.</font>
+            </p>
             <p></p>
 
             <div id="categories"></div>
@@ -225,15 +226,18 @@
             <fieldset>
                 <div class="field-group">
                     <label for="activity-verification-job">Trigger - Activity Verification Job Manually</label>
-                    <input type="submit" value="Activity Verification" id="applyActivityVerificationInterval" class="aui-button aui-button-primary">
+                    <input type="submit" value="Activity Verification" id="applyActivityVerificationInterval"
+                           class="aui-button aui-button-primary">
                 </div>
                 <div class="field-group">
                     <label for="activity-notification-job">Trigger - Activity Notification Job Manually</label>
-                    <input type="submit" value="Activity Notification" id="applyActivityNotificationInterval" class="aui-button aui-button-primary">
+                    <input type="submit" value="Activity Notification" id="applyActivityNotificationInterval"
+                           class="aui-button aui-button-primary">
                 </div>
                 <div class="field-group">
                     <label for="out-of-time-verification-job">Trigger - Out Of Time Notification Job Manually</label>
-                    <input type="submit" value="Out Of Time" id="applyOutOfTimeInterval" class="aui-button aui-button-primary">
+                    <input type="submit" value="Out Of Time" id="applyOutOfTimeInterval"
+                           class="aui-button aui-button-primary">
                 </div>
             </fieldset>
         </form>

@@ -62,8 +62,6 @@ public abstract class HelperServlet extends HttpServlet {
 
     private void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        //PermissionCondition permissionCondition = new PermissionCondition(null, configurationService, userManager, groupManager);
-
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userManager.getRemoteUser(request).getUsername());
         ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser(request).getUsername());
         String username = userManager.getUserProfile(userKey).getUsername();
@@ -75,12 +73,6 @@ public abstract class HelperServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-        /*
-        else if (!permissionCondition.isApproved(username)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-        */
         if (!webSudoManager.canExecuteRequest(request)) {
             webSudoManager.enforceWebSudoProtection(request, response);
             return;

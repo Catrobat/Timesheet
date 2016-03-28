@@ -26,33 +26,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class JsonTimesheetEntries {
 
-	@XmlElement
-	private JsonTimesheetEntry[] entries;
-	
-  @XmlElement
-	private String[] errorMessages;
-	
-  public JsonTimesheetEntries() {
-  }
+    @XmlElement
+    private JsonTimesheetEntry[] entries;
 
-	public JsonTimesheetEntries(JsonTimesheetEntry[] entries, String[] errorMessages) {
-		this.entries = entries;
-		this.errorMessages = errorMessages;
-	}
+    @XmlElement
+    private String[] errorMessages;
 
-	public JsonTimesheetEntry[] getEntries() {
-		return entries;
-	}
+    public JsonTimesheetEntries() {
+    }
 
-	public void setEntries(JsonTimesheetEntry[] entries) {
-		this.entries = entries;
-	}
-	
-	public String[] getErrorMessages() {
-		return errorMessages;
-	}
+    public JsonTimesheetEntries(JsonTimesheetEntry[] entries, String[] errorMessages) {
+        this.entries = entries;
+        this.errorMessages = errorMessages;
+    }
 
-	public void setErrorMessages(String[] errorMessages) {
-		this.errorMessages = errorMessages;
-	}
+    public JsonTimesheetEntry[] getEntries() {
+        return entries;
+    }
+
+    public void setEntries(JsonTimesheetEntry[] entries) {
+        this.entries = entries;
+    }
+
+    public String[] getErrorMessages() {
+        return errorMessages;
+    }
+
+    public void setErrorMessages(String[] errorMessages) {
+        this.errorMessages = errorMessages;
+    }
 }

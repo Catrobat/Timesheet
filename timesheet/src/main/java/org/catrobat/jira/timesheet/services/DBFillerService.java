@@ -20,9 +20,8 @@ import com.atlassian.activeobjects.tx.Transactional;
 
 @Transactional
 public interface DBFillerService {
-  void cleanDB();
 
-  void insertDefaultData();
+    void cleanDB();
 
-  void printDBStatus();
+    void printDBStatus();
 }

@@ -16,11 +16,11 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
+import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.jira.security.groups.GroupManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 
 import javax.servlet.ServletException;
@@ -30,17 +30,17 @@ import java.io.IOException;
 
 public class UserInformationServlet extends HelperServlet {
 
-  private final TemplateRenderer renderer;
+    private final TemplateRenderer renderer;
 
-  public UserInformationServlet(UserManager userManager, LoginUriProvider loginUriProvider, TemplateRenderer renderer,
-                                WebSudoManager webSudoManager, GroupManager groupManager, ConfigService configurationService) {
-    super(userManager, loginUriProvider, webSudoManager, groupManager, configurationService);
-    this.renderer = renderer;
-  }
+    public UserInformationServlet(UserManager userManager, LoginUriProvider loginUriProvider, TemplateRenderer renderer,
+                                  WebSudoManager webSudoManager, GroupManager groupManager, ConfigService configurationService) {
+        super(userManager, loginUriProvider, webSudoManager, groupManager, configurationService);
+        this.renderer = renderer;
+    }
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    super.doGet(request, response);
-    renderer.render("user_information.vm", response.getWriter());
-  }
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        super.doGet(request, response);
+        renderer.render("user_information.vm", response.getWriter());
+    }
 }

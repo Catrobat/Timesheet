@@ -18,8 +18,8 @@ package org.catrobat.jira.timesheet.activeobjects.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import net.java.ao.Query;
-import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.services.CategoryService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,6 +53,7 @@ public class ConfigServiceImpl implements ConfigService {
         config.setMailBodyEntry(mailBodyEntry);
 
         config.save();
+
         return config;
     }
 
@@ -89,25 +90,9 @@ public class ConfigServiceImpl implements ConfigService {
         fillTeam(team, TeamToGroup.Role.DEVELOPER, developerGroups);
 
         fillCategory(team, teamCategoryNames);
-
         team.save();
 
         return team;
-    }
-
-    private void fillCategoryIDs(Team team, int[] categoryList) {
-        if (categoryList == null) {
-            return;
-        }
-
-        for (int categoryID : categoryList) {
-            Category[] category = ao.find(Category.class, "ID = ?", categoryID);
-
-            CategoryToTeam mapper = ao.create(CategoryToTeam.class);
-            mapper.setTeam(team);
-            mapper.setCategory(category[0]);
-            mapper.save();
-        }
     }
 
     private void fillCategory(Team team, List<String> categoryList) {
@@ -150,7 +135,7 @@ public class ConfigServiceImpl implements ConfigService {
             category.setName(categoryName);
             category.save();
 
-            //category to team for one category
+            //categoryToTeam for one category
             CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"CATEGORY_ID\" = ?", category.getID()));
 
             //update relation

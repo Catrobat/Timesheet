@@ -44,11 +44,6 @@ public class TimesheetEntryImpl {
         entry.setDurationMinutes(getDuration());
     }
 
-    public void setDurationMinutes(int duration) {
-        //log.warn("You should not invoke setDurationMinutes(), because its a stub "
-        //        + "that prevents inconsistency");
-    }
-
     private int getDuration() {
 
         Date beginDate = entry.getBeginDate();
@@ -64,5 +59,4 @@ public class TimesheetEntryImpl {
 
         return durationMinutes;
     }
-
 }

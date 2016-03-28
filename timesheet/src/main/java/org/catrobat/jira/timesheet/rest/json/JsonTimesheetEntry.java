@@ -26,157 +26,157 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class JsonTimesheetEntry {
 
-  @XmlElement
-  private int entryID;
+    @XmlElement
+    private int entryID;
 
-  @XmlElement
-  private Date beginDate;
+    @XmlElement
+    private Date beginDate;
 
-  @XmlElement
-  private Date endDate;
+    @XmlElement
+    private Date endDate;
 
-  @XmlElement
-  private int pauseMinutes;
+    @XmlElement
+    private int pauseMinutes;
 
-  @XmlElement
-  private String description;
+    @XmlElement
+    private String description;
 
-  @XmlElement
-  private int teamID;
+    @XmlElement
+    private int teamID;
 
-  @XmlElement
-  private int categoryID;
+    @XmlElement
+    private int categoryID;
 
-  @XmlElement
-  private boolean isGoogleDocImport;
+    @XmlElement
+    private boolean isGoogleDocImport;
 
-  public JsonTimesheetEntry() {
-  }
+    public JsonTimesheetEntry() {
+    }
 
-  public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, int pauseMinutes, String description, int teamID,
-                            int categoryID, boolean isGoogleDocImport) {
-    this.entryID = entryID;
-    this.beginDate = beginDate;
-    this.endDate = endDate;
-    this.pauseMinutes = pauseMinutes;
-    this.description = description;
-    this.teamID = teamID;
-    this.categoryID = categoryID;
-    this.isGoogleDocImport = isGoogleDocImport;
-  }
+    public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, int pauseMinutes, String description, int teamID,
+                              int categoryID, boolean isGoogleDocImport) {
+        this.entryID = entryID;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.pauseMinutes = pauseMinutes;
+        this.description = description;
+        this.teamID = teamID;
+        this.categoryID = categoryID;
+        this.isGoogleDocImport = isGoogleDocImport;
+    }
 
-  public int getEntryID() {
-    return entryID;
-  }
+    public int getEntryID() {
+        return entryID;
+    }
 
-  public void setEntryID(int entryID) {
-    this.entryID = entryID;
-  }
+    public void setEntryID(int entryID) {
+        this.entryID = entryID;
+    }
 
-  public Date getBeginDate() {
-    return beginDate;
-  }
+    public Date getBeginDate() {
+        return beginDate;
+    }
 
-  public void setBeginDate(Date beginDate) {
-    this.beginDate = beginDate;
-  }
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
 
-  public Date getEndDate() {
-    return endDate;
-  }
+    public Date getEndDate() {
+        return endDate;
+    }
 
-  public void setEndDate(Date endDate) {
-    this.endDate = endDate;
-  }
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-  public int getPauseMinutes() {
-    return pauseMinutes;
-  }
+    public int getPauseMinutes() {
+        return pauseMinutes;
+    }
 
-  public void setPauseMinutes(int pauseMinutes) {
-    this.pauseMinutes = pauseMinutes;
-  }
+    public void setPauseMinutes(int pauseMinutes) {
+        this.pauseMinutes = pauseMinutes;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public int getTeamID() {
-    return teamID;
-  }
+    public int getTeamID() {
+        return teamID;
+    }
 
-  public void setTeamID(int teamID) {
-    this.teamID = teamID;
-  }
+    public void setTeamID(int teamID) {
+        this.teamID = teamID;
+    }
 
-  public int getCategoryID() {
-    return categoryID;
-  }
+    public int getCategoryID() {
+        return categoryID;
+    }
 
-  public void setCategoryID(int categoryID) {
-    this.categoryID = categoryID;
-  }
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
 
-  public boolean getIsGoogleDocImport() {
-    return isGoogleDocImport;
-  }
+    public boolean getIsGoogleDocImport() {
+        return isGoogleDocImport;
+    }
 
-  public void setIsGoogleDocImport(boolean isGoogleDocImport) {
-    this.isGoogleDocImport = isGoogleDocImport;
-  }
+    public void setIsGoogleDocImport(boolean isGoogleDocImport) {
+        this.isGoogleDocImport = isGoogleDocImport;
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    JsonTimesheetEntry that = (JsonTimesheetEntry) o;
+        JsonTimesheetEntry that = (JsonTimesheetEntry) o;
 
-    if (entryID != that.entryID) return false;
-    if (pauseMinutes != that.pauseMinutes) return false;
-    if (teamID != that.teamID) return false;
-    if (categoryID != that.categoryID) return false;
-    if (isGoogleDocImport != that.isGoogleDocImport) return false;
-    if (!beginDate.equals(that.beginDate)) return false;
-    if (!endDate.equals(that.endDate)) return false;
+        if (entryID != that.entryID) return false;
+        if (pauseMinutes != that.pauseMinutes) return false;
+        if (teamID != that.teamID) return false;
+        if (categoryID != that.categoryID) return false;
+        if (isGoogleDocImport != that.isGoogleDocImport) return false;
+        if (!beginDate.equals(that.beginDate)) return false;
+        if (!endDate.equals(that.endDate)) return false;
 
-    return description.equals(that.description);
-  }
+        return description.equals(that.description);
+    }
 
-  @Override
-  public int hashCode() {
-    int result = entryID;
-    result = 31 * result + beginDate.hashCode();
-    result = 31 * result + endDate.hashCode();
-    result = 31 * result + pauseMinutes;
-    result = 31 * result + description.hashCode();
-    result = 31 * result + teamID;
-    result = 31 * result + categoryID;
+    @Override
+    public int hashCode() {
+        int result = entryID;
+        result = 31 * result + beginDate.hashCode();
+        result = 31 * result + endDate.hashCode();
+        result = 31 * result + pauseMinutes;
+        result = 31 * result + description.hashCode();
+        result = 31 * result + teamID;
+        result = 31 * result + categoryID;
 
-    return result;
-  }
+        return result;
+    }
 
-  public String toReadableString() {
-    return beginDate + " - " + endDate + ": " + description +
-            "; TeamID: " + teamID + "; CategoryID: " + categoryID
-            + "; isGoogleDocImport: " + isGoogleDocImport;
-  }
+    public String toReadableString() {
+        return beginDate + " - " + endDate + ": " + description +
+                "; TeamID: " + teamID + "; CategoryID: " + categoryID
+                + "; isGoogleDocImport: " + isGoogleDocImport;
+    }
 
-  @Override
-  public String toString() {
-    return "JsonTimesheetEntry{" +
-            "entryID=" + entryID +
-            ", beginDate=" + beginDate +
-            ", endDate=" + endDate +
-            ", pauseMinutes=" + pauseMinutes +
-            ", description='" + description + '\'' +
-            ", teamID=" + teamID +
-            ", categoryID=" + categoryID +
-            ", isGoogleDocImprt=" + isGoogleDocImport +
-            '}';
-  }
+    @Override
+    public String toString() {
+        return "JsonTimesheetEntry{" +
+                "entryID=" + entryID +
+                ", beginDate=" + beginDate +
+                ", endDate=" + endDate +
+                ", pauseMinutes=" + pauseMinutes +
+                ", description='" + description + '\'' +
+                ", teamID=" + teamID +
+                ", categoryID=" + categoryID +
+                ", isGoogleDocImprt=" + isGoogleDocImport +
+                '}';
+    }
 }

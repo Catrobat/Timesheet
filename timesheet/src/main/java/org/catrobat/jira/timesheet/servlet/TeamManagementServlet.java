@@ -18,7 +18,6 @@ package org.catrobat.jira.timesheet.servlet;
 
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
@@ -39,16 +38,13 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TeamManagementServlet extends HttpServlet {
-    private final ComponentAccessor componentAccessor;
-    private final GroupManager groupManager;
     private final UserManager userManager;
     private final LoginUriProvider loginUriProvider;
     private final TemplateRenderer templateRenderer;
     private final TeamService teamService;
 
-    public TeamManagementServlet(GroupManager groupManager, UserManager userManager, LoginUriProvider loginUriProvider, TemplateRenderer templateRenderer, TeamService teamService, ComponentAccessor componentAccessor) {
-        this.componentAccessor = componentAccessor;
-        this.groupManager = groupManager;
+    public TeamManagementServlet(UserManager userManager, LoginUriProvider loginUriProvider,
+                                 TemplateRenderer templateRenderer, TeamService teamService) {
         this.userManager = userManager;
         this.loginUriProvider = loginUriProvider;
         this.templateRenderer = templateRenderer;
@@ -108,5 +104,4 @@ public class TeamManagementServlet extends HttpServlet {
         }
         return URI.create(builder.toString());
     }
-
 }

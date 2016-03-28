@@ -26,7 +26,9 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
-import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.services.CategoryService;
+import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TeamService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -45,19 +47,15 @@ public class ConfigResourceRest {
     private final TeamService teamService;
     private final CategoryService categoryService;
     private final PermissionService permissionService;
-    private final TimesheetEntryService entryService;
-    private final TimesheetService sheetService;
 
     public ConfigResourceRest(final UserManager userManager, final ConfigService configService,
                               final TeamService teamService, final CategoryService categoryService,
-                              final PermissionService permissionService, TimesheetEntryService entryService, TimesheetService sheetService) {
+                              final PermissionService permissionService) {
         this.configService = configService;
         this.teamService = teamService;
         this.userManager = userManager;
         this.categoryService = categoryService;
         this.permissionService = permissionService;
-        this.entryService = entryService;
-        this.sheetService = sheetService;
     }
 
     @GET
@@ -76,9 +74,11 @@ public class ConfigResourceRest {
     @GET
     @Path("/getTeams")
     public Response getTeams(@Context HttpServletRequest request) throws ServiceException {
+        if (permissionService.checkIfUserExists(request) == null) {
+            Response.serverError().entity("Access denied.");
+        }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
-        UserProfile user = permissionService.checkIfUserExists(request);
 
         for (Team team : teamService.all()) {
             Category[] categories = team.getCategories();
@@ -90,21 +90,6 @@ public class ConfigResourceRest {
         }
 
         return Response.ok(teams).build();
-    }
-
-    @GET
-    @Path("/getConfig")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getConfig(@Context HttpServletRequest request) {
-
-    /*ToDo: Refactor CheckPermission
-    Response unauthorized = checkPermission(request);
-    if (unauthorized != null) {
-      return unauthorized;
-    }
-    */
-
-        return Response.ok(new JsonConfig(configService)).build();
     }
 
     @GET
@@ -122,6 +107,19 @@ public class ConfigResourceRest {
         }
 
         return Response.ok(teamList).build();
+    }
+
+    @GET
+    @Path("/getConfig")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getConfig(@Context HttpServletRequest request) {
+
+        Response unauthorized = permissionService.checkPermission(request);
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        return Response.ok(new JsonConfig(configService)).build();
     }
 
     @PUT
@@ -171,6 +169,7 @@ public class ConfigResourceRest {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addTeamPermission(final String teamName, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkPermission(request);
+
         if (unauthorized != null) {
             return unauthorized;
         } else if (teamName.isEmpty()) {
@@ -179,14 +178,16 @@ public class ConfigResourceRest {
 
         Team[] teams = configService.getConfiguration().getTeams();
         for (Team team : teams) {
-            if (team.getTeamName().compareTo(teamName) == 0)
+            if (team.getTeamName().compareTo(teamName) == 0) {
                 return Response.serverError().entity("Team name already exists.").build();
+            }
         }
 
         boolean successful = configService.addTeam(teamName, null, null, null) != null;
 
-        if (successful)
+        if (successful) {
             return Response.noContent().build();
+        }
 
         return Response.serverError().build();
     }
@@ -196,11 +197,10 @@ public class ConfigResourceRest {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editTeamPermission(final String[] teams, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkPermission(request);
+
         if (unauthorized != null) {
             return unauthorized;
-        }
-
-        if (teams == null || teams.length != 2) {
+        } else if (teams == null || teams.length != 2) {
             return Response.serverError().build();
         } else if (teams[1].trim().isEmpty()) {
             return Response.serverError().entity("Team name must not be empty.").build();
@@ -210,8 +210,9 @@ public class ConfigResourceRest {
 
         boolean successful = configService.editTeamName(teams[0], teams[1]) != null;
 
-        if (successful)
+        if (successful) {
             return Response.ok().build();
+        }
 
         return Response.serverError().build();
     }
@@ -221,6 +222,7 @@ public class ConfigResourceRest {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeTeamPermission(final String teamName, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkPermission(request);
+
         if (unauthorized != null) {
             return unauthorized;
         } else if (teamName.isEmpty()) {
@@ -229,8 +231,9 @@ public class ConfigResourceRest {
 
         boolean successful = configService.removeTeam(teamName) != null;
 
-        if (successful)
+        if (successful) {
             return Response.noContent().build();
+        }
 
         return Response.serverError().build();
     }
@@ -240,6 +243,7 @@ public class ConfigResourceRest {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addCategory(final String categoryName, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkPermission(request);
+
         if (unauthorized != null) {
             return unauthorized;
         } else if (categoryName.isEmpty()) {
@@ -248,8 +252,9 @@ public class ConfigResourceRest {
 
         boolean successful = categoryService.add(categoryName) != null;
 
-        if (successful)
+        if (successful) {
             return Response.noContent().build();
+        }
 
         return Response.serverError().build();
     }
@@ -259,11 +264,10 @@ public class ConfigResourceRest {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editCategoryName(final String[] categories, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkPermission(request);
+
         if (unauthorized != null) {
             return unauthorized;
-        }
-
-        if (categories == null || categories.length != 2) {
+        } else if (categories == null || categories.length != 2) {
             return Response.serverError().build();
         } else if (categories[1].trim().isEmpty()) {
             return Response.serverError().entity("Category name must not be empty.").build();
@@ -279,8 +283,9 @@ public class ConfigResourceRest {
 
         boolean successful = configService.editCategoryName(categories[0], categories[1]) != null;
 
-        if (successful)
+        if (successful) {
             return Response.noContent().build();
+        }
 
         return Response.serverError().build();
     }
@@ -296,8 +301,9 @@ public class ConfigResourceRest {
 
         boolean successful = categoryService.removeCategory(modifyCategory);
 
-        if (successful)
+        if (successful) {
             return Response.noContent().build();
+        }
 
         return Response.serverError().build();
     }

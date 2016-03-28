@@ -54,7 +54,6 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         entry.save();
 
         return entry;
-
     }
 
     @Override

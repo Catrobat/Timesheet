@@ -26,94 +26,94 @@ import java.util.List;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class JsonUser {
-  @XmlElement
-  private String userName;
-  @XmlElement
-  private String firstName;
-  @XmlElement
-  private String lastName;
-  @XmlElement
-  private String email;
-  @XmlElement
-  private String displayName;
-  @XmlElement
-  private List<String> coordinatorList;
-  @XmlElement
-  private List<String> seniorList;
-  @XmlElement
-  private List<String> developerList;
-  @XmlElement
-  private boolean active;
+    @XmlElement
+    private String userName;
+    @XmlElement
+    private String firstName;
+    @XmlElement
+    private String lastName;
+    @XmlElement
+    private String email;
+    @XmlElement
+    private String displayName;
+    @XmlElement
+    private List<String> coordinatorList;
+    @XmlElement
+    private List<String> seniorList;
+    @XmlElement
+    private List<String> developerList;
+    @XmlElement
+    private boolean active;
 
-  public String getUserName() {
-    return userName;
-  }
+    public String getUserName() {
+        return userName;
+    }
 
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-  public String getFirstName() {
-    return firstName;
-  }
+    public String getFirstName() {
+        return firstName;
+    }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-  public String getLastName() {
-    return lastName;
-  }
+    public String getLastName() {
+        return lastName;
+    }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-  public String getEmail() {
-    return email;
-  }
+    public String getEmail() {
+        return email;
+    }
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-  public List<String> getCoordinatorList() {
-    return coordinatorList;
-  }
+    public List<String> getCoordinatorList() {
+        return coordinatorList;
+    }
 
-  public void setCoordinatorList(List<String> coordinatorList) {
-    this.coordinatorList = coordinatorList;
-  }
+    public void setCoordinatorList(List<String> coordinatorList) {
+        this.coordinatorList = coordinatorList;
+    }
 
-  public List<String> getSeniorList() {
-    return seniorList;
-  }
+    public List<String> getSeniorList() {
+        return seniorList;
+    }
 
-  public void setSeniorList(List<String> seniorList) {
-    this.seniorList = seniorList;
-  }
+    public void setSeniorList(List<String> seniorList) {
+        this.seniorList = seniorList;
+    }
 
-  public List<String> getDeveloperList() {
-    return developerList;
-  }
+    public List<String> getDeveloperList() {
+        return developerList;
+    }
 
-  public void setDeveloperList(List<String> developerList) {
-    this.developerList = developerList;
-  }
+    public void setDeveloperList(List<String> developerList) {
+        this.developerList = developerList;
+    }
 
-  public boolean isActive() {
-    return active;
-  }
+    public boolean isActive() {
+        return active;
+    }
 
-  public void setActive(boolean active) {
-    this.active = active;
-  }
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-  public String getDisplayName() {
-    return displayName;
-  }
+    public String getDisplayName() {
+        return displayName;
+    }
 
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 }

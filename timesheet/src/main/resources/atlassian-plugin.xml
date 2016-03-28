@@ -179,14 +179,16 @@
     </web-item>
 
     <!-- administration -->
-    <web-item key="administration_view" name="Link to Administration View" section="advanced_menu_section/advanced_section"
+    <web-item key="administration_view" name="Link to Administration View"
+              section="advanced_menu_section/advanced_section"
               weight="1">
         <description>Link to Administration menu</description>
         <label>TimePunch - Configuration</label>
         <link linkId="administration_view_link">/plugins/servlet/timesheet/administration</link>
     </web-item>
 
-    <web-item key="user_information" name="Link to User Information View" section="advanced_menu_section/advanced_section"
+    <web-item key="user_information" name="Link to User Information View"
+              section="advanced_menu_section/advanced_section"
               weight="2">
         <label>TimePunch - User Information</label>
         <link linkId="user_information_view_link">/plugins/servlet/timesheet/user/information</link>

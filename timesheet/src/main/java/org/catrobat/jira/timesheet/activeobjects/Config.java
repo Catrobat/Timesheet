@@ -24,56 +24,56 @@ import net.java.ao.schema.StringLength;
 @Preload
 public interface Config extends Entity {
 
-  String getMailFromName();
+    String getMailFromName();
 
-  void setMailFromName(String fromName);
+    void setMailFromName(String fromName);
 
-  String getMailFrom();
+    String getMailFrom();
 
-  void setMailFrom(String from);
+    void setMailFrom(String from);
 
-  @StringLength(StringLength.UNLIMITED)
-  String getMailSubjectTime();
+    @StringLength(StringLength.UNLIMITED)
+    String getMailSubjectTime();
 
-  @StringLength(StringLength.UNLIMITED)
-  void setMailSubjectTime(String subject);
+    @StringLength(StringLength.UNLIMITED)
+    void setMailSubjectTime(String subject);
 
-  @StringLength(StringLength.UNLIMITED)
-  String getMailSubjectInactive();
+    @StringLength(StringLength.UNLIMITED)
+    String getMailSubjectInactive();
 
-  @StringLength(StringLength.UNLIMITED)
-  void setMailSubjectInactive(String subject);
+    @StringLength(StringLength.UNLIMITED)
+    void setMailSubjectInactive(String subject);
 
-  @StringLength(StringLength.UNLIMITED)
-  String getMailSubjectEntry();
+    @StringLength(StringLength.UNLIMITED)
+    String getMailSubjectEntry();
 
-  @StringLength(StringLength.UNLIMITED)
-  void setMailSubjectEntry(String subject);
+    @StringLength(StringLength.UNLIMITED)
+    void setMailSubjectEntry(String subject);
 
-  @StringLength(StringLength.UNLIMITED)
-  String getMailBodyTime();
+    @StringLength(StringLength.UNLIMITED)
+    String getMailBodyTime();
 
-  @StringLength(StringLength.UNLIMITED)
-  void setMailBodyTime(String body);
+    @StringLength(StringLength.UNLIMITED)
+    void setMailBodyTime(String body);
 
-  @StringLength(StringLength.UNLIMITED)
-  String getMailBodyInactive();
+    @StringLength(StringLength.UNLIMITED)
+    String getMailBodyInactive();
 
-  @StringLength(StringLength.UNLIMITED)
-  void setMailBodyInactive(String body);
+    @StringLength(StringLength.UNLIMITED)
+    void setMailBodyInactive(String body);
 
-  @StringLength(StringLength.UNLIMITED)
-  String getMailBodyEntry();
+    @StringLength(StringLength.UNLIMITED)
+    String getMailBodyEntry();
 
-  @StringLength(StringLength.UNLIMITED)
-  void setMailBodyEntry(String body);
+    @StringLength(StringLength.UNLIMITED)
+    void setMailBodyEntry(String body);
 
-  @OneToMany(reverse = "getConfiguration")
-  ApprovedGroup[] getApprovedGroups();
+    @OneToMany(reverse = "getConfiguration")
+    ApprovedGroup[] getApprovedGroups();
 
-  @OneToMany(reverse = "getConfiguration")
-  ApprovedUser[] getApprovedUsers();
+    @OneToMany(reverse = "getConfiguration")
+    ApprovedUser[] getApprovedUsers();
 
-  @OneToMany(reverse = "getConfiguration")
-  Team[] getTeams();
+    @OneToMany(reverse = "getConfiguration")
+    Team[] getTeams();
 }

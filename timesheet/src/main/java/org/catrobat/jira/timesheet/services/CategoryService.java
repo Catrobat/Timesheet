@@ -25,13 +25,14 @@ import java.util.List;
 
 @Transactional
 public interface CategoryService {
-  @Nullable
-  Category getCategoryByID(int id);
 
-  public List<Category> all();
+    @Nullable
+    Category getCategoryByID(int id);
 
-  Category add(String name);
+    List<Category> all();
 
-  boolean removeCategory(String name) throws ServiceException;
+    Category add(String name);
+
+    boolean removeCategory(String name) throws ServiceException;
 
 }

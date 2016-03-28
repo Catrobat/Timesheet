@@ -22,11 +22,11 @@ import net.java.ao.Preload;
 @Preload
 public interface ApprovedGroup extends Entity {
 
-  Config getConfiguration();
+    Config getConfiguration();
 
-  void setConfiguration(Config configuration);
+    void setConfiguration(Config configuration);
 
-  String getGroupName();
+    String getGroupName();
 
-  void setGroupName(String groupName);
+    void setGroupName(String groupName);
 }

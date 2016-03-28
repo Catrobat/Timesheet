@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Stephan Fellhofer
+ * Copyright 2016 Adrian Schnedlitz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,21 +98,21 @@ public abstract class CsvTimesheetExporter {
         sb.append("Teams" + NEW_LINE);
         for (Team team : config.getTeams()) {
             sb.append(NEW_LINE);
-            sb.append("Team Name" + DELIMITER );
+            sb.append("Team Name" + DELIMITER);
             sb.append(unescape(team.getTeamName())).append(DELIMITER + NEW_LINE);
             //Append Coordinoators
-            sb.append("Assigned Coordinators" + DELIMITER );
-            for(String userName : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
+            sb.append("Assigned Coordinators" + DELIMITER);
+            for (String userName : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
                 sb.append(unescape(userName)).append(DELIMITER);
             sb.append(NEW_LINE);
             //Append Users
-            sb.append("Assigned Users" + DELIMITER );
-            for(String userName : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER))
+            sb.append("Assigned Users" + DELIMITER);
+            for (String userName : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER))
                 sb.append(unescape(userName)).append(DELIMITER);
             sb.append(NEW_LINE);
             //Append Categories
-            sb.append("Assigned Categories" + DELIMITER );
-            for(String categoryName : configService.getCategoryNamesForTeam(team.getTeamName()))
+            sb.append("Assigned Categories" + DELIMITER);
+            for (String categoryName : configService.getCategoryNamesForTeam(team.getTeamName()))
                 sb.append(unescape(categoryName)).append(DELIMITER);
             sb.append(NEW_LINE);
         }

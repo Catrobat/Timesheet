@@ -21,16 +21,25 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
+import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TeamService;
+import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.joda.time.DateTime;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Path("/scheduling")
 @Produces({MediaType.APPLICATION_JSON})
@@ -40,14 +49,16 @@ public class SchedulingRest {
     private final TimesheetEntryService entryService;
     private final TimesheetService sheetService;
     private final TeamService teamService;
+    private final UserManager userManager;
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
-                          final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService) {
+                          final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.entryService = entryService;
         this.sheetService = sheetService;
         this.teamService = teamService;
+        this.userManager = userManager;
     }
 
     @GET
@@ -65,27 +76,26 @@ public class SchedulingRest {
 
         for (User user : userList) {
             for (Timesheet timesheet : timesheetList) {
-                if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
-                        getUserByName(user.getName()).getKey())) {
+                if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey())) {
                     if (!timesheet.getIsActive()) {
                         //check if user made an inactive entry and entry date is equal to now
                         if (entryService.getEntriesBySheet(timesheet)[0].getCategory().getName().equals("Inactive") &&
                                 entryService.getEntriesBySheet(timesheet)[0].getBeginDate().equals(new DateTime())) {
                             //inform coordinators that he should be active by now
-                            for(String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+                            for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                                 sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
                                         "User: " + user.getName() + " should be 'active' since today, but is not."));
                             }
                         }
 
                         //Email to users coodinators
-                        for(String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+                        for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                             sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
                                     config.getMailBodyInactive()));
                         }
 
                         //Email to admins
-                        for(User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
+                        for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
                             sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
                                     , config.getMailBodyInactive()));
                         }
@@ -93,7 +103,7 @@ public class SchedulingRest {
                         if (entryService.getEntriesBySheet(timesheet).length > 0)
                             if (dateIsOlderThanTwoMonths(entryService.getEntriesBySheet(timesheet)[0].getBeginDate())) {
                                 //Email to admins
-                                for(User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
+                                for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
                                     sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
                                             , config.getMailBodyInactive()));
                                 }
@@ -108,8 +118,8 @@ public class SchedulingRest {
 
     private List<String> getCoordinatorsMailAddress(User user) {
         List<String> coordinatorMailAddressList = new LinkedList<String>();
-        for(Team team : teamService.getTeamsOfUser(user.getName())) {
-            for(String coordinator : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
+        for (Team team : teamService.getTeamsOfUser(user.getName())) {
+            for (String coordinator : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
                 coordinatorMailAddressList.add(ComponentAccessor.getUserManager().getUserByName(coordinator).getEmailAddress());
         }
 
@@ -123,7 +133,7 @@ public class SchedulingRest {
         return email;
     }
 
-    private void sendMail (Email email) {
+    private void sendMail(Email email) {
         SingleMailQueueItem item = new SingleMailQueueItem(email);
         ComponentAccessor.getMailQueue().addItem(item);
     }
@@ -177,8 +187,8 @@ public class SchedulingRest {
 
         for (User user : userList) {
             for (Timesheet timesheet : timesheetList) {
-                if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
-                        getUserByName(user.getName()).getKey().toString())) {
+                if (timesheet.getUserKey().equals(
+                        ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey())) {
                     if ((timesheet.getTargetHours() - timesheet.getTargetHoursCompleted()) <= 80) {
                         Email email = new Email(user.getEmailAddress());
                         email.setSubject(config.getMailSubjectTime());

@@ -20,7 +20,6 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
-import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.*;
@@ -64,13 +63,13 @@ public class PermissionServiceImpl implements PermissionService {
             return false;
         }
 
-
         String userKey = ComponentAccessor.
                 getUserKeyService().getKeyForUsername(userProfile.getUsername());
         Collection<String> userGroups = ComponentAccessor.getGroupManager().getGroupNamesForUser(
                 ComponentAccessor.getUserManager().getUserByKey(userKey));
-        if (userGroups.contains(groupName))
+        if (userGroups.contains(groupName)) {
             return true;
+        }
 
         return false;
     }
@@ -86,29 +85,35 @@ public class PermissionServiceImpl implements PermissionService {
 
     public boolean checkIfUserExists(String userName) {
         UserProfile userProfile = userManager.getUserProfile(userName);
+
         if (userProfile == null) {
             return false;
         }
+
         return true;
     }
 
     public Response checkPermission(HttpServletRequest request) {
-        String userKey = ComponentAccessor.
-                getUserKeyService().getKeyForUsername(userManager.getRemoteUser(request).getUsername());
+        UserProfile userProfile = userManager.getRemoteUser(request);
+
+        if (userProfile == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userProfile.getUsername());
 
         if (userKey == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-        /*
-        else if (!userManager.isSystemAdmin(userKey)) {
+        } else if (!(checkIfUserIsGroupMember(request, "jira-administrators") || checkIfUserIsGroupMember(request, "Timesheet"))) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        */
+
         return null;
     }
 
     public boolean isApproved(UserProfile applicationUser) {
         Config config = configService.getConfiguration();
+
         if (config.getApprovedGroups().length == 0 && config.getApprovedUsers().length == 0) {
             return false;
         }
@@ -120,8 +125,9 @@ public class PermissionServiceImpl implements PermissionService {
 
         Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(applicationUser.getUsername());
         for (String groupName : groupNameCollection) {
-            if (configService.isGroupApproved(groupName))
+            if (configService.isGroupApproved(groupName)) {
                 return true;
+            }
         }
 
         return false;
@@ -131,45 +137,27 @@ public class PermissionServiceImpl implements PermissionService {
         return isApproved(userManager.getUserProfile(userName));
     }
 
-    public boolean userIsAdmin(String userName) {
-        UserUtil userUtil = ComponentAccessor.getUserUtil();
-        Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
-        if (systemAdmins.contains(ComponentAccessor.getUserManager().getUserByName(userName)))
-            return true;
-        return false;
-    }
-
     private boolean userOwnsSheet(UserProfile user, Timesheet sheet) {
         if (sheet == null || user == null) {
             return false;
         }
 
         String sheetKey = sheet.getUserKey();
-        String userKey = ComponentAccessor.
-                getUserKeyService().getKeyForUsername(user.getUsername());
+        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername());
+
         return sheetKey.equals(userKey);
     }
 
     private boolean userIsAdmin(UserProfile userProfile) {
         Collection<User> approvedUsers = ComponentAccessor.getUserUtil().getJiraSystemAdministrators();
-        for (User user : approvedUsers)
-            if (user.getName().equals(userProfile.getUsername()))
+
+        for (User user : approvedUsers) {
+            if (user.getName().equals(userProfile.getUsername())) {
                 return true;
+            }
+        }
 
         return false;
-        //return userManager.isAdmin(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()));
-    }
-
-    private boolean dateIsOlderThanAMonth(Date date) {
-        DateTime aMonthAgo = new DateTime().minusDays(30);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(aMonthAgo) < 0);
-    }
-
-    private boolean dateIsOlderThanFiveYears(Date date) {
-        DateTime fiveYearsAgo = new DateTime().minusYears(5);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(fiveYearsAgo) < 0);
     }
 
     private boolean userCoordinatesTeamsOfSheet(UserProfile user, Timesheet sheet) {
@@ -225,7 +213,21 @@ public class PermissionServiceImpl implements PermissionService {
                 }
             }
         } else if (!userIsAdmin(user)) {
-            throw new PermissionException("You are not Admin");
+            throw new PermissionException("You are not Admin.");
         }
+    }
+
+    private boolean dateIsOlderThanAMonth(Date date) {
+        DateTime aMonthAgo = new DateTime().minusDays(30);
+        DateTime datetime = new DateTime(date);
+
+        return (datetime.compareTo(aMonthAgo) < 0);
+    }
+
+    private boolean dateIsOlderThanFiveYears(Date date) {
+        DateTime fiveYearsAgo = new DateTime().minusYears(5);
+        DateTime datetime = new DateTime(date);
+
+        return (datetime.compareTo(fiveYearsAgo) < 0);
     }
 }

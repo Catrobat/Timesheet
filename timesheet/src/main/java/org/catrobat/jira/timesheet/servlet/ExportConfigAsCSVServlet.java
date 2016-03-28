@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Stephan Fellhofer
+ * Copyright 2016 Adrian Schnedlitz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.security.groups.GroupManager;
-import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.helper.CsvConfigExporter;
-import org.catrobat.jira.timesheet.helper.CsvTimesheetExporterSingle;
-import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

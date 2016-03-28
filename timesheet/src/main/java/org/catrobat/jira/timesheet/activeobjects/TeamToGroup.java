@@ -22,19 +22,19 @@ import net.java.ao.Preload;
 @Preload
 public interface TeamToGroup extends Entity {
 
-  Team getTeam();
+    Team getTeam();
 
-  void setTeam(Team team);
+    void setTeam(Team team);
 
-  Group getGroup();
+    Group getGroup();
 
-  void setGroup(Group group);
+    void setGroup(Group group);
 
-  Role getRole();
+    Role getRole();
 
-  void setRole(Role role);
+    void setRole(Role role);
 
-  public enum Role {
-    COORDINATOR, DEVELOPER
-  }
+    public enum Role {
+        COORDINATOR, DEVELOPER
+    }
 }

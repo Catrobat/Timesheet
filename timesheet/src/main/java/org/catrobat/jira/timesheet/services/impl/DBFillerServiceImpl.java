@@ -54,19 +54,6 @@ public class DBFillerServiceImpl implements DBFillerService {
     ao.deleteWithSQL(TimesheetEntry.class, "1=?", "1");
   }
 
-  @Override
-  public void insertDefaultData() {
-    /*
-    UserKey key = um.getRemoteUserKey();
-    if (key != null) {
-      String userKey = key.getStringValue();
-      Timesheet sheet = tss.add(userKey, 150, 0, "Confluence Timesheet");
-      System.out.println("user key was " + userKey);
-      System.out.println("created timesheet: " + sheet.getID());
-    }
-    */
-  }
-
 
   @Override
   public void printDBStatus() {
