@@ -7,9 +7,7 @@ AJS.toInit(function () {
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
     if (isAdmin) {
-        document.getElementById("tabs-line").style.display = "none";
-        document.getElementById("tabs-category").style.display = "none";
-        document.getElementById("tabs-team").style.display = "none";
+        hideVisualizationTabs();
         fetchUsers();
     } else {
         //init coordinator/administrator/approved user Seetings
@@ -22,6 +20,12 @@ AJS.toInit(function () {
         fetchTeamVisData();
     }
 });
+
+function hideVisualizationTabs() {
+    document.getElementById("tabs-line").style.display = "none";
+    document.getElementById("tabs-category").style.display = "none";
+    document.getElementById("tabs-team").style.display = "none";
+}
 
 function initUserSaveButton() {
     AJS.$("#timesheet-information").submit(function (e) {
@@ -48,10 +52,12 @@ function initSelectTimesheetButton() {
             var selectedUser = AJS.$("#user-select2-field").val().split(',');
             if (selectedUser[0] !== "")
                 getTimesheetOfUser(selectedUser);
+                hideVisualizationTabs();
         } else if (AJS.$(document.activeElement).val() === 'Display') {
             var selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
             if (selectedUser[0] !== "")
                 getTimesheetOfUser(selectedUser);
+                hideVisualizationTabs();
         } else if (AJS.$(document.activeElement).val() === 'Visualize') {
             var selectedTeam = AJS.$("#select-team-select2-field").val().split(',');
             if (selectedTeam[0] !== "")
@@ -524,7 +530,7 @@ function populateTable(timesheetDataReply) {
                 'TimePunch - Timesheet. The plugin provides tracking your time ' +
                 'data in a comfortable way and offers several visualization opperutnies ' +
                 'for you colleted data. It is furthermore possible to import existing content ' +
-                'into your time table by clicking on "Import from Google Docs" and following ' +
+                'into your time table by clicking on "Import from Google Docs" and follow ' +
                 'the steps.</p> <p> If you notice any uncommon plugin behaviour, or ' +
                 'need support feel free to contact a "Coordinator", or an "Administrator".</p>'
             });

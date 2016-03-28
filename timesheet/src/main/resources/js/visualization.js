@@ -204,8 +204,7 @@ function assignTeamVisData(timesheetDataReply) {
         if (oldPos != pos || i == availableEntries.length - 1) {
             data['year'].push(referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1));
             data['team'].push((totalHours + totalMinutes / 60));
-            if (!containsElement(data['label'], availableTeams[actualTeamID].teamName))
-                data['label'].push(availableTeams[actualTeamID].teamName);
+            data['label'].push(availableTeams[actualTeamID].teamName);
             totalHours = 0;
             totalMinutes = 0;
         }
