@@ -476,9 +476,8 @@ public class TimesheetRest {
             return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
 
-        if (!sheet.getIsEnabled()) {
+        if (!sheet.getIsEnabled())
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
-        }
 
         TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(),
                 entry.getEndDate(), category, entry.getDescription(),

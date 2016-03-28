@@ -68,6 +68,16 @@ public class SchedulingRest {
                 if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
                         getUserByName(user.getName()).getKey())) {
                     if (!timesheet.getIsActive()) {
+                        //check if user made an inactive entry and entry date is equal to now
+                        if (entryService.getEntriesBySheet(timesheet)[0].getCategory().getName().equals("Inactive") &&
+                                entryService.getEntriesBySheet(timesheet)[0].getBeginDate().equals(new DateTime())) {
+                            //inform coordinators that he should be active by now
+                            for(String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+                                sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
+                                        "User: " + user.getName() + " should be 'active' since today, but is not."));
+                            }
+                        }
+
                         //Email to users coodinators
                         for(String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                             sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
@@ -134,8 +144,11 @@ public class SchedulingRest {
                 if (dateIsOlderThanTwoWeeks(entries[0].getBeginDate())) {
                     timesheet.setIsActive(false);
                     timesheet.save();
+                } else if (entries[0].getCategory().getName().equals("Inactive")) {
+                    timesheet.setIsActive(false);
+                    timesheet.save();
                 } else {
-                    //latest entry is not older than 2 weeks
+                    //latest entry is not older than 2 weeks and user did not add inactive entry
                     timesheet.setIsActive(true);
                     timesheet.save();
                 }

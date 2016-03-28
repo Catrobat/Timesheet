@@ -154,13 +154,6 @@
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
             <version>2.12.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-api</artifactId>
-            <version>2.12.1</version>
         </dependency>
 
     </dependencies>

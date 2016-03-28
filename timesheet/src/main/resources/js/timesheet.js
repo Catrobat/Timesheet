@@ -515,19 +515,57 @@ function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
 
     if (!isAdmin) {
+
+        //Information at the first use
+        if (timesheetData.entries.length == 0)
+            AJS.messages.generic({
+                title: 'TimePunch - Timesheet Information.',
+                body: '<p> Congratulations you sucessfully created your own ' +
+                'TimePunch - Timesheet. The plugin provides tracking your time ' +
+                'data in a comfortable way and offers several visualization opperutnies ' +
+                'for you colleted data. It is furthermore possible to import existing content ' +
+                'into your time table by clicking on "Import from Google Docs" and following ' +
+                'the steps.</p> <p> If you notice any uncommon plugin behaviour, or ' +
+                'need support feel free to contact a "Coordinator", or an "Administrator".</p>'
+            });
+
+        //Banner Informations for the User
         if (!timesheetData.isActive) {
+
+            AJS.messages.warning({
+                title: 'TimePunch - Timesheet Warning.',
+                body: '<p> Your Timesheet has been marked as "inactive", because ' +
+                'its latest entry date is older than two weeks, or you have no valid entries in your ' +
+                'table.</p>'
+            });
+
             require(['aui/banner'], function (banner) {
                 banner({
                     body: 'Your TimePunch - Timesheet is marked as <strong>inactive</strong>.'
                 });
             });
         } else if (!timesheetData.isEnabled) {
+
+            AJS.messages.warning({
+                title: 'TimePunch - Timesheet Warning.',
+                body: '<p> Your Timesheet has been marked as "disabled" by an Administrator.</p>' +
+                '<p> You are note able to apply any changes to your timesheet data until it is ' +
+                '"enabled" again.</p>'
+            });
+
             require(['aui/banner'], function (banner) {
                 banner({
                     body: 'Your TimePunch - Timesheet has been <strong>disabled</strong> by an Administrator.'
                 });
             });
         } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
+
+            AJS.messages.warning({
+                title: 'TimePunch - Timesheet Warning.',
+                body: '<p> Congratulations you almost did it. Please contact an "Administrator", or your ' +
+                '"Coordinator" for further approach.</p>'
+            });
+
             require(['aui/banner'], function (banner) {
                 banner({
                     body: 'TimePunch Timesheet - You have <strong>less than 80 hours</strong> left, please contact ' +

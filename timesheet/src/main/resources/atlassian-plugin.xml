@@ -19,6 +19,7 @@
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
         <dependency>com.atlassian.auiplugin:aui-banner</dependency>
         <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
+        <dependency>com.atlassian.auiplugin:message</dependency>
 
         <resource type="download" name="timesheet.css" location="/css/timesheet.css"/>
         <resource type="download" name="table-aui.css" location="/css/table-aui.css"/>
