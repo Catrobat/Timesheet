@@ -50,14 +50,20 @@ function initSelectTimesheetButton() {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Show') {
             var selectedUser = AJS.$("#user-select2-field").val().split(',');
-            if (selectedUser[0] !== "")
+            if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser);
+                AJS.$("#timesheet-owner-information").empty();
+                AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();
+            }
         } else if (AJS.$(document.activeElement).val() === 'Display') {
             var selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
-            if (selectedUser[0] !== "")
+            if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser);
+                AJS.$("#timesheet-owner-information").empty();
+                AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();
+            }
         } else if (AJS.$(document.activeElement).val() === 'Visualize') {
             var selectedTeam = AJS.$("#select-team-select2-field").val().split(',');
             if (selectedTeam[0] !== "")
@@ -311,6 +317,10 @@ function updateTimesheetHours(existingTimesheetData) {
         isActive: existingTimesheetData.isActive,
         isEnabled: existingTimesheetData.isEnabled
     };
+
+    //datum auslesen + speichern im TS
+    //console.log(AJS.$("#timesheet-inactive-begin-date").val());
+
     AJS.$.ajax({
             type: "post",
             url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
@@ -441,6 +451,11 @@ function calculateTheoryTime(timesheetData) {
 }
 
 function initTimesheetInformationValues(timesheetData) {
+    AJS.$(document).ready(function() {
+        AJS.$('#timesheet-inactive-begin-date').datePicker({overrideBrowserDefault: true, languageCode: 'en'});
+        AJS.$('#timesheet-inactive-end-date').datePicker({overrideBrowserDefault: true, languageCode: 'en'});
+    });
+
     AJS.$("#timesheet-hours-text").val(timesheetData.targetHours);
     AJS.$("#timesheet-hours-remain").val(timesheetData.targetHours - timesheetData.targetHoursCompleted
         + timesheetData.targetHoursRemoved);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Stephan Fellhofer
+ * Copyright 2016 Adrian Schnedlitz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ AJS.toInit(function () {
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
     var teams = [];
-    var approvedUsers = [];
     var editCategoryNameDialog, editTeamNameDialog;
 
     function scrollToAnchor(aid) {
@@ -47,7 +46,6 @@ AJS.toInit(function () {
 
         AJS.$.when(allUsersFetched, categoriesFetched)
             .done(populateForm)
-            .done(populateApprovedUsers)
             .fail(function (error) {
                 AJS.messages.error({
                     title: 'There was an error while fetching user data.',
@@ -56,41 +54,6 @@ AJS.toInit(function () {
                 console.log(error);
                 AJS.$(".loadingDiv").hide();
             });
-    }
-
-    function populateApprovedUsers(allUsers) {
-        AJS.$(".loadingDiv").show();
-        AJS.$.ajax({
-            url: restBaseUrl + 'config/getConfig',
-            dataType: "json",
-            success: function (config) {
-                AJS.$("#permissions").empty();
-                AJS.$("#permissions").append("<fieldset>");
-                AJS.$("#permissions").append("<div class=\"field-group\"><label for=\"approvedUser\">Approved User</label><input class=\"text approved\" type=\"text\" id=\"approvedUser\" value=\"" + config.approvedUsers + "\"></div>");
-                AJS.$("#permissions").append("</fieldset>");
-
-                var userNameList = [];
-                for (var i = 0; i < allUsers[0].length; i++) {
-                    userNameList.push(allUsers[0][i]['userName']);
-                }
-
-                AJS.$(".approved").auiSelect2({
-                    placeholder: "Search for user",
-                    tags: userNameList.sort(),
-                    tokenSeparators: [",", " "]
-                });
-
-                AJS.$(".loadingDiv").hide();
-            },
-            error: function (error) {
-                AJS.messages.error({
-                    title: "Error!",
-                    body: "Something went wrong while loading the config file!"
-                });
-
-                AJS.$(".loadingDiv").hide();
-            }
-        });
     }
 
     function populateForm(allUsers, allCategories) {
@@ -135,6 +98,59 @@ AJS.toInit(function () {
                     AJS.$("#teams").append("<div class=\"field-group\"><label for=\"" + tempTeamName + "-category\">Category</label><input class=\"text category\" type=\"text\" id=\"" + tempTeamName + "-category\" value=\"" + team['teamCategoryNames'] + "\"></div>");
                     AJS.$("#teams").append("</fieldset>");
                 }
+
+                AJS.$("#plugin-permission").auiSelect2({
+                    placeholder: "Search for users and groups",
+                    minimumInputLength: 0,
+                    tags: true,
+                    tokenSeparators: [",", " "],
+                    ajax: {
+                        url: baseUrl + "/rest/api/2/groupuserpicker",
+                        dataType: "json",
+                        data: function (term, page) {
+                            return {query: term};
+                        },
+                        results: function (data, page) {
+                            var select2data = [];
+                            for (var i = 0; i < data.groups.groups.length; i++) {
+                                select2data.push({
+                                    id: "groups-" + data.groups.groups[i].name,
+                                    text: data.groups.groups[i].name
+                                });
+                            }
+                            for (var i = 0; i < data.users.users.length; i++) {
+                                select2data.push({
+                                    id: "users-" + data.users.users[i].name,
+                                    text: data.users.users[i].name
+                                });
+                            }
+                            return {results: select2data};
+                        }
+                    },
+                    initSelection: function (elements, callback) {
+                        var data = [];
+                        var array = elements.val().split(",");
+                        for (var i = 0; i < array.length; i++) {
+                            data.push({id: array[i], text: array[i].replace(/^users-/i, "").replace(/^groups-/i, "")});
+                        }
+                        callback(data);
+                    }
+                });
+
+                var approved = [];
+                if (config.approvedGroups) {
+                    for (var i = 0; i < config.approvedGroups.length; i++) {
+                        approved.push({id: "groups-" + config.approvedGroups[i], text: config.approvedGroups[i]});
+                    }
+                }
+
+                if (config.approvedUsers) {
+                    for (var i = 0; i < config.approvedUsers.length; i++) {
+                        approved.push({id: "users-" + config.approvedUsers[i], text: config.approvedUsers[i]});
+                    }
+                }
+
+                AJS.$("#plugin-permission").auiSelect2("data", approved);
 
                 var userNameList = [];
                 for (var i = 0; i < allUsers[0].length; i++) {
@@ -198,11 +214,20 @@ AJS.toInit(function () {
         config.mailBodyInactive = AJS.$("#mail-body-inactive").val();
         config.mailBodyEntry = AJS.$("#mail-body-entry-change").val();
 
-        var approvedUsers = AJS.$("#approvedUser").auiSelect2("val");
+        var usersAndGroups = AJS.$("#plugin-permission").auiSelect2("val");
+        var approvedUsers = [];
         var approvedGroups = [];
+        for (var i = 0; i < usersAndGroups.length; i++) {
+            if (usersAndGroups[i].match("^users-")) {
+                approvedUsers.push(usersAndGroups[i].split("users-")[1]);
+            } else if (usersAndGroups[i].match("^groups-")) {
+                approvedGroups.push(usersAndGroups[i].split("groups-")[1]);
+            }
+        }
 
         config.approvedUsers = approvedUsers;
         config.approvedGroups = approvedGroups;
+
         config.teams = [];
         for (var i = 0; i < teams.length; i++) {
             var tempTeamName = teams[i].replace(/\W/g, '-');

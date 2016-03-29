@@ -23,14 +23,14 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
 
-public abstract class CsvTimesheetExporter {
+public abstract class CsvExporter {
 
     public static final String DELIMITER = ";";
     public static final String NEW_LINE = "\n";
 
     private final ConfigService configService;
 
-    public CsvTimesheetExporter(ConfigService configService) {
+    public CsvExporter(ConfigService configService) {
         this.configService = configService;
     }
 
@@ -49,71 +49,63 @@ public abstract class CsvTimesheetExporter {
     private String fetchConfigData(Config config) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Date" + DELIMITER);
-        sb.append(new Date()).append(NEW_LINE);
-
         //Approved Users
-        sb.append("Approved Users" + DELIMITER);
-        for (ApprovedUser approvedUser : config.getApprovedUsers())
+        sb.append("Allowed Users and Groups" + DELIMITER);
+        for (ApprovedUser approvedUser : config.getApprovedUsers()) {
             sb.append(approvedUser.getUserName()).append(DELIMITER);
-        sb.append(NEW_LINE);
+        }
+        sb.append(config.getMailFrom()).append(NEW_LINE);
 
         //Email Notifications
-        sb.append("Email Settings General" + DELIMITER);
-        sb.append(NEW_LINE);
         sb.append("Email From Name" + DELIMITER);
-        sb.append(config.getMailFromName()).append(DELIMITER);
+        sb.append(config.getMailFromName()).append(NEW_LINE);
         sb.append("Email From Mail-Address" + DELIMITER);
-        sb.append(config.getMailFrom()).append(DELIMITER);
-        sb.append(NEW_LINE);
+        sb.append(config.getMailFrom()).append(NEW_LINE);
 
         //Email Out Of Time
-        sb.append("Email Out of Time" + DELIMITER);
-        sb.append(NEW_LINE);
         sb.append("Email Out Of Time Subject" + DELIMITER);
-        sb.append(unescape(config.getMailSubjectTime())).append(DELIMITER);
+        sb.append(unescape(config.getMailSubjectTime())).append(NEW_LINE);
         sb.append("Email Out Of Time Body" + DELIMITER);
-        sb.append(unescape(config.getMailBodyTime())).append(DELIMITER);
-        sb.append(NEW_LINE);
+        sb.append(unescape(config.getMailBodyTime())).append(NEW_LINE);
 
         //Email Inactive
-        sb.append("Email Inactive" + DELIMITER);
-        sb.append(NEW_LINE);
         sb.append("Email Inactive Subject" + DELIMITER);
-        sb.append(unescape(config.getMailSubjectInactive())).append(DELIMITER);
+        sb.append(unescape(config.getMailSubjectInactive())).append(NEW_LINE);
         sb.append("Email Inactive Body" + DELIMITER);
-        sb.append(unescape(config.getMailBodyInactive())).append(DELIMITER);
-        sb.append(NEW_LINE);
+        sb.append(unescape(config.getMailBodyInactive())).append(NEW_LINE);
 
         //Email Admin
-        sb.append("Email Admin Changed Entry" + DELIMITER);
-        sb.append(NEW_LINE);
         sb.append("Email Admin Changed Entry Subject" + DELIMITER);
-        sb.append(unescape(config.getMailSubjectEntry())).append(DELIMITER);
+        sb.append(unescape(config.getMailSubjectEntry())).append(NEW_LINE);
         sb.append("Email Admin Changed Entry Body" + DELIMITER);
-        sb.append(unescape(config.getMailBodyEntry())).append(DELIMITER);
-        sb.append(NEW_LINE);
+        sb.append(unescape(config.getMailBodyEntry())).append(NEW_LINE);
 
         //Teams
-        sb.append("Teams" + NEW_LINE);
         for (Team team : config.getTeams()) {
             sb.append(NEW_LINE);
             sb.append("Team Name" + DELIMITER);
-            sb.append(unescape(team.getTeamName())).append(DELIMITER + NEW_LINE);
+            sb.append(unescape(team.getTeamName())).append(DELIMITER);
+            sb.append(NEW_LINE);
+
             //Append Coordinoators
             sb.append("Assigned Coordinators" + DELIMITER);
-            for (String userName : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
+            for (String userName : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR)) {
                 sb.append(unescape(userName)).append(DELIMITER);
+            }
             sb.append(NEW_LINE);
+
             //Append Users
             sb.append("Assigned Users" + DELIMITER);
-            for (String userName : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER))
+            for (String userName : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
                 sb.append(unescape(userName)).append(DELIMITER);
+            }
             sb.append(NEW_LINE);
+
             //Append Categories
             sb.append("Assigned Categories" + DELIMITER);
-            for (String categoryName : configService.getCategoryNamesForTeam(team.getTeamName()))
+            for (String categoryName : configService.getCategoryNamesForTeam(team.getTeamName())) {
                 sb.append(unescape(categoryName)).append(DELIMITER);
+            }
             sb.append(NEW_LINE);
         }
         return sb.toString();

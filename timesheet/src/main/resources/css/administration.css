@@ -85,3 +85,15 @@ div.change-details {
     line-height: 1.66666666666667;
     margin: 5px 0 0 0;
 }
+
+#mail-body-out-of-time{
+    border: solid;
+}
+
+#mail-body-inactive{
+    border: solid;
+}
+
+#mail-body-entry-change{
+    border: solid;
+}

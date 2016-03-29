@@ -19,7 +19,7 @@ package org.catrobat.jira.timesheet.helper;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 
-public class CsvConfigExporter extends CsvTimesheetExporter {
+public class CsvConfigExporter extends CsvExporter {
 
 
     public CsvConfigExporter(ConfigService configService) {

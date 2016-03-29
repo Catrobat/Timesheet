@@ -21,7 +21,7 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 
 import java.util.List;
 
-public class CsvTimesheetExporterAll extends CsvTimesheetExporter {
+public class CsvTimesheetExporterAll extends CsvExporter {
 
 
     public CsvTimesheetExporterAll(ConfigService configService) {

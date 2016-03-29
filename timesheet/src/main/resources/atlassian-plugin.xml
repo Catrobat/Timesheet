@@ -99,6 +99,10 @@
     <servlet key="download-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsCSVServlet">
         <url-pattern>/download/timesheet</url-pattern>
     </servlet>
+
+    <servlet key="upload-config-servlet" class="org.catrobat.jira.timesheet.servlet.ImportConfigCsvServlet">
+        <url-pattern>/timesheet/upload/config</url-pattern>
+    </servlet>
     <!-- end of servlets -->
 
     <!-- import from the product container -->

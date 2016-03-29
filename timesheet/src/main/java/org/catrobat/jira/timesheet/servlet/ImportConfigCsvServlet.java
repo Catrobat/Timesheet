@@ -22,8 +22,8 @@ import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import org.catrobat.jira.timesheet.activeobjects.Config;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import com.sun.xml.internal.ws.wsdl.writer.document.Part;
+import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.helper.CsvConfigImporter;
 
 import javax.servlet.ServletException;
@@ -59,15 +59,15 @@ public class ImportConfigCsvServlet extends HelperServlet {
                 "<body>" +
                 "<h1>Dangerzone!</h1>" +
                 "Just upload files when you know what you're doing - this upload will manipulate the database!<br />" +
-                "<form action=\"upload\" method=\"post\"><br />" +
-                "<textarea name=\"csv\" rows=\"20\" cols=\"200\" wrap=\"off\">" +
+                "<form action=\"config\" method=\"post\"><br />" +
+                "<textarea name=\"csv\" rows=\"20\" cols=\"175\" wrap=\"off\">" +
                 "# lines beginning with '#' are comments and will be ignored;;;;;;;;;;;;;;;;;;;;;;;\n" +
                 "# Name;Version;Type of Device;Operating System;Producer;Article Number;Price;IMEI;Serial Number;Inventory Number;Received Date;Received From;Useful Life Of Asset;Sorted Out Comment;Sorted Out Date;Lending Begin;Lending End;Lending Purpose;Lending Comment;Lending Issuer;Lent By;Device Comment;Device Comment Author;Device Comment Date\n" +
                 "Nexus 6;32 GB;Smartphone;Android Lollipop;Motorola;1337;600;123123;123123;123123;10/14/2014;Google Inc.;3 Years;Sorted Out Comment;10/14/2014;10/14/2014;10/14/2014;testing;just lending;issuer;lent by;Device Comment;comment author;10/14/2014\n" +
                 "Nexus 6;32 GB;Smartphone;Android Lollipop;Motorola;1337;600;234234;234234;234234;10/14/2014;Google Inc.;3 Years;;;;;;;;;;;\n" +
                 "Nexus 6;32 GB;Smartphone;Android Lollipop;Motorola;1337;600;345345;345345;345345;10/14/2014;Google Inc.;3 Years;;;10/14/2014;;testing 3;just lending 3;issuer 3;lent by 3;Device Comment 3;comment author 3;10/14/2014\n" +
                 "</textarea><br />\n" +
-                "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop hardware related entries<br /><br />\n" +
+                "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing table entries<br /><br />\n" +
                 "<input type=\"submit\" />" +
                 "</form>" +
                 "</body>" +
@@ -107,7 +107,27 @@ public class ImportConfigCsvServlet extends HelperServlet {
                 for (Config config : activeObjects.find(Config.class)) {
                     activeObjects.delete(config);
                 }
-
+                for (ApprovedUser approvedUser : activeObjects.find(ApprovedUser.class)) {
+                    activeObjects.delete(approvedUser);
+                }
+                for (ApprovedGroup approvedGroup : activeObjects.find(ApprovedGroup.class)) {
+                    activeObjects.delete(approvedGroup);
+                }
+                for (Category category : activeObjects.find(Category.class)) {
+                    activeObjects.delete(category);
+                }
+                for (CategoryToTeam categoryToTeam : activeObjects.find(CategoryToTeam.class)) {
+                    activeObjects.delete(categoryToTeam);
+                }
+                for (Group group : activeObjects.find(Group.class)) {
+                    activeObjects.delete(group);
+                }
+                for (TeamToGroup teamToGroup : activeObjects.find(TeamToGroup.class)) {
+                    activeObjects.delete(teamToGroup);
+                }
+                for (Team team : activeObjects.find(Team.class)) {
+                    activeObjects.delete(team);
+                }
                 return null;
             }
         });
