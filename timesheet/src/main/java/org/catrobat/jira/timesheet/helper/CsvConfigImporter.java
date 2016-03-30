@@ -16,7 +16,7 @@
 
 package org.catrobat.jira.timesheet.helper;
 
-import org.catrobat.jira.timesheet.activeobjects.Category;
+import com.atlassian.jira.component.ComponentAccessor;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.CategoryService;
@@ -62,43 +62,29 @@ public class CsvConfigImporter {
             //String[] columns = line.split(CsvExporter.DELIMITER, 24);
             String[] columns = line.split(CsvExporter.DELIMITER);
 
-            if (columns[0].equals("Approved Users") && columns.length > 0) {
+            if (columns[0].equals("Approved Users and Groups") && columns.length > 0) {
                 for (int i = 1; i < columns.length; i++) {
-                    configService.addApprovedUser(columns[i], columns[i]);
+                    if (!ComponentAccessor.getUserManager().getUserByName(columns[i]).getName().isEmpty()) {
+                        configService.addApprovedUser(columns[i],
+                                ComponentAccessor.getUserManager().getUserByName(columns[i]).getKey());
+                    }
                 }
-            } else if (columns[0].equals("Approved Groups") && columns.length > 0) {
-                for (int i = 1; i < columns.length; i++) {
-                    configService.addApprovedGroup(columns[i]);
-                }
-            } else if (columns[0].equals("Allowed Users and Groups") && columns.length > 0) {
-                for (int i = 1; i < columns.length; i++) {
-                    configService.addApprovedUser(columns[i], columns[i]);
-                }
-                System.out.println("approved: " + config.getApprovedUsers());
             } else if (columns[0].equals("Email From Name") && columns.length > 0) {
                 config.setMailFromName(columns[1]);
-                System.out.println(config.getMailFromName());
             } else if (columns[0].equals("Email From Mail-Address") && columns.length > 0) {
                 config.setMailFrom(columns[1]);
-                System.out.println(config.getMailFrom());
             } else if (columns[0].equals("Email Out Of Time Subject") && columns.length > 0) {
                 config.setMailSubjectTime(columns[1]);
-                System.out.println(config.getMailSubjectTime());
             } else if (columns[0].equals("Email Out Of Time Body") && columns.length > 0) {
                 config.setMailBodyTime(columns[1]);
-                System.out.println(config.getMailBodyTime());
             } else if (columns[0].equals("Email Inactive Subject") && columns.length > 0) {
                 config.setMailSubjectInactive(columns[1]);
-                System.out.println(config.getMailSubjectInactive());
             } else if (columns[0].equals("Email Inactive Body") && columns.length > 0) {
                 config.setMailBodyInactive(columns[1]);
-                System.out.println(config.getMailBodyInactive());
             } else if (columns[0].equals("Email Admin Changed Entry Subject") && columns.length > 0) {
                 config.setMailSubjectEntry(columns[1]);
-                System.out.println(config.getMailSubjectEntry());
             } else if (columns[0].equals("Email Admin Changed Entry Body") && columns.length > 0) {
                 config.setMailBodyEntry(columns[1]);
-                System.out.println(config.getMailBodyEntry());
             }
 
             //Team Data
@@ -135,7 +121,7 @@ public class CsvConfigImporter {
                         .append(" will be ignored)</li>");
             }
         }
-        
+
         addedCategories.clear();
         config.save();
         errorStringBuilder.append("</ul>");
