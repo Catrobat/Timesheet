@@ -19,12 +19,12 @@ package org.catrobat.jira.timesheet.servlet;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.helper.CsvConfigImporter;
+import org.catrobat.jira.timesheet.services.CategoryService;
+import org.catrobat.jira.timesheet.services.TeamService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +35,16 @@ import java.io.PrintWriter;
 public class ImportConfigCsvServlet extends HelperServlet {
 
     private final ConfigService configService;
+    private final CategoryService categoryService;
+    private final TeamService teamService;
     private final ActiveObjects activeObjects;
 
     public ImportConfigCsvServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                  GroupManager groupManager, ConfigService configService, ActiveObjects activeObjects) {
+                                  GroupManager groupManager, ConfigService configService, CategoryService categoryService, TeamService teamService, ActiveObjects activeObjects) {
         super(userManager, loginUriProvider, webSudoManager, groupManager, configService);
         this.configService = configService;
+        this.categoryService = categoryService;
+        this.teamService = teamService;
         this.activeObjects = activeObjects;
     }
 
@@ -91,7 +95,7 @@ public class ImportConfigCsvServlet extends HelperServlet {
             dropEntries();
         }
 
-        CsvConfigImporter csvImporter = new CsvConfigImporter(configService);
+        CsvConfigImporter csvImporter = new CsvConfigImporter(configService, categoryService, teamService);
         String errorString = csvImporter.importCsv(csvString);
 
         response.getWriter().print("Successfully executed following string:<br />" +
@@ -101,35 +105,13 @@ public class ImportConfigCsvServlet extends HelperServlet {
     }
 
     private void dropEntries() {
-        activeObjects.executeInTransaction(new TransactionCallback<Void>() {
-            @Override
-            public Void doInTransaction() {
-                for (Config config : activeObjects.find(Config.class)) {
-                    activeObjects.delete(config);
-                }
-                for (ApprovedUser approvedUser : activeObjects.find(ApprovedUser.class)) {
-                    activeObjects.delete(approvedUser);
-                }
-                for (ApprovedGroup approvedGroup : activeObjects.find(ApprovedGroup.class)) {
-                    activeObjects.delete(approvedGroup);
-                }
-                for (Category category : activeObjects.find(Category.class)) {
-                    activeObjects.delete(category);
-                }
-                for (CategoryToTeam categoryToTeam : activeObjects.find(CategoryToTeam.class)) {
-                    activeObjects.delete(categoryToTeam);
-                }
-                for (Group group : activeObjects.find(Group.class)) {
-                    activeObjects.delete(group);
-                }
-                for (TeamToGroup teamToGroup : activeObjects.find(TeamToGroup.class)) {
-                    activeObjects.delete(teamToGroup);
-                }
-                for (Team team : activeObjects.find(Team.class)) {
-                    activeObjects.delete(team);
-                }
-                return null;
-            }
-        });
+        activeObjects.deleteWithSQL(ApprovedGroup.class, "1=?", "1");
+        activeObjects.deleteWithSQL(ApprovedUser.class, "1=?", "1");
+        activeObjects.deleteWithSQL(Category.class, "1=?", "1");
+        activeObjects.deleteWithSQL(CategoryToTeam.class, "1=?", "1");
+        activeObjects.deleteWithSQL(Config.class, "1=?", "1");
+        activeObjects.deleteWithSQL(Group.class, "1=?", "1");
+        activeObjects.deleteWithSQL(Team.class, "1=?", "1");
+        activeObjects.deleteWithSQL(TeamToGroup.class, "1=?", "1");
     }
 }
