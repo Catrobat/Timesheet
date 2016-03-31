@@ -36,6 +36,9 @@ public final class JsonTimesheetEntry {
     private Date endDate;
 
     @XmlElement
+    private Date inactiveEndDate;
+
+    @XmlElement
     private int pauseMinutes;
 
     @XmlElement
@@ -48,20 +51,30 @@ public final class JsonTimesheetEntry {
     private int categoryID;
 
     @XmlElement
+    private String ticketID;
+
+    @XmlElement
+    private String partner;
+
+    @XmlElement
     private boolean isGoogleDocImport;
 
     public JsonTimesheetEntry() {
     }
 
-    public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, int pauseMinutes, String description, int teamID,
-                              int categoryID, boolean isGoogleDocImport) {
+    public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, Date inactiveEndDate, int pauseMinutes,
+                              String description, int teamID, int categoryID, String ticketID, String partner,
+                              boolean isGoogleDocImport) {
         this.entryID = entryID;
         this.beginDate = beginDate;
         this.endDate = endDate;
+        this.inactiveEndDate = inactiveEndDate;
         this.pauseMinutes = pauseMinutes;
         this.description = description;
         this.teamID = teamID;
         this.categoryID = categoryID;
+        this.ticketID = ticketID;
+        this.partner = partner;
         this.isGoogleDocImport = isGoogleDocImport;
     }
 
@@ -121,6 +134,30 @@ public final class JsonTimesheetEntry {
         this.categoryID = categoryID;
     }
 
+    public Date getInactiveEndDate() {
+        return inactiveEndDate;
+    }
+
+    public void setInactiveEndDate(Date inactiveEndDate) {
+        this.inactiveEndDate = inactiveEndDate;
+    }
+
+    public String getTicketID() {
+        return ticketID;
+    }
+
+    public void setTicketID(String ticketID) {
+        this.ticketID = ticketID;
+    }
+
+    public String getPairProgrammingUserName() {
+        return partner;
+    }
+
+    public void setPairProgrammingUserName(String partner) {
+        this.partner = partner;
+    }
+
     public boolean getIsGoogleDocImport() {
         return isGoogleDocImport;
     }
@@ -143,6 +180,9 @@ public final class JsonTimesheetEntry {
         if (isGoogleDocImport != that.isGoogleDocImport) return false;
         if (!beginDate.equals(that.beginDate)) return false;
         if (!endDate.equals(that.endDate)) return false;
+        if (!inactiveEndDate.equals(that.inactiveEndDate)) return false;
+        if (!partner.equals(that.partner)) return false;
+        if (!ticketID.equals(that.ticketID)) return false;
 
         return description.equals(that.description);
     }
@@ -156,6 +196,9 @@ public final class JsonTimesheetEntry {
         result = 31 * result + description.hashCode();
         result = 31 * result + teamID;
         result = 31 * result + categoryID;
+        result = 31 * result + ticketID.hashCode();
+        result = 31 * result + partner.hashCode();
+        result = 31 * result + inactiveEndDate.hashCode();
 
         return result;
     }

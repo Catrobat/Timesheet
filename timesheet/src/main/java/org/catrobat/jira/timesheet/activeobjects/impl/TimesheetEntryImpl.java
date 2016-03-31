@@ -21,7 +21,7 @@ import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TimesheetEntryImpl {
+public class TimesheetEntryImpl{
 
     private final TimesheetEntry entry;
 

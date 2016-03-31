@@ -53,6 +53,10 @@
     width: 87px;
 }
 
+#timesheet-table .inactive {
+    width: 87px;
+}
+
 #timesheet-table .range {
     width: 115px;
 }
@@ -63,13 +67,22 @@
 }
 
 #timesheet-table .team,
-#timesheet-table .category {
-    min-width: 150px;
+#timesheet-table .category,
+#timesheet-table .partner {
+    min-width: 100px;
 }
 
 #timesheet-table .team aui-select2-container,
-#timesheet-table .category aui-select2-container {
-    width: 200px;
+#timesheet-table .category aui-select2-container,
+#timesheet-table .partner aui-select2-container {
+    width: 130px;
+}
+
+#timesheet-table .description {
+    width: 150px;
+}
+#timesheet-table .ticket {
+    width: 95px;
 }
 
 #timesheet-table button {

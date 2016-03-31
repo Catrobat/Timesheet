@@ -27,11 +27,12 @@ import java.util.Date;
 
 @Transactional
 public interface TimesheetEntryService {
-    TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category,
-                       String description, int pause, Team team, boolean isGoogleDocImport);
+    TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
+                       Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID, String userName);
 
-    TimesheetEntry edit(int entryID, Timesheet sheet, Date begin, Date end,
-                        Category category, String description, int pause, Team team, boolean isGoogleDocImport) throws ServiceException;
+    TimesheetEntry edit(int entryID, Timesheet sheet, Date begin, Date end, Category category, String description,
+                        int pause, Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
+                        String userName) throws ServiceException;
 
     TimesheetEntry getEntryByID(int entryID) throws ServiceException;
 

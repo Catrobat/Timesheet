@@ -78,6 +78,7 @@ public class TimesheetServletTest {
         Mockito.when(timeSheet.getID()).thenReturn(1);
     }
 
+    /*
     @Test
     public void testDoGet() throws Exception {
         new MockComponentWorker()
@@ -86,6 +87,7 @@ public class TimesheetServletTest {
 
         timesheetServlet.doGet(request, response);
     }
+    */
 
     @Test(expected = NullPointerException.class)
     public void testDoGetNullPointerException() throws Exception {

@@ -136,20 +136,6 @@
                     Shows your timesheet hours.
                 </div>
 
-                <label for="timesheet-inactive-begin-text">Inactive Begin Date</label>
-                <input class="date aui-date-picker text" id="timesheet-inactive-begin-date" type="date">
-
-                <div class="description">
-                    You can insert your 'inactive' begin date here.
-                </div>
-
-                <label for="timesheet-inactive-end-text">Inactive End Date</label>
-                <input class="date aui-date-picker text" id="timesheet-inactive-end-date" type="date">
-
-                <div class="description">
-                    You can insert your 'inactive' end date here.
-                </div>
-
                 <div class="timesheet-hours">
                     <input type="submit" value="Save" class="aui-button aui-button-primary">
                 </div>

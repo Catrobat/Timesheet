@@ -20,6 +20,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.InvalidCredentialException;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
@@ -187,9 +188,9 @@ public class TimesheetRest {
                             TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
                             for (TimesheetEntry entry : entries) {
                                 jsonTimesheetEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
-                                        entry.getEndDate(), entry.getPauseMinutes(),
-                                        entry.getDescription(), entry.getTeam().getID(),
-                                        entry.getCategory().getID(), entry.getIsGoogleDocImport()));
+                                        entry.getEndDate(), entry.getInactiveEndDate(), entry.getPauseMinutes(),
+                                        entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
+                                        entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
                             }
                         }
                     }
@@ -212,9 +213,12 @@ public class TimesheetRest {
             for (TimesheetEntry timesheetEntry : sheetService.getTimesheetByUser(ComponentAccessor.
                     getUserKeyService().getKeyForUsername(developerTeamMemberName)).getEntries()) {
                 if (timesheetEntry.getTeam().getTeamName().equals(teamName))
-                    jsonTimesheetEntries.add(new JsonTimesheetEntry(timesheetEntry.getID(), timesheetEntry.getBeginDate(),
-                            timesheetEntry.getEndDate(), timesheetEntry.getPauseMinutes(), timesheetEntry.getDescription(),
-                            timesheetEntry.getTeam().getID(), timesheetEntry.getCategory().getID(), timesheetEntry.getIsGoogleDocImport()));
+                    jsonTimesheetEntries.add(new JsonTimesheetEntry(timesheetEntry.getID(),
+                            timesheetEntry.getBeginDate(), timesheetEntry.getEndDate(),
+                            timesheetEntry.getInactiveEndDate(), timesheetEntry.getPauseMinutes(),
+                            timesheetEntry.getDescription(), timesheetEntry.getTeam().getID(),
+                            timesheetEntry.getCategory().getID(), timesheetEntry.getJiraTicketID(),
+                            timesheetEntry.getPairProgrammingUserName(), timesheetEntry.getIsGoogleDocImport()));
             }
         }
 
@@ -328,9 +332,9 @@ public class TimesheetRest {
 
         for (TimesheetEntry entry : entries) {
             jsonEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
-                    entry.getEndDate(), entry.getPauseMinutes(),
-                    entry.getDescription(), entry.getTeam().getID(),
-                    entry.getCategory().getID(), entry.getIsGoogleDocImport()));
+                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getPauseMinutes(),
+                    entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
+                    entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
         }
         return Response.ok(jsonEntries).build();
     }
@@ -390,9 +394,9 @@ public class TimesheetRest {
 
         for (TimesheetEntry entry : entries) {
             jsonEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
-                    entry.getEndDate(), entry.getPauseMinutes(),
-                    entry.getDescription(), entry.getTeam().getID(),
-                    entry.getCategory().getID(), entry.getIsGoogleDocImport()));
+                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getPauseMinutes(),
+                    entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
+                    entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
         }
         return Response.ok(jsonEntries).build();
     }
@@ -448,12 +452,15 @@ public class TimesheetRest {
 
         if (entry.getDescription().isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
+        } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0)) {
+            return Response.status(Response.Status.FORBIDDEN).entity("The 'Inactive Date' is before your 'Timesheet Entry Date'. That is not possible.").build();
         }
 
         Timesheet sheet;
         UserProfile user;
         Category category;
         Team team;
+        String programmingPartnerName = "";
 
         try {
             user = permissionService.checkIfUserExists(request);
@@ -468,17 +475,21 @@ public class TimesheetRest {
             return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
 
+        if (!entry.getPairProgrammingUserName().isEmpty())
+            programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName()).getUsername();
+
         if (sheet == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet is NULL.").build();
-        }
-
-        if (!sheet.getIsEnabled()) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("The Timesheet your are looking for is NULL.").build();
+        } else if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
+        } else if (!category.getName().equals("Pair Programming") && !programmingPartnerName.equals("")) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You can not select a 'Pair Programming' " +
+                    "Partner without selecting the 'Pair Programming' category.").build();
         }
 
-        TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(),
-                entry.getEndDate(), category, entry.getDescription(),
-                entry.getPauseMinutes(), team, entry.getIsGoogleDocImport());
+        TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
+                entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
+                entry.getInactiveEndDate(), entry.getTicketID(), programmingPartnerName);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -527,6 +538,7 @@ public class TimesheetRest {
 
         List<JsonTimesheetEntry> newEntries = new LinkedList<JsonTimesheetEntry>();
         List<String> errorMessages = new LinkedList<String>();
+        ApplicationUser pairProgrammingUser;
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -540,10 +552,11 @@ public class TimesheetRest {
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
                 checkIfCategoryIsAssociatedWithTeam(team, category);
+                pairProgrammingUser = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName());
 
-                TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(),
-                        entry.getEndDate(), category, entry.getDescription(),
-                        entry.getPauseMinutes(), team, entry.getIsGoogleDocImport());
+                TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
+                        entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
+                        entry.getInactiveEndDate(), entry.getTicketID(), pairProgrammingUser.getUsername());
 
                 //update latest timesheet entry date if latest entry date is < new latest entry in the table
                 if (sheet.getEntries().length == 1) {
@@ -673,6 +686,7 @@ public class TimesheetRest {
         Category category;
         Team team;
         Timesheet sheet;
+        ApplicationUser pairProgrammingUser;
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -684,14 +698,15 @@ public class TimesheetRest {
             sheet = entry.getTimeSheet();
             checkIfCategoryIsAssociatedWithTeam(team, category);
             permissionService.userCanEditTimesheetEntry(user, entry.getTimeSheet(), jsonEntry);
+            pairProgrammingUser = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName());
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
 
         if (sheet.getIsEnabled() || permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
-            entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(),
-                    jsonEntry.getEndDate(), category, jsonEntry.getDescription(),
-                    jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport());
+            entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
+                    jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport(),
+                    jsonEntry.getInactiveEndDate(), jsonEntry.getTicketID(), pairProgrammingUser.getUsername());
 
             //inform user about Administrator changes
             if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {

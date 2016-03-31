@@ -79,9 +79,13 @@ public class TimesheetEntryServiceImplTest {
         String desc = "Debugged this thingy...";
         int pause = 0;
         boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        Date inactiveEndDate = new Date();
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport);
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+                pairProgrammingUserName);
         TimesheetEntry[] entries = ao.find(TimesheetEntry.class);
 
         //Assert
@@ -107,9 +111,13 @@ public class TimesheetEntryServiceImplTest {
         String desc = "Debugged this thingy...";
         int pause = 0;
         boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        Date inactiveEndDate = new Date();
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport);
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+                pairProgrammingUserName);
         TimesheetEntry[] entries = service.getEntriesBySheet(sheet);
 
         //Assert
@@ -135,15 +143,20 @@ public class TimesheetEntryServiceImplTest {
         String desc = "Debugged this thingy...";
         int pause = 0;
         boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        Date inactiveEndDate = new Date();
 
         //Act
-        TimesheetEntry newEntry = service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport);
+        TimesheetEntry newEntry = service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport,
+                inactiveEndDate, jiraTicketID, pairProgrammingUserName);
 
         String newDesc = "Changed Entry Content";
         int newPause = 30;
 
         TimesheetEntry changedEntry = service.edit(newEntry.getID(), sheet, begin, end, category,
-                newDesc, newPause, team, isGoogleDocImport);
+                newDesc, newPause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+                pairProgrammingUserName);
 
         //Assert
         assertEquals(changedEntry.getDescription(), newDesc);
@@ -162,9 +175,13 @@ public class TimesheetEntryServiceImplTest {
         String desc = "Debugged this thingy...";
         int pause = 0;
         boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        Date inactiveEndDate = new Date();
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport);
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+                pairProgrammingUserName);
         TimesheetEntry[] entriesBeforeDelete = ao.find(TimesheetEntry.class);
 
         service.delete(entriesBeforeDelete[0]);
@@ -185,9 +202,13 @@ public class TimesheetEntryServiceImplTest {
         String desc = "Debugged this thingy...";
         int pause = 0;
         boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        Date inactiveEndDate = new Date();
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport);
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+                pairProgrammingUserName);
         Assert.assertNotNull(service.getEntriesBySheet(sheet));
 
         long newOneHourInMS = 60 * 60 * 1000;
@@ -222,9 +243,13 @@ public class TimesheetEntryServiceImplTest {
         String desc = "Debugged this thingy...";
         int pause = 0;
         boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        Date inactiveEndDate = new Date();
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport);
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+                pairProgrammingUserName);
         TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
         TimesheetEntry receivedEntry = service.getEntryByID(sheet.getID());
 

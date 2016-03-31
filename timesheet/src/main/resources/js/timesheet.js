@@ -318,9 +318,6 @@ function updateTimesheetHours(existingTimesheetData) {
         isEnabled: existingTimesheetData.isEnabled
     };
 
-    //datum auslesen + speichern im TS
-    //console.log(AJS.$("#timesheet-inactive-begin-date").val());
-
     AJS.$.ajax({
             type: "post",
             url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
@@ -389,7 +386,12 @@ function fetchData() {
         url: restBaseUrl + 'teams',
         contentType: "application/json"
     });
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
+    var usersFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'user/getUsers',
+        contentType: "application/json"
+    });
+    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
         .fail(function (error) {
@@ -451,10 +453,6 @@ function calculateTheoryTime(timesheetData) {
 }
 
 function initTimesheetInformationValues(timesheetData) {
-    AJS.$(document).ready(function() {
-        AJS.$('#timesheet-inactive-begin-date').datePicker({overrideBrowserDefault: true, languageCode: 'en'});
-        AJS.$('#timesheet-inactive-end-date').datePicker({overrideBrowserDefault: true, languageCode: 'en'});
-    });
 
     AJS.$("#timesheet-hours-text").val(timesheetData.targetHours);
     AJS.$("#timesheet-hours-remain").val(timesheetData.targetHours - timesheetData.targetHoursCompleted
@@ -508,11 +506,18 @@ function updateTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
 }
 
-function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
+function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply) {
     var timesheetData = timesheetReply[0];
     timesheetData.entries = entriesReply[0];
     timesheetData.categories = [];
     timesheetData.teams = [];
+    timesheetData['users'] = [];
+
+    //fill user names
+    for(var i = 0; i < usersReply[0].length; i++) {
+        if(usersReply[0][i]['active'])
+            timesheetData['users'].push(usersReply[0][i]['userName']);
+    }
 
     categoriesReply[0].map(function (category) {
         timesheetData.categories[category.categoryID] = {
@@ -610,10 +615,13 @@ function populateTable(timesheetDataReply) {
         date: toDateString(actualDate),
         begin: actualDate.getHours() + ":" + actualDate.getMinutes(),
         end: (actualDate.getHours() + 1) + ":" + actualDate.getMinutes(),
+        inactiveEndDate: toDateString(actualDate),
         pause: "00:00",
         description: "",
         duration: "",
-        isGoogleDocImport: false
+        ticketID: "CAT-XXXX",
+        isGoogleDocImport: false,
+        partner: ""
     };
 
     var addNewEntryOptions = {
@@ -793,14 +801,26 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     var endDate = new Date(date + " " + toTimeString(endTime));
     var pauseMin = pauseTime.getHours() * 60 + pauseTime.getMinutes();
 
+    var inactiveDate = form.inactiveEndDateField.val();
+    var validInactiveDateFormat = new Date(inactiveDate);
+
+    if ((inactiveDate == "") || (!isValidDate(validInactiveDateFormat))) {
+        inactiveDate = new Date().toJSON().slice(0, 10);
+    }
+
+    var inactiveEndDate =  new Date(inactiveDate + " " + toTimeString(beginTime));
+
     var entry = {
         beginDate: beginDate,
         endDate: endDate,
+        inactiveEndDate: inactiveEndDate,
         description: form.descriptionField.val(),
         pauseMinutes: pauseMin,
         teamID: form.teamSelect.val(),
         categoryID: form.categorySelect.val(),
-        isGoogleDocImport: existingIsGoogleDocImportValue
+        isGoogleDocImport: existingIsGoogleDocImportValue,
+        partner: form.partnerSelect.val(),
+        ticketID: form.ticketField.val()
     };
 
     if (existingEntryID !== "new-id") {
@@ -875,17 +895,25 @@ function prepareForm(entry, timesheetData) {
         loadingSpinner: row.find('span.aui-icon-wait').hide(),
         saveButton: row.find('button.save'),
         dateField: row.find('input.date'),
+        inactiveEndDateField: row.find('input.inactive'),
         beginTimeField: row.find('input.time.start'),
         endTimeField: row.find('input.time.end'),
         pauseTimeField: row.find('input.time.pause'),
         durationField: row.find('input.duration'),
         descriptionField: row.find('input.description'),
+        ticketField: row.find('input.ticket'),
         categorySelect: row.find('span.category'),
+        partnerSelect: row.find('span.partner'),
         teamSelect: row.find('select.team')
     };
 
     //date time columns
     form.dateField
+        .datePicker(
+            {overrideBrowserDefault: true, languageCode: 'en'}
+        );
+
+    form.inactiveEndDateField
         .datePicker(
             {overrideBrowserDefault: true, languageCode: 'en'}
         );
@@ -921,6 +949,11 @@ function prepareForm(entry, timesheetData) {
         })
         .auiSelect2("val", initTeamID)
         .trigger("change");
+
+    form.partnerSelect.auiSelect2({tags: timesheetData.users.sort(),
+        width: 'resolve',
+        maximumSelectionSize: 1,
+        })
 
     if (countDefinedElementsInArray(teams) < 2) {
         row.find(".team").hide();
@@ -1132,7 +1165,10 @@ function augmentEntry(timesheetData, entry) {
         pauseMinutes: entry.pauseMinutes,
         teamID: entry.teamID,
         categoryID: entry.categoryID,
-        isGoogleDocImport: entry.isGoogleDocImport
+        isGoogleDocImport: entry.isGoogleDocImport,
+        inactiveEndDate: toDateString(new Date(entry.inactiveEndDate)),
+        ticketID: entry.ticketID,
+        partner: entry.partner
     };
 }
 

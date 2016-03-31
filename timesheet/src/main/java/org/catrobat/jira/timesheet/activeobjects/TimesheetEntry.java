@@ -60,4 +60,16 @@ public interface TimesheetEntry extends Entity {
     int getDurationMinutes();
 
     void setDurationMinutes(int duration);
+
+    Date getInactiveEndDate();
+
+    void setInactiveEndDate(Date date);
+
+    String getPairProgrammingUserName();
+
+    void setPairProgrammingUserName(String userName);
+
+    String getJiraTicketID();
+
+    void setJiraTicketID(String ticketID);
 }
