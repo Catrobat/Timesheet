@@ -1,4 +1,4 @@
-package ut.org.catrobat.confluence.services.impl;
+package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
