@@ -76,10 +76,6 @@
         <url-pattern>/timesheet</url-pattern>
     </servlet>
 
-    <servlet key="teammanagement-servlet" class="org.catrobat.jira.timesheet.servlet.TeamManagementServlet">
-        <url-pattern>/teams</url-pattern>
-    </servlet>
-
     <servlet key="administration-servlet" class="org.catrobat.jira.timesheet.servlet.AdminServlet">
         <url-pattern>/timesheet/administration</url-pattern>
     </servlet>
@@ -143,8 +139,6 @@
                class="org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl"/>
     <component key="permission-service" name="Permission Service"
                class="org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl"/>
-    <component key="dbfiller-service" name="DBFiller Service"
-               class="org.catrobat.jira.timesheet.services.impl.DBFillerServiceImpl"/>
     <!-- end of timesheet-components -->
 
     <!-- administration-components -->

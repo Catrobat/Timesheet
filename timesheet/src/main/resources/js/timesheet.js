@@ -990,7 +990,8 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         endDate: new Date(pieces[0] + " " + pieces[2]),
         teamID: firstTeamID,
         categoryID: firstCategoryIDOfFirstTeam,
-        isGoogleDocImport: true
+        isGoogleDocImport: true,
+        inactiveEndDate:new Date(pieces[0] + " " + pieces[1])
     };
 }
 

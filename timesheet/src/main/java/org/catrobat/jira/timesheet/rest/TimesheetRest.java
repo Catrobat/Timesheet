@@ -52,19 +52,16 @@ public class TimesheetRest {
     private final TeamService teamService;
     private final UserManager userManager;
     private final PermissionService permissionService;
-    private final DBFillerService dbfiller;
     private final ConfigService configService;
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
-                         final UserManager um, final TeamService ts, PermissionService ps,
-                         final DBFillerService df, final ConfigService ahcs) {
+                         final UserManager um, final TeamService ts, PermissionService ps, final ConfigService ahcs) {
         this.userManager = um;
         this.teamService = ts;
         this.entryService = es;
         this.sheetService = ss;
         this.categoryService = cs;
         this.permissionService = ps;
-        this.dbfiller = df;
         this.configService = ahcs;
     }
 
@@ -798,21 +795,6 @@ public class TimesheetRest {
                     "Not Available", sheet.getIsActive(), sheet.getIsEnabled());
         }
         return Response.ok().build();
-    }
-
-    @GET
-    @Path("cleanandinitdb")
-    public Response cleanAndInitDB() {
-
-        if (userManager.isAdmin(userManager.getRemoteUser().getUserKey())) {
-            dbfiller.printDBStatus();
-            dbfiller.cleanDB();
-            dbfiller.printDBStatus();
-            dbfiller.printDBStatus();
-            return Response.ok("cleanandinitdb").build();
-        } else {
-            return Response.ok("you're not admin").build();
-        }
     }
 
     private void buildEmailOutOfTime(String emailTo, Timesheet sheet, UserProfile user) {
