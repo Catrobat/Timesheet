@@ -451,6 +451,9 @@ public class TimesheetRest {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
         } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0)) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Inactive Date' is before your 'Timesheet Entry Date'. That is not possible.").build();
+        }else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
+                (!categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive"))) {
+            return Response.status(Response.Status.FORBIDDEN).entity("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.").build();
         }
 
         Timesheet sheet;

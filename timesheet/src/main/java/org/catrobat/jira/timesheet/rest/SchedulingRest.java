@@ -154,7 +154,8 @@ public class SchedulingRest {
                 if (dateIsOlderThanTwoWeeks(entries[0].getBeginDate())) {
                     timesheet.setIsActive(false);
                     timesheet.save();
-                } else if (entries[0].getCategory().getName().equals("Inactive")) {
+                } else if ((entries[0].getCategory().getName().equals("Inactive")) &&
+                        (entries[0].getInactiveEndDate().compareTo(entries[0].getBeginDate()) > 0)) {
                     timesheet.setIsActive(false);
                     timesheet.save();
                 } else {
