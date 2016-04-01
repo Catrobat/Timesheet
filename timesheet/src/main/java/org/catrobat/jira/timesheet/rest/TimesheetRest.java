@@ -180,7 +180,7 @@ public class TimesheetRest {
                         if (user.getName().compareTo(teamMember) == 0) {
                             //collect all timesheet entries of those team members
                             Timesheet sheet = sheetService.getTimesheetByUser(
-                                    ComponentAccessor.getUserManager().getUserByName(teamMember).getKey());
+                                    ComponentAccessor.getUserManager().getUserByName(teamMember).getKey(), false);
                             //all entries of each user
                             TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
                             for (TimesheetEntry entry : entries) {
@@ -208,7 +208,7 @@ public class TimesheetRest {
 
         for (String developerTeamMemberName : configService.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER)) {
             for (TimesheetEntry timesheetEntry : sheetService.getTimesheetByUser(ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(developerTeamMemberName)).getEntries()) {
+                    getUserKeyService().getKeyForUsername(developerTeamMemberName), false).getEntries()) {
                 if (timesheetEntry.getTeam().getTeamName().equals(teamName))
                     jsonTimesheetEntries.add(new JsonTimesheetEntry(timesheetEntry.getID(),
                             timesheetEntry.getBeginDate(), timesheetEntry.getEndDate(),
@@ -233,7 +233,7 @@ public class TimesheetRest {
         try {
             user = permissionService.checkIfUsernameExists(userName);
             sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(user.getUsername()));
+                    getUserKeyService().getKeyForUsername(user.getUsername()), false);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
@@ -768,7 +768,7 @@ public class TimesheetRest {
 
         //update latest date
         sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(user.getUsername()));
+                getUserKeyService().getKeyForUsername(user.getUsername()), false);
 
         if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();

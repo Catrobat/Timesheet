@@ -5,6 +5,10 @@ var restBaseUrl;
 AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
+    
+    if(isMasterThesisTimesheet) {
+        document.getElementById("tabs-timesheet-settings").style.display = "none";
+    }
 
     if (isAdmin) {
         hideVisualizationTabs();

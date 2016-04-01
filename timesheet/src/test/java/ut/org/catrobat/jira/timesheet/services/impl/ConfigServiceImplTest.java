@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ut.org.catrobat.jira.timesheet.activeobjects;
+package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
@@ -27,6 +27,7 @@ import org.catrobat.jira.timesheet.services.CategoryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import java.util.ArrayList;
 import java.util.Arrays;

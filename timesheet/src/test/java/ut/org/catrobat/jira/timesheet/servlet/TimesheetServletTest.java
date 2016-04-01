@@ -72,7 +72,7 @@ public class TimesheetServletTest {
         Mockito.when(userManager.getUserProfile(admin_key.getStringValue())).thenReturn(admin);
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
-        Mockito.when(sheetService.getTimesheetByUser("admin_key")).thenReturn(timeSheet);
+        Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "confluence-administrators")).thenReturn(false);
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
         Mockito.when(timeSheet.getID()).thenReturn(1);
@@ -93,7 +93,7 @@ public class TimesheetServletTest {
     public void testDoGetNullPointerException() throws Exception {
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
-        Mockito.when(sheetService.getTimesheetByUser("admin_key")).thenReturn(null);
+        Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(null);
 
         timesheetServlet.doGet(request, response);
     }

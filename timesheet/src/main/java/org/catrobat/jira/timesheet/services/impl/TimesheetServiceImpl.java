@@ -66,7 +66,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                          int targetHours, int targetHoursCompleted, int targetHoursRemoved,
                          String lectures, String reason, int ects, String latestEntryDate,
-                         Boolean isActive, Boolean isEnabled) {
+                         Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) {
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
         sheet.setTargetHoursPractice(targetHoursPractice);
@@ -78,8 +78,9 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setReason(reason);
         sheet.setEcts(ects);
         sheet.setLatestEntryDate(new DateTime().toString());
-        sheet.setIsActive(false);
-        sheet.setIsEnabled(true);
+        sheet.setIsActive(isActive);
+        sheet.setIsEnabled(isEnabled);
+        sheet.setIsMasterThesisTimesheet(isMasterThesisTimesheet);
         sheet.save();
         return sheet;
     }
@@ -103,14 +104,30 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public Timesheet getTimesheetByUser(String userKey) throws ServiceException {
+    public Timesheet getTimesheetByUser(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
-        if (found.length > 1) {
-            throw new ServiceException("Multiple Timesheets with the same User.");
+        if (found.length > 2) {
+            throw new ServiceException("Found more than two Timesheets with the same UserKey.");
         }
 
-        return (found.length > 0) ? found[0] : null;
+        if (isMasterThesisTimesheet) {
+            for (int i = 0; i < found.length; i++) {
+                if (found[i].getIsMasterThesisTimesheet()) {
+                    return found[i];
+                }
+            }
+        }
+
+        if (!isMasterThesisTimesheet) {
+            for (int i = 0; i < found.length; i++) {
+                if (!found[i].getIsMasterThesisTimesheet()) {
+                    return found[i];
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override

@@ -59,7 +59,7 @@ public class ExportTimesheetAsCSVServlet extends HelperServlet {
 
         Timesheet timesheet = null;
         try {
-            timesheet = timesheetService.getTimesheetByUser(userManager.getRemoteUser(request).getUserKey().getStringValue());
+            timesheet = timesheetService.getTimesheetByUser(userManager.getRemoteUser(request).getUserKey().getStringValue(), false);
         } catch (ServiceException e) {
             e.printStackTrace();
         }

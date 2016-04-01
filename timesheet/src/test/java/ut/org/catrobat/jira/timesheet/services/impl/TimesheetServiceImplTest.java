@@ -60,7 +60,7 @@ public class TimesheetServiceImplTest {
     public void testAdd() throws Exception {
         //Act
         service.add(userKey, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted,
-                targetHoursRemoved, lectures, reason, ects, latestEntryDate, true, true);
+                targetHoursRemoved, lectures, reason, ects, latestEntryDate, true, true, false);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         //Assert
@@ -121,14 +121,14 @@ public class TimesheetServiceImplTest {
         ao.flushAll();
 
         //Act
-        Timesheet sheet0 = service.getTimesheetByUser("USER_000");
+        Timesheet sheet0 = service.getTimesheetByUser("USER_000", false);
 
         //Assert
         assertNotNull(sheet0);
         assertEquals(sheet0.getUserKey(), "USER_000");
 
         //Act
-        Timesheet sheet1 = service.getTimesheetByUser("USER_001");
+        Timesheet sheet1 = service.getTimesheetByUser("USER_001", false);
 
         //Assert
         assertNotNull(sheet1);
@@ -138,7 +138,7 @@ public class TimesheetServiceImplTest {
     @Test
     public void testGetTimesheetByUserNotFound() throws Exception {
         //Act
-        Timesheet missingSheet = service.getTimesheetByUser("USER_DOES_NOT_EXIST");
+        Timesheet missingSheet = service.getTimesheetByUser("USER_DOES_NOT_EXIST", false);
 
         //Assert
         assertNull(missingSheet);

@@ -34,15 +34,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
-public class TimesheetServlet extends HttpServlet {
+public class MasterThesisTimesheetServlet extends HttpServlet {
 
     private final LoginUriProvider loginUriProvider;
     private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
     private final PermissionService permissionService;
 
-    public TimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
-                            final TimesheetService sheetService, final PermissionService permissionService) {
+    public MasterThesisTimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
+                                        final TimesheetService sheetService, final PermissionService permissionService) {
         this.loginUriProvider = loginUriProvider;
         this.templateRenderer = templateRenderer;
         this.sheetService = sheetService;
@@ -52,19 +52,18 @@ public class TimesheetServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
-                    !permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
-                throw new ServletException("User is no Timesheet-Group member, or Administrator.");
+            if (!permissionService.checkIfUserIsGroupMember(request, "Master-Students")) {
+                throw new ServletException("User is no Master-Students-Group member.");
             }
 
             UserProfile userProfile = permissionService.checkIfUserExists(request);
             String userKey = ComponentAccessor.
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
-            Timesheet sheet = sheetService.getTimesheetByUser(userKey, false);
+            Timesheet sheet = sheetService.getTimesheetByUser(userKey, true);
 
             if (sheet == null) {
-                sheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
-                        "Hint: Do not make other people angry.", 5, "Not Available", true, true, false);
+                sheet = sheetService.add(userKey, 0, 0, 900, 0, 0, "Master Thesis",
+                        "Hint: Good Luck & Have Fun.", 30, "Not Available", true, true, true);
             }
 
             Map<String, Object> paramMap = Maps.newHashMap();
@@ -74,7 +73,7 @@ public class TimesheetServlet extends HttpServlet {
             } else {
                 paramMap.put("isadmin", false);
             }
-
+            paramMap.put("ismasterthesistimesheet", true);
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
         } catch (ServletException e) {

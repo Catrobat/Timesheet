@@ -10,6 +10,7 @@
 <script type="text/javascript">
     var timesheetID = $timesheetid;
     var isAdmin = $isadmin;
+    var isMasterThesisTimesheet = $ismasterthesistimesheet;
 </script>
 
 <script type="application/javascript">
@@ -48,16 +49,16 @@
 <div class="aui-tabs horizontal-tabs">
     <ul class="tabs-menu">
         <li class="menu-item active-tab">
-            <a href="#tabs-timesheet"><strong>Timesheet Table</strong></a>
+            <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
         </li>
         <li class="menu-item">
             <a href="#tabs-timesheet-information"><strong>Information</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-timesheet-settings"><strong>Coordinator Settings</strong></a>
+            <a href="#tabs-timesheet-settings"><strong>Team Information</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-overview" onclick="showOverview();">Overview</a>
+            <a href="#tabs-overview" onclick="showOverview();">Summary</a>
         </li>
         <li class="menu-item">
             <a href="#tabs-line" onclick="showLineDiagram();">Time - Visualization</a>

@@ -69,6 +69,10 @@ public interface Timesheet extends Entity {
 
     void setLatestEntryDate(String latestEntryDate);
 
+    boolean getIsMasterThesisTimesheet();
+
+    void setIsMasterThesisTimesheet(boolean isMasterThesisTimesheet);
+
     @OneToMany(reverse = "getTimeSheet")
     TimesheetEntry[] getEntries();
 
