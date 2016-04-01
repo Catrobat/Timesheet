@@ -991,7 +991,9 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         teamID: firstTeamID,
         categoryID: firstCategoryIDOfFirstTeam,
         isGoogleDocImport: true,
-        inactiveEndDate:new Date(pieces[0] + " " + pieces[1])
+        ticketID: "None",
+        partner: "",
+        inactiveEndDate: new Date(pieces[0] + " " + pieces[1])
     };
 }
 

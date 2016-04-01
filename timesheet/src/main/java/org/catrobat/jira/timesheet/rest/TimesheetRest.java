@@ -700,26 +700,31 @@ public class TimesheetRest {
         Team team;
         Timesheet sheet;
         ApplicationUser pairProgrammingUser;
+        Response response;
+        String programmingPartnerName = "";
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         try {
             user = permissionService.checkIfUserExists(request);
+            permissionService.checkPermission(request);
             entry = entryService.getEntryByID(entryID);
             category = categoryService.getCategoryByID(jsonEntry.getCategoryID());
             team = teamService.getTeamByID(jsonEntry.getTeamID());
             sheet = entry.getTimeSheet();
             checkIfCategoryIsAssociatedWithTeam(team, category);
             permissionService.userCanEditTimesheetEntry(user, entry.getTimeSheet(), jsonEntry);
-            pairProgrammingUser = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName());
         } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+            return Response.status(Response.Status.FORBIDDEN).entity("Access denied. You do not have the permission for changing a 'Timesheet Entry'").build();
         }
 
-        if (sheet.getIsEnabled() || permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+        if (sheet.getIsEnabled()) {
+            if (!entry.getPairProgrammingUserName().isEmpty()) {
+                programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(jsonEntry.getPairProgrammingUserName()).getUsername();
+            }
             entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
                     jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport(),
-                    jsonEntry.getInactiveEndDate(), jsonEntry.getTicketID(), pairProgrammingUser.getUsername());
+                    jsonEntry.getInactiveEndDate(), jsonEntry.getTicketID(), programmingPartnerName);
 
             //inform user about Administrator changes
             if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
