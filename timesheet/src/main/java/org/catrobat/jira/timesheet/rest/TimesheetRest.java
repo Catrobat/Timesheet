@@ -475,8 +475,9 @@ public class TimesheetRest {
             return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
 
-        if (!entry.getPairProgrammingUserName().isEmpty())
+        if (!entry.getPairProgrammingUserName().isEmpty()) {
             programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName()).getUsername();
+        }
 
         if (sheet == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("The Timesheet your are looking for is NULL.").build();
@@ -492,6 +493,10 @@ public class TimesheetRest {
                 entry.getInactiveEndDate(), entry.getTicketID(), programmingPartnerName);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        boolean isActive = sheet.getIsActive();
+        if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
+            isActive = false;
+        }
 
         //update latest timesheet entry date if latest entry date is < new latest entry in the table
         if (sheet.getEntries().length == 1) {
@@ -499,12 +504,12 @@ public class TimesheetRest {
                     sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                     sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
                     sheet.getReason(), sheet.getEcts(), df.format(entryService.getEntriesBySheet(sheet)[0].
-                            getBeginDate()), sheet.getIsActive(), sheet.getIsEnabled());
+                            getBeginDate()), isActive, sheet.getIsEnabled());
         } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
             sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
                     sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                     sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
-                    sheet.getReason(), sheet.getEcts(), df.format(entry.getBeginDate()), sheet.getIsActive(),
+                    sheet.getReason(), sheet.getEcts(), df.format(entry.getBeginDate()), isActive,
                     sheet.getIsEnabled());
         }
 
@@ -529,7 +534,7 @@ public class TimesheetRest {
         }
 
         if (sheet == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet is NULL.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("The Timesheet your are looking for is NULL.").build();
         }
 
         if (!sheet.getIsEnabled()) {
@@ -538,25 +543,36 @@ public class TimesheetRest {
 
         List<JsonTimesheetEntry> newEntries = new LinkedList<JsonTimesheetEntry>();
         List<String> errorMessages = new LinkedList<String>();
-        ApplicationUser pairProgrammingUser;
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         for (JsonTimesheetEntry entry : entries) {
+
             if (entry.getDescription().isEmpty()) {
                 return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
+            } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0)) {
+                return Response.status(Response.Status.FORBIDDEN).entity("The 'Inactive Date' is before your 'Timesheet Entry Date'. That is not possible.").build();
             }
+
+            String programmingPartnerName = "";
+            boolean isActive = sheet.getIsActive();
 
             try {
                 permissionService.userCanEditTimesheetEntry(user, sheet, entry);
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
                 checkIfCategoryIsAssociatedWithTeam(team, category);
-                pairProgrammingUser = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName());
+
+                if (!entry.getPairProgrammingUserName().isEmpty()) {
+                    programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName()).getUsername();
+                } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
+                    isActive = false;
+                }
+
 
                 TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
                         entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
-                        entry.getInactiveEndDate(), entry.getTicketID(), pairProgrammingUser.getUsername());
+                        entry.getInactiveEndDate(), entry.getTicketID(), programmingPartnerName);
 
                 //update latest timesheet entry date if latest entry date is < new latest entry in the table
                 if (sheet.getEntries().length == 1) {
@@ -564,14 +580,14 @@ public class TimesheetRest {
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                            df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
+                            df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), isActive,
                             sheet.getIsEnabled());
                 } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
                     sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                            df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
+                            df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), isActive,
                             sheet.getIsEnabled());
                 }
 

@@ -172,17 +172,17 @@ AJS.toInit(function () {
                 }
 
                 AJS.$(".coordinator").auiSelect2({
-                    placeholder: "Search for user",
+                    placeholder: "Select coordinators",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
                 AJS.$(".user").auiSelect2({
-                    placeholder: "Search for user",
+                    placeholder: "Select users",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
                 AJS.$(".category").auiSelect2({
-                    placeholder: "Search for category",
+                    placeholder: "Select categories",
                     tags: categoryList.sort(),
                     tokenSeparators: [",", " "]
                 });
@@ -192,7 +192,7 @@ AJS.toInit(function () {
             error: function (error) {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!"
+                    body: "Could not load 'Config'."
                 });
 
                 AJS.$(".loadingDiv").hide();
@@ -286,14 +286,14 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Team added!"
+                    body: "'Team' added successfully."
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!<br />" + error.responseText
+                    body: "Could not add 'Team'.<br />" + error.responseText
                 });
                 AJS.$(".loadingDiv").hide();
             }
@@ -311,14 +311,14 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Category added!"
+                    body: "'Category' added successfully."
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!<br />" + error.responseText
+                    body: "Could not add 'Category'<br />" + error.responseText
                 });
                 AJS.$(".loadingDiv").hide();
             }
@@ -366,7 +366,7 @@ AJS.toInit(function () {
                 success: function () {
                     AJS.messages.success({
                         title: "Success!",
-                        body: "Team renamed."
+                        body: "'Team' renamed successfully."
                     });
                     fetchData();
                     AJS.$(".loadingDiv").hide();
@@ -374,7 +374,7 @@ AJS.toInit(function () {
                 error: function (error) {
                     AJS.messages.error({
                         title: "Error!",
-                        body: "Something went wrong!<br />" + error.responseText
+                        body: "Could not rename 'Team'.<br />" + error.responseText
                     });
                     scrollToAnchor('top');
                     AJS.$(".loadingDiv").hide();
@@ -434,7 +434,7 @@ AJS.toInit(function () {
                 success: function () {
                     AJS.messages.success({
                         title: "Success!",
-                        body: "Category renamed."
+                        body: "'Category' renamed. successfully"
                     });
                     fetchData();
                     AJS.$(".loadingDiv").hide();
@@ -442,7 +442,7 @@ AJS.toInit(function () {
                 error: function (error) {
                     AJS.messages.error({
                         title: "Error!",
-                        body: "Something went wrong!<br />" + error.responseText
+                        body: "Could not rename 'Category'<br />" + error.responseText
                     });
                     scrollToAnchor('top');
                     AJS.$(".loadingDiv").hide();
@@ -471,14 +471,14 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Team removed!"
+                    body: "'Team' deleted successfully."
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function () {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!"
+                    body: "Could not delete 'Team'."
                 });
                 AJS.$(".loadingDiv").hide();
             }
@@ -496,39 +496,14 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Category removed!"
+                    body: "'Category' deleted successfully."
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function () {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!"
-                });
-                AJS.$(".loadingDiv").hide();
-            }
-        });
-    }
-
-    function modifyActivityVerificationScheduling() {
-        AJS.$(".loadingDiv").show();
-        AJS.$.ajax({
-            url: restBaseUrl + 'scheduling/changeVerificationInterval',
-            type: "PUT",
-            contentType: "application/json",
-            data: AJS.$("#activity-verification-job").attr("value"),
-            processData: false,
-            success: function () {
-                AJS.messages.success({
-                    title: "Success!",
-                    body: "Scheduling interval changes applied!"
-                });
-                AJS.$(".loadingDiv").hide();
-            },
-            error: function () {
-                AJS.messages.error({
-                    title: "Error!",
-                    body: "Something went wrong!"
+                    body: "Could not delete 'Category'."
                 });
                 AJS.$(".loadingDiv").hide();
             }

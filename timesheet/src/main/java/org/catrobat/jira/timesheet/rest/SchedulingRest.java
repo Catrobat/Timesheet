@@ -80,7 +80,7 @@ public class SchedulingRest {
                     if (!timesheet.getIsActive()) {
                         //check if user made an inactive entry and entry date is equal to now
                         if (entryService.getEntriesBySheet(timesheet)[0].getCategory().getName().equals("Inactive") &&
-                                entryService.getEntriesBySheet(timesheet)[0].getBeginDate().equals(new DateTime())) {
+                                entryService.getEntriesBySheet(timesheet)[0].getInactiveEndDate().equals(new DateTime())) {
                             //inform coordinators that he should be active by now
                             for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                                 sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
