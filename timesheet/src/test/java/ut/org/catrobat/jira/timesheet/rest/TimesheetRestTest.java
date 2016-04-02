@@ -1,14 +1,11 @@
 package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.easymock.Mock;
 import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.MockApplicationUser;
 import com.atlassian.jira.user.preferences.UserPreferencesManager;
 import com.atlassian.jira.user.util.UserUtil;
-import com.atlassian.jira.user.util.UserUtilImpl;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -50,11 +47,8 @@ public class TimesheetRestTest {
     private Team team;
     UserKey userKey = new UserKey("USER_001");
     private ConfigService configService;
-    private GroupManager groupManager;
     private UserPreferencesManager userPreferencesManager;
     private ComponentAccessor componentAccessor;
-    private ApplicationUser applicationUser;
-    private UserUtil userUtil;
 
     private SimpleDateFormat sdf;
 
@@ -73,11 +67,8 @@ public class TimesheetRestTest {
         timeSheetEntry = Mockito.mock(TimesheetEntry.class);
         team = Mockito.mock(Team.class);
         configService = Mockito.mock(ConfigService.class);
-        groupManager = Mockito.mock(GroupManager.class);
         userPreferencesManager = Mockito.mock(UserPreferencesManager.class);
         componentAccessor = Mockito.mock(ComponentAccessor.class);
-        applicationUser = Mockito.mock(ApplicationUser.class);
-        userUtil = Mockito.mock(UserUtil.class);
 
         timesheetRest = new TimesheetRest(entryService, sheetService, categoryService, userManager, teamService, permissionService, configService);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(userProfile);
@@ -307,7 +298,7 @@ public class TimesheetRestTest {
 
         Assert.assertEquals(expectedTimesheetEntry, response.getEntity());
     }
-
+   
     @Test
     public void testPutTimesheetEntry() throws Exception {
         String changedDescription = "My changed entry";
@@ -346,6 +337,14 @@ public class TimesheetRestTest {
                 changedDescription, timeSheetEntry.getPauseMinutes(), team, false,
                 timeSheetEntry.getBeginDate(), "None", "Partner")).thenReturn(newEntry);
 
+        Mockito.when(timeSheet.getIsEnabled()).thenReturn(true);
+        Mockito.when(timeSheetEntry.getTimeSheet()).thenReturn(timeSheet);
+        Mockito.when(timeSheetEntry.getPairProgrammingUserName()).thenReturn("Partner");
+
+        com.atlassian.jira.user.util.UserManager jiraUserManager = Mockito.mock(com.atlassian.jira.user.util.UserManager.class);
+
+        Mockito.when(jiraUserManager.getUserByName(expectedTimesheetEntry.getPairProgrammingUserName()).getUsername()).thenReturn("Partner");
+
         response = timesheetRest.putTimesheetEntry(request, expectedTimesheetEntry, 1);
 
         Mockito.verify(entryService).edit(1, timeSheetEntry.getTimeSheet(),
@@ -355,9 +354,11 @@ public class TimesheetRestTest {
 
         Assert.assertEquals(expectedTimesheetEntry, response.getEntity());
     }
+    */
 
     @Test
     public void testDeleteTimesheetEntryOk() throws Exception {
+
         TimesheetEntry[] entries = {timeSheetEntry};
 
         TimesheetEntry newEntry = Mockito.mock(TimesheetEntry.class);
@@ -366,6 +367,9 @@ public class TimesheetRestTest {
         Mockito.when(timeSheet.getEntries()).thenReturn(entries);
         Mockito.when(entryService.getEntriesBySheet(timeSheet)).thenReturn(entries);
         Mockito.when(timeSheetEntry.getBeginDate()).thenReturn(sdf.parse("01-01-2015 00:01"));
+        Mockito.when(timeSheet.getIsEnabled()).thenReturn(true);
+        Mockito.when(sheetService.getTimesheetByUser(componentAccessor.getUserKeyService().
+                getKeyForUsername(userProfile.getUsername()), false)).thenReturn(timeSheet);
 
         sheetService.add(userKey.getStringValue(), timeSheet.getTargetHoursPractice(), timeSheet.getTargetHoursTheory(),
                 timeSheet.getTargetHours(), timeSheet.getTargetHoursCompleted(), timeSheet.getTargetHoursRemoved(),
@@ -376,5 +380,4 @@ public class TimesheetRestTest {
 
         Mockito.verify(entryService).delete(timeSheetEntry);
     }
-    */
 }
