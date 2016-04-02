@@ -16,13 +16,10 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.security.groups.GroupManager;
-import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.services.PermissionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -34,20 +31,15 @@ import java.net.URI;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class HelperServlet extends HttpServlet {
-    private final UserManager userManager;
     private final LoginUriProvider loginUriProvider;
     private final WebSudoManager webSudoManager;
-    private final GroupManager groupManager;
-    private final ConfigService configurationService;
+    private final PermissionService permissionService;
 
-    public HelperServlet(final UserManager userManager, final LoginUriProvider loginUriProvider,
-                         final WebSudoManager webSudoManager, final GroupManager groupManager,
-                         final ConfigService configurationService) {
-        this.userManager = checkNotNull(userManager, "userManager");
+    public HelperServlet(final LoginUriProvider loginUriProvider, final WebSudoManager webSudoManager,
+                         final PermissionService permissionService) {
         this.loginUriProvider = checkNotNull(loginUriProvider, "loginProvider");
         this.webSudoManager = checkNotNull(webSudoManager, "webSudoManager");
-        this.groupManager = checkNotNull(groupManager);
-        this.configurationService = checkNotNull(configurationService);
+        this.permissionService = checkNotNull(permissionService);
     }
 
     @Override
@@ -61,16 +53,9 @@ public abstract class HelperServlet extends HttpServlet {
     }
 
     private void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userManager.getRemoteUser(request).getUsername());
-        ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser(request).getUsername());
-        String username = userManager.getUserProfile(userKey).getUsername();
-        if (username == null) {
+        if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
+                !permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
             redirectToLogin(request, response);
-            return;
-        } else if (!ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators") &&
-                !ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Timesheet")) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
         if (!webSudoManager.canExecuteRequest(request)) {

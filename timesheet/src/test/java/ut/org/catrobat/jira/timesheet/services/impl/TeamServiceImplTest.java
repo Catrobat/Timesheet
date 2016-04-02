@@ -19,6 +19,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
@@ -63,39 +66,35 @@ public class TeamServiceImplTest {
         }
     }
 
-  /*
-  @Test
-  public void testGetTeamsOfUser() throws Exception
-  {
-    //arrange
-    String userName = "user_x";
-    Mockito.when(ua.getGroupNamesForUserName(userName)).thenReturn(groups);
-    Set<Team> expectedTeams = new HashSet<Team>(2);
-    expectedTeams.add(catroid);
-    expectedTeams.add(html5);
+    /*
+    @Test
+    public void testGetTeamsOfUser() throws Exception {
+        //arrange
+        String userName = "user_x";
+        Set<Team> expectedTeams = new HashSet<Team>(2);
+        expectedTeams.add(catroid);
+        expectedTeams.add(html5);
 
-    Set<Team> teams = service.getTeamsOfUser(userName);
+        Set<Team> teams = service.getTeamsOfUser(userName);
 
-    //assert
-    Assert.assertEquals(expectedTeams, teams);
-  }
+        //assert
+        Assert.assertEquals(expectedTeams, teams);
+    }
 
-  @Test
-  public void testGetCoordinatorTeamsOfUser() throws Exception
-  {
-    //arrange
-    String userName = "user_x";
-    Mockito.when(service.getCoordinatorTeamsOfUser(userName)).thenReturn();
-    Set<Team> expectedTeams = new HashSet<Team>(1);
-    expectedTeams.add(html5);
+    @Test
+    public void testGetCoordinatorTeamsOfUser() throws Exception {
+        //arrange
+        String userName = "user_x";
+        Set<Team> expectedTeams = new HashSet<Team>(1);
+        expectedTeams.add(html5);
 
-    //act
-    Set<Team> teams = service.getCoordinatorTeamsOfUser(userName);
+        //act
+        Set<Team> teams = service.getCoordinatorTeamsOfUser(userName);
 
-    //assert
-    Assert.assertEquals(expectedTeams, teams);
-  }
-  */
+        //assert
+        Assert.assertEquals(expectedTeams, teams);
+    }
+    */
 
     @Test
     public void testAddAndGetTeamByID() throws Exception {

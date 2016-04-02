@@ -16,12 +16,10 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.services.PermissionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +30,9 @@ public class UserInformationServlet extends HelperServlet {
 
     private final TemplateRenderer renderer;
 
-    public UserInformationServlet(UserManager userManager, LoginUriProvider loginUriProvider, TemplateRenderer renderer,
-                                  WebSudoManager webSudoManager, GroupManager groupManager, ConfigService configurationService) {
-        super(userManager, loginUriProvider, webSudoManager, groupManager, configurationService);
+    public UserInformationServlet(LoginUriProvider loginUriProvider, TemplateRenderer renderer,
+                                  WebSudoManager webSudoManager, PermissionService permissionService) {
+        super(loginUriProvider, webSudoManager, permissionService);
         this.renderer = renderer;
     }
 

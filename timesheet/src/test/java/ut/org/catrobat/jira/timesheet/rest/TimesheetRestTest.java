@@ -2,10 +2,7 @@ package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
-import com.atlassian.jira.security.groups.GroupManager;
-import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.preferences.UserPreferencesManager;
-import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -15,7 +12,6 @@ import org.catrobat.jira.timesheet.rest.TimesheetRest;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
-import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -298,7 +294,7 @@ public class TimesheetRestTest {
 
         Assert.assertEquals(expectedTimesheetEntry, response.getEntity());
     }
-   
+   /*
     @Test
     public void testPutTimesheetEntry() throws Exception {
         String changedDescription = "My changed entry";

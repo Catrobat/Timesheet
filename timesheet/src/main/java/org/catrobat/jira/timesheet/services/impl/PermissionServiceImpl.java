@@ -149,15 +149,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     private boolean userIsAdmin(UserProfile userProfile) {
-        Collection<User> approvedUsers = ComponentAccessor.getUserUtil().getJiraSystemAdministrators();
-
-        for (User user : approvedUsers) {
-            if (user.getName().equals(userProfile.getUsername())) {
-                return true;
-            }
-        }
-
-        return false;
+        return userManager.isAdmin(userProfile.getUserKey());
     }
 
     private boolean userCoordinatesTeamsOfSheet(UserProfile user, Timesheet sheet) {

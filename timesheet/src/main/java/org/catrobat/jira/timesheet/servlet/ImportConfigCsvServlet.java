@@ -17,13 +17,12 @@
 package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.helper.CsvConfigImporter;
 import org.catrobat.jira.timesheet.services.CategoryService;
+import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 
 import javax.servlet.ServletException;
@@ -39,9 +38,11 @@ public class ImportConfigCsvServlet extends HelperServlet {
     private final TeamService teamService;
     private final ActiveObjects activeObjects;
 
-    public ImportConfigCsvServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                  GroupManager groupManager, ConfigService configService, CategoryService categoryService, TeamService teamService, ActiveObjects activeObjects) {
-        super(userManager, loginUriProvider, webSudoManager, groupManager, configService);
+    public ImportConfigCsvServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
+                                  ConfigService configService, CategoryService categoryService,
+                                  TeamService teamService, ActiveObjects activeObjects,
+                                  PermissionService permissionService) {
+        super(loginUriProvider, webSudoManager, permissionService);
         this.configService = configService;
         this.categoryService = categoryService;
         this.teamService = teamService;

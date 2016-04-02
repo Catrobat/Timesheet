@@ -549,8 +549,6 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
 
-    console.log(timesheetData);
-
     if (!isAdmin) {
         //Information at the first use
         if (timesheetData.entries.length == 0)

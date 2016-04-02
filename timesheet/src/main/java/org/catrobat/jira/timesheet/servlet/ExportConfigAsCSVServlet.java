@@ -15,13 +15,12 @@
  */
 package org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.helper.CsvConfigExporter;
+import org.catrobat.jira.timesheet.services.PermissionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,13 +32,11 @@ import java.util.Date;
 public class ExportConfigAsCSVServlet extends HelperServlet {
 
     private final ConfigService configService;
-    private final UserManager userManager;
 
-    public ExportConfigAsCSVServlet(UserManager userManager, LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                    GroupManager groupManager, ConfigService configService) {
-        super(userManager, loginUriProvider, webSudoManager, groupManager, configService);
+    public ExportConfigAsCSVServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
+                                    ConfigService configService, PermissionService permissionService) {
+        super(loginUriProvider, webSudoManager, permissionService);
         this.configService = configService;
-        this.userManager = userManager;
     }
 
     @Override
