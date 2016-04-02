@@ -199,7 +199,12 @@ function fetchUserTimesheetData(timesheetID) {
         url: restBaseUrl + 'teams/' + timesheetID,
         contentType: "application/json"
     });
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
+    var usersFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'user/getUsers',
+        contentType: "application/json"
+    });
+    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
         .fail(function (error) {
@@ -544,8 +549,9 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
 
-    if (!isAdmin) {
+    console.log(timesheetData);
 
+    if (!isAdmin) {
         //Information at the first use
         if (timesheetData.entries.length == 0)
             AJS.messages.generic({
@@ -561,7 +567,6 @@ function populateTable(timesheetDataReply) {
 
         //Banner Informations for the User
         if (!timesheetData.isActive) {
-
             AJS.messages.warning({
                 title: 'TimePunch - Timesheet Warning.',
                 body: '<p> Your Timesheet has been marked as "inactive", because ' +
@@ -575,7 +580,6 @@ function populateTable(timesheetDataReply) {
                 });
             });
         } else if (!timesheetData.isEnabled) {
-
             AJS.messages.warning({
                 title: 'TimePunch - Timesheet Warning.',
                 body: '<p> Your Timesheet has been marked as "disabled" by an Administrator.</p>' +

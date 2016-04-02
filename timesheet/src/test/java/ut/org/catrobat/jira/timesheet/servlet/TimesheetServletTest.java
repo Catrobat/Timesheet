@@ -43,6 +43,17 @@ public class TimesheetServletTest {
     private Team team;
     private UserProfile admin;
 
+    final String userKey = "USER_001";
+    final int targetHoursPractice = 150;
+    final int targetHoursTheory = 0;
+    final int targeHours = 300;
+    final int targetHoursCompleted = 150;
+    final int targetHoursRemoved = 0;
+    final int ects = 10;
+    final String latestEntryDate = "Not Available";
+    final String lectures = "Mobile Applications (705.881)";
+    final String reason = "Agathe Bauer";
+
     @Before
     public void setUp() throws Exception {
         new MockComponentWorker().init();
@@ -73,21 +84,19 @@ public class TimesheetServletTest {
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
         Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "confluence-administrators")).thenReturn(false);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
         Mockito.when(timeSheet.getID()).thenReturn(1);
     }
 
-    /*
     @Test
     public void testDoGet() throws Exception {
-        new MockComponentWorker()
-                .addMock(ComponentAccessor.class, new ComponentAccessor())
-                  .init();
+        timeSheet = sheetService.add(userKey, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted, targetHoursRemoved, lectures, reason, ects, latestEntryDate, true, true, false);
+        Mockito.when(sheetService.getTimesheetByUser(userKey, false)).thenReturn(timeSheet);
 
         timesheetServlet.doGet(request, response);
     }
-    */
+
 
     @Test(expected = NullPointerException.class)
     public void testDoGetNullPointerException() throws Exception {

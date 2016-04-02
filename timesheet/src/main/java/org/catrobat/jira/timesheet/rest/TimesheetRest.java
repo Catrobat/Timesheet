@@ -424,7 +424,7 @@ public class TimesheetRest {
 
             for (Timesheet timesheet : timesheetList) {
                 if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
-                        getUserByName(user.getName()).getKey())) {
+                        getUserByName(user.getName()).getKey()) && !timesheet.getIsMasterThesisTimesheet()) {
                     isActive = timesheet.getIsActive();
                     isEnabled = timesheet.getIsEnabled();
                     latestEntryDate = timesheet.getLatestEntryDate();
