@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.services.impl;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
@@ -111,7 +110,7 @@ public class PermissionServiceImpl implements PermissionService {
         return null;
     }
 
-    public boolean isApproved(UserProfile applicationUser) {
+    public boolean isApproved(UserProfile userProfile) {
         Config config = configService.getConfiguration();
 
         if (config.getApprovedGroups().length == 0 && config.getApprovedUsers().length == 0) {
@@ -119,11 +118,11 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         if (configService.isUserApproved(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(applicationUser.getUsername()))) {
+                getUserKeyService().getKeyForUsername(userProfile.getUsername()))) {
             return true;
         }
 
-        Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(applicationUser.getUsername());
+        Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(userProfile.getUsername());
         for (String groupName : groupNameCollection) {
             if (configService.isGroupApproved(groupName)) {
                 return true;
