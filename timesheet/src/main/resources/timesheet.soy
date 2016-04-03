@@ -6,6 +6,7 @@
 {template .timesheetHeader}
   <div class="tr">
     <span class="th date">Date</span>
+    <span class="th inactive">Inactive End Date</span>
     <span class="th range">Start - End</span>
     <span class="th pause">Pause</span>
     <span class="th duration">Duration</span>
@@ -13,6 +14,8 @@
       <span class="th team">Team</span>
     {/if}
     <span class="th category">Category</span>
+    <span class="th programming">Pair Programming</span>
+    <span class="th ticket">Jira Ticket ID</span>
     <span class="th">Task Description</span>
     <span class="th"></span>
   </div>
@@ -26,6 +29,7 @@
 {template .timesheetEntry}
    <div class="tr entry-view" data-id="{$entry.entryID}">
     <span class="td date">{$entry.date}</span>
+    <span class="td inactive">{$entry.inactiveEndDate}</span>
     <span class="td range">{$entry.begin} - {$entry.end}</span>
     <span class="td pause">{$entry.pause}</span>
     <span class="td duration">{$entry.duration}</span>
@@ -33,6 +37,8 @@
       <span class="td">{$entry.team}</span>
     {/if}
     <span class="td">{$entry.category}</span>
+    <span class="td">{$entry.partner}</span>
+    <span class="td">{$entry.ticketID}</span>
     <span class="td">{$entry.description}</span>
     <span class="td">
       <button class="aui-button aui-button-subtle edit">
@@ -62,6 +68,9 @@
     <span class="td">
       <input class="date aui-date-picker text" type="date" value="{$entry.date}">
     </span>
+    <span class="td">
+          <input class="inactive aui-date-picker text" type="date" value="{$entry.inactiveEndDate}">
+    </span>
     <span class="td time-picker">
       <input class="time start text" type="text" value="{$entry.begin}"> &nbsp;
       <input class="time end text" type="text" value="{$entry.end}">
@@ -81,6 +90,12 @@
     </span>
     <span class="td">
       <span class="category"></span>
+    </span>
+    <span class="td">
+          <span class="partner"></span>
+    </span>
+    <span class="td">
+      <input class="ticket text" type="text" value="{$entry.ticketID}"/>
     </span>
     <span class="td">
       <input class="description text" type="text" value="{$entry.description}"/> 

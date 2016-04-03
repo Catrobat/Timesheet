@@ -22,14 +22,14 @@ import net.java.ao.OneToMany;
 
 public interface Category extends Entity {
 
-  String getName();
+    String getName();
 
-  void setName(String name);
+    void setName(String name);
 
-  @ManyToMany(value = CategoryToTeam.class, through = "getTeam", reverse = "getCategory")
-  Team[] getTeams();
+    @ManyToMany(value = CategoryToTeam.class, through = "getTeam", reverse = "getCategory")
+    Team[] getTeams();
 
-  @OneToMany(reverse = "getCategory")
-  TimesheetEntry[] getEntries();
+    @OneToMany(reverse = "getCategory")
+    TimesheetEntry[] getEntries();
 
 }

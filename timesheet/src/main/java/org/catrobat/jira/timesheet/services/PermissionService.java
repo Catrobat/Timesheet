@@ -30,19 +30,19 @@ import javax.ws.rs.core.Response;
 @Transactional
 public interface PermissionService {
 
-    public UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException;
+    UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException;
 
-    public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName);
+    boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName);
 
-    public UserProfile checkIfUsernameExists(String userName) throws ServiceException;
+    UserProfile checkIfUsernameExists(String userName) throws ServiceException;
 
-    public boolean checkIfUserExists(String userName);
+    boolean checkIfUserExists(String userName);
 
-    public Response checkPermission(HttpServletRequest request);
+    Response checkPermission(HttpServletRequest request);
 
-    public boolean userCanViewTimesheet(UserProfile user, Timesheet sheet);
+    boolean userCanViewTimesheet(UserProfile user, Timesheet sheet);
 
-    public void userCanEditTimesheetEntry(UserProfile user, Timesheet sheet, JsonTimesheetEntry entry) throws ServiceException, PermissionException;
+    void userCanEditTimesheetEntry(UserProfile user, Timesheet sheet, JsonTimesheetEntry entry) throws ServiceException, PermissionException;
 
-    public void userCanDeleteTimesheetEntry(UserProfile user, TimesheetEntry entry) throws PermissionException;
+    void userCanDeleteTimesheetEntry(UserProfile user, TimesheetEntry entry) throws PermissionException;
 }

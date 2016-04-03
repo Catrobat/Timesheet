@@ -22,17 +22,17 @@ import java.util.Date;
 
 public class DateAdapter extends XmlAdapter<String, Date> {
 
-  // private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    // private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-  @Override
-  public String marshal(Date v) throws Exception {
-    return dateFormat.format(v);
-  }
+    @Override
+    public String marshal(Date v) throws Exception {
+        return dateFormat.format(v);
+    }
 
-  @Override
-  public Date unmarshal(String v) throws Exception {
-    return dateFormat.parse(v);
-  }
+    @Override
+    public Date unmarshal(String v) throws Exception {
+        return dateFormat.parse(v);
+    }
 
 }

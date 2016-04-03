@@ -25,39 +25,51 @@ import java.util.Date;
 @Implementation(TimesheetEntryImpl.class)
 public interface TimesheetEntry extends Entity {
 
-  public Timesheet getTimeSheet();
+    Timesheet getTimeSheet();
 
-  public void setTimeSheet(Timesheet sheet);
+    void setTimeSheet(Timesheet sheet);
 
-  public Date getBeginDate();
+    Date getBeginDate();
 
-  public void setBeginDate(Date date);
+    void setBeginDate(Date date);
 
-  public Date getEndDate();
+    Date getEndDate();
 
-  public void setEndDate(Date date);
+    void setEndDate(Date date);
 
-  public Category getCategory();
+    Category getCategory();
 
-  public void setCategory(Category category);
+    void setCategory(Category category);
 
-  public boolean getIsGoogleDocImport();
+    boolean getIsGoogleDocImport();
 
-  public void setIsGoogleDocImport(boolean isGoogleDocImport);
+    void setIsGoogleDocImport(boolean isGoogleDocImport);
 
-  public String getDescription();
+    String getDescription();
 
-  public void setDescription(String description);
+    void setDescription(String description);
 
-  public int getPauseMinutes();
+    int getPauseMinutes();
 
-  public void setPauseMinutes(int pause);
+    void setPauseMinutes(int pause);
 
-  public Team getTeam();
+    Team getTeam();
 
-  public void setTeam(Team team);
+    void setTeam(Team team);
 
-  public int getDurationMinutes();
+    int getDurationMinutes();
 
-  public void setDurationMinutes(int duration);
+    void setDurationMinutes(int duration);
+
+    Date getInactiveEndDate();
+
+    void setInactiveEndDate(Date date);
+
+    String getPairProgrammingUserName();
+
+    void setPairProgrammingUserName(String userName);
+
+    String getJiraTicketID();
+
+    void setJiraTicketID(String ticketID);
 }

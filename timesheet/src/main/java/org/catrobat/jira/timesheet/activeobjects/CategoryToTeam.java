@@ -20,11 +20,11 @@ import net.java.ao.Entity;
 
 public interface CategoryToTeam extends Entity {
 
-  Category getCategory();
+    Category getCategory();
 
-  void setCategory(Category category);
+    void setCategory(Category category);
 
-  Team getTeam();
+    Team getTeam();
 
-  void setTeam(Team team);
+    void setTeam(Team team);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Stephan Fellhofer
+ * Copyright 2016 Adrian Schnedlitz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,11 @@
 var restBaseUrl;
 
 AJS.toInit(function () {
-    //AJS.$(document).ajaxStart(function () {
-    //    AJS.$(".loadingDiv").show();
-    //});
-    //AJS.$(document).ajaxStop(function () {
-    //    AJS.$(".loadingDiv").hide();
-    //});
-
-    //var baseUrl = AJS.$("meta[name='application-base-url']").attr("content");
-    //var baseUrl = AJS.$("meta[id$='-base-url']").attr("content");
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
     var teams = [];
-    var approvedUsers = [];
-    var editNameDialog, editCategoryNameDialog;
+    var editCategoryNameDialog, editTeamNameDialog;
 
     function scrollToAnchor(aid) {
         var aTag = AJS.$("a[name='" + aid + "']");
@@ -56,7 +46,6 @@ AJS.toInit(function () {
 
         AJS.$.when(allUsersFetched, categoriesFetched)
             .done(populateForm)
-            .done(populateApprovedUsers)
             .fail(function (error) {
                 AJS.messages.error({
                     title: 'There was an error while fetching user data.',
@@ -65,41 +54,6 @@ AJS.toInit(function () {
                 console.log(error);
                 AJS.$(".loadingDiv").hide();
             });
-    }
-
-    function populateApprovedUsers(allUsers) {
-        AJS.$(".loadingDiv").show();
-        AJS.$.ajax({
-            url: restBaseUrl + 'config/getConfig',
-            dataType: "json",
-            success: function (config) {
-                AJS.$("#permissions").empty();
-                AJS.$("#permissions").append("<fieldset>");
-                AJS.$("#permissions").append("<div class=\"field-group\"><label for=\"approvedUser\">Approved User</label><input class=\"text approved\" type=\"text\" id=\"approvedUser\" value=\"" + config.approvedUsers + "\"></div>");
-                AJS.$("#permissions").append("</fieldset>");
-
-                var userNameList = [];
-                for (var i = 0; i < allUsers[0].length; i++) {
-                    userNameList.push(allUsers[0][i]['userName']);
-                }
-
-                AJS.$(".approved").auiSelect2({
-                    placeholder: "Search for user",
-                    tags: userNameList.sort(),
-                    tokenSeparators: [",", " "]
-                });
-
-                AJS.$(".loadingDiv").hide();
-            },
-            error: function (error) {
-                AJS.messages.error({
-                    title: "Error!",
-                    body: "Something went wrong while loading the config file!"
-                });
-
-                AJS.$(".loadingDiv").hide();
-            }
-        });
     }
 
     function populateForm(allUsers, allCategories) {
@@ -145,6 +99,59 @@ AJS.toInit(function () {
                     AJS.$("#teams").append("</fieldset>");
                 }
 
+                AJS.$("#plugin-permission").auiSelect2({
+                    placeholder: "Search for users and groups",
+                    minimumInputLength: 0,
+                    tags: true,
+                    tokenSeparators: [",", " "],
+                    ajax: {
+                        url: baseUrl + "/rest/api/2/groupuserpicker",
+                        dataType: "json",
+                        data: function (term, page) {
+                            return {query: term};
+                        },
+                        results: function (data, page) {
+                            var select2data = [];
+                            for (var i = 0; i < data.groups.groups.length; i++) {
+                                select2data.push({
+                                    id: "groups-" + data.groups.groups[i].name,
+                                    text: data.groups.groups[i].name
+                                });
+                            }
+                            for (var i = 0; i < data.users.users.length; i++) {
+                                select2data.push({
+                                    id: "users-" + data.users.users[i].name,
+                                    text: data.users.users[i].name
+                                });
+                            }
+                            return {results: select2data};
+                        }
+                    },
+                    initSelection: function (elements, callback) {
+                        var data = [];
+                        var array = elements.val().split(",");
+                        for (var i = 0; i < array.length; i++) {
+                            data.push({id: array[i], text: array[i].replace(/^users-/i, "").replace(/^groups-/i, "")});
+                        }
+                        callback(data);
+                    }
+                });
+
+                var approved = [];
+                if (config.approvedGroups) {
+                    for (var i = 0; i < config.approvedGroups.length; i++) {
+                        approved.push({id: "groups-" + config.approvedGroups[i], text: config.approvedGroups[i]});
+                    }
+                }
+
+                if (config.approvedUsers) {
+                    for (var i = 0; i < config.approvedUsers.length; i++) {
+                        approved.push({id: "users-" + config.approvedUsers[i], text: config.approvedUsers[i]});
+                    }
+                }
+
+                AJS.$("#plugin-permission").auiSelect2("data", approved);
+
                 var userNameList = [];
                 for (var i = 0; i < allUsers[0].length; i++) {
                     userNameList.push(allUsers[0][i]['userName']);
@@ -165,17 +172,17 @@ AJS.toInit(function () {
                 }
 
                 AJS.$(".coordinator").auiSelect2({
-                    placeholder: "Search for user",
+                    placeholder: "Select coordinators",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
                 AJS.$(".user").auiSelect2({
-                    placeholder: "Search for user",
+                    placeholder: "Select users",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
                 AJS.$(".category").auiSelect2({
-                    placeholder: "Search for category",
+                    placeholder: "Select categories",
                     tags: categoryList.sort(),
                     tokenSeparators: [",", " "]
                 });
@@ -185,7 +192,7 @@ AJS.toInit(function () {
             error: function (error) {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!"
+                    body: "Could not load 'Config'."
                 });
 
                 AJS.$(".loadingDiv").hide();
@@ -207,11 +214,20 @@ AJS.toInit(function () {
         config.mailBodyInactive = AJS.$("#mail-body-inactive").val();
         config.mailBodyEntry = AJS.$("#mail-body-entry-change").val();
 
-        var approvedUsers = AJS.$("#approvedUser").auiSelect2("val");
+        var usersAndGroups = AJS.$("#plugin-permission").auiSelect2("val");
+        var approvedUsers = [];
         var approvedGroups = [];
+        for (var i = 0; i < usersAndGroups.length; i++) {
+            if (usersAndGroups[i].match("^users-")) {
+                approvedUsers.push(usersAndGroups[i].split("users-")[1]);
+            } else if (usersAndGroups[i].match("^groups-")) {
+                approvedGroups.push(usersAndGroups[i].split("groups-")[1]);
+            }
+        }
 
         config.approvedUsers = approvedUsers;
         config.approvedGroups = approvedGroups;
+
         config.teams = [];
         for (var i = 0; i < teams.length; i++) {
             var tempTeamName = teams[i].replace(/\W/g, '-');
@@ -270,14 +286,14 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Team added!"
+                    body: "'Team' added successfully."
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!<br />" + error.responseText
+                    body: "Could not add 'Team'.<br />" + error.responseText
                 });
                 AJS.$(".loadingDiv").hide();
             }
@@ -295,14 +311,14 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Category added!"
+                    body: "'Category' added successfully."
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!<br />" + error.responseText
+                    body: "Could not add 'Category'<br />" + error.responseText
                 });
                 AJS.$(".loadingDiv").hide();
             }
@@ -311,68 +327,69 @@ AJS.toInit(function () {
 
     function editTeam(teamName) {
         // may be in background and therefore needs to be removed
-        if (editNameDialog) {
+        if (editTeamNameDialog) {
             try {
-                editNameDialog.remove();
+                editTeamNameDialog.remove();
             } catch (err) {
                 // may be removed already
             }
         }
 
-        editNameDialog = new AJS.Dialog({
+        console.log(teamName);
+
+        editTeamNameDialog = new AJS.Dialog({
             width: 600,
             height: 200,
-            id: "edit-name-dialog",
+            id: "edit-team-name-dialog",
             closeOnOutsideClick: true
         });
 
         var content = "<form class=\"aui\">\n" +
             "    <fieldset>\n" +
             "        <div class=\"field-group\">\n" +
-            "            <label for=\"new-name\">New Team Name</label>\n" +
-            "            <input class=\"text\" type=\"text\" id=\"new-name\" name=\"new-name\" title=\"new-name\">\n" +
+            "            <label for=\"new-team-name\">New Team Name</label>\n" +
+            "            <input class=\"text\" type=\"text\" id=\"new-team-name\" name=\"new-team-name\" title=\"new-team-name\">\n" +
             "        </div>\n" +
             "    </fieldset>\n" +
             " </form> ";
 
-        editNameDialog.addHeader("New Team Name for " + teamName);
-        editNameDialog.addPanel("Panel 1", content, "panel-body");
-
-        editNameDialog.addButton("Save", function (dialog) {
-            ajs.$(".loadingdiv").show();
-            ajs.$.ajax({
-                url: restbaseurl + 'config/editteampermission',
-                type: "put",
-                contenttype: "application/json",
-                data: json.stringify([teamname, ajs.$("#new-name").val()]),
-                processdata: false,
+        editTeamNameDialog.addHeader("New Team Name for " + teamName);
+        editTeamNameDialog.addPanel("Panel 1", content, "panel-body");
+        editTeamNameDialog.addButton("Save", function (dialog) {
+            AJS.$(".loadingDiv").show();
+            AJS.$.ajax({
+                url: restBaseUrl + 'config/editTeamName',
+                type: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify([teamName, AJS.$("#new-team-name").val()]),
+                processData: false,
                 success: function () {
-                    ajs.messages.success({
-                        title: "success!",
-                        body: "team edited!"
+                    AJS.messages.success({
+                        title: "Success!",
+                        body: "'Team' renamed successfully."
                     });
-                    fetchdata();
-                    ajs.$(".loadingdiv").hide();
+                    fetchData();
+                    AJS.$(".loadingDiv").hide();
                 },
                 error: function (error) {
-                    ajs.messages.error({
-                        title: "error!",
-                        body: "something went wrong!<br />" + error.responsetext
+                    AJS.messages.error({
+                        title: "Error!",
+                        body: "Could not rename 'Team'.<br />" + error.responseText
                     });
-                    scrolltoanchor('top');
-                    ajs.$(".loadingdiv").hide();
+                    scrollToAnchor('top');
+                    AJS.$(".loadingDiv").hide();
                 }
             });
 
             dialog.remove();
         });
-        editNameDialog.addLink("Cancel", function (dialog) {
+        editTeamNameDialog.addLink("Cancel", function (dialog) {
             dialog.remove();
         }, "#");
 
-        editNameDialog.gotoPage(0);
-        editNameDialog.gotoPanel(0);
-        editNameDialog.show();
+        editTeamNameDialog.gotoPage(0);
+        editTeamNameDialog.gotoPanel(0);
+        editTeamNameDialog.show();
     }
 
     function editCategory(categoryName) {
@@ -417,7 +434,7 @@ AJS.toInit(function () {
                 success: function () {
                     AJS.messages.success({
                         title: "Success!",
-                        body: "Category edited!"
+                        body: "'Category' renamed. successfully"
                     });
                     fetchData();
                     AJS.$(".loadingDiv").hide();
@@ -425,7 +442,7 @@ AJS.toInit(function () {
                 error: function (error) {
                     AJS.messages.error({
                         title: "Error!",
-                        body: "Something went wrong!<br />" + error.responseText
+                        body: "Could not rename 'Category'<br />" + error.responseText
                     });
                     scrollToAnchor('top');
                     AJS.$(".loadingDiv").hide();
@@ -454,14 +471,14 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Team removed!"
+                    body: "'Team' deleted successfully."
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function () {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!"
+                    body: "Could not delete 'Team'."
                 });
                 AJS.$(".loadingDiv").hide();
             }
@@ -479,39 +496,14 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Category removed!"
+                    body: "'Category' deleted successfully."
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function () {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Something went wrong!"
-                });
-                AJS.$(".loadingDiv").hide();
-            }
-        });
-    }
-
-    function modifyActivityVerificationScheduling() {
-        AJS.$(".loadingDiv").show();
-        AJS.$.ajax({
-            url: restBaseUrl + 'scheduling/changeVerificationInterval',
-            type: "PUT",
-            contentType: "application/json",
-            data: AJS.$("#activity-verification-job").attr("value"),
-            processData: false,
-            success: function () {
-                AJS.messages.success({
-                    title: "Success!",
-                    body: "Scheduling interval changes applied!"
-                });
-                AJS.$(".loadingDiv").hide();
-            },
-            error: function () {
-                AJS.messages.error({
-                    title: "Error!",
-                    body: "Something went wrong!"
+                    body: "Could not delete 'Category'."
                 });
                 AJS.$(".loadingDiv").hide();
             }
@@ -560,35 +552,38 @@ AJS.toInit(function () {
     AJS.$("#modify-scheduling").submit(function (e) {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Activity Verification') {
-            trigger();
+            triggerJobManually("trigger/activity/verification", "Activity-Verification");
         } else if (AJS.$(document.activeElement).val() === 'Activity Notification') {
-            //call function from the server
+            triggerJobManually("trigger/activity/notification", "Activity-Notification");
         } else {
-            //call function from the server
+            triggerJobManually("trigger/out/of/time/notification", "Out-Of-Time-Notification");
         }
     });
 
-    function trigger() {
-        AJS.$(".loadingDiv").show();
-        AJS.$.ajax({
-            url: restBaseUrl + 'config/trigger',
-            type: "GET",
-            contentType: "application/json",
-            success: function () {
+    function triggerJobManually(restUrl, jobName) {
+        var callREST = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'scheduling/' + restUrl,
+            contentType: "application/json"
+        });
+
+        AJS.$.when(callREST)
+            .done(function (success) {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Job triggered successfull!"
+                    body: jobName + " Job triggered successfully."
                 });
+                fetchData();
                 AJS.$(".loadingDiv").hide();
-            },
-            error: function (error) {
+            })
+            .fail(function (error) {
                 AJS.messages.error({
-                    title: "Error!",
-                    body: "Something went wrong during Job Triggering!<br />" + error.responseText
+                    title: 'There was an error while triggering the Job REST url: ' + restUrl,
+                    body: '<p>Reason: ' + error.responseText + '</p>'
                 });
+                console.log(error);
                 AJS.$(".loadingDiv").hide();
-            }
-        });
+            });
     }
 
     AJS.$("a[href='#tabs-general']").click(function () {

@@ -1,3 +1,25 @@
+/*
+ * Copyright 2016 Adrian Schnedlitz
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
 .table {
     display: table;
 }
@@ -14,60 +36,14 @@
     display: table-cell;
 }
 
-#visualization-table .time-picker,
-#visualization-table .range,
-#visualization-table .pause,
-#visualization-table .duration {
-    text-align: center;
+
+
+#visualization-table .date {
+    width: 100px;
 }
 
 #visualization-table .time {
-    width: 50px;
-}
-
-#visualization-table input.duration {
-    width: 50px;
-    border: none;
-    background-color: inherit;
-    cursor: inherit;
-    color: inherit;
-}
-
-#visualization-table .date {
-    width: 87px;
-}
-
-#visualization-table .range {
-    width: 115px;
-}
-
-#visualization-table .pause,
-#visualization-table .duration {
-    width: 55px;
-}
-
-#visualization-table .team,
-#visualization-table .category {
-    min-width: 150px;
-}
-
-#visualization-table .team aui-select2-container,
-#visualization-table .category aui-select2-container {
-    width: 200px;
-}
-
-#visualization-table button {
-    visibility: hidden;
-}
-
-#visualization-table .tr:hover button,
-#visualization-table button.save {
-    visibility: visible;
-}
-
-#button-wrapper {
-    width: 100%;
-    text-align: right;
+    width: 100px;
 }
 
 code {
@@ -84,8 +60,66 @@ code {
     overflow-x: scroll;
 }
 
-.tabs-pane div {
-    position: relative;
-    width: inherit;
-    display: inline-block;
+#visualization-table {
+    margin-top: 25px;
+    visibility: hidden;
+}
+
+#piChartDiagram {
+    margin-top: 25px;
+    width: 200px;
+    height: 200px;
+    margin-left: 10px;
+    visibility: hidden;
+}
+
+#piChartDiagramTag {
+    margin-top: 25px;
+    visibility: hidden;
+}
+
+#lineDiagram {
+    margin-top: 25px;
+    width: 100%;
+    height: 30%;
+    margin-left: 10px;
+    visibility: hidden;
+}
+
+#lineDiagramTag {
+    margin-top: 25px;
+    visibility: hidden;
+}
+
+#teamDataDiagram {
+    margin-top: 25px;
+    width: 100%;
+    height: 30%;
+    margin-left: 10px;
+}
+
+#categoryLineDiagram {
+    margin-top: 25px;
+    width: 100%;
+    height: 30%;
+    margin-left: 10px;
+    visibility: hidden;
+}
+
+#categoryLineDiagramTag {
+    margin-top: 25px;
+    visibility: hidden;
+}
+
+#teamLineDiagram {
+    margin-top: 25px;
+    width: 100%;
+    height: 30%;
+    margin-left: 10px;
+    visibility: hidden;
+}
+
+#teamLineDiagramTag {
+    margin-top: 25px;
+    visibility: hidden;
 }

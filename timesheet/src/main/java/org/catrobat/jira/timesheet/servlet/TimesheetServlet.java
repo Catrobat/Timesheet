@@ -54,26 +54,27 @@ public class TimesheetServlet extends HttpServlet {
         try {
             if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
                     !permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
-                throw new ServletException("User is no Timesheet-Group member.");
+                throw new ServletException("User is no Timesheet-Group member, or Administrator.");
             }
 
             UserProfile userProfile = permissionService.checkIfUserExists(request);
             String userKey = ComponentAccessor.
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
-            Timesheet sheet = sheetService.getTimesheetByUser(userKey);
+            Timesheet sheet = sheetService.getTimesheetByUser(userKey, false);
 
             if (sheet == null) {
                 sheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
-                        "Hint: Do not make other people angry.", 5, "Not Available", true, true);
+                        "Hint: Do not make other people angry.", 5, "Not Available", true, true, false);
             }
 
             Map<String, Object> paramMap = Maps.newHashMap();
             paramMap.put("timesheetid", sheet.getID());
-            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators"))
+            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
                 paramMap.put("isadmin", true);
-            else
+            } else {
                 paramMap.put("isadmin", false);
-
+            }
+            paramMap.put("ismasterthesistimesheet", false);
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
         } catch (ServletException e) {

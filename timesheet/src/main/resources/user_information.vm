@@ -46,7 +46,8 @@
                 </p>
                 <div id="update-timesheet-button" class="field-group">
                     <form id="update-timesheet-status">
-                        <input type="submit" value="Refresh List" class="aui-button aui-button-primary" style="float: right;">
+                        <input type="submit" value="Refresh List" class="aui-button aui-button-primary"
+                               style="float: right;">
                     </form>
                 </div>
                 <table id="user-table" class="aui aui-table-interactive aui-table-sortable">

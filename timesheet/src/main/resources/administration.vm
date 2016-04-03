@@ -47,12 +47,23 @@
             <input style="display:none" type="password" name="fakepasswordremembered"/>
 
             <h2>Global Timesheet Read Access</h2>
-            <p>
-                Selected users are able to view all available timesheets, but are not able to apply any changes.
-            </p>
-            <p></p>
+            <fieldset>
+                <div class="field-group">
+                    <label for="plugin-permission">Allowed Groups/Users</label>
+                    <input class="text" type="text" id="plugin-permission" name="plugin-permission"
+                           title="plugin-permission">
 
-            <div id="permissions"></div>
+                    <div class="description">
+                        <ul>
+                            <li>If nothing is given, every Jira Administrator may read/write</li>
+                            <li>If a group is given, every Jira Administrator within this group may read/write</li>
+                            <li>If a single user is given and this user is a Jira Administrator this user may
+                                read/write
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </fieldset>
 
             <h2>E-Mail Notifications</h2>
             <fieldset>
@@ -157,20 +168,23 @@
                 </div>
             </fieldset>
 
-            <h2>Export</h2>
-            <p>Download all user timesheets as <a href="download/all">CSV</a>.</p>
+            <h2><font color="green">Export</font></h2>
+            <p>Download 'All Timesheets' as <a href="download/timesheets">CSV</a>.</p>
+            <p>Download 'Config' as <a href="download/config">CSV</a>.</p>
+
+            <h2><font color="red">Import</font></h2>
+            <p>Upload your new 'Config' <a href="upload/config">here</a>.</p>
 
             <h2>Team Configuration</h2>
-            <p>
-                Provides: change Team name; assign users and/or categories to a team.
-            </p>
+            <p>Provides: change Team name; assign users and/or categories to a team.</p>
+            <p><font color="red">Important Note: always 'save' immedeatly after you applied changes.</font></p>
             <p></p>
 
             <div id="teams"></div>
 
             <h2>Category Management</h2>
-            <p>
-                Provides: change Category name.
+            <p>Provides: change Category name.</p>
+            <p><font color="red">Important Note: please 'save' team modifications before renaming a 'Category'.</font>
             </p>
             <p></p>
 
@@ -183,9 +197,7 @@
     </div>
     <div class="tabs-pane" id="tabs-teams">
         <h2>Team</h2>
-        <p>
-            Removing a team just effects the configuration and no user will be modified.
-        </p>
+        <p>Removing a team just effects the configuration and no user will be modified.</p>
         <form id="modify-team" class="aui">
             <fieldset>
                 <div class="field-group">
@@ -201,9 +213,7 @@
     </div>
     <div class="tabs-pane" id="tabs-categories">
         <h2>Category</h2>
-        <p>
-            Removing a category does not modify any user.
-        </p>
+        <p>Removing a category does not modify any user.</p>
         <form id="modify-categoryList" class="aui">
             <fieldset>
                 <div class="field-group">
@@ -230,15 +240,18 @@
             <fieldset>
                 <div class="field-group">
                     <label for="activity-verification-job">Trigger - Activity Verification Job Manually</label>
-                    <input type="submit" value="Activity Verification" id="applyActivityVerificationInterval" class="aui-button aui-button-primary">
+                    <input type="submit" value="Activity Verification" id="applyActivityVerificationInterval"
+                           class="aui-button aui-button-primary">
                 </div>
                 <div class="field-group">
                     <label for="activity-notification-job">Trigger - Activity Notification Job Manually</label>
-                    <input type="submit" value="Activity Notification" id="applyActivityNotificationInterval" class="aui-button aui-button-primary">
+                    <input type="submit" value="Activity Notification" id="applyActivityNotificationInterval"
+                           class="aui-button aui-button-primary">
                 </div>
                 <div class="field-group">
                     <label for="out-of-time-verification-job">Trigger - Out Of Time Notification Job Manually</label>
-                    <input type="submit" value="Out Of Time" id="applyOutOfTimeInterval" class="aui-button aui-button-primary">
+                    <input type="submit" value="Out Of Time" id="applyOutOfTimeInterval"
+                           class="aui-button aui-button-primary">
                 </div>
             </fieldset>
         </form>

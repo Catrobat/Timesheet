@@ -56,7 +56,8 @@ public interface TimesheetService {
     @Nonnull
     Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                  String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled);
+                  String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
+                  Boolean isMasterThesisTimesheet);
 
     /**
      * Return all Timesheets
@@ -76,7 +77,7 @@ public interface TimesheetService {
      * @return Timesheet, null if unknown user
      */
     @Nullable
-    Timesheet getTimesheetByUser(String userKey) throws ServiceException;
+    Timesheet getTimesheetByUser(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException;
 
     /**
      * Returns a timesheet with the corresponding id
@@ -86,5 +87,4 @@ public interface TimesheetService {
      */
     @Nullable
     Timesheet getTimesheetByID(int id) throws ServiceException;
-
 }

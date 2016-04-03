@@ -1,22 +1,22 @@
 <html>
-  <head>
+<head>
     <title>Teams</title>
     <meta name="decorator" content="atl.admin">
-  </head>
-  <body>
-	<div id="add_form">
-        <form method="post">
-        	<input type="text" name="team" maxlength="32" placeholder="Teamname"/>
-        	<input type="submit" name="submit" value="Add Team"/>
-		</form>
-	</div>
-    <div id="teams_list">
-		#set($data = $entries.keySet())
+</head>
+<body>
+<div id="add_form">
+    <form method="post">
+        <input type="text" name="team" maxlength="32" placeholder="Teamname"/>
+        <input type="submit" name="submit" value="Add Team"/>
+    </form>
+</div>
+<div id="teams_list">
+    #set($data = $entries.keySet())
 		#foreach ($key in $data)
-			#set($entryWithHtml = $entries.get($key))
-			$entryWithHtml
-		#end
-    </div>
-    <script language='javascript'>document.forms[0].elements[0].focus();</script>
-  </body>
+    #set($entryWithHtml = $entries.get($key))
+    $entryWithHtml
+#end
+</div>
+<script language='javascript'>document.forms[0].elements[0].focus();</script>
+</body>
 </html>

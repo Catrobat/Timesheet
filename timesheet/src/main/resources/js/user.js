@@ -58,7 +58,7 @@ function getConfigAndCallback(baseUrl, callback) {
         error: function (error) {
             AJS.messages.error({
                 title: "Error!",
-                body: "Something went wrong!<br />" + error.responseText
+                body: "Could not load 'config'.<br />" + error.responseText
             });
             AJS.$(".loadingDiv").hide();
         }

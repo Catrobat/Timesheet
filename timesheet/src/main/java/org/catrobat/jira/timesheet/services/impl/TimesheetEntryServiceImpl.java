@@ -37,8 +37,9 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     }
 
     @Override
-    public TimesheetEntry add(Timesheet sheet, Date begin, Date end,
-                              Category category, String description, int pause, Team team, boolean isGoogleDocImport) {
+    public TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
+                              Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
+                              String userName) {
 
         TimesheetEntry entry = ao.create(TimesheetEntry.class);
 
@@ -50,11 +51,13 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         entry.setPauseMinutes(pause);
         entry.setTeam(team);
         entry.setIsGoogleDocImport(isGoogleDocImport);
+        entry.setInactiveEndDate(inactiveEndDate);
+        entry.setJiraTicketID(jiraTicketID);
+        entry.setPairProgrammingUserName(userName);
 
         entry.save();
 
         return entry;
-
     }
 
     @Override
@@ -71,8 +74,9 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     @Override
     @Nullable
-    public TimesheetEntry edit(int entryId, Timesheet sheet, Date begin, Date end,
-                               Category category, String description, int pause, Team team, boolean isGoogleDocImport) throws ServiceException {
+    public TimesheetEntry edit(int entryId, Timesheet sheet, Date begin, Date end, Category category,
+                               String description, int pause, Team team, boolean isGoogleDocImport,
+                               Date inactiveEndDate, String jiraTicketID, String userName) throws ServiceException {
 
         TimesheetEntry entry = getEntryByID(entryId);
 
@@ -88,6 +92,9 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         entry.setPauseMinutes(pause);
         entry.setTeam(team);
         entry.setIsGoogleDocImport(isGoogleDocImport);
+        entry.setInactiveEndDate(inactiveEndDate);
+        entry.setJiraTicketID(jiraTicketID);
+        entry.setPairProgrammingUserName(userName);
 
         entry.save();
 

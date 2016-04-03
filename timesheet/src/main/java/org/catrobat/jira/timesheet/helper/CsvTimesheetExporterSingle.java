@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package org.catrobat.jira.timesheet.services;
+package org.catrobat.jira.timesheet.helper;
 
-import com.atlassian.activeobjects.tx.Transactional;
+import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 
-@Transactional
-public interface DBFillerService {
-  void cleanDB();
+public class CsvTimesheetExporterSingle extends CsvExporter {
 
-  void insertDefaultData();
 
-  void printDBStatus();
+    public CsvTimesheetExporterSingle(ConfigService configService) {
+        super(configService);
+    }
+
+    @Override
+    public String getTimesheetCsvData(Timesheet timesheet) {
+        return super.getTimesheetCsvData(timesheet);
+    }
 }

@@ -1,19 +1,8 @@
 "use strict";
 
 //var baseUrl, visualizationTable, timesheetForm, restBaseUrl;
-var restBaseUrl;
 
-AJS.toInit(function () {
-    //var baseUrl = AJS.$("meta[id$='-base-url']").attr("content");
-    var baseUrl = AJS.params.baseURL;
-    restBaseUrl = baseUrl + "/rest/timesheet/latest/";
-    //restBaseUrl = "/rest/timesheet/latest/";
-
-    fetchData();
-    fetchTeamData();
-});
-
-function fetchData() {
+function fetchVisData() {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheets/' + timesheetID,
@@ -39,8 +28,9 @@ function fetchData() {
     });
 
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
-        .done(assembleTimesheetData)
-        .done(populateTable)
+        .done(assembleTimesheetVisData)
+        .done(populateVisTable)
+        .done(computeCategoryDiagramData)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching data.',
@@ -50,7 +40,7 @@ function fetchData() {
         });
 }
 
-function fetchTeamData() {
+function fetchTeamVisData() {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
@@ -76,8 +66,8 @@ function fetchTeamData() {
     });
 
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
-        .done(assembleTimesheetData)
-        .done(assignTeamData)
+        .done(assembleTimesheetVisData)
+        .done(assignTeamVisData)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching data.',
@@ -87,7 +77,7 @@ function fetchTeamData() {
         });
 }
 
-function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
+function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
     var timesheetData = timesheetReply[0];
 
     timesheetData.entries = entriesReply[0];
@@ -106,10 +96,65 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
             teamCategories: team.teamCategories
         };
     });
+
     return timesheetData;
 }
 
-function assignTeamData(timesheetDataReply) {
+function assignTeamData(entries) {
+    AJS.$("#teamDataDiagram").empty();
+    var availableEntries = entries;
+
+    var pos = availableEntries.length - 1;
+    //variables for the time calculation
+    var totalHours = 0;
+    var totalMinutes = 0;
+
+    //data array
+    var dataPoints = [];
+
+    for (var i = availableEntries.length - 1; i >= 0; i--) {
+        //calculate spent time for team
+        var referenceEntryDate = new Date(availableEntries[pos].beginDate);
+        var compareToDate = new Date(availableEntries[i].beginDate);
+        var oldPos = pos;
+
+        if ((referenceEntryDate.getFullYear() == compareToDate.getFullYear()) &&
+            (referenceEntryDate.getMonth() == compareToDate.getMonth())) {
+            //add all times for the same year-month pairs
+            var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
+                availableEntries[i].pauseMinutes).getHours();
+            var minutes = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
+                availableEntries[i].pauseMinutes).getMinutes();
+            var pause = availableEntries[i].pauseMinutes;
+            var calculatedTime = hours * 60 + minutes - pause;
+
+            totalMinutes = totalMinutes + calculatedTime;
+
+            if (totalMinutes >= 60) {
+                var minutesToFullHours = Math.floor(totalMinutes / 60); //get only full hours
+                totalHours = totalHours + minutesToFullHours;
+                totalMinutes = totalMinutes - minutesToFullHours * 60;
+            }
+        } else {
+            pos = i;
+            i = i + 1;
+        }
+
+        if (oldPos != pos || i == 0) {
+            var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
+            var dataY = totalHours + totalMinutes / 60;
+            dataPoints.push(dataX);
+            dataPoints.push(dataY);
+            totalHours = 0;
+            totalMinutes = 0;
+        }
+    }
+
+    //assign JSON data for line graph
+    teamDiagram(dataPoints);
+}
+
+function assignTeamVisData(timesheetDataReply) {
     var availableEntries = timesheetDataReply[0].entries;
     var availableTeams = timesheetDataReply[0].teams;
 
@@ -192,24 +237,14 @@ function assignTeamData(timesheetDataReply) {
     drawTeamDiagram(dataJSON, data['label']);
 }
 
-function populateTable(timesheetDataReply) {
+function populateVisTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
-    var visualizationTable = AJS.$("#visualization-table");
-    visualizationTable.empty();
-
-    visualizationTable.append(Confluence.Templates.Visualization.visualizationHeader(
-        {teams: timesheetData.teams}
-    ));
-
-    appendEntriesToTable(timesheetData);
-    assignCategoryDiagramData(timesheetData);
+    AJS.$("#visualization-table-content").empty();
+    appendEntriesToVisTable(timesheetData);
 }
 
-Array.prototype.contains = function (k) {
-    for (var p in this)
-        if (this[p] === k)
-            return true;
-    return false;
+function computeCategoryDiagramData(timesheetDataReply) {
+    assignCategoryDiagramData(timesheetDataReply[0]);
 }
 
 function appendTimeToPiChart(theoryTime, practicalTime, totalTime) {
@@ -225,9 +260,8 @@ function appendTimeToPiChart(theoryTime, practicalTime, totalTime) {
     drawPiChartDiagram(piChartDataPoints);
 }
 
-function appendEntriesToTable(timesheetData) {
+function appendEntriesToVisTable(timesheetData) {
 
-    var visualizationTable = AJS.$("#visualization-table");
     var availableEntries = timesheetData.entries;
 
     var pos = 0;
@@ -237,12 +271,16 @@ function appendEntriesToTable(timesheetData) {
     var totalMinutes = 0;
     var totalTimeHours = 0;
     var totalTimeMinutes = 0;
+    var timeLastSixMonthHours = 0;
+    var timeLastSixMonthMinutes = 0;
     //save data in an additional array
-    var index = 0;
-    var dataArray = [];
+    var count = 0;
     var dataPoints = [];
     //pi chart variables
     var theoryHours = 0;
+
+    //spent time within the last six months
+    var sixMonthAgo = new Date().getMonth() - 6;
 
     while (i < availableEntries.length) {
         var referenceEntryDate = new Date(availableEntries[pos].beginDate);
@@ -271,32 +309,30 @@ function appendEntriesToTable(timesheetData) {
             if (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory")
                 theoryHours = theoryHours + calculatedTime;
 
+            //date within the last six months
+            var compareEntryMonth = compareToDate.getMonth() - 6;
+            if (compareEntryMonth <= sixMonthAgo) {
+                timeLastSixMonthHours = timeLastSixMonthHours + hours;
+                timeLastSixMonthMinutes = timeLastSixMonthMinutes + minutes;
+            }
         } else {
             pos = i;
             i = i - 1;
         }
 
         if (oldPos != pos || i == availableEntries.length - 1) {
-            //create a new table entry and add it to the table
-            var newVisualizationEntry = {
-                entryID: index,
-                date: referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1),
-                begin: totalHours + "h" + totalMinutes + "min",
-            };
-
             //add points to line diagram
             var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
             var dataY = totalHours + totalMinutes / 60;
             dataPoints.push(dataX);
             dataPoints.push(dataY);
 
-            //add entry to table
-            dataArray.push(newVisualizationEntry);
-            index = index + 1;
+            AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"date\">" +
+                "Time Spent: " + referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1) + "</td>" +
+                "<td headers=\"basic-time\" class=\"time\">" + totalHours + "hours " + totalMinutes + "mins" + "</td>" +
+                "</tr>");
 
-            var viewRow = AJS.$(Confluence.Templates.Visualization.visualizationEntry(
-                {entry: newVisualizationEntry, teams: timesheetData.teams}));
-            visualizationTable.append(viewRow);
+            count++;
 
             //overall sum of spent time
             totalTimeHours = totalTimeHours + totalHours;
@@ -316,21 +352,13 @@ function appendEntriesToTable(timesheetData) {
 
     var totalTime = totalTimeHours * 60 + totalTimeMinutes;
 
-    //entry for whole time
-    var newVisualizationEntry = {
-        entryID: index,
-        date: "Total Time",
-        begin: totalTimeHours + "h" + totalTimeMinutes + "min",
-    };
-
-    dataArray.push(newVisualizationEntry);
-
-    var viewRow = AJS.$(Confluence.Templates.Visualization.visualizationEntry(
-        {entry: newVisualizationEntry, teams: timesheetData.teams}));
-    visualizationTable.append(viewRow);
+    //append total time
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Total Spent Time" + "</td>" +
+        "<td headers=\"basic-time\" class=\"time\">" + totalTimeHours + "hours " + totalTimeMinutes + "mins" + "</td>" +
+        "</tr>");
 
     //entry for average time
-    var averageMinutesPerMonth = (totalTimeHours * 60 + totalTimeMinutes) / (dataArray.length - 1);
+    var averageMinutesPerMonth = (totalTimeHours * 60 + totalTimeMinutes) / count;
     var averageTimeHours = 0;
     var averageTimeMinutes = 0;
 
@@ -340,19 +368,17 @@ function appendEntriesToTable(timesheetData) {
         averageTimeMinutes = averageMinutesPerMonth - minutesToFullHours * 60;
     }
 
-    newVisualizationEntry = {
-        entryID: index,
-        date: "Time / Month",
-        begin: averageTimeHours + "h" + averageTimeMinutes + "min",
-    };
+    //append avg time
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"avg-time\">" + "Time / Month" + "</td>" +
+        "<td headers=\"basic-time\" class=\"time\">" + averageTimeHours + "hours " + averageTimeMinutes + "mins" + "</td>" +
+        "</tr>");
 
-    dataArray.push(newVisualizationEntry);
+    //append time last 6 month
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Overall Time Last 6 Month" + "</td>" +
+        "<td headers=\"basic-time\" class=\"time\">" + timeLastSixMonthHours + "hours " + timeLastSixMonthMinutes + "mins" + "</td>" +
+        "</tr>");
 
-    var viewRow = AJS.$(Confluence.Templates.Visualization.visualizationEntry(
-        {entry: newVisualizationEntry, teams: timesheetData.teams}));
-    visualizationTable.append(viewRow);
-
-    //draw line graph
+    //assign JSON data for line graph
     diagram(dataPoints);
     appendTimeToPiChart(theoryHours, totalTime - theoryHours, totalTime);
 }
@@ -360,7 +386,6 @@ function appendEntriesToTable(timesheetData) {
 //reverse order of the table from bottom to top
 function assignCategoryDiagramData(timesheetData) {
 
-    var visualizationTable = AJS.$("#visualization-table");
     var availableEntries = timesheetData.entries;
 
     var pos = availableEntries.length - 1;
@@ -426,7 +451,7 @@ function assignCategoryDiagramData(timesheetData) {
     for (var i = 0; i < dataPoints.length; i++)
         //read category name at position 3
         if (i % 3 === 2)
-            if (!categories.contains(dataPoints[i]))
+            if (!containsElement(categories, dataPoints[i]))
                 categories.push(dataPoints[i]);
 
 
@@ -465,11 +490,11 @@ function categoryDiagram(sortedDataArray, numberOfCategories) {
     for (var i = 0; i < numberOfCategories; i++) {
         //console.log(sortedDataArray[i]);
         //labels
-        if (!data['label'].contains(sortedDataArray[i][0]))
+        if (!containsElement(data['label'], sortedDataArray[i][0]))
             data['label'].push(sortedDataArray[i][0]);
         //years
         for (var j = 1; j < sortedDataArray[i].length - 1; j = j + 2)
-            if (!data['year'].contains(sortedDataArray[i][j]))
+            if (!containsElement(data['year'], sortedDataArray[i][j]))
                 data['year'].push(sortedDataArray[i][j]);
         //values
         data['category' + i] = [];
@@ -504,7 +529,6 @@ function categoryDiagram(sortedDataArray, numberOfCategories) {
 
         tempData = [];
     }
-    //console.log(dataJSON);
     drawCategoryDiagram(dataJSON, data['label']);
 }
 
@@ -530,87 +554,15 @@ function drawPiChartDiagram(dataPoints) {
     drawPiChart(data);
 }
 
-/**
- * Finds and returns the form row that belongs to a view row
- * @param {jQuery} viewRow
- * @returns {jQuery} formRow or undefined if not found
- */
-function getFormRow(viewRow) {
-    var formRow = viewRow.next(".entry-form");
-    if (formRow.data("id") === viewRow.data("id")) {
-        return formRow;
+function teamDiagram(dataPoints) {
+    var data = [];
+    for (var i = 0; i < dataPoints.length; i = i + 2) {
+        data.push({
+            year: dataPoints[i],
+            value: dataPoints[i + 1]
+        });
     }
-}
-
-/**
- * Augments an entry object wth a few attributes by deriving them from its
- * original attributes
- * @param {Object} timesheetData
- * @param {Object} entry
- * @returns {Object} augmented entry
- */
-function augmentEntry(timesheetData, entry) {
-
-    var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
-
-    return {
-        date: toDateString(new Date(entry.beginDate)),
-        begin: toTimeString(new Date(entry.beginDate)),
-        end: toTimeString(new Date(entry.endDate)),
-        pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
-        duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
-        category: timesheetData.categories[entry.categoryID].categoryName,
-        team: timesheetData.teams[entry.teamID].teamName,
-        entryID: entry.entryID,
-        beginDate: entry.beginDate,
-        endDate: entry.endDate,
-        description: entry.description,
-        pauseMinutes: entry.pauseMinutes,
-        teamID: entry.teamID,
-        categoryID: entry.categoryID
-    };
-}
-
-/**
- * Creates the viewrow
- * @param {Object} timesheetData
- * @param {Object} entry
- */
-function prepareViewRow(timesheetData, entry) {
-
-    //todo: dont augment entry twice.
-    var augmentedEntry = augmentEntry(timesheetData, entry);
-
-    var viewRow = AJS.$(Confluence.Templates.Visualization.visualizationEntry(
-        {entry: augmentedEntry, teams: timesheetData.teams}));
-
-    viewRow.find('span.aui-icon-wait').hide();
-
-    return viewRow;
-}
-
-function toUTCTimeString(date) {
-    var h = date.getUTCHours(), m = date.getUTCMinutes();
-    var string =
-        ((h < 10) ? "0" : "") + h + ":" +
-        ((m < 10) ? "0" : "") + m;
-    return string;
-}
-
-function toTimeString(date) {
-    var h = date.getHours(), m = date.getMinutes();
-    var string =
-        ((h < 10) ? "0" : "") + h + ":" +
-        ((m < 10) ? "0" : "") + m;
-    return string;
-}
-
-function toDateString(date) {
-    var y = date.getFullYear(), d = date.getDate(), m = date.getMonth() + 1;
-    var string = y + "-" +
-        ((m < 10) ? "0" : "") + m + "-" +
-        ((d < 10) ? "0" : "") + d;
-    return string;
+    drawSelectedTeamDiagram(data);
 }
 
 function calculateDuration(begin, end, pause) {
@@ -618,39 +570,10 @@ function calculateDuration(begin, end, pause) {
     return new Date(end - begin - (pauseDate.getHours() * 60 + pauseDate.getMinutes()) * 60 * 1000);
 }
 
-function countDefinedElementsInArray(array) {
-    return array.filter(function (v) {
-        return v !== undefined
-    }).length;
-}
 
-/**
- * Check if date is a valid Date
- * source: http://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript
- * @param {type} date
- * @returns {boolean} true, if date is valid
- */
-function isValidDate(date) {
-    if (Object.prototype.toString.call(date) === "[object Date]") {
-        if (isNaN(date.getTime())) {
-            return false;
-        }
-        else {
+function containsElement(array, ele) {
+    for (var p in array)
+        if (array[p] === ele)
             return true;
-        }
-    }
-    else {
-        return false;
-    }
-}
-
-function getMinutesFromTimeString(timeString) {
-    var pieces = timeString.split(":");
-    if (pieces.length === 2) {
-        var hours = parseInt(pieces[0]);
-        var minutes = parseInt(pieces[1]);
-        return hours * 60 + minutes;
-    } else {
-        return 0;
-    }
+    return false;
 }
