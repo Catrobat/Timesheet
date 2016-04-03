@@ -159,16 +159,23 @@
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-tests</artifactId>
-            <version>${jira.version}</version>
+            <version>6.1.5</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-func-tests</artifactId>
-            <version>${jira.version}</version>
+            <version>6.4.9</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.maven.plugins</groupId>
+            <artifactId>maven-clover2-plugin</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
