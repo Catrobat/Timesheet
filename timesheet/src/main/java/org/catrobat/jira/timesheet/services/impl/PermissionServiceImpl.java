@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.services.impl;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
@@ -57,7 +56,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName) {
-        UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUser(request).getUsername());
+        String username = userManager.getRemoteUser(request).getUsername();
+        UserProfile userProfile = userManager.getUserProfile(username);
 
         if (userProfile == null) {
             return false;
