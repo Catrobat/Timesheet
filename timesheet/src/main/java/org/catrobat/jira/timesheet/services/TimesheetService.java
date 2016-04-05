@@ -40,7 +40,8 @@ public interface TimesheetService {
     @Nullable
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
                             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                            String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled);
+                            String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
+                            Boolean isMasterThesisTimesheet);
 
     /**
      * Adds a new Timesheet

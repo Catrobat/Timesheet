@@ -21,13 +21,28 @@
         <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
         <dependency>com.atlassian.auiplugin:message</dependency>
 
+        <!-- CSS -->
         <resource type="download" name="timesheet.css" location="/css/timesheet.css"/>
         <resource type="download" name="table-aui.css" location="/css/table-aui.css"/>
-
         <resource type="download" name="visualization.css" location="/css/visualization.css"/>
 
+        <!-- JS core files -->
         <resource type="download" name="timesheet.js" location="/js/timesheet.js"/>
         <resource type="download" name="visualization.js" location="/js/visualization.js"/>
+
+        <!-- additional timesheet JS files -->
+        <resource type="download" name="approved_user.js" location="/js/timesheet/approved_user.js"/>
+        <resource type="download" name="coordinator.js" location="/js/timesheet/coordinator.js"/>
+        <resource type="download" name="functions.js" location="/js/timesheet/functions.js"/>
+        <resource type="download" name="google_import.js" location="/js/timesheet/google_import.js"/>
+
+        <!-- additional visualization JS files -->
+        <resource type="download" name="team_diagram.js" location="/js/visualization/team_diagram.js"/>
+        <resource type="download" name="user_category_diagram.js" location="/js/visualization/user_category_diagram.js"/>
+        <resource type="download" name="user_line_diagram.js" location="/js/visualization/user_line_diagram.js"/>
+        <resource type="download" name="user_overview_table.js" location="/js/visualization/user_overview_table.js"/>
+        <resource type="download" name="user_pi_chart_diagram.js" location="/js/visualization/user_pi_chart_diagram.js"/>
+        <resource type="download" name="user_team_diagram.js" location="/js/visualization/user_team_diagram.js"/>
 
         <resource type="download" name="jquery.datepair.min.js" location="/js/jquery.datepair.min.js"/>
         <resource type="download" name="datepair.min.js" location="/js/datepair.min.js"/>
@@ -65,7 +80,6 @@
         <dependency>com.atlassian.auiplugin:aui-table-sortable</dependency>
 
         <resource type="download" name="user_information.js" location="/js/user_information.js"/>
-        <resource type="download" name="user.js" location="/js/user.js"/>
         <resource type="download" name="administration.css" location="/css/administration.css"/>
         <context>modify</context>
     </web-resource>

@@ -39,25 +39,30 @@ public class TimesheetServiceImpl implements TimesheetService {
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
                                    int targetHours, int targetHoursCompleted, int targetHoursRemoved,
                                    String lectures, String reason, int ects, String latestEntryDate,
-                                   Boolean isActive, Boolean isEnabled) {
+                                   Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
-        if ((found.length == 1)) {
-            Timesheet sheet = found[0];
 
-            sheet.setUserKey(userKey);
-            sheet.setTargetHoursPractice(targetHoursPractice);
-            sheet.setTargetHoursTheory(targetHoursTheory);
-            sheet.setTargetHours(targetHours);
-            sheet.setTargetHoursCompleted(targetHoursCompleted);
-            sheet.setTargetHoursRemoved(targetHoursRemoved);
-            sheet.setLectures(lectures);
-            sheet.setReason(reason);
-            sheet.setEcts(ects);
-            sheet.setLatestEntryDate(latestEntryDate);
-            sheet.setIsActive(isActive);
-            sheet.setIsEnabled(isEnabled);
-            sheet.save();
-            return sheet;
+        if (!(found.length > 2)) {
+            for (int i = 0; i < found.length; i++) {
+                if (isMasterThesisTimesheet.equals(found[i].getIsMasterThesisTimesheet())) {
+                    Timesheet sheet = found[i];
+
+                    sheet.setUserKey(userKey);
+                    sheet.setTargetHoursPractice(targetHoursPractice);
+                    sheet.setTargetHoursTheory(targetHoursTheory);
+                    sheet.setTargetHours(targetHours);
+                    sheet.setTargetHoursCompleted(targetHoursCompleted);
+                    sheet.setTargetHoursRemoved(targetHoursRemoved);
+                    sheet.setLectures(lectures);
+                    sheet.setReason(reason);
+                    sheet.setEcts(ects);
+                    sheet.setLatestEntryDate(latestEntryDate);
+                    sheet.setIsActive(isActive);
+                    sheet.setIsEnabled(isEnabled);
+                    sheet.save();
+                    return sheet;
+                }
+            }
         }
         return null;
     }

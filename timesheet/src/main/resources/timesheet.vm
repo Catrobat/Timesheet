@@ -110,15 +110,17 @@
                     Shows your finished theory hours.
                 </div>
             </div>
+
             <div class="field-group">
-                <label for="timesheet-hours-ects">ECTS</label>
-                <input class="text" type="text" id="timesheet-hours-ects" name="timesheet-hours-ects"
-                       title="timesheet-hours-ects">
+                <label for="timesheet-hours-text">Timesheet Hours</label>
+                <input readonly class="text" type="text" id="timesheet-hours-text" name="timesheet-hours-text"
+                       title="timesheet-hours-text">
 
                 <div class="description">
-                    Shows your ECTS.
+                    Shows your timesheet hours.
                 </div>
             </div>
+
             <div class="field-group">
                 <label for="timesheet-hours-lectures">Lectures</label>
                 <input class="text" type="text" id="timesheet-hours-lectures" name="timesheet-hours-lectures"
@@ -128,13 +130,14 @@
                     Shows your lectures.
                 </div>
             </div>
+
             <div class="field-group">
-                <label for="timesheet-hours-text">Timesheet Hours</label>
-                <input class="text" type="text" id="timesheet-hours-text" name="timesheet-hours-text"
-                       title="timesheet-hours-text">
+                <label for="timesheet-hours-ects">ECTS</label>
+                <input class="text" type="text" id="timesheet-hours-ects" name="timesheet-hours-ects"
+                       title="timesheet-hours-ects">
 
                 <div class="description">
-                    Shows your timesheet hours.
+                    Shows your ECTS.
                 </div>
 
                 <div class="timesheet-hours">
@@ -236,7 +239,7 @@
     </div>
     <div class="tabs-pane active-pane" id="tabs-category">
         <h3 id="categoryLineDiagramTag">Visualization of your spent time on categories</h3>
-        <div id="categoryLineDiagram"></div>
+        <div id="categoryLineDiagram" style="height:250px;"></div>
     </div>
     <div class="tabs-pane active-pane" id="tabs-team">
         <h3 id="teamLineDiagramTag">Team Visualization</h3>

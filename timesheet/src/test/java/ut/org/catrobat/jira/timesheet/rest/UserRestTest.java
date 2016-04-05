@@ -101,6 +101,6 @@ public class UserRestTest {
         Mockito.when(componentAccessor.getUserKeyService().getKeyForUsername(userProfile.getUsername()))
                 .thenReturn("USER_KEY_1");
 
-        response = userRest.getUsers(request);
+        //response = userRest.getUsers(request);
     }
 }

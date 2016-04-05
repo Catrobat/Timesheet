@@ -96,15 +96,18 @@ public class PermissionServiceImpl implements PermissionService {
         UserProfile userProfile = userManager.getRemoteUser(request);
 
         if (userProfile == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid profil.").build();
         }
 
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userProfile.getUsername());
 
         if (userKey == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        } else if (!(checkIfUserIsGroupMember(request, "jira-administrators") || checkIfUserIsGroupMember(request, "Timesheet"))) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid " +
+                    "'UserKey'.").build();
+        } else if (!(checkIfUserIsGroupMember(request, "jira-administrators") ||
+                checkIfUserIsGroupMember(request, "Timesheet"))) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
+                    "'jira-administrators', or 'Timesheet' group.").build();
         }
 
         return null;
@@ -169,7 +172,8 @@ public class PermissionServiceImpl implements PermissionService {
         return user != null && sheet != null &&
                 (userOwnsSheet(user, sheet)
                         || userIsAdmin(user)
-                        || userCoordinatesTeamsOfSheet(user, sheet));
+                        || userCoordinatesTeamsOfSheet(user, sheet)
+                        || isApproved(user));
     }
 
     @Override

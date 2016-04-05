@@ -173,6 +173,25 @@ AJS.toInit(function () {
             });
     }
 
+    function getConfigAndCallback(baseUrl, callback) {
+        AJS.$(".loadingDiv").show();
+        AJS.$.ajax({
+            url: restBaseUrl + 'config/getConfig',
+            dataType: "json",
+            success: function (config) {
+                AJS.$(".loadingDiv").hide();
+                callback(config);
+            },
+            error: function (error) {
+                AJS.messages.error({
+                    title: "Error!",
+                    body: "Could not load 'config'.<br />" + error.responseText
+                });
+                AJS.$(".loadingDiv").hide();
+            }
+        });
+    }
+
     fetchData();
 
     AJS.$("#update-timesheet-status").submit(function (e) {
