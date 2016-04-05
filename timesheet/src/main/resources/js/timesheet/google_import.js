@@ -20,7 +20,7 @@ function prepareImportDialog(timesheetDataReply) {
 
 function importGoogleDocsTable(table, timesheetData, importDialog) {
     var entries = parseEntriesFromGoogleDocTimesheet(table, timesheetData);
-    var url = restBaseUrl + "timesheets/" + timesheetID + "/entries";
+    var url = restBaseUrl + "timesheets/" + timesheetID + "/entries/" + isMasterThesisTimesheet;
 
     if (entries.length === 0) return;
 

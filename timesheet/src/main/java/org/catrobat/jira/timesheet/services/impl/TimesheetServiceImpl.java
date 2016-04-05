@@ -44,14 +44,13 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         if (found.length > 2) {
             throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+        } else if (found.length == 0) {
+            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
         }
-        for (int i = 0; i < found.length; i++) {
-            if (isMasterThesisTimesheet.equals(found[i].getIsMasterThesisTimesheet())) {
-                Timesheet sheet = found[i];
 
-                System.out.println(sheet.getID());
-                System.out.println(sheet.getIsMasterThesisTimesheet());
-                System.out.println(sheet.getEcts());
+        for(int i = 0; i < found.length; i++) {
+            if(isMasterThesisTimesheet.equals(found[i].getIsMasterThesisTimesheet())) {
+                Timesheet sheet = found[i];
 
                 sheet.setUserKey(userKey);
                 sheet.setTargetHoursPractice(targetHoursPractice);
@@ -103,15 +102,16 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Nullable
     @Override
-    public Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) {
+    public Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "ID = ?", timesheetID);
         if ((found.length == 1)) {
             Timesheet sheet = found[0];
             sheet.setIsEnabled(isEnabled);
             sheet.save();
             return sheet;
+        } else  {
+            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
         }
-        return null;
     }
 
     @Override
@@ -120,6 +120,8 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         if (found.length > 2) {
             throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+        } else if (found.length == 0) {
+            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
         }
 
         if (isMasterThesisTimesheet) {
@@ -147,6 +149,8 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         if (found.length > 1) {
             throw new ServiceException("Multiple Timesheets with the same ID.");
+        } else if (found.length == 0) {
+            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
         }
 
         return (found.length > 0) ? found[0] : null;

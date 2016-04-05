@@ -385,15 +385,6 @@ public class TimesheetRest {
 
         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
 
-        //update latest entry date value
-        if ((entries.length > 0) && (sheet != null)) {
-            sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
-                    sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
-                    sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
-                    sheet.getReason(), sheet.getEcts(), entries[0].getBeginDate().toString(), sheet.getIsActive(),
-                    sheet.getIsEnabled(), false);
-        }
-
         List<JsonTimesheetEntry> jsonEntries = new ArrayList<JsonTimesheetEntry>(entries.length);
 
         for (TimesheetEntry entry : entries) {
@@ -450,9 +441,11 @@ public class TimesheetRest {
     }
 
     @POST
-    @Path("timesheets/{timesheetID}/entry")
+    @Path("timesheets/{timesheetID}/entry/{isMTSheet}")
     public Response postTimesheetEntry(@Context HttpServletRequest request,
-                                       final JsonTimesheetEntry entry, @PathParam("timesheetID") int timesheetID) throws ServiceException, InvalidCredentialException {
+                                       final JsonTimesheetEntry entry,
+                                       @PathParam("timesheetID") int timesheetID,
+                                       @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException {
 
         if (entry.getDescription().isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
@@ -512,13 +505,13 @@ public class TimesheetRest {
                     sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                     sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
                     sheet.getReason(), sheet.getEcts(), df.format(entryService.getEntriesBySheet(sheet)[0].
-                            getBeginDate()), isActive, sheet.getIsEnabled(), false);
+                            getBeginDate()), isActive, sheet.getIsEnabled(), isMTSheet);
         } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
             sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
                     sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                     sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
                     sheet.getReason(), sheet.getEcts(), df.format(entry.getBeginDate()), isActive,
-                    sheet.getIsEnabled(), false);
+                    sheet.getIsEnabled(), isMTSheet);
         }
 
         entry.setEntryID(newEntry.getID());
@@ -527,9 +520,11 @@ public class TimesheetRest {
     }
 
     @POST
-    @Path("timesheets/{timesheetID}/entries")
+    @Path("timesheets/{timesheetID}/entries/{isMTSheet}")
     public Response postTimesheetEntries(@Context HttpServletRequest request,
-                                         final JsonTimesheetEntry[] entries, @PathParam("timesheetID") int timesheetID) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
+                                         final JsonTimesheetEntry[] entries,
+                                         @PathParam("timesheetID") int timesheetID,
+                                         @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
 
         Timesheet sheet;
         UserProfile user;
@@ -589,14 +584,14 @@ public class TimesheetRest {
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                             df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), isActive,
-                            sheet.getIsEnabled(), false);
+                            sheet.getIsEnabled(), isMTSheet);
                 } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
                     sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                             df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), isActive,
-                            sheet.getIsEnabled(), false);
+                            sheet.getIsEnabled(), isMTSheet);
                 }
 
                 entry.setEntryID(newEntry.getID());
@@ -632,7 +627,7 @@ public class TimesheetRest {
             user = permissionService.checkIfUserExists(request);
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+            return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         }
 
         if (sheet == null || !permissionService.userCanViewTimesheet(user, sheet)) {
@@ -702,9 +697,11 @@ public class TimesheetRest {
     }
 
     @PUT
-    @Path("entries/{entryID}")
+    @Path("entries/{entryID}/{isMTSheet}")
     public Response putTimesheetEntry(@Context HttpServletRequest request,
-                                      final JsonTimesheetEntry jsonEntry, @PathParam("entryID") int entryID) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
+                                      final JsonTimesheetEntry jsonEntry,
+                                      @PathParam("entryID") int entryID,
+                                      @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
 
         if (jsonEntry.getDescription().isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
@@ -756,14 +753,14 @@ public class TimesheetRest {
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                         df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
-                        sheet.getIsEnabled(), false);
+                        sheet.getIsEnabled(), isMTSheet);
             } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
                 sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                         df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
-                        sheet.getIsEnabled(), false);
+                        sheet.getIsEnabled(), isMTSheet);
             }
 
             return Response.ok(jsonEntry).build();
@@ -772,9 +769,10 @@ public class TimesheetRest {
     }
 
     @DELETE
-    @Path("entries/{entryID}")
+    @Path("entries/{entryID}/{isMTSheet}")
     public Response deleteTimesheetEntry(@Context HttpServletRequest request,
-                                         @PathParam("entryID") int entryID) throws ServiceException, com.atlassian.jira.exception.PermissionException {
+                                         @PathParam("entryID") int entryID,
+                                         @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, com.atlassian.jira.exception.PermissionException {
         UserProfile user;
         TimesheetEntry entry;
         Timesheet sheet;
@@ -815,14 +813,14 @@ public class TimesheetRest {
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                         df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
-                        sheet.getIsEnabled(), false);
+                        sheet.getIsEnabled(), isMTSheet);
             }
         } else {
             sheetService.editTimesheet(ComponentAccessor.
                             getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                     sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                     sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                    "Not Available", sheet.getIsActive(), sheet.getIsEnabled(), false);
+                    "Not Available", sheet.getIsActive(), sheet.getIsEnabled(), isMTSheet);
         }
         return Response.ok().build();
     }

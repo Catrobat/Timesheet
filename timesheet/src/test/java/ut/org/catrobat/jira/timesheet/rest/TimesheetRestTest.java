@@ -372,7 +372,7 @@ public class TimesheetRestTest {
                 timeSheet.getLectures(), timeSheet.getReason(), timeSheet.getEcts(), timeSheet.getLatestEntryDate(),
                 timeSheet.getIsActive(), timeSheet.getIsEnabled(), timeSheet.getIsMasterThesisTimesheet());
 
-        response = timesheetRest.deleteTimesheetEntry(request, 1);
+        response = timesheetRest.deleteTimesheetEntry(request, 1, timeSheet.getIsMasterThesisTimesheet());
 
         Mockito.verify(entryService).delete(timeSheetEntry);
     }

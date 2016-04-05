@@ -69,7 +69,7 @@ public interface TimesheetService {
     List<Timesheet> all();
 
     @Nullable
-    Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled);
+    Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException;
 
     /**
      * Returns Timesheet corresponding to a User

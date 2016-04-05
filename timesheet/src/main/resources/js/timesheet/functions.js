@@ -184,13 +184,13 @@ function initTimesheetInformationValues(timesheetData) {
 }
 
 function updateTimesheetInformationValues(timesheetData) {
-    AJS.$("#timesheet-hours-substract").val(toFixed(timesheetData.targetHoursRemoved,1 ));
+    AJS.$("#timesheet-hours-substract").val(toFixed(timesheetData.targetHoursRemoved, 2));
     AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
-    AJS.$("#timesheet-hours-text").val(toFixed(timesheetData.targetHours,1 ));
-    AJS.$("#timesheet-hours-theory").val(toFixed(calculateTheoryTime(timesheetData),1 ));
-    AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData) - calculateTheoryTime(timesheetData), 1));
+    AJS.$("#timesheet-hours-text").val(toFixed(timesheetData.targetHours, 2));
+    AJS.$("#timesheet-hours-theory").val(toFixed(calculateTheoryTime(timesheetData), 2));
+    AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData) - calculateTheoryTime(timesheetData), 2));
     AJS.$("#timesheet-hours-remain").val(toFixed(AJS.$("#timesheet-hours-text").val() - AJS.$("#timesheet-hours-theory").val()
-        - AJS.$("#timesheet-hours-practical").val() - (-AJS.$("#timesheet-hours-substract").val()), 1));
+        - AJS.$("#timesheet-hours-practical").val() - (-AJS.$("#timesheet-hours-substract").val()), 2));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
     AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
     AJS.$("#timesheet-hours-text").val(timesheetData.ects * 30);

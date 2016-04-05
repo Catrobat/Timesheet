@@ -62,6 +62,7 @@ public class TimesheetServlet extends HttpServlet {
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
             Timesheet sheet = sheetService.getTimesheetByUser(userKey, false);
 
+
             if (sheet == null) {
                 sheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
                         "Hint: Do not make other people angry.", 5, "Not Available", true, true, false);

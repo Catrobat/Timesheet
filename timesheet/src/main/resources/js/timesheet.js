@@ -147,7 +147,7 @@ function getExistingTimesheetHours(timesheetID) {
     });
     AJS.$.when(timesheetFetched)
         .done(updateTimesheetHours)
-        //.done(location.reload())
+        .done(location.reload())
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching existing timesheet data.',
@@ -163,12 +163,12 @@ function updateTimesheetHours(existingTimesheetData) {
         lectures: AJS.$("#timesheet-hours-lectures").val(),
         reason: AJS.$("#timesheet-substract-hours-text").val(),
         ects: AJS.$("#timesheet-hours-ects").val(),
-        targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 1),
-        targetHourTheory: toFixed(AJS.$("#timesheet-hours-theory").val(), 1),
+        targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
+        targetHourTheory: toFixed(AJS.$("#timesheet-hours-theory").val(), 2),
         targetHours: AJS.$("#timesheet-hours-ects").val() * 30,
         targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
-        - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 1),
-        targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 1),
+        - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
+        targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
         isActive: existingTimesheetData.isActive,
         isEnabled: existingTimesheetData.isEnabled,
     };
@@ -286,6 +286,8 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
 
     initTimesheetInformationValues(timesheetData);
 
+    updateTimesheetInformationValues(timesheetData);
+
     return timesheetData;
 }
 
@@ -376,7 +378,7 @@ function populateTable(timesheetDataReply) {
     var addNewEntryOptions = {
         httpMethod: "post",
         callback: addNewEntryCallback,
-        ajaxUrl: restBaseUrl + "timesheets/" + timesheetData.timesheetID + "/entry/"
+        ajaxUrl: restBaseUrl + "timesheets/" + timesheetData.timesheetID + '/entry/' + isMasterThesisTimesheet
     };
 
     var emptyForm = renderFormRow(timesheetData, emptyEntry, addNewEntryOptions);
@@ -696,7 +698,7 @@ function renderViewRow(timesheetData, entry) {
     var editEntryOptions = {
         httpMethod: "put",
         callback: editEntryCallback,
-        ajaxUrl: restBaseUrl + "entries/" + entry.entryID
+        ajaxUrl: restBaseUrl + "entries/" + entry.entryID + '/' + isMasterThesisTimesheet
     };
 
     var viewRow = prepareViewRow(timesheetData, augmentedEntry);
@@ -709,8 +711,6 @@ function renderViewRow(timesheetData, entry) {
     viewRow.find("button.delete").click(function () {
         deleteEntryClicked(viewRow, entry.entryID);
     });
-
-    updateTimesheetInformationValues(timesheetData);
 
     return viewRow;
 }
@@ -729,7 +729,7 @@ function editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewR
 
 function deleteEntryClicked(viewRow, entryID) {
 
-    var ajaxUrl = restBaseUrl + "entries/" + entryID;
+    var ajaxUrl = restBaseUrl + 'entries/' + entryID + '/' + isMasterThesisTimesheet;
 
     var spinner = viewRow.find('span.aui-icon-wait');
     spinner.show();

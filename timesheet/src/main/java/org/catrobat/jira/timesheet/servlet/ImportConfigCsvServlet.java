@@ -66,11 +66,24 @@ public class ImportConfigCsvServlet extends HelperServlet {
                 "Just upload files when you know what you're doing - this upload will manipulate the database!<br />" +
                 "<form action=\"config\" method=\"post\"><br />" +
                 "<textarea name=\"csv\" rows=\"20\" cols=\"175\" wrap=\"off\">" +
-                "# lines beginning with '#' are comments and will be ignored;;;;;;;;;;;;;;;;;;;;;;;\n" +
-                "# Name;Version;Type of Device;Operating System;Producer;Article Number;Price;IMEI;Serial Number;Inventory Number;Received Date;Received From;Useful Life Of Asset;Sorted Out Comment;Sorted Out Date;Lending Begin;Lending End;Lending Purpose;Lending Comment;Lending Issuer;Lent By;Device Comment;Device Comment Author;Device Comment Date\n" +
-                "Nexus 6;32 GB;Smartphone;Android Lollipop;Motorola;1337;600;123123;123123;123123;10/14/2014;Google Inc.;3 Years;Sorted Out Comment;10/14/2014;10/14/2014;10/14/2014;testing;just lending;issuer;lent by;Device Comment;comment author;10/14/2014\n" +
-                "Nexus 6;32 GB;Smartphone;Android Lollipop;Motorola;1337;600;234234;234234;234234;10/14/2014;Google Inc.;3 Years;;;;;;;;;;;\n" +
-                "Nexus 6;32 GB;Smartphone;Android Lollipop;Motorola;1337;600;345345;345345;345345;10/14/2014;Google Inc.;3 Years;;;10/14/2014;;testing 3;just lending 3;issuer 3;lent by 3;Device Comment 3;comment author 3;10/14/2014\n" +
+                "# lines beginning with '#' are comments and will be ignored\n" +
+                "# Approved Users and Groups; add usernames e.g.: MaxMustermann\n" +
+                "# Email From Name; your@email.address;\n" +
+                "# Email From Mail-Address;NaN; \n" +
+                "# Email Out Of Time Subject;NaN; \n" +
+                "# Email Out Of Time Body;NaN; \n" +
+                "# Email Inactive Subject;NaN; \n" +
+                "# Email Inactive Body;NaN; \n" +
+                "# Email Admin Changed Entry Subject;NaN; \n" +
+                "# Email Admin Changed Entry Body;NaN; \n" +
+                "# \n" +
+                "# Assigned Coordinators;e.g.: MaxMustermann; \n" +
+                "# Assigned Users;e.g.: MaxMustermann; \n" +
+                "# Assigned Categories;Theory;Inactive;Programming;Meeting; \n" +
+                "# Team Name;Catroid; \n" +
+                "# \n" +
+                "# you can insert here several teams \n" +
+                "# all of them will be inserted \n" +
                 "</textarea><br />\n" +
                 "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing table entries<br /><br />\n" +
                 "<input type=\"submit\" />" +

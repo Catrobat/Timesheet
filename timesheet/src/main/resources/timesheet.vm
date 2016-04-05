@@ -182,19 +182,30 @@
                     <li>
                         Make sure the columns of your Google Doc Timesheet are in the following order:
                         <code>Date</code>, <code>From</code>, <code>To</code>, <code>Duration in h</code>,
-                        <code>Pause</code>, <code>Theory? Ja = j</code>, <code>Description</code>
+                        <code>Pause</code>, <code>Category</code>, <code>Description</code>
                     </li>
                     <li>
-                        Make sure the values in column <code>Datum</code> is formatted this way: <code>YYYY-MM-DD</code>
+                        Make sure the values in column <code>Date</code> is formatted this way: <code>YYYY-MM-DD</code>
                         (e.g. <code>2015-09-21</code>). You can achieve this by
                         <ol>
-                            <li>Select Fields in column <code>Datum</code></li>
+                            <li>Select Fields in column <code>Date</code></li>
                             <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
                                 Formats</strong> > <strong>Number Format</strong></li>
                             <li>Paste <code>yyyy"-"mm"-"dd</code> and confirm</li>
                         </ol>
                     </li>
-                    <li>Select the rows you want to import</li>
+                    <li>Make sure the values in column <code>From</code> and <code>To</code> are formatted this way:
+                        <code>HH:MM</code> (e.g. <code>12:00</code>). You can achieve this by
+                        <ol>
+                            <li>Select Fields in column <code>From/To</code></li>
+                            <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
+                                Formats</strong> > <strong>Number Format</strong></li>
+                            <li>Paste <code>HH":"MM"</code> and confirm</li>
+                        </ol>
+                    </li>
+                    <li>Select the rows you want to import, but ensure that the <code>Task Description</code> is not too long.</li>
+                    <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
+                    <li><strong>Attention - </strong> ensure that your import entries do not have <code>""</code>.</li>
                     <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
                     <li>Paste content in the text box below</li>
                 </ol>
