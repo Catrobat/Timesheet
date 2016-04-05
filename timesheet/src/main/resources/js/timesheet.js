@@ -120,10 +120,10 @@ function getDataOfTeam(teamName) {
         });
 }
 
-function getTimesheetOfUser(selectedUser) {
+function getTimesheetOfUser(selectedUser, getMTSheet) {
     var timesheetIDFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'timesheetID/fromUser/' + selectedUser[0],
+        url: restBaseUrl + 'timesheet/timesheetID/' + selectedUser[0] + '/' + getMTSheet,
         contentType: "application/json"
     });
     AJS.$.when(timesheetIDFetched)
@@ -170,12 +170,12 @@ function updateTimesheetHours(existingTimesheetData) {
         - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 1),
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 1),
         isActive: existingTimesheetData.isActive,
-        isEnabled: existingTimesheetData.isEnabled
+        isEnabled: existingTimesheetData.isEnabled,
     };
 
     AJS.$.ajax({
-            type: "post",
-            url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
+            type: 'POST',
+            url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID + '/' + isMasterThesisTimesheet,
             contentType: "application/json",
             data: JSON.stringify(timesheetUpdateData)
         })

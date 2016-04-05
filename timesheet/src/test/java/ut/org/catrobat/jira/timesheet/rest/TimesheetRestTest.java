@@ -214,7 +214,7 @@ public class TimesheetRestTest {
         JsonTimesheet expectedTimesheet = new JsonTimesheet(1, timeSheet.getLectures(), timeSheet.getReason(), timeSheet.getEcts(),
                 timeSheet.getLatestEntryDate(), timeSheet.getTargetHoursPractice(), timeSheet.getTargetHoursTheory(),
                 timeSheet.getTargetHours(), timeSheet.getTargetHoursCompleted(), timeSheet.getTargetHoursRemoved(),
-                timeSheet.getIsActive(), timeSheet.getIsEnabled());
+                timeSheet.getIsActive(), timeSheet.getIsEnabled(), timeSheet.getIsMasterThesisTimesheet());
 
         response = timesheetRest.getTimesheet(request, 1);
 
@@ -226,11 +226,11 @@ public class TimesheetRestTest {
         JsonTimesheet expectedTimesheet = new JsonTimesheet(5, timeSheet.getLectures(), timeSheet.getReason(), timeSheet.getEcts(),
                 timeSheet.getLatestEntryDate(), timeSheet.getTargetHoursPractice(), timeSheet.getTargetHoursTheory(),
                 timeSheet.getTargetHours(), timeSheet.getTargetHoursCompleted(), timeSheet.getTargetHoursRemoved(),
-                timeSheet.getIsActive(), timeSheet.getIsEnabled());
+                timeSheet.getIsActive(), timeSheet.getIsEnabled(), timeSheet.getIsMasterThesisTimesheet());
 
         response = timesheetRest.getTimesheet(request, 1);
 
-        Assert.assertFalse(expectedTimesheet == response.getEntity());
+        Assert.assertFalse(response.getEntity() == expectedTimesheet);
     }
 
     /*

@@ -227,9 +227,10 @@ public class TimesheetRest {
     }
 
     @GET
-    @Path("timesheetID/fromUser/{userName}")
+    @Path("timesheet/timesheetID/{userName}/{getMTSheet}")
     public Response getTimesheetIDForUser(@Context HttpServletRequest request,
-                                          @PathParam("userName") String userName) throws ServiceException {
+                                          @PathParam("userName") String userName,
+                                          @PathParam("getMTSheet") Boolean getMTSheet) throws ServiceException {
 
         Timesheet sheet;
         UserProfile user;
@@ -237,14 +238,10 @@ public class TimesheetRest {
         try {
             user = permissionService.checkIfUsernameExists(userName);
             sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(user.getUsername()), false);
+                    getUserKeyService().getKeyForUsername(user.getUsername()), getMTSheet);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("Timesheet of Username: "
                     + userName + " has not been initialized.").build();
-        }
-
-        if (sheet == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
         }
 
         return Response.ok(sheet.getID()).build();
@@ -305,7 +302,7 @@ public class TimesheetRest {
         JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
                 sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
                 sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled());
+                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
 
         return Response.ok(jsonTimesheet).build();
     }
@@ -366,7 +363,7 @@ public class TimesheetRest {
         JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
                 sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
                 sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled());
+                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
 
         return Response.ok(jsonTimesheet).build();
     }
@@ -622,9 +619,11 @@ public class TimesheetRest {
     }
 
     @POST
-    @Path("timesheets/update/{timesheetID}")
+    @Path("timesheets/update/{timesheetID}/{isMTSheet}")
     public Response postTimesheetHours(@Context HttpServletRequest request,
-                                       final JsonTimesheet jsonTimesheet, @PathParam("timesheetID") int timesheetID) throws ServiceException {
+                                       final JsonTimesheet jsonTimesheet,
+                                       @PathParam("timesheetID") int timesheetID,
+                                       @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
 
         Timesheet sheet;
         UserProfile user;
@@ -647,23 +646,23 @@ public class TimesheetRest {
                     jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
                     jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isEnabled(),
-                    false);
+                    isMTSheet);
         } else {
             sheet = sheetService.editTimesheet(ComponentAccessor.
                             getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
                     jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
                     jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isEnabled(),
-                    false);
+                    isMTSheet);
         }
         if (sheet == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'Timesheet' not found.").build();
         }
 
-        JsonTimesheet newJsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
+        JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
                 sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(),
                 sheet.getTargetHours(), sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getIsActive(),
-                sheet.getIsEnabled());
+                sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
 
         return Response.ok(newJsonTimesheet).build();
     }
@@ -693,7 +692,7 @@ public class TimesheetRest {
                 JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
                         sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                        sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled());
+                        sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
 
                 newJsonTimesheets.add(newJsonTimesheet);
             }

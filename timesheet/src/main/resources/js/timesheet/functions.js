@@ -66,7 +66,7 @@ function initSelectTimesheetButton() {
         if (AJS.$(document.activeElement).val() === 'Show') {
             var selectedUser = AJS.$("#user-select2-field").val().split(',');
             if (selectedUser[0] !== "") {
-                getTimesheetOfUser(selectedUser);
+                getTimesheetOfUser(selectedUser, false);
                 AJS.$("#timesheet-owner-information").empty();
                 AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();
@@ -74,7 +74,7 @@ function initSelectTimesheetButton() {
         } else if (AJS.$(document.activeElement).val() === 'Display') {
             var selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
             if (selectedUser[0] !== "") {
-                getTimesheetOfUser(selectedUser);
+                getTimesheetOfUser(selectedUser, AJS.$("#requestMTSheetCheckbox")[0].checked);
                 AJS.$("#timesheet-owner-information").empty();
                 AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();
@@ -143,7 +143,6 @@ function calculateTheoryTime(timesheetData) {
 }
 
 function initTimesheetInformationValues(timesheetData) {
-
     AJS.$("#timesheet-hours-text").val(timesheetData.targetHours);
     AJS.$("#timesheet-hours-remain").val(timesheetData.targetHours - timesheetData.targetHoursCompleted
         + timesheetData.targetHoursRemoved);

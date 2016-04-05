@@ -1,10 +1,10 @@
 package ut.org.catrobat.jira.timesheet.services.impl;
 
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -14,10 +14,7 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
@@ -32,7 +29,9 @@ import org.mockito.junit.MockitoJUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -43,14 +42,14 @@ import static org.junit.Assert.*;
 public class PermissionServiceImplTest {
 
     private static Team catroid, html5, drone;
+    private static ApprovedUser approvedUser;
+    private static ApprovedGroup approvedGroup;
     @Rule
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private PermissionServiceImpl permissionService, permissionServiceException;
     private TeamService teamService;
     private UserManager userManager;
-    private EntityManager entityManager;
     private UserProfile coord, owner, eve, test, admin;
-    private User approvedUser;
     private Timesheet sheet;
     private TimesheetEntry timeSheetEntry;
     private HttpServletRequest request;
@@ -58,8 +57,12 @@ public class PermissionServiceImplTest {
     private TimesheetService sheetService;
     private TimesheetEntryService entryService;
     private SimpleDateFormat sdf;
-    private ConfigService config;
+    private ConfigService configService;
+    private static Config config;
     private ComponentAccessor componentAccessor;
+    private GroupManager groupManager;
+    private EntityManager entityManager;
+    private Collection<String> userGroupNames;
 
     @Before
     public void setUp() throws Exception {
@@ -67,11 +70,13 @@ public class PermissionServiceImplTest {
 
         teamService = Mockito.mock(TeamService.class);
         userManager = Mockito.mock(UserManager.class);
-        config = Mockito.mock(ConfigService.class);
+        config = Mockito.mock(Config.class);
+        configService = Mockito.mock(ConfigService.class);
+        groupManager = Mockito.mock(GroupManager.class);
 
         assertNotNull(entityManager);
 
-        permissionService = new PermissionServiceImpl(userManager, teamService, config);
+        permissionService = new PermissionServiceImpl(userManager, teamService, configService);
 
         //arrange
         coord = Mockito.mock(UserProfile.class);
@@ -86,8 +91,9 @@ public class PermissionServiceImplTest {
         team = Mockito.mock(Team.class);
         request = Mockito.mock(HttpServletRequest.class);
         permissionServiceException = Mockito.mock(PermissionServiceImpl.class);
-        approvedUser = Mockito.mock(User.class);
         componentAccessor = Mockito.mock(ComponentAccessor.class);
+        config = Mockito.mock(Config.class);
+        userGroupNames = Mockito.mock(Collection.class);
 
         UserKey coord_key = new UserKey("coord_key");
         UserKey owner_key = new UserKey("owner_key");
@@ -108,11 +114,6 @@ public class PermissionServiceImplTest {
         Mockito.when(eve.getUsername()).thenReturn("eve");
         Mockito.when(test.getUsername()).thenReturn("test");
         Mockito.when(admin.getUsername()).thenReturn("admin");
-
-        Mockito.when(approvedUser.getDirectoryId()).thenReturn(1L);
-        Mockito.when(approvedUser.getDisplayName()).thenReturn("test");
-        Mockito.when(approvedUser.getEmailAddress()).thenReturn("test@test.at");
-        Mockito.when(approvedUser.isActive()).thenReturn(true);
 
         Mockito.when(userManager.isAdmin(owner_key)).thenReturn(false);
         Mockito.when(userManager.isAdmin(coord_key)).thenReturn(false);
@@ -174,15 +175,31 @@ public class PermissionServiceImplTest {
         assertTrue(permissionService.userCanViewTimesheet(admin, sheet));
     }
 
+    /*
     @Test
     public void testEveCantViewTimesheet() throws Exception {
+        configService.addApprovedUser("test1", "test1_key");
+        configService.addApprovedGroup("testGroup1");
+
+        ApprovedUser[] approvedUsers = {approvedUser};
+        ApprovedGroup[] approvedGroups = {approvedGroup};
+
+        userGroupNames.add("abc");
+        userGroupNames.add("def");
+
+        Mockito.when(configService.getConfiguration()).thenReturn(config);
+        Mockito.when(config.getApprovedUsers()).thenReturn(approvedUsers);
+        Mockito.when(config.getApprovedGroups()).thenReturn(approvedGroups);
+
+        Mockito.when(componentAccessor.getGroupManager().getGroupNamesForUser(eve.getUsername())).thenReturn(userGroupNames);
+
         assertFalse(permissionService.userCanViewTimesheet(eve, sheet));
     }
+    */
 
     @Test
-    public void testOwnerOfSheetIsNull() throws Exception {
-        Mockito.when(sheet.getUserKey()).thenReturn("Test");
-        assertFalse(permissionService.userCanViewTimesheet(eve, sheet));
+    public void testNullUserCantViewTimesheet() throws Exception {
+        assertFalse(permissionService.userCanViewTimesheet(null, sheet));
     }
 
     @Test
@@ -357,6 +374,17 @@ public class PermissionServiceImplTest {
             drone = em.create(Team.class);
             drone.setTeamName("drone");
             drone.save();
+
+            em.migrate(ApprovedUser.class);
+            approvedUser = em.create(ApprovedUser.class);
+            approvedUser.setConfiguration(config);
+            approvedUser.setUserKey("APPROVED_KEY");
+            approvedUser.setUserName("ApprovedUser");
+
+            em.migrate(ApprovedGroup.class);
+            approvedGroup = em.create(ApprovedGroup.class);
+            approvedGroup.setConfiguration(config);
+            approvedGroup.setGroupName("ApprovedGroup");
         }
     }
 }

@@ -116,7 +116,7 @@ public class PermissionServiceImpl implements PermissionService {
     public boolean isApproved(UserProfile userProfile) {
         Config config = configService.getConfiguration();
 
-        if (config.getApprovedGroups().length == 0 && config.getApprovedUsers().length == 0) {
+        if (config.getApprovedUsers().length == 0 && config.getApprovedGroups().length == 0) {
             return false;
         }
 

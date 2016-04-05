@@ -41,7 +41,7 @@ public interface TimesheetService {
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
                             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
                             String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
-                            Boolean isMasterThesisTimesheet);
+                            Boolean isMasterThesisTimesheet) throws ServiceException;
 
     /**
      * Adds a new Timesheet

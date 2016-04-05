@@ -49,10 +49,12 @@ public final class JsonTimesheet {
     private boolean isActive;
     @XmlElement
     private boolean isEnabled;
+    @XmlElement
+    private boolean isMTSheet;
 
     public JsonTimesheet(int timesheetID, String lectures, String reason, int ects, String latestEntryDate, int targetHourPractice,
                          int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
-                         boolean isEnabled) {
+                         boolean isEnabled, boolean isMTSheet) {
         this.timesheetID = timesheetID;
         this.lectures = lectures;
         this.reason = reason;
@@ -65,6 +67,7 @@ public final class JsonTimesheet {
         this.targetHoursRemoved = targetHoursRemoved;
         this.isActive = isActive;
         this.isEnabled = isEnabled;
+        this.isMTSheet = isMTSheet;
     }
 
     public JsonTimesheet() {
