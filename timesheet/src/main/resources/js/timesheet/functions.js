@@ -1,5 +1,8 @@
 "use strict";
 
+var selectedUser;
+var isMTSheetSelected;
+
 function isUserApprovedUser(userName, config) {
     for (var i = 0; i < config.approvedUsers.length; i++) {
         var approvedUserName = config.approvedUsers[i].replace(/\s/g, '');
@@ -34,9 +37,9 @@ function getselectedCategoryName(categoryID, timesheetData) {
 }
 
 function getCategoryID(categoryName, teamCategories, timesheetData) {
-    for(var i = 0; i < teamCategories.length; i++) {
-        if(categoryName == timesheetData.categories[i+1].categoryName) {
-            return i+1;
+    for (var i = 0; i < teamCategories.length; i++) {
+        if (categoryName == timesheetData.categories[i + 1].categoryName) {
+            return i + 1;
         }
     }
     return 0;
@@ -51,20 +54,21 @@ function initUserSaveButton() {
     });
 }
 
-function initAdminSaveButton(timesheetID) {
-    AJS.$("#timesheet-information").submit(function (e) {
+function initAdministratorButton() {
+    AJS.$("#timesheet-hours-save-button").hide();
+    AJS.$("#timesheet-hours-update-button").show();
+    AJS.$("#timesheet-hours-update-button").click('click', function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
-            getExistingTimesheetHours(timesheetID);
-        }
+        getTimesheetByUser(selectedUser, isMTSheetSelected);
     });
 }
 
 function initSelectTimesheetButton() {
+    //TODO: das ist das problem
     AJS.$("#timesheet-settings").submit(function (e) {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Show') {
-            var selectedUser = AJS.$("#user-select2-field").val().split(',');
+            selectedUser = AJS.$("#user-select2-field").val().split(',');
             if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser, false);
                 AJS.$("#timesheet-owner-information").empty();
@@ -72,9 +76,10 @@ function initSelectTimesheetButton() {
                 hideVisualizationTabs();
             }
         } else if (AJS.$(document.activeElement).val() === 'Display') {
-            var selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
+            selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
+            isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
             if (selectedUser[0] !== "") {
-                getTimesheetOfUser(selectedUser, AJS.$("#requestMTSheetCheckbox")[0].checked);
+                getTimesheetOfUser(selectedUser, isMTSheetSelected);
                 AJS.$("#timesheet-owner-information").empty();
                 AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();

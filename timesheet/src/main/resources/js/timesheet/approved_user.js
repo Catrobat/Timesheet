@@ -44,6 +44,9 @@ function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
         tokenSeparators: [",", " "],
         maximumSelectionSize: 1
     });
+    if(isAdmin) {
+        initAdministratorButton();
+    }
     if (isApprovedUser || isAdmin) {
         initSelectTimesheetButton();
         AJS.$("#approvedUserTimesheetSelect").show();

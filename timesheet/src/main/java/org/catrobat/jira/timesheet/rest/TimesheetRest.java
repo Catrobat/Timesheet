@@ -275,6 +275,37 @@ public class TimesheetRest {
     }
 
     @GET
+    @Path("timesheet/of/{useName}/{isMTSheet}")
+    public Response getTimesheetByUsername(@Context HttpServletRequest request,
+                                 @PathParam("useName") String useName,
+                                 @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
+
+        Timesheet sheet;
+        UserProfile user;
+        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(useName);
+
+        try {
+            user = permissionService.checkIfUserExists(request);
+            sheet = sheetService.getTimesheetByUser(userKey,isMTSheet);
+        } catch (ServiceException e) {
+            return Response.serverError().entity("No Timesheet available for this user.").build();
+        }
+
+        if (sheet == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
+        } else if (!permissionService.userCanViewTimesheet(user, sheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet Access denied.").build();
+        }
+
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
+                sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
+                sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
+                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
+
+        return Response.ok(jsonTimesheet).build();
+    }
+
+    @GET
     @Path("timesheets/{timesheetID}")
     public Response getTimesheet(@Context HttpServletRequest request,
                                  @PathParam("timesheetID") int timesheetID) throws ServiceException {
@@ -297,67 +328,6 @@ public class TimesheetRest {
 
         if (sheet.getTargetHoursTheory() <= 80) {
             buildEmailOutOfTime(user.getEmail(), sheet, user);
-        }
-
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
-                sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
-                sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
-
-        return Response.ok(jsonTimesheet).build();
-    }
-
-    @GET
-    @Path("coordinator/{timesheetID}/entries")
-    public Response getTimesheetEntriesCoordinator(@Context HttpServletRequest request,
-                                                   @PathParam("timesheetID") int timesheetID) throws ServiceException {
-
-        Timesheet sheet;
-        UserProfile user;
-
-        try {
-            sheet = sheetService.getTimesheetByID(timesheetID);
-            user = permissionService.checkIfUserExists(request);
-        } catch (ServiceException e) {
-            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
-        }
-
-        TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
-
-        if (entries.length == 0) {
-            return Response.serverError().entity("Timesheet has no entries.").build();
-        }
-
-        if (dateIsOlderThanTwoWeeks(entries[0].getBeginDate())) {
-            buildEmailInactive(user.getEmail(), sheet, user);
-        }
-
-        List<JsonTimesheetEntry> jsonEntries = new ArrayList<JsonTimesheetEntry>(entries.length);
-
-        for (TimesheetEntry entry : entries) {
-            jsonEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
-                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getPauseMinutes(),
-                    entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
-                    entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
-        }
-        return Response.ok(jsonEntries).build();
-    }
-
-    @GET
-    @Path("coordinator/{timesheetID}")
-    public Response getTimesheetCoordinator(@Context HttpServletRequest request,
-                                            @PathParam("timesheetID") int timesheetID) throws ServiceException {
-
-        Timesheet sheet;
-
-        try {
-            sheet = sheetService.getTimesheetByID(timesheetID);
-        } catch (ServiceException e) {
-            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
-        }
-
-        if (sheet == null) {
-            return Response.serverError().entity("Timesheet hat not been initialized.").build();
         }
 
         JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
@@ -525,7 +495,6 @@ public class TimesheetRest {
                                          final JsonTimesheetEntry[] entries,
                                          @PathParam("timesheetID") int timesheetID,
                                          @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
-
         Timesheet sheet;
         UserProfile user;
 
@@ -571,7 +540,6 @@ public class TimesheetRest {
                 } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
                     isActive = false;
                 }
-
 
                 TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
                         entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
@@ -661,6 +629,8 @@ public class TimesheetRest {
 
         return Response.ok(newJsonTimesheet).build();
     }
+
+
 
     @POST
     @Path("timesheets/updateEnableStates")

@@ -139,7 +139,11 @@
                     Shows your ECTS.
                 </div>
 
-                <div class="timesheet-hours">
+                <div class="timesheet-hours" id="timesheet-hours-update-button">
+                    <input type="submit" value="Update" class="aui-button aui-button-primary">
+                </div>
+
+                <div class="timesheet-hours" id="timesheet-hours-save-button">
                     <input type="submit" value="Save" class="aui-button aui-button-primary">
                 </div>
 

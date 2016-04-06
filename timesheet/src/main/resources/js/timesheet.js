@@ -18,6 +18,8 @@ AJS.toInit(function () {
     if (isAdmin) {
         hideVisualizationTabs();
         fetchUsers();
+        AJS.$("#timesheet-hours-save-button").hide();
+        AJS.$("#timesheet-hours-update-button").show();
     } else {
         //init coordinator/administrator/approved user Seetings
         initUserSaveButton();
@@ -27,6 +29,8 @@ AJS.toInit(function () {
         //fetch visualization data
         fetchVisData();
         fetchTeamVisData();
+        AJS.$("#timesheet-hours-save-button").show();
+        AJS.$("#timesheet-hours-update-button").hide();
     }
 });
 
@@ -34,13 +38,13 @@ function fetchUserTimesheetData(timesheetID) {
 
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'coordinator/' + timesheetID,
+        url: restBaseUrl + 'timesheets/' + timesheetID,
         contentType: "application/json"
     });
 
     var entriesFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'coordinator/' + timesheetID + '/entries',
+        url: restBaseUrl + 'timesheets/' + timesheetID + '/entries',
         contentType: "application/json"
     });
 
@@ -125,19 +129,35 @@ function getDataOfTeam(teamName) {
         });
 }
 
-function getTimesheetOfUser(selectedUser, getMTSheet) {
+function getTimesheetOfUser(selectedUser, isMTSheet) {
     var timesheetIDFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'timesheet/timesheetID/' + selectedUser[0] + '/' + getMTSheet,
+        url: restBaseUrl + 'timesheet/timesheetID/' + selectedUser[0] + '/' + isMTSheet,
         contentType: "application/json"
     });
     AJS.$.when(timesheetIDFetched)
         .done(fetchUserTimesheetData)
         .done(fetchUserVisData)
-        .done(initAdminSaveButton)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while getting timesheet data of another user.',
+                body: '<p>Reason: ' + error.responseText + '</p>'
+            });
+            console.log(error);
+        });
+}
+
+function getTimesheetByUser(selectedUser, isMTSheetSelected) {
+    var timesheetFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheet/of/' + selectedUser + '/' + isMTSheetSelected,
+        contentType: "applicatPion/json"
+    });
+    AJS.$.when(timesheetFetched)
+        .done(updateTimesheetHours)
+        .fail(function (error) {
+            AJS.messages.error({
+                title: 'There was an error while fetching existing timesheet data.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);
@@ -152,7 +172,6 @@ function getExistingTimesheetHours(timesheetID) {
     });
     AJS.$.when(timesheetFetched)
         .done(updateTimesheetHours)
-        .done(location.reload())
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching existing timesheet data.',
@@ -176,11 +195,12 @@ function updateTimesheetHours(existingTimesheetData) {
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
         isActive: existingTimesheetData.isActive,
         isEnabled: existingTimesheetData.isEnabled,
+        isMTSheet: existingTimesheetData.isMTSheet
     };
 
     AJS.$.ajax({
             type: 'POST',
-            url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID + '/' + isMasterThesisTimesheet,
+            url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID + '/' + existingTimesheetData.isMTSheet,
             contentType: "application/json",
             data: JSON.stringify(timesheetUpdateData)
         })
