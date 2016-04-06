@@ -64,24 +64,34 @@ function initAdministratorButton() {
 }
 
 function initSelectTimesheetButton() {
-    //TODO: das ist das problem
     AJS.$("#timesheet-settings").submit(function (e) {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Show') {
+            AJS.$("#timesheet-hours-save-button").hide();
+            AJS.$("#timesheet-hours-save-button").hide();
+
             selectedUser = AJS.$("#user-select2-field").val().split(',');
+
+            AJS.$("#timesheet-export-csv-link").empty();
+            AJS.$("#timesheet-export-csv-link").append("<h3>You are watching the TimePunch Timesheet Information of: " + selectedUser[0] + "</h3>");
             if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser, false);
                 AJS.$("#timesheet-owner-information").empty();
-                AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
+                AJS.$("#timesheet-owner-information").append("<p><h3>You are watching the TimePunch Timesheet of: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();
             }
         } else if (AJS.$(document.activeElement).val() === 'Display') {
+            AJS.$("#timesheet-hours-save-button").hide();
+
             selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
+
+            AJS.$("#timesheet-export-csv-link").empty();
+            AJS.$("#timesheet-export-csv-link").append("<h3>You are watching the TimePunch Timesheet Information of: " + selectedUser[0] + "</h3>");
             isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
             if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser, isMTSheetSelected);
                 AJS.$("#timesheet-owner-information").empty();
-                AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
+                AJS.$("#timesheet-owner-information").append("<p><h3>You are watching the TimePunch Timesheet of: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();
             }
         } else if (AJS.$(document.activeElement).val() === 'Visualize') {

@@ -177,7 +177,7 @@
 
             <h2>Team Configuration</h2>
             <p>Provides: change Team name; assign users and/or categories to a team.</p>
-            <p><font color="red">Important Note: always 'save' immedeatly after you applied changes.</font></p>
+            <p><font color="red">Important Note: always 'save' immediately after you changed something.</font></p>
             <p></p>
 
             <div id="teams"></div>
