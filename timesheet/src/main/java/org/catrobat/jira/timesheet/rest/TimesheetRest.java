@@ -75,9 +75,12 @@ public class TimesheetRest {
             throw new InvalidCredentialException("Category not found.");
         }
 
+
         if (!Arrays.asList(team.getCategories()).contains(category)) {
             throw new InvalidCredentialException("Category is not associated with Team.");
         }
+
+
     }
 
     @GET

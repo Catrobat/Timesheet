@@ -16,16 +16,24 @@ import org.catrobat.jira.timesheet.services.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ComponentAccessor.class)
 public class TimesheetRestTest {
 
     private CategoryService categoryService;
@@ -100,6 +108,8 @@ public class TimesheetRestTest {
         Mockito.when(teamService.getTeamByID(1)).thenReturn(team);
         Mockito.when(sheetService.getTimesheetByID(1)).thenReturn(timeSheet);
         Mockito.when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
+
+        PowerMockito.mockStatic(ComponentAccessor.class);
     }
 
     @Test
@@ -375,5 +385,66 @@ public class TimesheetRestTest {
         response = timesheetRest.deleteTimesheetEntry(request, 1);
 
         Mockito.verify(entryService).delete(timeSheetEntry);
+    }
+
+    // ** --| Test a private Method | used Reflection for accessing private method or field |--
+    @Test(expected = InvocationTargetException.class)
+    public void testCheckIfCategoryIsAssociatedWithTeam_NoCategoryContained() throws Exception {
+        Team team = Mockito.mock(Team.class);
+        Category category = Mockito.mock(Category.class);
+        Category[] categories = new Category[0]; // categories remains empty
+        Mockito.when(team.getCategories()).thenReturn(categories);
+
+        Method method = TimesheetRest.class.getDeclaredMethod("checkIfCategoryIsAssociatedWithTeam", Team.class, Category.class);
+        System.out.println("method.toString() = " + method.toString());
+        method.setAccessible(true);
+        method.invoke(timesheetRest, team, category);
+    }
+
+    // ** --| Test a private Method | used Reflection for accessing private method or field |--
+    @Test(expected = InvocationTargetException.class)
+    public void testCheckIfCategoryIsAssociatedWithTeam_TeamIsNull() throws Exception {
+        Method method = TimesheetRest.class.getDeclaredMethod("checkIfCategoryIsAssociatedWithTeam", Team.class, Category.class);
+        System.out.println("method.toString() = " + method.toString());
+        method.setAccessible(true);
+        method.invoke(timesheetRest, null, null);
+    }
+
+    // ** --| Test a private Method | used Reflection for accessing private method or field |--
+    @Test(expected = InvocationTargetException.class)
+    public void testCheckIfCategoryIsAssociatedWithTeam_CategoryIsNull() throws Exception {
+        Team team = Mockito.mock(Team.class);
+        Method method = TimesheetRest.class.getDeclaredMethod("checkIfCategoryIsAssociatedWithTeam", Team.class, Category.class);
+        method.setAccessible(true);
+        method.invoke(timesheetRest, team, null);
+    }
+
+    // ** --| Test a private Method | used Reflection for accessing private method or field |--
+    @Test
+    public void testDateIsOlderThanTwoWeeks_OldDate() throws Exception {
+        Date date = new Date();
+        // Convert string to date
+
+        SimpleDateFormat dateformat2 = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        String strdate = "02-04-2013 11:35:42";
+        Date newdate = newdate = dateformat2.parse(strdate);
+
+        Method method = TimesheetRest.class.getDeclaredMethod("dateIsOlderThanTwoWeeks", Date.class);
+        method.setAccessible(true);
+        Boolean result = (Boolean) method.invoke(timesheetRest, newdate);
+
+        assertTrue(result);
+    }
+
+    // ** --| Test a private Method | used Reflection for accessing private method or field |--
+    @Test
+    public void testDateIsOlderThanTwoWeeks_CurrentDate() throws Exception {
+        Date date = new Date();
+
+        Method method = TimesheetRest.class.getDeclaredMethod("dateIsOlderThanTwoWeeks", Date.class);
+        method.setAccessible(true);
+        Boolean result = (Boolean) method.invoke(timesheetRest, date);
+
+        assertFalse(result);
     }
 }
