@@ -91,7 +91,7 @@
     </servlet>
 
     <servlet key="master-thesis-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.MasterThesisTimesheetServlet">
-        <url-pattern>/timesheet/master/thesis</url-pattern>
+        <url-pattern>/timesheet/masterthesis</url-pattern>
     </servlet>
 
     <servlet key="administration-servlet" class="org.catrobat.jira.timesheet.servlet.AdminServlet">
@@ -112,6 +112,10 @@
 
     <servlet key="download-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsCSVServlet">
         <url-pattern>/download/timesheet</url-pattern>
+    </servlet>
+
+    <servlet key="download-master-thesis-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportMasterThesisTimesheetAsCSVServlet">
+        <url-pattern>/timesheet/download/masterthesis</url-pattern>
     </servlet>
 
     <servlet key="upload-config-servlet" class="org.catrobat.jira.timesheet.servlet.ImportConfigCsvServlet">
@@ -196,7 +200,7 @@
 
     <web-item key="master_thesis_timesheet_view" name="Link to Master Thesis Timsheet View" section="system.user.options/personal" weight="35">
         <label>TimePunch - Master Thesis Timesheet</label>
-        <link linkId="master_thesis_timesheet_view_link">/plugins/servlet/timesheet/master/thesis</link>
+        <link linkId="master_thesis_timesheet_view_link">/plugins/servlet/timesheet/masterthesis</link>
     </web-item>
 
     <!-- administration -->

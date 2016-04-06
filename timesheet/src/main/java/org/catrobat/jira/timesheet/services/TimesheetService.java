@@ -81,6 +81,15 @@ public interface TimesheetService {
     Timesheet getTimesheetByUser(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException;
 
     /**
+     * Returns Administrator Timesheet corresponding his UserKey
+     *
+     * @param userKey
+     * @return Timesheet, null if unknown userKey
+     */
+    @Nullable
+    Timesheet getAdministratorTimesheet(String userKey) throws ServiceException;
+
+    /**
      * Returns a timesheet with the corresponding id
      *
      * @param id

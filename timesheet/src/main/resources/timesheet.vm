@@ -74,9 +74,8 @@
     <div class="tabs-pane" id="tabs-timesheet-information">
         <p>
         <form id="timesheet-information" class="aui">
-            <div class="field-group">
-                <h2>Export</h2>
-                Download timesheets as <a href="download/timesheet">CSV</a>.
+            <div class="field-group" id="timesheet-export-csv-link">
+                <h2>Export</h2>Download timesheet as <a href="download/timesheet">CSV</a>.
             </div>
 
             <div class="field-group">

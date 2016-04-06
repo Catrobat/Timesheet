@@ -6,8 +6,13 @@ AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
+    AJS.$("#timesheet-export-csv-link").empty();
+
     if(isMasterThesisTimesheet) {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
+        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Master Thesis Timesheet' as <a href=\"download/masterthesis\">CSV</a>.");
+    } else {
+        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as <a href=\"download/timesheet\">CSV</a>.");
     }
 
     if (isAdmin) {

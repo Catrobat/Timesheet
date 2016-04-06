@@ -2,6 +2,7 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
+import com.atlassian.jira.service.ServiceException;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -135,7 +136,7 @@ public class TimesheetServiceImplTest {
         assertEquals(sheet1.getUserKey(), "USER_001");
     }
 
-    @Test
+    @Test (expected = ServiceException.class)
     public void testGetTimesheetByUserNotFound() throws Exception {
         //Act
         Timesheet missingSheet = service.getTimesheetByUser("USER_DOES_NOT_EXIST", false);
@@ -155,7 +156,7 @@ public class TimesheetServiceImplTest {
         assertEquals(refSheet, checkSheet);
     }
 
-    @Test
+    @Test (expected = ServiceException.class)
     public void testGetTimesheetByMissingID() throws Exception {
         //Act
         Timesheet sheet = service.getTimesheetByID(12345);
