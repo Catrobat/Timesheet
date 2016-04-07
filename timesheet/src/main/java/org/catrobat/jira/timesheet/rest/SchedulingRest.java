@@ -36,10 +36,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Path("/scheduling")
 @Produces({MediaType.APPLICATION_JSON})
@@ -71,16 +68,21 @@ public class SchedulingRest {
         }
 
         List<Timesheet> timesheetList = sheetService.all();
-        Collection<User> userList = ComponentAccessor.getUserManager().getAllUsers();
+        Set<User> userList = ComponentAccessor.getUserManager().getAllUsers();
         Config config = configService.getConfiguration();
 
         for (User user : userList) {
+            String userKey = ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey();
             for (Timesheet timesheet : timesheetList) {
-                if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey())) {
-                    if (!timesheet.getIsActive()) {
+                if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
+                    continue;
+                }
+                TimesheetEntry timesheetFirstEntry = entryService.getEntriesBySheet(timesheet)[0];
+                if (timesheet.getUserKey().equals(userKey)) {
+                    if (!timesheet.getIsActive()) { // user is inactive
                         //check if user made an inactive entry and entry date is equal to now
-                        if (entryService.getEntriesBySheet(timesheet)[0].getCategory().getName().equals("Inactive") &&
-                                entryService.getEntriesBySheet(timesheet)[0].getInactiveEndDate().equals(new DateTime())) {
+                        if (timesheetFirstEntry.getCategory().getName().equals("Inactive") &&
+                                timesheetFirstEntry.getInactiveEndDate().equals(new DateTime())) {
                             //inform coordinators that he should be active by now
                             for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                                 sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
@@ -88,7 +90,7 @@ public class SchedulingRest {
                             }
                         }
 
-                        //Email to users coodinators
+                        //Email to users coordinators
                         for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                             sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
                                     config.getMailBodyInactive()));
@@ -99,15 +101,14 @@ public class SchedulingRest {
                             sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
                                     , config.getMailBodyInactive()));
                         }
-                    } else {
-                        if (entryService.getEntriesBySheet(timesheet).length > 0)
-                            if (dateIsOlderThanTwoMonths(entryService.getEntriesBySheet(timesheet)[0].getBeginDate())) {
-                                //Email to admins
-                                for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
-                                    sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
-                                            , config.getMailBodyInactive()));
-                                }
+                    } else { // user is active
+                        if (isDateOlderThanTwoMonths(timesheetFirstEntry.getBeginDate())) {
+                            //Email to admins
+                            for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
+                                sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
+                                        , config.getMailBodyInactive()));
                             }
+                        }
                     }
                 }
             }
@@ -151,7 +152,7 @@ public class SchedulingRest {
         for (Timesheet timesheet : timesheetList) {
             if (timesheet.getEntries().length > 0) {
                 TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
-                if (dateIsOlderThanTwoWeeks(entries[0].getBeginDate())) {
+                if (isDateOlderThanTwoWeeks(entries[0].getBeginDate())) {
                     timesheet.setIsActive(false);
                     timesheet.save();
                 } else if ((entries[0].getCategory().getName().equals("Inactive")) &&
@@ -204,13 +205,13 @@ public class SchedulingRest {
         return Response.noContent().build();
     }
 
-    private boolean dateIsOlderThanTwoWeeks(Date date) {
+    private boolean isDateOlderThanTwoWeeks(Date date) {
         DateTime twoWeeksAgo = new DateTime().minusWeeks(2);
         DateTime datetime = new DateTime(date);
         return (datetime.compareTo(twoWeeksAgo) < 0);
     }
 
-    private boolean dateIsOlderThanTwoMonths(Date date) {
+    private boolean isDateOlderThanTwoMonths(Date date) {
         DateTime twoMonthsAgo = new DateTime().minusMonths(2);
         DateTime datetime = new DateTime(date);
         return (datetime.compareTo(twoMonthsAgo) < 0);

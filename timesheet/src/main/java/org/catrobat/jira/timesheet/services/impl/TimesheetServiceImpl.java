@@ -65,7 +65,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                          int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-                         String lectures, String reason, int ects, String latestEntryDate,
+                         String lectures, String reason, double ects, String latestEntryDate,
                          Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) {
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
