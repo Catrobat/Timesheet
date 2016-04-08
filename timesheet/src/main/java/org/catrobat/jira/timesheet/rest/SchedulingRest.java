@@ -47,6 +47,7 @@ public class SchedulingRest {
     private final TimesheetService sheetService;
     private final TeamService teamService;
     private final UserManager userManager;
+    private final int PERIOD_OF_TIME = 14 * 24 * 60 * 60 * 1000; // 2 weeks in ms
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
                           final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
@@ -71,6 +72,8 @@ public class SchedulingRest {
         Set<User> userList = ComponentAccessor.getUserManager().getAllUsers();
         Config config = configService.getConfiguration();
 
+        Date today = new Date();
+
         for (User user : userList) {
             String userKey = ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey();
             for (Timesheet timesheet : timesheetList) {
@@ -80,9 +83,10 @@ public class SchedulingRest {
                 TimesheetEntry timesheetFirstEntry = entryService.getEntriesBySheet(timesheet)[0];
                 if (timesheet.getUserKey().equals(userKey)) {
                     if (!timesheet.getIsActive()) { // user is inactive
-                        //check if user made an inactive entry and entry date is equal to now
+                        //check if user made an inactive entry and inactive date is more than 2 weeks old
+                        long diff = today.getTime() - timesheetFirstEntry.getInactiveEndDate().getTime();
                         if (timesheetFirstEntry.getCategory().getName().equals("Inactive") &&
-                                timesheetFirstEntry.getInactiveEndDate().equals(new DateTime())) {
+                                diff > PERIOD_OF_TIME) { // > 2 weeks in ms
                             //inform coordinators that he should be active by now
                             for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                                 sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
@@ -90,24 +94,26 @@ public class SchedulingRest {
                             }
                         }
 
-                        //Email to users coordinators
+                        //Email to users coordinators -- immer informiert?
                         for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                             sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
                                     config.getMailBodyInactive()));
                         }
 
-                        //Email to admins
+                        //Email to admins -- immer informiert?
                         for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
                             sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
                                     , config.getMailBodyInactive()));
                         }
                     } else { // user is active
                         if (isDateOlderThanTwoMonths(timesheetFirstEntry.getBeginDate())) {
-                            //Email to admins
+                            //Email to admins is good but not enough -- nur system admins?
                             for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
                                 sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
                                         , config.getMailBodyInactive()));
                             }
+
+
                         }
                     }
                 }

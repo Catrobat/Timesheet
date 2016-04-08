@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
-@PrepareForTest({ComponentAccessor.class,SchedulingRest.class})
+@PrepareForTest({ComponentAccessor.class, SchedulingRest.class})
 public class SchedulingRestTest {
 
     private SchedulingRest schedulingRestMock;
@@ -117,9 +117,9 @@ public class SchedulingRestTest {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
                 timesheetService, teamService, userManagerLDAPMock);
 
-        timesheetService.add("key 1", 450, 450, 900, 200, 0, "Masterarbeit", "", 30, "", true, true, true); // master thesis
-        timesheetService.add("key 2", 450, 0, 450, 450, 0, "Bachelorarbeit", "", 15, "", true, false, false); // disabled
-        timesheetService.add("key 3", 450, 0, 450, 200, 20, "Seminararbeit", "", 7.5, "", false, true, false); // inactive
+        timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, "", true, true, true); // master thesis
+        timesheetService.add("key 2", 450, 0, 450, 450, 0, "bachelor thesis", "", 15, "", true, false, false); // disabled
+        timesheetService.add("key 3", 450, 0, 450, 200, 20, "seminar paper", "", 7.5, "", false, true, false); // inactive
 
         User user1 = mock(User.class);
         User user2 = mock(User.class);
@@ -140,11 +140,11 @@ public class SchedulingRestTest {
     }
 
     @Test
-    public void testActivityNotification() throws Exception {
+    public void testActivityNotification_differentKindsOfTimesheets() throws Exception {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
                 timesheetService, teamService, userManagerLDAPMock);
 
-        Timesheet timesheet1 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "Masterarbeit", "", 30, "", true, true, true); // master thesis
+        Timesheet timesheet1 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, "", true, true, true);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -184,6 +184,21 @@ public class SchedulingRestTest {
 
         // verify your calls
         PowerMockito.verifyPrivate(spy, never()).invoke("sendMail", Matchers.anyObject());
+
+        timesheetService.remove(timesheet1);
+        Timesheet timesheet2 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, "", false, true, true); // inactive
+
+        timesheetEntryService.add(timesheet2, yesterday, today, categoryDrone, "testing a lot of things",
+                30, droneTeam, false, today, "123456", "MarkusHobisch"); // this should work
+
+        // execute your test
+        spy.activityNotification(httpRequest);
+
+        // verify your calls
+        PowerMockito.verifyPrivate(spy, never()).invoke("sendMail", Matchers.anyObject());
+
+
+
     }
 
 

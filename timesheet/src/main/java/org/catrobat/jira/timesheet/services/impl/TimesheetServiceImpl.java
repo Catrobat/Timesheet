@@ -19,9 +19,11 @@ package org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.joda.time.DateTime;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -83,6 +85,23 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setIsMasterThesisTimesheet(isMasterThesisTimesheet);
         sheet.save();
         return sheet;
+    }
+
+    @Nonnull
+    @Override
+    public void remove(Timesheet timesheet) throws ServiceException {
+        int id = timesheet.getID();
+        Timesheet[] found = ao.find(Timesheet.class, "ID = ?", id);
+
+        if (found.length > 1) {
+            throw new ServiceException("Found more than one timesheet with the same id.");
+        }
+
+        for(TimesheetEntry entry: found[0].getEntries()){
+            ao.delete(entry);
+        }
+
+        ao.delete(found[0]);
     }
 
     @Override
