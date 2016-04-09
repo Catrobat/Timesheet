@@ -22,7 +22,6 @@ function hideVisualizationTabs() {
 function filterCategoriesPerTeam(selectedTeam, categories) {
 
     var categoriesPerTeam = [];
-
     selectedTeam.teamCategories.map(function (categoryID) {
         categoriesPerTeam.push(
             {id: categoryID, text: categories[categoryID].categoryName}

@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -33,8 +34,8 @@ public class TimesheetServiceImplTest {
     final int targeHours = 300;
     final int targetHoursCompleted = 150;
     final int targetHoursRemoved = 0;
-    final int ects = 10;
-    final String latestEntryDate = "Not Available";
+    final double ects = 10.0;
+    final String latestEntryDate = "2016-04-09";
     final String lectures = "Mobile Applications (705.881)";
     final String reason = "Agathe Bauer";
 
@@ -72,14 +73,10 @@ public class TimesheetServiceImplTest {
         assertEquals(targeHours, timesheet[0].getTargetHours());
         assertEquals(targetHoursCompleted, timesheet[0].getTargetHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
-        assertEquals(ects, timesheet[0].getEcts());
-
-        //fails, but why?
-        /*
-        assertEquals(latestEntryDate, timesheet[0].getLatestEntryDate());
+        assertEquals(ects, timesheet[0].getEcts(), 0.0);
+        assertEquals(latestEntryDate, timesheet[0].getLatestEntryDate().substring(0,10));
         assertEquals(true, timesheet[0].getIsActive());
         assertEquals(true, timesheet[0].getIsEnabled());
-        */
     }
 
     @Test
@@ -136,7 +133,7 @@ public class TimesheetServiceImplTest {
         assertEquals(sheet1.getUserKey(), "USER_001");
     }
 
-    @Test (expected = ServiceException.class)
+    @Test
     public void testGetTimesheetByUserNotFound() throws Exception {
         //Act
         Timesheet missingSheet = service.getTimesheetByUser("USER_DOES_NOT_EXIST", false);

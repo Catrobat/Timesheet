@@ -78,7 +78,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         Mockito.when(timesheet.getTargetHoursTheory()).thenReturn(100);
         Mockito.when(timesheet.getTargetHours()).thenReturn(300);
         Mockito.when(timesheet.getTargetHoursCompleted()).thenReturn(150);
-        Mockito.when(timesheet.getEcts()).thenReturn(10);
+        Mockito.when(timesheet.getEcts()).thenReturn(10.0);
         Mockito.when(timesheet.getLatestEntryDate()).thenReturn(new DateTime().toString());
         Mockito.when(timesheet.getLectures()).thenReturn("Mobile Computing");
         Mockito.when(timesheet.getIsActive()).thenReturn(true);

@@ -185,7 +185,7 @@ public abstract class CsvExporter {
         sb.append(Integer.toString(timesheet.getTargetHours())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getTargetHoursCompleted())).append(DELIMITER);
         sb.append(timesheet.getReason()).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getEcts())).append(DELIMITER);
+        sb.append(Double.toString(timesheet.getEcts())).append(DELIMITER);
         sb.append(timesheet.getLectures()).append(NEW_LINE);
 
         sb.append("Date" + DELIMITER +

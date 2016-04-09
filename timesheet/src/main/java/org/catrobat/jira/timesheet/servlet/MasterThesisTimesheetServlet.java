@@ -52,7 +52,8 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            if (!permissionService.checkIfUserIsGroupMember(request, "Master-Students")) {
+            if (!permissionService.checkIfUserIsGroupMember(request, "AtlassianDevelopers") &&
+                    !permissionService.checkIfUserIsGroupMember(request, "Master-Students")) {
                 throw new ServletException("User is no Master-Students-Group member.");
             }
 

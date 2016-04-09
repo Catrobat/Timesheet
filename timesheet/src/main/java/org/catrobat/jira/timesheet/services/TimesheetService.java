@@ -35,12 +35,13 @@ public interface TimesheetService {
      * @param targetHoursTheory   specifies the amount of hours the user has to
      *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
+     * @param ects
      * @return the new Timesheet, or null
      */
     @Nullable
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
                             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                            String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
+                            String reason, double ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
                             Boolean isMasterThesisTimesheet) throws ServiceException;
 
     /**
@@ -52,12 +53,13 @@ public interface TimesheetService {
      * @param targetHoursTheory   specifies the amount of hours the user has to
      *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
+     * @param ects
      * @return the new Timesheet
      */
     @Nonnull
     Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                  String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
+                  String reason, double ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
                   Boolean isMasterThesisTimesheet);
 
     /**

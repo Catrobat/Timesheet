@@ -67,7 +67,6 @@ public class TimesheetRest {
     }
 
     private void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws InvalidCredentialException {
-
         if (team == null) {
             throw new InvalidCredentialException("Team not found.");
         } else if (category == null) {
@@ -79,14 +78,17 @@ public class TimesheetRest {
 
     @GET
     @Path("teams")
-    public Response getTeams(@Context HttpServletRequest request) throws ServiceException {
+    public Response getTeamsForUser(@Context HttpServletRequest request) throws ServiceException {
+
+        UserProfile userProfile = null;
+        try {
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
-        UserProfile user;
-
-        user = permissionService.checkIfUserExists(request);
-
-        String userName = user.getUsername();
+        String userName = userProfile.getUsername();
 
         for (Team team : teamService.getTeamsOfUser(userName)) {
             Category[] categories = team.getCategories();
@@ -102,16 +104,22 @@ public class TimesheetRest {
 
     @GET
     @Path("teams/{timesheetID}")
-    public Response getTimesheetTeams(@Context HttpServletRequest request,
-                                      @PathParam("timesheetID") int timesheetID) throws ServiceException {
+    public Response getTeamsForTimesheet(@Context HttpServletRequest request,
+                                         @PathParam("timesheetID") int timesheetID) throws ServiceException {
+
+        UserProfile userProfile = null;
+        try {
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        permissionService.checkIfUserExists(request);
 
         for (User user : allUsers) {
             if (sheetService.getTimesheetByID(timesheetID).getUserKey().equals(
-                    ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey().toString())) {
+                    ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey())) {
                 for (Team team : teamService.getTeamsOfUser(user.getName())) {
                     Category[] categories = team.getCategories();
                     int[] categoryIDs = new int[categories.length];
@@ -128,7 +136,14 @@ public class TimesheetRest {
 
     @GET
     @Path("categories")
-    public Response getCategories(@Context HttpServletRequest request) {
+    public Response getCategories(@Context HttpServletRequest request) throws ServiceException {
+
+        UserProfile userProfile = null;
+        try {
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonCategory> categories = new LinkedList<JsonCategory>();
 
@@ -141,7 +156,14 @@ public class TimesheetRest {
 
     @GET
     @Path("teamInformation")
-    public Response getAllTeams(@Context HttpServletRequest request) {
+    public Response getAllTeams(@Context HttpServletRequest request) throws ServiceException {
+
+        UserProfile userProfile = null;
+        try {
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
 
@@ -150,7 +172,6 @@ public class TimesheetRest {
             for (int i = 0; i < team.getCategories().length; i++) {
                 teamCategoryIDs[i] = team.getCategories()[i].getID();
             }
-
             teams.add(new JsonTeam(team.getID(), team.getTeamName(), teamCategoryIDs));
         }
 
@@ -159,12 +180,17 @@ public class TimesheetRest {
 
     @GET
     @Path("timesheet/{timesheetID}/teamEntries")
-    public Response getTeamTimesheetEntries(@Context HttpServletRequest request,
+    public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
                                             @PathParam("timesheetID") int timesheetID) throws ServiceException {
+        UserProfile userProfile = null;
+        try {
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<JsonTimesheetEntry>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        UserProfile userProfile = permissionService.checkIfUserExists(request);
 
         for (User user : allUsers) {
             //get user name
@@ -174,7 +200,7 @@ public class TimesheetRest {
                 for (Team team : teamService.getTeamsOfUser(user.getName())) {
                     //get all team members
                     for (String teamMember : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
-                        if (user.getName().compareTo(teamMember) == 0) {
+                        if (user.getName().equals(teamMember)) {
                             //collect all timesheet entries of those team members
                             Timesheet sheet = sheetService.getTimesheetByUser(
                                     ComponentAccessor.getUserManager().getUserByName(teamMember).getKey(), false);
@@ -197,17 +223,21 @@ public class TimesheetRest {
 
     @GET
     @Path("timesheet/{teamName}/entries")
-    public Response getAllTeamTimesheetEntries(@Context HttpServletRequest request,
+    public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
                                                @PathParam("teamName") String teamName) throws ServiceException {
+        UserProfile userProfile = null;
+        try {
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<JsonTimesheetEntry>();
-        permissionService.checkIfUserExists(request);
-
         for (String developerTeamMemberName : configService.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER)) {
             TimesheetEntry[] timesheetEntries;
             try {
-                timesheetEntries = sheetService.getTimesheetByUser(ComponentAccessor.getUserKeyService()
-                        .getKeyForUsername(developerTeamMemberName), false).getEntries();
+                String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(developerTeamMemberName);
+                timesheetEntries = sheetService.getTimesheetByUser(userKey, false).getEntries();
             } catch (NullPointerException e) {
                 return Response.serverError().entity("At least one Team Member has no valid Timesheet Entries.").build();
             }
@@ -228,17 +258,21 @@ public class TimesheetRest {
 
     @GET
     @Path("timesheet/timesheetID/{userName}/{getMTSheet}")
-    public Response getTimesheetIDForUser(@Context HttpServletRequest request,
+    public Response getTimesheetIDOFUser(@Context HttpServletRequest request,
                                           @PathParam("userName") String userName,
                                           @PathParam("getMTSheet") Boolean getMTSheet) throws ServiceException {
 
-        Timesheet sheet;
-        UserProfile user;
-
+        UserProfile userProfile = null;
         try {
-            user = permissionService.checkIfUsernameExists(userName);
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
+
+        Timesheet sheet = null;
+        try {
             sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(user.getUsername()), getMTSheet);
+                    getUserKeyService().getKeyForUsername(userProfile.getUsername()), getMTSheet);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("Timesheet of Username: "
                     + userName + " has not been initialized.").build();
@@ -249,14 +283,17 @@ public class TimesheetRest {
 
     @GET
     @Path("timesheets/owner/{timesheetID}")
-    public Response getTimesheetOwner(@Context HttpServletRequest request,
+    public Response getOwnerOfTimesheet(@Context HttpServletRequest request,
                                       @PathParam("timesheetID") int timesheetID) throws ServiceException {
-
-        Timesheet sheet;
-        UserProfile user;
-
+        UserProfile userProfile = null;
         try {
-            user = permissionService.checkIfUserExists(request);
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
+
+        Timesheet sheet = null;
+        try {
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
             return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
@@ -264,21 +301,21 @@ public class TimesheetRest {
 
         if (sheet == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
-        } else if (!permissionService.userCanViewTimesheet(user, sheet)) {
+        } else if (!permissionService.userCanViewTimesheet(userProfile, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet Access denied.").build();
         }
 
         JsonUser jsonUser = new JsonUser();
-        jsonUser.setUserName(user.getUsername());
+        jsonUser.setUserName(userProfile.getUsername());
 
         return Response.ok(jsonUser).build();
     }
 
     @GET
     @Path("timesheet/of/{useName}/{isMTSheet}")
-    public Response getTimesheetByUsername(@Context HttpServletRequest request,
-                                 @PathParam("useName") String useName,
-                                 @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
+    public Response getTimesheetForUsername(@Context HttpServletRequest request,
+                                           @PathParam("useName") String useName,
+                                           @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
 
         Timesheet sheet;
         UserProfile user;
@@ -286,7 +323,7 @@ public class TimesheetRest {
 
         try {
             user = permissionService.checkIfUserExists(request);
-            sheet = sheetService.getTimesheetByUser(userKey,isMTSheet);
+            sheet = sheetService.getTimesheetByUser(userKey, isMTSheet);
         } catch (ServiceException e) {
             return Response.serverError().entity("No Timesheet available for this user.").build();
         }
@@ -326,7 +363,10 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet Access denied.").build();
         }
 
-        if (sheet.getTargetHoursTheory() <= 80) {
+        int completeTime = sheet.getTargetHoursCompleted();
+        int targetTime = sheet.getTargetHours();
+
+        if ((targetTime - completeTime) <= 80) {
             buildEmailOutOfTime(user.getEmail(), sheet, user);
         }
 
@@ -629,7 +669,6 @@ public class TimesheetRest {
 
         return Response.ok(newJsonTimesheet).build();
     }
-
 
 
     @POST

@@ -61,9 +61,9 @@ public interface Timesheet extends Entity {
 
     void setReason(String reason);
 
-    int getEcts();
+    double getEcts();
 
-    void setEcts(int ects);
+    void setEcts(double ects);
 
     String getLatestEntryDate();
 

@@ -1,6 +1,6 @@
 package ut.org.catrobat.jira.timesheet.services.impl;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.junit.Before;

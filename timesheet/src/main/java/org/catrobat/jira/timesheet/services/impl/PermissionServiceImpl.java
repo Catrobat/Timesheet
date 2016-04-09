@@ -48,7 +48,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     public UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException {
         UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUser(request).getUsername());
-
+        
         if (userProfile == null) {
             throw new ServiceException("User does not exist.");
         }
