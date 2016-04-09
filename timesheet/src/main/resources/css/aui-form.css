@@ -185,7 +185,7 @@
 
 /* Placeholder styling
  * - You have to use two rules, because user agents are required to ignore a rule with an unknown selector.
- *   Since WebKit doesn’t know the proprietary Mozilla selector and vice versa, you have to include them separately.
+ *   Since WebKit doesnï¿½t know the proprietary Mozilla selector and vice versa, you have to include them separately.
  *   See http://stackoverflow.com/questions/2610497/change-an-inputs-html5-placeholder-color-with-css#answer-2610741
  */
 .aui-form .text::-webkit-input-placeholder,

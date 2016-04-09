@@ -8,8 +8,7 @@ import com.atlassian.mail.queue.MailQueue;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.activeobjects.Config;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.rest.SchedulingRest;
 import org.catrobat.jira.timesheet.services.PermissionService;
@@ -20,6 +19,7 @@ import org.catrobat.jira.timesheet.services.impl.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -29,9 +29,7 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +37,7 @@ import static org.mockito.Mockito.*;
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
-@PrepareForTest(ComponentAccessor.class)
+@PrepareForTest({ComponentAccessor.class,SchedulingRest.class})
 public class SchedulingRestTest {
 
     private SchedulingRest schedulingRestMock;
@@ -97,6 +95,7 @@ public class SchedulingRestTest {
         // ... and sometimes you would like to mix them together (see in test method)
 
 
+        // info: mock static method
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
@@ -118,11 +117,9 @@ public class SchedulingRestTest {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
                 timesheetService, teamService, userManagerLDAPMock);
 
-        TimesheetServiceImpl timesheetService = new TimesheetServiceImpl(ao);
-
-        timesheetService.add("key 1",450,450,900,200,0,"Masterarbeit","",30,"",true,true,true); // master thesis
-        timesheetService.add("key 2",450,0,450,450,0,"Bachelorarbeit","",15,"",true,false,false); // disabled
-        timesheetService.add("key 3",450,0,450,200,20,"Seminararbeit","",7.5,"",false,true,false); // inactive
+        timesheetService.add("key 1", 450, 450, 900, 200, 0, "Masterarbeit", "", 30, "", true, true, true); // master thesis
+        timesheetService.add("key 2", 450, 0, 450, 450, 0, "Bachelorarbeit", "", 15, "", true, false, false); // disabled
+        timesheetService.add("key 3", 450, 0, 450, 200, 20, "Seminararbeit", "", 7.5, "", false, true, false); // inactive
 
         User user1 = mock(User.class);
         User user2 = mock(User.class);
@@ -140,6 +137,53 @@ public class SchedulingRestTest {
         when(permissionServiceMock.checkPermission(httpRequest)).thenReturn(null);
 
         schedulingRest.activityNotification(httpRequest);
+    }
+
+    @Test
+    public void testActivityNotification() throws Exception {
+        SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
+                timesheetService, teamService, userManagerLDAPMock);
+
+        Timesheet timesheet1 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "Masterarbeit", "", 30, "", true, true, true); // master thesis
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        Date yesterday = cal.getTime();
+
+        Date today = new Date();
+
+        cal.add(Calendar.DATE, +1);
+        Date tomorrow = cal.getTime();
+
+        Category categoryDrone = categoryService.add("Drone");
+        Team droneTeam = teamService.add("Drone Team");
+
+        User user1 = mock(User.class);
+        User user2 = mock(User.class);
+        Set<User> userSet = new HashSet<User>(Arrays.asList(user1, user2));
+        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(userSet);
+
+        when(user1.getName()).thenReturn("MarkusHobisch");
+        when(user2.getName()).thenReturn("AdrianSchnedlitz");
+        when(ComponentAccessor.getUserManager().getUserByName(user1.getName()).getKey()).thenReturn("key 1");
+        when(ComponentAccessor.getUserManager().getUserByName(user2.getName()).getKey()).thenReturn("key 2");
+
+        Config config = mock(Config.class);
+        when(configServiceMock.getConfiguration()).thenReturn(config);
+
+        when(permissionServiceMock.checkPermission(httpRequest)).thenReturn(null);
+
+        timesheetEntryService.add(timesheet1, yesterday, today, categoryDrone, "testing a lot of things",
+                30, droneTeam, false, today, "123456", "MarkusHobisch"); // this should work
+
+        // info: mock private method
+        SchedulingRest spy = PowerMockito.spy(schedulingRest);
+
+        // execute your test
+        spy.activityNotification(httpRequest);
+
+        // verify your calls
+        PowerMockito.verifyPrivate(spy, never()).invoke("sendMail", Matchers.anyObject());
     }
 
 
