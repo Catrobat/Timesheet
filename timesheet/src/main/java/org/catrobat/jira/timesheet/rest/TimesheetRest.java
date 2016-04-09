@@ -559,8 +559,9 @@ public class TimesheetRest {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         for (JsonTimesheetEntry entry : entries) {
-
-            if (entry.getDescription().isEmpty()) {
+            if(entry == null) {
+                return Response.status(Response.Status.FORBIDDEN).entity("Please prove if your 'Import-Entry' fulfills all import-requirements.").build();
+            } else if (entry.getDescription().isEmpty()) {
                 return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
             } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0)) {
                 return Response.status(Response.Status.FORBIDDEN).entity("The 'Inactive Date' is before your 'Timesheet Entry Date'. That is not possible.").build();

@@ -92,6 +92,19 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
 function parseEntryFromGoogleDocRow(row, timesheetData) {
     var pieces = row.split("\t");
 
+    console.log(pieces);
+    console.log(pieces.length);
+
+    if((pieces.length < 7)){
+        return null;
+    }
+
+    for(var i = 0; i <= 7; i++) {
+        if(pieces[i] == "") {
+            return null;
+        }
+    }
+
     var firstTeamID = Object.keys(timesheetData.teams)[0];
     var firstTeam = timesheetData.teams[firstTeamID];
     var firstCategoryIDOfFirstTeam = firstTeam.teamCategories[0];

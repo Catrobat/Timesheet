@@ -52,8 +52,7 @@ public class TimesheetServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            if (!permissionService.checkIfUserIsGroupMember(request, "AtlassianDevelopers") &&
-                    !permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
+            if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
                     !permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
                 throw new ServletException("User is no Timesheet-Group member, or Administrator.");
             }

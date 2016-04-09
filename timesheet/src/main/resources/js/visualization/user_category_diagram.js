@@ -43,7 +43,7 @@ function assignCategoryDiagramData(timesheetData) {
 
             //add points
             var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
-            var dataY = toFixed(totalHours + totalMinutes / 60, 2);
+            var dataY = totalHours + totalMinutes / 60;
             dataPoints.push(dataX);
             dataPoints.push(dataY);
             dataPoints.push(timesheetData.categories[availableEntries[i].categoryID].categoryName);
@@ -121,7 +121,7 @@ function categoryDiagram(sortedDataArray, numberOfCategories) {
                 if (sortedDataArray[i][k] == data['year'][l])
                     sum = sum + sortedDataArray[i][k + 1];
             }
-            data['category' + i].push(sum);
+            data['category' + i].push(toFixed(sum, 2));
         }
     }
 
