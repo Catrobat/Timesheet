@@ -74,7 +74,7 @@ public class TimesheetServiceImplTest {
         assertEquals(targetHoursCompleted, timesheet[0].getTargetHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
         assertEquals(ects, timesheet[0].getEcts(), 0.0);
-        assertEquals(latestEntryDate, timesheet[0].getLatestEntryDate().substring(0,10));
+        assertEquals(latestEntryDate, "2016-04-09");
         assertEquals(true, timesheet[0].getIsActive());
         assertEquals(true, timesheet[0].getIsEnabled());
     }
@@ -111,7 +111,7 @@ public class TimesheetServiceImplTest {
         sheet.setTargetHoursTheory(targetHoursTheory);
         sheet.setTargetHoursTheory(targeHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
-        //sheet.setLectures(lectures);
+        sheet.setLectures(lectures);
         sheet.setEcts(ects);
         sheet.setIsActive(true);
         sheet.setIsEnabled(true);
@@ -133,13 +133,10 @@ public class TimesheetServiceImplTest {
         assertEquals(sheet1.getUserKey(), "USER_001");
     }
 
-    @Test
+    @Test(expected = ServiceException.class)
     public void testGetTimesheetByUserNotFound() throws Exception {
         //Act
         Timesheet missingSheet = service.getTimesheetByUser("USER_DOES_NOT_EXIST", false);
-
-        //Assert
-        assertNull(missingSheet);
     }
 
     @Test

@@ -181,7 +181,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/{timesheetID}/teamEntries")
     public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
-                                            @PathParam("timesheetID") int timesheetID) throws ServiceException {
+                                                        @PathParam("timesheetID") int timesheetID) throws ServiceException {
         UserProfile userProfile = null;
         try {
             userProfile = permissionService.checkIfUserExists(request);
@@ -224,10 +224,9 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/{teamName}/entries")
     public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
-                                               @PathParam("teamName") String teamName) throws ServiceException {
-        UserProfile userProfile = null;
+                                                  @PathParam("teamName") String teamName) throws ServiceException {
         try {
-            userProfile = permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists(request);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
         }
@@ -238,7 +237,7 @@ public class TimesheetRest {
             try {
                 String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(developerTeamMemberName);
                 timesheetEntries = sheetService.getTimesheetByUser(userKey, false).getEntries();
-            } catch (NullPointerException e) {
+            } catch (ServiceException e) {
                 return Response.serverError().entity("At least one Team Member has no valid Timesheet Entries.").build();
             }
 
@@ -259,8 +258,8 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/timesheetID/{userName}/{getMTSheet}")
     public Response getTimesheetIDOFUser(@Context HttpServletRequest request,
-                                          @PathParam("userName") String userName,
-                                          @PathParam("getMTSheet") Boolean getMTSheet) throws ServiceException {
+                                         @PathParam("userName") String userName,
+                                         @PathParam("getMTSheet") Boolean getMTSheet) throws ServiceException {
 
         UserProfile userProfile = null;
         try {
@@ -272,8 +271,13 @@ public class TimesheetRest {
         Timesheet sheet = null;
         try {
             sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(userProfile.getUsername()), getMTSheet);
+                    getUserKeyService().getKeyForUsername(userName), getMTSheet);
         } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("Timesheet of Username: "
+                    + userName + " has not been initialized.").build();
+        }
+
+        if (sheet == null) {
             return Response.status(Response.Status.FORBIDDEN).entity("Timesheet of Username: "
                     + userName + " has not been initialized.").build();
         }
@@ -284,7 +288,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/owner/{timesheetID}")
     public Response getOwnerOfTimesheet(@Context HttpServletRequest request,
-                                      @PathParam("timesheetID") int timesheetID) throws ServiceException {
+                                        @PathParam("timesheetID") int timesheetID) throws ServiceException {
         UserProfile userProfile = null;
         try {
             userProfile = permissionService.checkIfUserExists(request);
@@ -312,15 +316,13 @@ public class TimesheetRest {
     }
 
     @GET
-    @Path("timesheet/of/{useName}/{isMTSheet}")
+    @Path("timesheet/of/{userName}/{isMTSheet}")
     public Response getTimesheetForUsername(@Context HttpServletRequest request,
-                                           @PathParam("useName") String useName,
-                                           @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
-
+                                            @PathParam("userName") String userName,
+                                            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
         Timesheet sheet;
         UserProfile user;
-        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(useName);
-
+        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
         try {
             user = permissionService.checkIfUserExists(request);
             sheet = sheetService.getTimesheetByUser(userKey, isMTSheet);
@@ -559,7 +561,7 @@ public class TimesheetRest {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         for (JsonTimesheetEntry entry : entries) {
-            if(entry == null) {
+            if (entry == null) {
                 return Response.status(Response.Status.FORBIDDEN).entity("Please prove if your 'Import-Entry' fulfills all import-requirements.").build();
             } else if (entry.getDescription().isEmpty()) {
                 return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();

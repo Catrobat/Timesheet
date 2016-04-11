@@ -41,7 +41,6 @@ function assignTeamVisData(timesheetDataReply) {
                 totalHours = totalHours + minutesToFullHours;
                 totalMinutes = totalMinutes - minutesToFullHours * 60;
             }
-
         } else {
             pos = i;
             i = i - 1;
@@ -49,8 +48,9 @@ function assignTeamVisData(timesheetDataReply) {
 
         if (oldPos != pos || i == availableEntries.length - 1) {
             data['year'].push(referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1));
-            data['team'].push(toFixed(totalHours + totalMinutes / 60), 2);
-            data['label'].push(availableTeams[actualTeamID].teamName);
+            data['team'].push(toFixed((totalHours + totalMinutes / 60), 2));
+           //if (!containsElement(data['label'], availableTeams[actualTeamID].teamName))
+                data['label'].push(availableTeams[actualTeamID].teamName);
             totalHours = 0;
             totalMinutes = 0;
         }

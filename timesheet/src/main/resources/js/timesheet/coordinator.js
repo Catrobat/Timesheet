@@ -12,6 +12,9 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
     AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><label for=\"permission\">Timesheet Of</label><input class=\"text selectTimesheetOfUserField\" type=\"text\" id=\"user-select2-field\"></div>");
     AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Show\" class=\"aui-button aui-button-primary\"></field-group>");
     AJS.$("#coordinatorTimesheetSelect").append("</field-group>");
+
+    AJS.$("#coordinatorTimesheetSelect").append("<field-group>");
+    AJS.$("#coordinatorTimesheetSelect").append("<h3>Your Teams: </h3>");
     for (var i = 0; i < config.teams.length; i++) {
         var team = config.teams[i];
         //check if user is coordinator of a team
@@ -22,6 +25,8 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
                     if (!containsElement(listOfUsers, team['developerGroups'][j]))
                         listOfUsers.push(team['developerGroups'][j]);
                 }
+                AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><label>"+ team.teamName +"</label></div>");
+                AJS.$("#coordinatorTimesheetSelect").append("</field-group>");
                 isTeamCoordinator = true;
             }
         }

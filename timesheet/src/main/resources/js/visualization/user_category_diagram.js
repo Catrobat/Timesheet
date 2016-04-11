@@ -141,7 +141,17 @@ function categoryDiagram(sortedDataArray, numberOfCategories) {
             cat2: tempData[3],
             cat3: tempData[4],
             cat4: tempData[5],
-            cat5: tempData[6]
+            cat5: tempData[6],
+            cat6: tempData[7],
+            cat7: tempData[8],
+            cat8: tempData[9],
+            cat9: tempData[10],
+            cat10: tempData[11],
+            cat11: tempData[12],
+            cat12: tempData[13],
+            cat13: tempData[14],
+            cat14: tempData[15],
+            cat15: tempData[16]
         });
 
         tempData = [];

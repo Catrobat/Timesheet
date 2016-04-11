@@ -253,11 +253,11 @@
     </div>
     <div class="tabs-pane active-pane" id="tabs-category">
         <h3 id="categoryLineDiagramTag">Visualization of your spent time on categories</h3>
-        <div id="categoryLineDiagram" style="height:250px;"></div>
+        <div id="categoryLineDiagram" style="height:400px;"></div>
     </div>
     <div class="tabs-pane active-pane" id="tabs-team">
         <h3 id="teamLineDiagramTag">Team Visualization</h3>
-        <div id="teamLineDiagram" style="height: 250px;"></div>
+        <div id="teamLineDiagram" style="height: 400px;"></div>
     </div>
 </div>
 
@@ -344,7 +344,8 @@
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
-            ykeys: ['cat1', 'cat2', 'cat3', 'cat4', 'cat5'],
+            ykeys: ['cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6', 'cat7', 'cat8', 'cat9', 'cat10',
+                'cat11', 'cat12', 'cat13', 'cat14', 'cat15'],
             // Labels for the ykeys -- will be displayed when you hover over the
             // chart.
             labels: labelData,

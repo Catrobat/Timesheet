@@ -59,7 +59,10 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
             UserProfile userProfile = permissionService.checkIfUserExists(request);
             String userKey = ComponentAccessor.
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
-            Timesheet sheet = sheetService.getTimesheetByUser(userKey, true);
+            Timesheet sheet = null;
+            if(sheetService.userHasTimesheet(userKey, true)) {
+                sheet = sheetService.getTimesheetByUser(userKey, true);
+            }
 
             if (sheet == null) {
                 sheet = sheetService.add(userKey, 0, 0, 900, 0, 0, "Master Thesis",

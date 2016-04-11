@@ -120,6 +120,8 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         if (found.length > 2) {
             throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+        } else if (found.length == 0) {
+            throw new ServiceException("No Timesheet found.");
         }
 
         if (isMasterThesisTimesheet) {
@@ -139,6 +141,33 @@ public class TimesheetServiceImpl implements TimesheetService {
         }
 
         return null;
+    }
+
+    @Override
+    public Boolean userHasTimesheet(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException {
+        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
+
+        if (found.length > 2) {
+            throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+        }
+
+        if (isMasterThesisTimesheet) {
+            for (int i = 0; i < found.length; i++) {
+                if (found[i].getIsMasterThesisTimesheet()) {
+                    return true;
+                }
+            }
+        }
+
+        if (!isMasterThesisTimesheet) {
+            for (int i = 0; i < found.length; i++) {
+                if (!found[i].getIsMasterThesisTimesheet()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override

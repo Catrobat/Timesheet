@@ -67,7 +67,11 @@ public class TimesheetServlet extends HttpServlet {
                 sheet = sheetService.getAdministratorTimesheet(userKey);
             } else {
                 paramMap.put("isadmin", false);
-                sheet = sheetService.getTimesheetByUser(userKey, false);
+                if(sheetService.userHasTimesheet(userKey, false)) {
+                    sheet = sheetService.getTimesheetByUser(userKey, false);
+                } else {
+                    sheet = null;
+                }
             }
 
             if (sheet == null) {

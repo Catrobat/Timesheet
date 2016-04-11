@@ -46,7 +46,9 @@ function appendEntriesToVisTable(timesheetData) {
             }
 
             //calculate theory time in minutes
-            if (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory")
+            if ((timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory") ||
+                (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory (MT)") ||
+                (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Research"))
                 theoryHours = theoryHours + calculatedTime;
 
             //date within the last six months
@@ -116,7 +118,7 @@ function appendEntriesToVisTable(timesheetData) {
 
     //append avg time
     AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"avg-time\">" + "Time / Month" + "</td>" +
-        "<td headers=\"basic-time\" class=\"time\">" + averageTimeHours + "hours " + averageTimeMinutes + "mins" + "</td>" +
+        "<td headers=\"basic-time\" class=\"time\">" + averageTimeHours + "hours " + Math.floor(averageTimeMinutes) + "mins" + "</td>" +
         "</tr>");
 
     //append time last 6 month

@@ -92,18 +92,21 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
 function parseEntryFromGoogleDocRow(row, timesheetData) {
     var pieces = row.split("\t");
 
-    console.log(pieces);
-    console.log(pieces.length);
-
+    //check if import entry length is valid
     if((pieces.length < 7)){
         return null;
     }
-
+    //check if any field of the import entry is empty
     for(var i = 0; i <= 7; i++) {
         if(pieces[i] == "") {
             return null;
         }
     }
+
+    //check if entry values are correct
+    if((!isValidDate(new Date(pieces[0] + " " + pieces[1]))) ||
+        (!isValidDate(new Date(pieces[0] + " " + pieces[2]))))
+        return null;
 
     var firstTeamID = Object.keys(timesheetData.teams)[0];
     var firstTeam = timesheetData.teams[firstTeamID];
