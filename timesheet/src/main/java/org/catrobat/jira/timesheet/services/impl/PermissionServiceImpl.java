@@ -56,7 +56,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName) {
-        UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUser(request).getUsername());
+        String username = userManager.getRemoteUser(request).getUsername();
+        UserProfile userProfile = userManager.getUserProfile(username);
 
         if (userProfile == null) {
             return false;

@@ -34,8 +34,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Path("/user")
 public class UserRest extends PermissionServiceImpl {
@@ -53,7 +54,8 @@ public class UserRest extends PermissionServiceImpl {
     @Path("/getUsers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@Context HttpServletRequest request) {
-        if (!isApproved(userManager.getRemoteUser().getUsername())) {
+        String username = userManager.getRemoteUser().getUsername();
+        if (!isApproved(username)) {
             Response unauthorized = checkPermission(request);
             if (unauthorized != null) {
                 return unauthorized;
@@ -62,8 +64,8 @@ public class UserRest extends PermissionServiceImpl {
 
         UserUtil userUtil = ComponentAccessor.getUserUtil();
         List<JsonUser> jsonUserList = new ArrayList<JsonUser>();
-        Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
+        Set<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
+        HashSet<User> systemAdmins = new HashSet<User>(userUtil.getJiraSystemAdministrators());
         for (User user : allUsers) {
 
             if (systemAdmins.contains(user)) {

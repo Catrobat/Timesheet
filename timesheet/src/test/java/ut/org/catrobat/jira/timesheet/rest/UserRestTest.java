@@ -3,6 +3,10 @@ package ut.org.catrobat.jira.timesheet.rest;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.MockApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.UserRest;
@@ -18,17 +22,17 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ComponentAccessor.class)
 public class UserRestTest {
+
+
     private ComponentAccessor componentAccessor;
+
     private com.atlassian.sal.api.user.UserManager userManagerLDAP;
     private com.atlassian.jira.user.util.UserManager userManagerJira;
     private ConfigService configService;
@@ -40,6 +44,8 @@ public class UserRestTest {
 
     @Before
     public void setUp() throws Exception {
+        new MockComponentWorker().init();
+
         componentAccessor = Mockito.mock(ComponentAccessor.class, RETURNS_DEEP_STUBS);
         userManagerLDAP = Mockito.mock(com.atlassian.sal.api.user.UserManager.class, RETURNS_DEEP_STUBS);
         userManagerJira = Mockito.mock(com.atlassian.jira.user.util.UserManager.class, RETURNS_DEEP_STUBS);
@@ -52,7 +58,19 @@ public class UserRestTest {
         userRest = new UserRest(userManagerLDAP, configService, teamService);
         spyUserRest = spy(userRest);
 
+        final ApplicationUser fred = new MockApplicationUser("Fred");
+        final JiraAuthenticationContext jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
+        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(fred);
+        Mockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(fred.getDirectoryUser());
+        new MockComponentWorker()
+                .addMock(JiraAuthenticationContext.class, jiraAuthenticationContext)
+                .addMock(UserUtil.class, userUtil)
+                .addMock(com.atlassian.sal.api.user.UserManager.class, userManagerLDAP)
+                .addMock(com.atlassian.jira.user.util.UserManager.class, userManagerJira)
+                .init();
+
         PowerMockito.mockStatic(ComponentAccessor.class);
+
     }
 
     @Test
@@ -74,6 +92,7 @@ public class UserRestTest {
         String username = "MarkusHobisch";
         when(userManagerLDAP.getRemoteUser().getUsername()).thenReturn(username);
         doReturn(true).when(spyUserRest).isApproved(username);
+
 
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJira);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtil);
