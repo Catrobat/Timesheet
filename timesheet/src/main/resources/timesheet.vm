@@ -74,9 +74,8 @@
     <div class="tabs-pane" id="tabs-timesheet-information">
         <p>
         <form id="timesheet-information" class="aui">
-            <div class="field-group">
-                <h2>Export</h2>
-                Download timesheets as <a href="download/timesheet">CSV</a>.
+            <div class="field-group" id="timesheet-export-csv-link">
+                <h2>Export</h2>Download timesheet as <a href="download/timesheet">CSV</a>.
             </div>
 
             <div class="field-group">
@@ -110,15 +109,17 @@
                     Shows your finished theory hours.
                 </div>
             </div>
+
             <div class="field-group">
-                <label for="timesheet-hours-ects">ECTS</label>
-                <input class="text" type="text" id="timesheet-hours-ects" name="timesheet-hours-ects"
-                       title="timesheet-hours-ects">
+                <label for="timesheet-hours-text">Timesheet Hours</label>
+                <input readonly class="text" type="text" id="timesheet-hours-text" name="timesheet-hours-text"
+                       title="timesheet-hours-text">
 
                 <div class="description">
-                    Shows your ECTS.
+                    Shows your timesheet hours.
                 </div>
             </div>
+
             <div class="field-group">
                 <label for="timesheet-hours-lectures">Lectures</label>
                 <input class="text" type="text" id="timesheet-hours-lectures" name="timesheet-hours-lectures"
@@ -128,16 +129,21 @@
                     Shows your lectures.
                 </div>
             </div>
+
             <div class="field-group">
-                <label for="timesheet-hours-text">Timesheet Hours</label>
-                <input class="text" type="text" id="timesheet-hours-text" name="timesheet-hours-text"
-                       title="timesheet-hours-text">
+                <label for="timesheet-hours-ects">ECTS</label>
+                <input class="text" type="text" id="timesheet-hours-ects" name="timesheet-hours-ects"
+                       title="timesheet-hours-ects">
 
                 <div class="description">
-                    Shows your timesheet hours.
+                    Shows your ECTS.
                 </div>
 
-                <div class="timesheet-hours">
+                <div class="timesheet-hours" id="timesheet-hours-update-button">
+                    <input type="submit" value="Update" class="aui-button aui-button-primary">
+                </div>
+
+                <div class="timesheet-hours" id="timesheet-hours-save-button">
                     <input type="submit" value="Save" class="aui-button aui-button-primary">
                 </div>
 
@@ -179,19 +185,30 @@
                     <li>
                         Make sure the columns of your Google Doc Timesheet are in the following order:
                         <code>Date</code>, <code>From</code>, <code>To</code>, <code>Duration in h</code>,
-                        <code>Pause</code>, <code>Theory? Ja = j</code>, <code>Description</code>
+                        <code>Pause</code>, <code>Category</code>, <code>Description</code>
                     </li>
                     <li>
-                        Make sure the values in column <code>Datum</code> is formatted this way: <code>YYYY-MM-DD</code>
+                        Make sure the values in column <code>Date</code> is formatted this way: <code>YYYY-MM-DD</code>
                         (e.g. <code>2015-09-21</code>). You can achieve this by
                         <ol>
-                            <li>Select Fields in column <code>Datum</code></li>
+                            <li>Select Fields in column <code>Date</code></li>
                             <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
                                 Formats</strong> > <strong>Number Format</strong></li>
                             <li>Paste <code>yyyy"-"mm"-"dd</code> and confirm</li>
                         </ol>
                     </li>
-                    <li>Select the rows you want to import</li>
+                    <li>Make sure the values in column <code>From</code> and <code>To</code> are formatted this way:
+                        <code>HH:MM</code> (e.g. <code>12:00</code>). You can achieve this by
+                        <ol>
+                            <li>Select Fields in column <code>From/To</code></li>
+                            <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
+                                Formats</strong> > <strong>Number Format</strong></li>
+                            <li>Paste <code>HH":"MM"</code> and confirm</li>
+                        </ol>
+                    </li>
+                    <li>Select the rows you want to import, but ensure that the <code>Task Description</code> is not too long.</li>
+                    <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
+                    <li><strong>Attention - </strong> ensure that your import entries do not have <code>""</code>.</li>
                     <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
                     <li>Paste content in the text box below</li>
                 </ol>
@@ -236,11 +253,11 @@
     </div>
     <div class="tabs-pane active-pane" id="tabs-category">
         <h3 id="categoryLineDiagramTag">Visualization of your spent time on categories</h3>
-        <div id="categoryLineDiagram"></div>
+        <div id="categoryLineDiagram" style="height:400px;"></div>
     </div>
     <div class="tabs-pane active-pane" id="tabs-team">
         <h3 id="teamLineDiagramTag">Team Visualization</h3>
-        <div id="teamLineDiagram" style="height: 250px;"></div>
+        <div id="teamLineDiagram" style="height: 400px;"></div>
     </div>
 </div>
 
@@ -327,7 +344,8 @@
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
-            ykeys: ['cat1', 'cat2', 'cat3', 'cat4', 'cat5'],
+            ykeys: ['cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6', 'cat7', 'cat8', 'cat9', 'cat10',
+                'cat11', 'cat12', 'cat13', 'cat14', 'cat15'],
             // Labels for the ykeys -- will be displayed when you hover over the
             // chart.
             labels: labelData,

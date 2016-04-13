@@ -192,11 +192,28 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.maven.plugins</groupId>
-            <artifactId>maven-clover2-plugin</artifactId>
+            <groupId>com.atlassian.clover</groupId>
+            <artifactId>clover</artifactId>
             <version>4.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.6.4</version>
+            <scope>test</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.6.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-core-uberjar</artifactId>
+            <version>1.4.19</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -209,8 +226,6 @@
                 <configuration>
                     <productVersion>${jira.version}</productVersion>
                     <productDataVersion>${jira.version}</productDataVersion>
-
-
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                     </systemPropertyVariables>
@@ -233,6 +248,8 @@
                     </pluginArtifacts>
 
                     <allowGoogleTracking>false</allowGoogleTracking>
+
+                    <jvmArgs>-Xms1g -Xmx2g -XX:MaxPermSize=1g -XX:-UseGCOverheadLimit -server</jvmArgs>
                     <!--
                     <enableQuickReload>true</enableQuickReload>
                     <enableFastdev>false</enableFastdev>

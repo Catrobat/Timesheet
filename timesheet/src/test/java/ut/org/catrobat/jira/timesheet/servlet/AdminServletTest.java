@@ -1,74 +1,107 @@
 package ut.org.catrobat.jira.timesheet.servlet;
 
+import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.mock.component.MockComponentWorker;
-import com.atlassian.jira.security.groups.GroupManager;
-import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import net.java.ao.EntityManager;
+import net.java.ao.test.jdbc.Data;
+import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
+import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.TeamService;
+import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
 import org.catrobat.jira.timesheet.servlet.AdminServlet;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class AdminServletTest {
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
+@Data(MySampleDatabaseUpdater.class)
+@PrepareForTest(ComponentAccessor.class)
+public class AdminServletTest {
     private AdminServlet adminServlet;
 
-    private LoginUriProvider loginUriProvider;
-    private TemplateRenderer templateRenderer;
+    private LoginUriProvider loginUriProviderMock;
+    private TemplateRenderer templateRendererMock;
+    private PermissionService permissionServiceMock;
+    private UserManager userManagerMock;
+    private WebSudoManager webSudoManagerMock;
+    private ConfigService configServiceMock;
+    private ComponentAccessor componentAccessorMock;
+
+    private TeamService teamService;
     private PermissionService permissionService;
-    private UserManager userManager;
-    private WebSudoManager webSudoManager;
     private ConfigService configService;
-    private ComponentAccessor componentAccessor;
+    private CategoryService categoryService;
+    private TestActiveObjects ao;
+    private EntityManager entityManager;
 
     private HttpServletResponse response;
     private HttpServletRequest request;
 
     UserKey test_key = new UserKey("test_key");
-    private UserProfile userProfile;
+    private UserProfile userProfileMock;
 
     @Before
     public void setUp() throws Exception {
-        new MockComponentWorker().init();
+        assertNotNull(entityManager);
+        ao = new TestActiveObjects(entityManager);
 
-        loginUriProvider = Mockito.mock(LoginUriProvider.class);
-        templateRenderer = Mockito.mock(TemplateRenderer.class);
-        userManager = Mockito.mock(UserManager.class);
-        webSudoManager = Mockito.mock(WebSudoManager.class);
-        permissionService = Mockito.mock(PermissionService.class);
-        componentAccessor = Mockito.mock(ComponentAccessor.class);
-        userProfile = Mockito.mock(UserProfile.class);
-        request = Mockito.mock(HttpServletRequest.class);
-        response = Mockito.mock(HttpServletResponse.class);
+        componentAccessorMock = Mockito.mock(ComponentAccessor.class, RETURNS_DEEP_STUBS);
+        loginUriProviderMock = Mockito.mock(LoginUriProvider.class, RETURNS_DEEP_STUBS);
+        templateRendererMock = Mockito.mock(TemplateRenderer.class, RETURNS_DEEP_STUBS);
+        userManagerMock = Mockito.mock(UserManager.class, RETURNS_DEEP_STUBS);
+        webSudoManagerMock = Mockito.mock(WebSudoManager.class, RETURNS_DEEP_STUBS);
+        permissionServiceMock = Mockito.mock(PermissionService.class, RETURNS_DEEP_STUBS);
+        userProfileMock = Mockito.mock(UserProfile.class, RETURNS_DEEP_STUBS);
+        request = Mockito.mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
+        response = Mockito.mock(HttpServletResponse.class, RETURNS_DEEP_STUBS);
 
-        adminServlet = new AdminServlet(loginUriProvider, templateRenderer, webSudoManager, permissionService);
+        categoryService = new CategoryServiceImpl(ao);
+        configService = new ConfigServiceImpl(ao, categoryService);
+        teamService = new TeamServiceImpl(ao, configService);
+        permissionService = new PermissionServiceImpl(userManagerMock, teamService, configService);
 
-        Mockito.when(userProfile.getUsername()).thenReturn("test");
-        Mockito.when(userProfile.getUserKey()).thenReturn(test_key);
+        adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock);
 
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(userProfile);
+        Mockito.when(userProfileMock.getUsername()).thenReturn("test");
+        Mockito.when(userProfileMock.getUserKey()).thenReturn(test_key);
 
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(userProfile);
-        Mockito.when(userManager.getUserProfile(test_key)).thenReturn(userProfile);
+        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(userProfileMock);
 
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        Mockito.when(userManagerMock.getRemoteUser(request)).thenReturn(userProfileMock);
+        Mockito.when(userManagerMock.getUserProfile(test_key)).thenReturn(userProfileMock);
+
+        Mockito.when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
+        Mockito.when(permissionServiceMock.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
     }
 
     @Test
     public void testDoGet() throws Exception {
         adminServlet.doGet(request, response);
     }
+
 }

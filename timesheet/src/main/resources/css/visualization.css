@@ -101,7 +101,7 @@ code {
 #categoryLineDiagram {
     margin-top: 25px;
     width: 100%;
-    height: 30%;
+    height: 50%;
     margin-left: 10px;
     visibility: hidden;
 }
@@ -114,7 +114,7 @@ code {
 #teamLineDiagram {
     margin-top: 25px;
     width: 100%;
-    height: 30%;
+    height: 50%;
     margin-left: 10px;
     visibility: hidden;
 }

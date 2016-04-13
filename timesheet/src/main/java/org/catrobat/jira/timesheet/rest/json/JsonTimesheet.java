@@ -32,7 +32,7 @@ public final class JsonTimesheet {
     @XmlElement
     private String reason;
     @XmlElement
-    private int ects;
+    private double ects;
     @XmlElement
     private String latestEntryDate;
     @XmlElement
@@ -49,10 +49,12 @@ public final class JsonTimesheet {
     private boolean isActive;
     @XmlElement
     private boolean isEnabled;
+    @XmlElement
+    private boolean isMTSheet;
 
-    public JsonTimesheet(int timesheetID, String lectures, String reason, int ects, String latestEntryDate, int targetHourPractice,
+    public JsonTimesheet(int timesheetID, String lectures, String reason, double ects, String latestEntryDate, int targetHourPractice,
                          int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
-                         boolean isEnabled) {
+                         boolean isEnabled, boolean isMTSheet) {
         this.timesheetID = timesheetID;
         this.lectures = lectures;
         this.reason = reason;
@@ -65,6 +67,7 @@ public final class JsonTimesheet {
         this.targetHoursRemoved = targetHoursRemoved;
         this.isActive = isActive;
         this.isEnabled = isEnabled;
+        this.isMTSheet = isMTSheet;
     }
 
     public JsonTimesheet() {
@@ -94,11 +97,11 @@ public final class JsonTimesheet {
         this.reason = reason;
     }
 
-    public int getEcts() {
+    public double getEcts() {
         return ects;
     }
 
-    public void setEcts(int ects) {
+    public void setEcts(double ects) {
         this.ects = ects;
     }
 
@@ -192,7 +195,7 @@ public final class JsonTimesheet {
         int result = timesheetID;
         result = 31 * result + lectures.hashCode();
         result = 31 * result + reason.hashCode();
-        result = 31 * result + ects;
+        result = 31 * result + (int)ects;
         //result = 31 * result + latestEntryDate.hashCode();
         result = 31 * result + targetHourPractice;
         result = 31 * result + targetHourTheory;

@@ -241,7 +241,7 @@ public class ConfigResourceRest {
     @PUT
     @Path("/addCategory")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addCategory(final String categoryName, @Context HttpServletRequest request) {
+    public Response addCategory(final String categoryName, @Context HttpServletRequest request) throws ServiceException {
         Response unauthorized = permissionService.checkPermission(request);
 
         if (unauthorized != null) {

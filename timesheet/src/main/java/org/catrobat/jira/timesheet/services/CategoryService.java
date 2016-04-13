@@ -31,7 +31,7 @@ public interface CategoryService {
 
     List<Category> all();
 
-    Category add(String name);
+    Category add(String name) throws ServiceException;
 
     boolean removeCategory(String name) throws ServiceException;
 

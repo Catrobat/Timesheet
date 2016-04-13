@@ -185,18 +185,19 @@ public abstract class CsvExporter {
         sb.append(Integer.toString(timesheet.getTargetHours())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getTargetHoursCompleted())).append(DELIMITER);
         sb.append(timesheet.getReason()).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getEcts())).append(DELIMITER);
+        sb.append(Double.toString(timesheet.getEcts())).append(DELIMITER);
         sb.append(timesheet.getLectures()).append(NEW_LINE);
 
-        for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
-            sb.append("Begin Date" + DELIMITER +
-                    "End Date" + DELIMITER +
-                    "Pause Minutes" + DELIMITER +
-                    "Duration Minutes" + DELIMITER +
-                    "Team" + DELIMITER +
-                    "Category" + DELIMITER +
-                    "Description" + NEW_LINE);
+        sb.append("Date" + DELIMITER +
+                "Begin" + DELIMITER +
+                "End" + DELIMITER +
+                "Pause Minutes" + DELIMITER +
+                "Duration Minutes" + DELIMITER +
+                "Team" + DELIMITER +
+                "Category" + DELIMITER +
+                "Description" + NEW_LINE);
 
+        for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
             Integer hours = 0;
             Integer minutes = timesheetEntry.getDurationMinutes();
 
@@ -206,8 +207,9 @@ public abstract class CsvExporter {
             }
             String duration = hours + ":" + minutes;
 
-            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getEndDate().toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(0, 10).toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(12, 17).toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getEndDate().toString().subSequence(12, 17).toString())).append(DELIMITER);
             sb.append(unescape(Integer.toString(timesheetEntry.getPauseMinutes()))).append(DELIMITER);
             sb.append(unescape(duration)).append(DELIMITER);
             sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(DELIMITER);

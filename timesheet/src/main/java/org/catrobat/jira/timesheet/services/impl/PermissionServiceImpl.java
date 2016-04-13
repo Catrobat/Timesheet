@@ -48,7 +48,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     public UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException {
         UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUser(request).getUsername());
-
+        
         if (userProfile == null) {
             throw new ServiceException("User does not exist.");
         }
@@ -97,33 +97,36 @@ public class PermissionServiceImpl implements PermissionService {
         UserProfile userProfile = userManager.getRemoteUser(request);
 
         if (userProfile == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid profil.").build();
         }
 
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userProfile.getUsername());
 
         if (userKey == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        } else if (!(checkIfUserIsGroupMember(request, "jira-administrators") || checkIfUserIsGroupMember(request, "Timesheet"))) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid " +
+                    "'UserKey'.").build();
+        } else if (!(checkIfUserIsGroupMember(request, "jira-administrators") ||
+                checkIfUserIsGroupMember(request, "Timesheet"))) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
+                    "'jira-administrators', or 'Timesheet' group.").build();
         }
 
         return null;
     }
 
-    public boolean isApproved(UserProfile applicationUser) {
+    public boolean isApproved(UserProfile userProfile) {
         Config config = configService.getConfiguration();
 
-        if (config.getApprovedGroups().length == 0 && config.getApprovedUsers().length == 0) {
+        if (config.getApprovedUsers().length == 0 && config.getApprovedGroups().length == 0) {
             return false;
         }
 
         if (configService.isUserApproved(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(applicationUser.getUsername()))) {
+                getUserKeyService().getKeyForUsername(userProfile.getUsername()))) {
             return true;
         }
 
-        Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(applicationUser.getUsername());
+        Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(userProfile.getUsername());
         for (String groupName : groupNameCollection) {
             if (configService.isGroupApproved(groupName)) {
                 return true;
@@ -170,7 +173,8 @@ public class PermissionServiceImpl implements PermissionService {
         return user != null && sheet != null &&
                 (userOwnsSheet(user, sheet)
                         || userIsAdmin(user)
-                        || userCoordinatesTeamsOfSheet(user, sheet));
+                        || userCoordinatesTeamsOfSheet(user, sheet)
+                        || isApproved(user));
     }
 
     @Override

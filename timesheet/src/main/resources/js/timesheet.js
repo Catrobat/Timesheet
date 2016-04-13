@@ -6,13 +6,20 @@ AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
+    AJS.$("#timesheet-export-csv-link").empty();
+
     if(isMasterThesisTimesheet) {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
+        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Master Thesis Timesheet' as <a href=\"download/masterthesis\">CSV</a>.");
+    } else {
+        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as <a href=\"download/timesheet\">CSV</a>.");
     }
 
     if (isAdmin) {
         hideVisualizationTabs();
         fetchUsers();
+        AJS.$("#timesheet-hours-save-button").hide();
+        AJS.$("#timesheet-hours-update-button").show();
     } else {
         //init coordinator/administrator/approved user Seetings
         initUserSaveButton();
@@ -22,169 +29,22 @@ AJS.toInit(function () {
         //fetch visualization data
         fetchVisData();
         fetchTeamVisData();
+        AJS.$("#timesheet-hours-save-button").show();
+        AJS.$("#timesheet-hours-update-button").hide();
     }
 });
-
-function hideVisualizationTabs() {
-    document.getElementById("tabs-line").style.display = "none";
-    document.getElementById("tabs-category").style.display = "none";
-    document.getElementById("tabs-team").style.display = "none";
-}
-
-function initUserSaveButton() {
-    AJS.$("#timesheet-information").submit(function (e) {
-        e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
-            getExistingTimesheetHours(timesheetID);
-        }
-    });
-}
-
-function initAdminSaveButton(timesheetID) {
-    AJS.$("#timesheet-information").submit(function (e) {
-        e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
-            getExistingTimesheetHours(timesheetID);
-        }
-    });
-}
-
-function initSelectTimesheetButton() {
-    AJS.$("#timesheet-settings").submit(function (e) {
-        e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Show') {
-            var selectedUser = AJS.$("#user-select2-field").val().split(',');
-            if (selectedUser[0] !== "") {
-                getTimesheetOfUser(selectedUser);
-                AJS.$("#timesheet-owner-information").empty();
-                AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
-                hideVisualizationTabs();
-            }
-        } else if (AJS.$(document.activeElement).val() === 'Display') {
-            var selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
-            if (selectedUser[0] !== "") {
-                getTimesheetOfUser(selectedUser);
-                AJS.$("#timesheet-owner-information").empty();
-                AJS.$("#timesheet-owner-information").append("<h3>TimePunch Timesheet Owner: " + selectedUser[0] + "</h3>");
-                hideVisualizationTabs();
-            }
-        } else if (AJS.$(document.activeElement).val() === 'Visualize') {
-            var selectedTeam = AJS.$("#select-team-select2-field").val().split(',');
-            if (selectedTeam[0] !== "")
-                getDataOfTeam(selectedTeam[0]);
-        }
-    });
-}
-
-function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
-    var config = jsonConfig[0];
-    var userName = jsonUser[0]['userName'];
-    var isTeamCoordinator = false;
-    var listOfUsers = [];
-
-    AJS.$("#coordinatorTimesheetSelect").append("<field-group>");
-    AJS.$("#coordinatorTimesheetSelect").append("<h3>Coordinator Space</h3>");
-    AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><label for=\"permission\">Timesheet Of</label><input class=\"text selectTimesheetOfUserField\" type=\"text\" id=\"user-select2-field\"></div>");
-    AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Show\" class=\"aui-button aui-button-primary\"></field-group>");
-    AJS.$("#coordinatorTimesheetSelect").append("</field-group>");
-    for (var i = 0; i < config.teams.length; i++) {
-        var team = config.teams[i];
-        //check if user is coordinator of a team
-        for (var j = 0; j < team['coordinatorGroups'].length; j++) {
-            if (team['coordinatorGroups'][j].localeCompare(userName) == 0) {
-                //add users of that team to the select2
-                for (var j = 0; j < team['developerGroups'].length; j++) {
-                    if (!containsElement(listOfUsers, team['developerGroups'][j]))
-                        listOfUsers.push(team['developerGroups'][j]);
-                }
-                isTeamCoordinator = true;
-            }
-        }
-    }
-    AJS.$(".selectTimesheetOfUserField").auiSelect2({
-        placeholder: "Select User",
-        tags: listOfUsers.sort(),
-        tokenSeparators: [",", " "],
-        maximumSelectionSize: 1
-    });
-
-    if (isTeamCoordinator) {
-        initSelectTimesheetButton();
-        AJS.$("#coordinatorTimesheetSelect").show();
-        AJS.$("#approvedUserTimesheetSelect").hide();
-    } else {
-        AJS.$("#coordinatorTimesheetSelect").hide();
-    }
-}
-
-function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
-    var config = jsonConfig[0];
-    var userName = jsonUser[0]['userName'];
-    var isApprovedUser = false;
-    var listOfUsers = [];
-
-    //Select User
-    AJS.$("#approvedUserTimesheetSelect").append("<field-group>");
-    AJS.$("#approvedUserTimesheetSelect").append("<h3>Approved User Space</h3>");
-    AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><label for=\"approvedUserSelect\">Timesheet Of</label><input class=\"text approvedUserSelectTimesheetOfUserField\" type=\"text\" id=\"approved-user-select2-field\"></div>");
-    AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Display\" class=\"aui-button aui-button-primary\"></field-group>");
-    AJS.$("#approvedUserTimesheetSelect").append("</field-group>");
-    //check if user is approved
-    for (var i = 0; i < config.approvedUsers.length; i++) {
-        var approvedUserName = config.approvedUsers[i].replace(/\s/g, '');
-        if (approvedUserName.localeCompare(userName) == 0) {
-            isApprovedUser = true;
-            for (var j = 0; j < userList[0].length; j++)
-                listOfUsers.push(userList[0][j]['userName']);
-        }
-    }
-    if (isAdmin)
-        for (var j = 0; j < userList[0].length; j++)
-            listOfUsers.push(userList[0][j]['userName']);
-
-    AJS.$(".approvedUserSelectTimesheetOfUserField").auiSelect2({
-        placeholder: "Select User",
-        tags: listOfUsers.sort(),
-        tokenSeparators: [",", " "],
-        maximumSelectionSize: 1
-    });
-
-    //Team Visualization
-    var teamNameList = [];
-    for (var i = 0; i < config.teams.length; i++)
-        teamNameList.push(config.teams[i]['teamName']);
-
-    AJS.$("#visualizationTeamSelect").append("<field-group>");
-    AJS.$("#visualizationTeamSelect").append("<h3>Team</h3>");
-    AJS.$("#visualizationTeamSelect").append("<div class=\"field-group\"><label for=\"teamSelect\">Visualize Team Data</label><input class=\"text teamSelectField\" type=\"text\" id=\"select-team-select2-field\"></div>");
-    AJS.$("#visualizationTeamSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Visualize\" class=\"aui-button aui-button-primary\"></field-group>");
-    AJS.$("#visualizationTeamSelect").append("</field-group>");
-    AJS.$(".teamSelectField").auiSelect2({
-        placeholder: "Select Team",
-        tags: teamNameList.sort(),
-        tokenSeparators: [",", " "],
-        maximumSelectionSize: 1
-    });
-    if (isApprovedUser || isAdmin) {
-        initSelectTimesheetButton();
-        AJS.$("#approvedUserTimesheetSelect").show();
-        AJS.$("#coordinatorTimesheetSelect").hide();
-    } else {
-        AJS.$("#approvedUserTimesheetSelect").hide();
-    }
-}
 
 function fetchUserTimesheetData(timesheetID) {
 
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'coordinator/' + timesheetID,
+        url: restBaseUrl + 'timesheets/' + timesheetID,
         contentType: "application/json"
     });
 
     var entriesFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'coordinator/' + timesheetID + '/entries',
+        url: restBaseUrl + 'timesheets/' + timesheetID + '/entries',
         contentType: "application/json"
     });
 
@@ -269,19 +129,35 @@ function getDataOfTeam(teamName) {
         });
 }
 
-function getTimesheetOfUser(selectedUser) {
+function getTimesheetOfUser(selectedUser, isMTSheet) {
     var timesheetIDFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'timesheetID/fromUser/' + selectedUser[0],
+        url: restBaseUrl + 'timesheet/timesheetID/' + selectedUser[0] + '/' + isMTSheet,
         contentType: "application/json"
     });
     AJS.$.when(timesheetIDFetched)
         .done(fetchUserTimesheetData)
         .done(fetchUserVisData)
-        .done(initAdminSaveButton)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while getting timesheet data of another user.',
+                body: '<p>Reason: ' + error.responseText + '</p>'
+            });
+            console.log(error);
+        });
+}
+
+function getTimesheetByUser(selectedUser, isMTSheetSelected) {
+    var timesheetFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheet/of/' + selectedUser + '/' + isMTSheetSelected,
+        contentType: "applicatPion/json"
+    });
+    AJS.$.when(timesheetFetched)
+        .done(updateTimesheetHours)
+        .fail(function (error) {
+            AJS.messages.error({
+                title: 'There was an error while fetching existing timesheet data.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);
@@ -296,7 +172,6 @@ function getExistingTimesheetHours(timesheetID) {
     });
     AJS.$.when(timesheetFetched)
         .done(updateTimesheetHours)
-        //.done(location.reload())
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching existing timesheet data.',
@@ -306,30 +181,26 @@ function getExistingTimesheetHours(timesheetID) {
         });
 }
 
-function toFixed(value, precision) {
-    var power = Math.pow(10, precision || 0);
-    return Math.round(value * power) / power;
-}
-
 function updateTimesheetHours(existingTimesheetData) {
     var timesheetUpdateData = {
         timesheetID: existingTimesheetData.timesheetID,
         lectures: AJS.$("#timesheet-hours-lectures").val(),
         reason: AJS.$("#timesheet-substract-hours-text").val(),
         ects: AJS.$("#timesheet-hours-ects").val(),
-        targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 1),
-        targetHourTheory: toFixed(AJS.$("#timesheet-hours-theory").val(), 1),
-        targetHours: AJS.$("#timesheet-hours-text").val(),
+        targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
+        targetHourTheory: toFixed(AJS.$("#timesheet-hours-theory").val(), 2),
+        targetHours: AJS.$("#timesheet-hours-ects").val() * 30,
         targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
-        - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 1),
-        targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 1),
+        - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
+        targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
         isActive: existingTimesheetData.isActive,
-        isEnabled: existingTimesheetData.isEnabled
+        isEnabled: existingTimesheetData.isEnabled,
+        isMTSheet: existingTimesheetData.isMTSheet
     };
 
     AJS.$.ajax({
-            type: "post",
-            url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
+            type: 'POST',
+            url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID + '/' + existingTimesheetData.isMTSheet,
             contentType: "application/json",
             data: JSON.stringify(timesheetUpdateData)
         })
@@ -412,109 +283,6 @@ function fetchData() {
         });
 }
 
-function calculateTime(timesheetData) {
-    var totalHours = 0;
-    var totalMinutes = 0;
-    var availableEntries = timesheetData.entries;
-
-    for (var i = 0; i < availableEntries.length; i++) {
-        var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
-            availableEntries[i].pauseMinutes).getHours();
-        var minutes = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
-            availableEntries[i].pauseMinutes).getMinutes();
-        var pause = availableEntries[i].pauseMinutes;
-        var calculatedTime = hours * 60 + minutes - pause;
-
-        totalMinutes = totalMinutes + calculatedTime;
-
-        if (totalMinutes >= 60) {
-            var minutesToFullHours = Math.floor(totalMinutes / 60); //get only full hours
-            totalHours = totalHours + minutesToFullHours;
-            totalMinutes = totalMinutes - minutesToFullHours * 60;
-        }
-    }
-    return totalHours + totalMinutes / 60;
-}
-
-function calculateTheoryTime(timesheetData) {
-    var totalHours = 0;
-    var totalMinutes = 0;
-    var availableEntries = timesheetData.entries;
-
-    for (var i = 0; i < availableEntries.length; i++) {
-        var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
-            availableEntries[i].pauseMinutes).getHours();
-        var minutes = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
-            availableEntries[i].pauseMinutes).getMinutes();
-        var pause = availableEntries[i].pauseMinutes;
-        var calculatedTime = hours * 60 + minutes - pause;
-
-        if (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory")
-            totalMinutes = totalMinutes + calculatedTime;
-
-        if (totalMinutes >= 60) {
-            var minutesToFullHours = Math.floor(totalMinutes / 60); //get only full hours
-            totalHours = totalHours + minutesToFullHours;
-            totalMinutes = totalMinutes - minutesToFullHours * 60;
-        }
-    }
-    return totalHours + totalMinutes / 60;
-}
-
-function initTimesheetInformationValues(timesheetData) {
-
-    AJS.$("#timesheet-hours-text").val(timesheetData.targetHours);
-    AJS.$("#timesheet-hours-remain").val(timesheetData.targetHours - timesheetData.targetHoursCompleted
-        + timesheetData.targetHoursRemoved);
-    AJS.$("#timesheet-hours-theory").val(timesheetData.targetHourTheory);
-    AJS.$("#timesheet-hours-practical").val(timesheetData.targetHourPractice);
-    AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
-    AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
-
-    if (isAdmin) {
-        AJS.$("#substractTimesheetHours").empty();
-        AJS.$("#substractTimesheetHours").append("<fieldset>");
-        AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
-        AJS.$("#substractTimesheetHours").append("<input class=\"text\" type=\"text\" id=\"timesheet-hours-substract\" name=\"timesheet-hours-substract\" title=\"timesheet-hours-substract\">");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your remaining timesheet hours.</div>");
-        AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
-        AJS.$("#substractTimesheetHours").append("<textarea name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"You can add here what ever you want...\"></textarea>");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
-        AJS.$("#substractTimesheetHours").append("</fieledset>");
-
-        //load values
-        AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
-        AJS.$("#timesheet-hours-substract").val(timesheetData.targetHoursRemoved);
-    } else {
-        AJS.$("#substractTimesheetHours").empty();
-        AJS.$("#substractTimesheetHours").append("<fieldset>");
-        AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
-        AJS.$("#substractTimesheetHours").append("<input class=\"text\" type=\"text\" id=\"timesheet-hours-substract\" name=\"timesheet-hours-substract\" title=\"timesheet-hours-substract\" readonly>");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your remaining timesheet hours.</div>");
-        AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
-        AJS.$("#substractTimesheetHours").append("<textarea name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"You can add here what ever you want...\" readonly></textarea>");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
-        AJS.$("#substractTimesheetHours").append("</fieledset>");
-
-        //load values
-        AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
-        AJS.$("#timesheet-hours-substract").val(timesheetData.targetHoursRemoved);
-    }
-
-}
-
-function updateTimesheetInformationValues(timesheetData) {
-    AJS.$("#timesheet-hours-substract").val(timesheetData.targetHoursRemoved);
-    AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
-    AJS.$("#timesheet-hours-text").val(timesheetData.targetHours);
-    AJS.$("#timesheet-hours-theory").val(calculateTheoryTime(timesheetData));
-    AJS.$("#timesheet-hours-practical").val(calculateTime(timesheetData) - calculateTheoryTime(timesheetData));
-    AJS.$("#timesheet-hours-remain").val(AJS.$("#timesheet-hours-text").val() - AJS.$("#timesheet-hours-theory").val()
-        - AJS.$("#timesheet-hours-practical").val() - (-AJS.$("#timesheet-hours-substract").val()));
-    AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
-    AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
-}
-
 function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply) {
     var timesheetData = timesheetReply[0];
     timesheetData.entries = entriesReply[0];
@@ -542,6 +310,8 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     });
 
     initTimesheetInformationValues(timesheetData);
+
+    updateTimesheetInformationValues(timesheetData);
 
     return timesheetData;
 }
@@ -621,11 +391,11 @@ function populateTable(timesheetDataReply) {
         date: toDateString(actualDate),
         begin: actualDate.getHours() + ":" + actualDate.getMinutes(),
         end: (actualDate.getHours() + 1) + ":" + actualDate.getMinutes(),
-        inactiveEndDate: toDateString(actualDate),
+        inactiveEndDate: "",
         pause: "00:00",
         description: "",
         duration: "",
-        ticketID: "CAT-XXXX",
+        ticketID: "",
         isGoogleDocImport: false,
         partner: ""
     };
@@ -633,7 +403,7 @@ function populateTable(timesheetDataReply) {
     var addNewEntryOptions = {
         httpMethod: "post",
         callback: addNewEntryCallback,
-        ajaxUrl: restBaseUrl + "timesheets/" + timesheetData.timesheetID + "/entry/"
+        ajaxUrl: restBaseUrl + "timesheets/" + timesheetData.timesheetID + '/entry/' + isMasterThesisTimesheet
     };
 
     var emptyForm = renderFormRow(timesheetData, emptyEntry, addNewEntryOptions);
@@ -650,81 +420,6 @@ function appendEntriesToTable(timesheetData) {
         var viewRow = renderViewRow(timesheetData, entry);
         timesheetTable.append(viewRow);
     });
-}
-
-function prepareImportDialog(timesheetDataReply) {
-    var timesheetData = timesheetDataReply[0];
-    var showImportDialogButton = AJS.$(".import-google-docs");
-    var importDialog = AJS.$(".import-dialog");
-    var importTextarea = importDialog.find(".import-text");
-    var startImportButton = importDialog.find(".start-import");
-
-    showImportDialogButton.click(function () {
-        AJS.dialog2(importDialog).show();
-    });
-
-    autosize(importTextarea);
-
-    startImportButton.click(function () {
-        importGoogleDocsTable(importTextarea.val(), timesheetData, importDialog);
-    });
-}
-
-function importGoogleDocsTable(table, timesheetData, importDialog) {
-    var entries = parseEntriesFromGoogleDocTimesheet(table, timesheetData);
-    var url = restBaseUrl + "timesheets/" + timesheetID + "/entries";
-
-    if (entries.length === 0) return;
-
-    AJS.$.ajax({
-            type: "post",
-            url: url,
-            contentType: "application/json",
-            data: JSON.stringify(entries)
-        })
-        .then(function (response) {
-            showImportMessage(response);
-            AJS.dialog2(importDialog).hide();
-            timesheetData.entries = response.entries;
-            appendEntriesToTable(timesheetData);
-        })
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error during your Google Timesheet import.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-        });
-}
-
-function showImportMessage(response) {
-    var successfulEntries = response.entries.length;
-    var errorEntries = response.errorMessages.length;
-
-    if (errorEntries > 0) {
-
-        var begin = (successfulEntries === 0)
-            ? "Entries could not be imported"
-            : "Some entries could not be imported";
-
-        var message = begin + ". Reason: <br /> "
-            + "<ul><li>"
-            + response.errorMessages.join("</li><li>")
-            + "</li></ul>"
-            + "Successfully imported entries: " + successfulEntries + "<br />"
-            + "Failed imports: " + errorEntries + "<br />";
-
-        if (successfulEntries === 0)
-            AJS.messages.error({title: 'Import Error', body: message});
-        else
-            AJS.messages.warning({title: 'Import Error', body: message});
-
-    } else {
-        var message = "Imported " + successfulEntries + " entries.";
-        AJS.messages.success({
-            title: 'Import was successful!',
-            body: message
-        });
-    }
 }
 
 /**
@@ -815,6 +510,11 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     }
 
     var inactiveEndDate =  new Date(inactiveDate + " " + toTimeString(beginTime));
+
+    //change entry to 0min duration for inactive entry
+    if(getselectedCategoryName(form.categorySelect.val(), timesheetData) === "Inactive") {
+        endDate = beginDate;
+    }
 
     var entry = {
         beginDate: beginDate,
@@ -958,7 +658,6 @@ function prepareForm(entry, timesheetData) {
 
     form.partnerSelect.auiSelect2({tags: timesheetData.users.sort(),
         width: 'resolve',
-        maximumSelectionSize: 1,
         })
 
     if (countDefinedElementsInArray(teams) < 2) {
@@ -966,41 +665,6 @@ function prepareForm(entry, timesheetData) {
     }
 
     return form;
-}
-
-function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
-    var entries = [];
-
-    googleDocContent
-        .split("\n")
-        .forEach(function (row) {
-            if (row.trim() === "") return;
-            var entry = parseEntryFromGoogleDocRow(row, timesheetData);
-            entries.push(entry);
-        });
-
-    return entries;
-}
-
-function parseEntryFromGoogleDocRow(row, timesheetData) {
-    var pieces = row.split("\t");
-
-    var firstTeamID = Object.keys(timesheetData.teams)[0];
-    var firstTeam = timesheetData.teams[firstTeamID];
-    var firstCategoryIDOfFirstTeam = firstTeam.teamCategories[0];
-
-    return {
-        description: pieces[6],
-        pauseMinutes: getMinutesFromTimeString(pieces[4]),
-        beginDate: new Date(pieces[0] + " " + pieces[1]),
-        endDate: new Date(pieces[0] + " " + pieces[2]),
-        teamID: firstTeamID,
-        categoryID: firstCategoryIDOfFirstTeam,
-        isGoogleDocImport: true,
-        ticketID: "None",
-        partner: "",
-        inactiveEndDate: new Date(pieces[0] + " " + pieces[1])
-    };
 }
 
 /**
@@ -1022,25 +686,6 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
         : entry.categoryID;
 
     categorySelect.val(selectedCategoryID).trigger("change");
-}
-
-/**
- * Creates an array with the categories of seletedTeam
- * @param {Object} selectedTeam
- * @param {Object} categories
- * @returns {Array of Objects}
- */
-function filterCategoriesPerTeam(selectedTeam, categories) {
-
-    var categoriesPerTeam = [];
-
-    selectedTeam.teamCategories.map(function (categoryID) {
-        categoriesPerTeam.push(
-            {id: categoryID, text: categories[categoryID].categoryName}
-        );
-    });
-
-    return categoriesPerTeam;
 }
 
 function updateTimeField(form) {
@@ -1078,7 +723,7 @@ function renderViewRow(timesheetData, entry) {
     var editEntryOptions = {
         httpMethod: "put",
         callback: editEntryCallback,
-        ajaxUrl: restBaseUrl + "entries/" + entry.entryID
+        ajaxUrl: restBaseUrl + "entries/" + entry.entryID + '/' + isMasterThesisTimesheet
     };
 
     var viewRow = prepareViewRow(timesheetData, augmentedEntry);
@@ -1091,8 +736,6 @@ function renderViewRow(timesheetData, entry) {
     viewRow.find("button.delete").click(function () {
         deleteEntryClicked(viewRow, entry.entryID);
     });
-
-    updateTimesheetInformationValues(timesheetData);
 
     return viewRow;
 }
@@ -1111,7 +754,7 @@ function editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewR
 
 function deleteEntryClicked(viewRow, entryID) {
 
-    var ajaxUrl = restBaseUrl + "entries/" + entryID;
+    var ajaxUrl = restBaseUrl + 'entries/' + entryID + '/' + isMasterThesisTimesheet;
 
     var spinner = viewRow.find('span.aui-icon-wait');
     spinner.show();
@@ -1181,6 +824,32 @@ function augmentEntry(timesheetData, entry) {
     };
 }
 
+function sensoredAugmentEntry(timesheetData, entry) {
+
+    var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
+
+    return {
+        date: toDateString(new Date(entry.beginDate)),
+        begin: toTimeString(new Date(entry.beginDate)),
+        end: toTimeString(new Date(entry.endDate)),
+        pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
+        duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
+        category: timesheetData.categories[entry.categoryID].categoryName,
+        team: timesheetData.teams[entry.teamID].teamName,
+        entryID: entry.entryID,
+        beginDate: entry.beginDate,
+        endDate: entry.endDate,
+        description: entry.description,
+        pauseMinutes: entry.pauseMinutes,
+        teamID: entry.teamID,
+        categoryID: entry.categoryID,
+        isGoogleDocImport: entry.isGoogleDocImport,
+        inactiveEndDate: "",
+        ticketID: entry.ticketID,
+        partner: entry.partner
+    };
+}
+
 /**
  * Creates the viewrow
  * @param {Object} timesheetData
@@ -1191,76 +860,15 @@ function prepareViewRow(timesheetData, entry) {
     //todo: dont augment entry twice.
     var augmentedEntry = augmentEntry(timesheetData, entry);
 
+    //show inactive date only if it's different to the entry date
+    if(!toDateString(new Date(entry.beginDate)).localeCompare(toDateString(new Date(entry.inactiveEndDate)))) {
+        augmentedEntry = sensoredAugmentEntry(timesheetData, entry);
+    }
+
     var viewRow = AJS.$(Jira.Templates.Timesheet.timesheetEntry(
         {entry: augmentedEntry, teams: timesheetData.teams}));
 
     viewRow.find('span.aui-icon-wait').hide();
 
     return viewRow;
-}
-
-function toUTCTimeString(date) {
-    var h = date.getUTCHours(), m = date.getUTCMinutes();
-    var string =
-        ((h < 10) ? "0" : "") + h + ":" +
-        ((m < 10) ? "0" : "") + m;
-    return string;
-}
-
-function toTimeString(date) {
-    var h = date.getHours(), m = date.getMinutes();
-    var string =
-        ((h < 10) ? "0" : "") + h + ":" +
-        ((m < 10) ? "0" : "") + m;
-    return string;
-}
-
-function toDateString(date) {
-    var y = date.getFullYear(), d = date.getDate(), m = date.getMonth() + 1;
-    var string = y + "-" +
-        ((m < 10) ? "0" : "") + m + "-" +
-        ((d < 10) ? "0" : "") + d;
-    return string;
-}
-
-function calculateDuration(begin, end, pause) {
-    var pauseDate = new Date(pause);
-    return new Date(end - begin - (pauseDate.getHours() * 60 + pauseDate.getMinutes()) * 60 * 1000);
-}
-
-function countDefinedElementsInArray(array) {
-    return array.filter(function (v) {
-        return v !== undefined
-    }).length;
-}
-
-/**
- * Check if date is a valid Date
- * source: http://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript
- * @param {type} date
- * @returns {boolean} true, if date is valid
- */
-function isValidDate(date) {
-    if (Object.prototype.toString.call(date) === "[object Date]") {
-        if (isNaN(date.getTime())) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-    else {
-        return false;
-    }
-}
-
-function getMinutesFromTimeString(timeString) {
-    var pieces = timeString.split(":");
-    if (pieces.length === 2) {
-        var hours = parseInt(pieces[0]);
-        var minutes = parseInt(pieces[1]);
-        return hours * 60 + minutes;
-    } else {
-        return 0;
-    }
 }

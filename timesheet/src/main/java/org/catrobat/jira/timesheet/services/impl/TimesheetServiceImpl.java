@@ -19,9 +19,11 @@ package org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.joda.time.DateTime;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -38,34 +40,44 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
                                    int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-                                   String lectures, String reason, int ects, String latestEntryDate,
-                                   Boolean isActive, Boolean isEnabled) {
+                                   String lectures, String reason, double ects, String latestEntryDate,
+                                   Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
-        if ((found.length == 1)) {
-            Timesheet sheet = found[0];
 
-            sheet.setUserKey(userKey);
-            sheet.setTargetHoursPractice(targetHoursPractice);
-            sheet.setTargetHoursTheory(targetHoursTheory);
-            sheet.setTargetHours(targetHours);
-            sheet.setTargetHoursCompleted(targetHoursCompleted);
-            sheet.setTargetHoursRemoved(targetHoursRemoved);
-            sheet.setLectures(lectures);
-            sheet.setReason(reason);
-            sheet.setEcts(ects);
-            sheet.setLatestEntryDate(latestEntryDate);
-            sheet.setIsActive(isActive);
-            sheet.setIsEnabled(isEnabled);
-            sheet.save();
-            return sheet;
+        if (found.length > 2) {
+            throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+        } else if (found.length == 0) {
+            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
         }
+
+        for(int i = 0; i < found.length; i++) {
+            if(isMasterThesisTimesheet.equals(found[i].getIsMasterThesisTimesheet())) {
+                Timesheet sheet = found[i];
+
+                sheet.setUserKey(userKey);
+                sheet.setTargetHoursPractice(targetHoursPractice);
+                sheet.setTargetHoursTheory(targetHoursTheory);
+                sheet.setTargetHours(targetHours);
+                sheet.setTargetHoursCompleted(targetHoursCompleted);
+                sheet.setTargetHoursRemoved(targetHoursRemoved);
+                sheet.setLectures(lectures);
+                sheet.setReason(reason);
+                sheet.setEcts(ects);
+                sheet.setLatestEntryDate(latestEntryDate);
+                sheet.setIsActive(isActive);
+                sheet.setIsEnabled(isEnabled);
+                sheet.save();
+                return sheet;
+            }
+        }
+
         return null;
     }
 
     @Override
     public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                          int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-                         String lectures, String reason, int ects, String latestEntryDate,
+                         String lectures, String reason, double ects, String latestEntryDate,
                          Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) {
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
@@ -85,6 +97,23 @@ public class TimesheetServiceImpl implements TimesheetService {
         return sheet;
     }
 
+    @Nonnull
+    @Override
+    public void remove(Timesheet timesheet) throws ServiceException {
+        int id = timesheet.getID();
+        Timesheet[] found = ao.find(Timesheet.class, "ID = ?", id);
+
+        if (found.length > 1) {
+            throw new ServiceException("Found more than one timesheet with the same id.");
+        }
+
+        for(TimesheetEntry entry: found[0].getEntries()){
+            ao.delete(entry);
+        }
+
+        ao.delete(found[0]);
+    }
+
     @Override
     public List<Timesheet> all() {
         return newArrayList(ao.find(Timesheet.class));
@@ -92,15 +121,16 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Nullable
     @Override
-    public Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) {
+    public Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "ID = ?", timesheetID);
         if ((found.length == 1)) {
             Timesheet sheet = found[0];
             sheet.setIsEnabled(isEnabled);
             sheet.save();
             return sheet;
+        } else  {
+            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
         }
-        return null;
     }
 
     @Override
@@ -109,6 +139,8 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         if (found.length > 2) {
             throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+        } else if (found.length == 0) {
+            throw new ServiceException("No Timesheet found.");
         }
 
         if (isMasterThesisTimesheet) {
@@ -131,11 +163,53 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
+    public Boolean userHasTimesheet(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException {
+        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
+
+        if (found.length > 2) {
+            throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+        }
+
+        if (isMasterThesisTimesheet) {
+            for (int i = 0; i < found.length; i++) {
+                if (found[i].getIsMasterThesisTimesheet()) {
+                    return true;
+                }
+            }
+        }
+
+        if (!isMasterThesisTimesheet) {
+            for (int i = 0; i < found.length; i++) {
+                if (!found[i].getIsMasterThesisTimesheet()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public Timesheet getAdministratorTimesheet(String userKey) throws ServiceException {
+        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
+
+        if (found.length > 1) {
+            throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+        } else if (found.length == 0) {
+            return null;
+        } else {
+            return found[0];
+        }
+    }
+
+    @Override
     public Timesheet getTimesheetByID(int id) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "ID = ?", id);
 
         if (found.length > 1) {
             throw new ServiceException("Multiple Timesheets with the same ID.");
+        } else if (found.length == 0) {
+            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
         }
 
         return (found.length > 0) ? found[0] : null;

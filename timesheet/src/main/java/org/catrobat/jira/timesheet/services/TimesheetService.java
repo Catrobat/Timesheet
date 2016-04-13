@@ -35,12 +35,14 @@ public interface TimesheetService {
      * @param targetHoursTheory   specifies the amount of hours the user has to
      *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
+     * @param ects
      * @return the new Timesheet, or null
      */
     @Nullable
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
                             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                            String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled);
+                            String reason, double ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
+                            Boolean isMasterThesisTimesheet) throws ServiceException;
 
     /**
      * Adds a new Timesheet
@@ -51,12 +53,13 @@ public interface TimesheetService {
      * @param targetHoursTheory   specifies the amount of hours the user has to
      *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
+     * @param ects
      * @return the new Timesheet
      */
     @Nonnull
     Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                  String reason, int ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
+                  String reason, double ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
                   Boolean isMasterThesisTimesheet);
 
     /**
@@ -68,7 +71,7 @@ public interface TimesheetService {
     List<Timesheet> all();
 
     @Nullable
-    Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled);
+    Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException;
 
     /**
      * Returns Timesheet corresponding to a User
@@ -80,6 +83,24 @@ public interface TimesheetService {
     Timesheet getTimesheetByUser(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException;
 
     /**
+     * Returns true if the user has a timesheet, otherwise false
+     *
+     * @param userKey
+     * @return Boolean
+     */
+    @Nullable
+    Boolean userHasTimesheet(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException;
+
+    /**
+     * Returns Administrator Timesheet corresponding his UserKey
+     *
+     * @param userKey
+     * @return Timesheet, null if unknown userKey
+     */
+    @Nullable
+    Timesheet getAdministratorTimesheet(String userKey) throws ServiceException;
+
+    /**
      * Returns a timesheet with the corresponding id
      *
      * @param id
@@ -87,4 +108,7 @@ public interface TimesheetService {
      */
     @Nullable
     Timesheet getTimesheetByID(int id) throws ServiceException;
+
+    @Nonnull
+    void remove(Timesheet timesheet) throws ServiceException;
 }

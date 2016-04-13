@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.helper;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.service.ServiceException;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.CategoryService;
@@ -38,7 +39,7 @@ public class CsvConfigImporter {
         this.teamService = teamService;
     }
 
-    public String importCsv(String csvString) {
+    public String importCsv(String csvString) throws ServiceException {
         StringBuilder errorStringBuilder = new StringBuilder("<ul>");
         int lineNumber = 0;
         List<String> assignedCoordinators = new LinkedList<String>();
