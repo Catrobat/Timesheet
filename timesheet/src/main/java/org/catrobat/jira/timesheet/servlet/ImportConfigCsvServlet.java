@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
@@ -97,7 +98,12 @@ public class ImportConfigCsvServlet extends HelperServlet {
         }
 
         CsvConfigImporter csvImporter = new CsvConfigImporter(configService, categoryService, teamService);
-        String errorString = csvImporter.importCsv(csvString);
+        String errorString = null;
+        try {
+            errorString = csvImporter.importCsv(csvString);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
 
         response.getWriter().print("Successfully executed following string:<br />" +
                 "<textarea rows=\"20\" cols=\"200\" wrap=\"off\" disabled>" + csvString + "</textarea>" +

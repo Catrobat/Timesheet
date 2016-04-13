@@ -63,7 +63,7 @@ public interface Timesheet extends Entity {
 
     int getEcts();
 
-    void setEcts(int ects);
+    void setEcts(double ects);
 
     String getLatestEntryDate();
 

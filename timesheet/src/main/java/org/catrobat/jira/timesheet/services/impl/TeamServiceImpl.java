@@ -54,6 +54,10 @@ public class TeamServiceImpl implements TeamService {
     public boolean removeTeam(String name) throws ServiceException {
         Team[] found = ao.find(Team.class, "TEAM_NAME = ?", name);
 
+        if(found == null){
+            return false;
+        }
+
         if (found.length > 1) {
             throw new ServiceException("Multiple Teams with the same Name");
         }
@@ -71,6 +75,10 @@ public class TeamServiceImpl implements TeamService {
     public Team getTeamByID(int id) throws ServiceException {
         Team[] found = ao.find(Team.class, "ID = ?", id);
 
+        if(found == null){
+            return null;
+        }
+
         if (found.length > 1) {
             throw new ServiceException("Multiple Teams with the same ID");
         }
@@ -81,6 +89,10 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team getTeamByName(String name) throws ServiceException {
         Team[] found = ao.find(Team.class, "TEAM_NAME = ?", name);
+
+       if(found == null){
+            return null;
+        }
 
         if (found.length > 1) {
             throw new ServiceException("Multiple Teams with the same Name");
