@@ -22,8 +22,9 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
             if (team['coordinatorGroups'][j].localeCompare(userName) == 0) {
                 //add users of that team to the select2
                 for (var j = 0; j < team['developerGroups'].length; j++) {
-                    if (!containsElement(listOfUsers, team['developerGroups'][j]))
-                        listOfUsers.push(team['developerGroups'][j]);
+                    if(team['developerGroups'][j] != userName)
+                        if (!containsElement(listOfUsers, team['developerGroups'][j]))
+                            listOfUsers.push(team['developerGroups'][j]);
                 }
                 AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><label>"+ team.teamName +"</label></div>");
                 AJS.$("#coordinatorTimesheetSelect").append("</field-group>");
@@ -42,10 +43,13 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
         initSelectTimesheetButton();
         AJS.$("#coordinatorTimesheetSelect").show();
         AJS.$("#approvedUserTimesheetSelect").hide();
+        AJS.$("#visualizationTeamSelect").show();
     } else if(isApprovedUser && !isTeamCoordinator) {
         AJS.$("#coordinatorTimesheetSelect").hide();
         AJS.$("#approvedUserTimesheetSelect").show();
-    } else {
+        AJS.$("#visualizationTeamSelect").show();
+    } else if(!isTeamCoordinator) {
         AJS.$("#coordinatorTimesheetSelect").hide();
+        AJS.$("#visualizationTeamSelect").hide();
     }
 }

@@ -193,25 +193,22 @@ public class TimesheetRest {
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
         for (User user : allUsers) {
-            //get user name
-            if (sheetService.getTimesheetByID(timesheetID).getUserKey().equals(
-                    ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey())) {
-                //get all teams of that user
-                for (Team team : teamService.getTeamsOfUser(user.getName())) {
-                    //get all team members
-                    for (String teamMember : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
-                        if (user.getName().equals(teamMember)) {
-                            //collect all timesheet entries of those team members
-                            Timesheet sheet = sheetService.getTimesheetByUser(
-                                    ComponentAccessor.getUserManager().getUserByName(teamMember).getKey(), false);
-                            //all entries of each user
-                            TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
-                            for (TimesheetEntry entry : entries) {
-                                jsonTimesheetEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
-                                        entry.getEndDate(), entry.getInactiveEndDate(), entry.getPauseMinutes(),
-                                        entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
-                                        entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
-                            }
+            //get all teams of that user
+            for (Team team : teamService.getTeamsOfUser(user.getName())) {
+                //get all team members
+                for (String teamMember : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
+                    //collect all timesheet entries of those team members
+                    if (sheetService.userHasTimesheet(ComponentAccessor.getUserManager().getUserByName(teamMember).getKey(), false)) {
+
+                        Timesheet sheet = sheetService.getTimesheetByUser(
+                                ComponentAccessor.getUserManager().getUserByName(teamMember).getKey(), false);
+                        //all entries of each user
+                        TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
+                        for (TimesheetEntry entry : entries) {
+                            jsonTimesheetEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
+                                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getPauseMinutes(),
+                                    entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
+                                    entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
                         }
                     }
                 }
@@ -497,8 +494,18 @@ public class TimesheetRest {
         } else if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
         } else if (!category.getName().equals("Pair programming") && !programmingPartnerName.equals("")) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("You can not select a 'Pair Programming' " +
-                    "Partner without selecting the 'Pair Programming' category.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You can not select a 'Pair programming' " +
+                    "Partner without selecting the 'Pair programming' category.").build();
+        }
+
+        //check if all pair programming names are valid
+        for (String userName : entry.getPairProgrammingUserName().split(",")) {
+            if (userName.equals(user.getUsername())) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity("You can not select yourself for 'Pair Programming'.").build();
+            } else if ((ComponentAccessor.getUserManager().getUserByName(userName) == null) &&
+                    (!entry.getPairProgrammingUserName().isEmpty())) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Username : " + userName + " not found.").build();
+            }
         }
 
         TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
@@ -691,11 +698,6 @@ public class TimesheetRest {
             sheet = sheetService.getTimesheetByID(jsonTimesheet.getTimesheetID());
             if (sheet != null) {
                 sheet = sheetService.updateTimesheetEnableState(jsonTimesheet.getTimesheetID(), jsonTimesheet.isEnabled());
-
-                if (sheet == null) {
-                    return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet is NULL.").build();
-                }
-
                 JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
                         sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),

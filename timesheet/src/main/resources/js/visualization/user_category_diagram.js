@@ -13,7 +13,6 @@ function assignCategoryDiagramData(timesheetData) {
     var totalTimeHours = 0;
     var totalTimeMinutes = 0;
     //save data in an additional array
-    var index = 0;
     var dataPoints = [];
 
     while (i >= 0) {
@@ -96,10 +95,10 @@ function assignCategoryDiagramData(timesheetData) {
         }
     }
 
-    categoryDiagram(sortedDataArray, categories.length)
+    categoryDiagram(sortedDataArray, categories.length, false);
 }
 
-function categoryDiagram(sortedDataArray, numberOfCategories) {
+function categoryDiagram(sortedDataArray, numberOfCategories, isTeamDiagram) {
     var data = {};
     //create data json array dynamically
     data['label'] = [];
@@ -156,5 +155,9 @@ function categoryDiagram(sortedDataArray, numberOfCategories) {
 
         tempData = [];
     }
-    drawCategoryDiagram(dataJSON, data['label']);
+    if (isTeamDiagram) {
+        drawTeamDiagram(dataJSON, data['label']);
+    } else {
+        drawCategoryDiagram(dataJSON, data['label']);
+    }
 }

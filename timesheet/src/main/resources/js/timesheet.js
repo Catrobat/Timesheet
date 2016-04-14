@@ -5,11 +5,11 @@ var restBaseUrl;
 AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
-
     AJS.$("#timesheet-export-csv-link").empty();
 
     if(isMasterThesisTimesheet) {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
+        document.getElementById("tabs-team").style.display = "none";
         AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Master Thesis Timesheet' as <a href=\"download/masterthesis\">CSV</a>.");
     } else {
         AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as <a href=\"download/timesheet\">CSV</a>.");
@@ -172,6 +172,7 @@ function getExistingTimesheetHours(timesheetID) {
     });
     AJS.$.when(timesheetFetched)
         .done(updateTimesheetHours)
+        .done(location.reload())
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching existing timesheet data.',
@@ -323,54 +324,53 @@ function populateTable(timesheetDataReply) {
         //Information at the first use
         if (timesheetData.entries.length == 0)
             AJS.messages.generic({
-                title: 'TimePunch - Timesheet Information.',
+                title: 'Timesheet Information.',
                 body: '<p> Congratulations you sucessfully created your own ' +
-                'TimePunch - Timesheet. The plugin provides tracking your time ' +
-                'data in a comfortable way and offers several visualization opperutnies ' +
-                'for you colleted data. It is furthermore possible to import existing content ' +
-                'into your time table by clicking on "Import from Google Docs" and follow ' +
-                'the steps.</p> <p> If you notice any uncommon plugin behaviour, or ' +
-                'need support feel free to contact a "Coordinator", or an "Administrator".</p>'
+                'Timesheet. TimePunch provides tracking your time ' +
+                'data in a comfortable way and offers several visualization opportunities ' +
+                'for colleted data. Additionally an import for existing timesheet entries ' +
+                'from CSV / Google Doc Timesheets is provided. The required data formarting ' +
+                'steps are shown within the "Import from Google Docs - Dialog".</p>' +
+                '<p> If you notice any uncommon plugin behaviour, or need support feel free to ' +
+                'contact one of the project "Coordinators", or an "Administrator".</p>'
             });
 
         //Banner Informations for the User
         if (!timesheetData.isActive) {
             AJS.messages.warning({
-                title: 'TimePunch - Timesheet Warning.',
-                body: '<p> Your Timesheet has been marked as "inactive", because ' +
-                'its latest entry date is older than two weeks, or you have no valid entries in your ' +
-                'table.</p>'
+                title: 'Timesheet Warning.',
+                body: '<p> Your Timesheet is marked as "inactive", because its last entry ' +
+                'date is older than two weeks, or your entry table is empty.</p>'
             });
 
             require(['aui/banner'], function (banner) {
                 banner({
-                    body: 'Your TimePunch - Timesheet is marked as <strong>inactive</strong>.'
+                    body: 'Your Timesheet is marked as <strong>inactive</strong>.'
                 });
             });
         } else if (!timesheetData.isEnabled) {
             AJS.messages.warning({
-                title: 'TimePunch - Timesheet Warning.',
-                body: '<p> Your Timesheet has been marked as "disabled" by an Administrator.</p>' +
-                '<p> You are note able to apply any changes to your timesheet data until it is ' +
-                '"enabled" again.</p>'
+                title: 'Timesheet Warning.',
+                body: '<p> Your Timesheet is marked as "disabled".</p>' +
+                '<p> You are not able to apply any changes until it is "disabled" again by an Administrator.</p>'
             });
 
             require(['aui/banner'], function (banner) {
                 banner({
-                    body: 'Your TimePunch - Timesheet has been <strong>disabled</strong> by an Administrator.'
+                    body: 'Your Timesheet is marked as <strong>disabled</strong>.'
                 });
             });
         } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
 
             AJS.messages.warning({
-                title: 'TimePunch - Timesheet Warning.',
+                title: 'Timesheet Warning.',
                 body: '<p> Congratulations you almost did it. Please contact an "Administrator", or your ' +
-                '"Coordinator" for further approach.</p>'
+                '"Coordinator" for further steps.</p>'
             });
 
             require(['aui/banner'], function (banner) {
                 banner({
-                    body: 'TimePunch Timesheet - You have <strong>less than 80 hours</strong> left, please contact ' +
+                    body: 'You have <strong>less than 80 hours</strong> left, please contact ' +
                     'your Team - Coordinator and/or an Administrator.'
                 });
             });

@@ -208,10 +208,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         if (found.length > 1) {
             throw new ServiceException("Multiple Timesheets with the same ID.");
-        } else if (found.length == 0) {
-            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
         }
-
         return (found.length > 0) ? found[0] : null;
     }
 }

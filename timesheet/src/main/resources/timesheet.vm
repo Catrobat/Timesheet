@@ -39,6 +39,7 @@
     function showTeamDiagram() {
         document.getElementById("teamLineDiagram").style.visibility = "visible";
         document.getElementById("teamLineDiagramTag").style.visibility = "visible";
+
     }
 </script>
 
@@ -80,7 +81,7 @@
 
             <div class="field-group">
                 <label for="timesheet-hours-remain">Remaining Timesheet Hours</label>
-                <input readonly class="text" type="text" id="timesheet-hours-remain" name="timesheet-hours-remain"
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-remain" name="timesheet-hours-remain"
                        title="timesheet-hours-remain">
 
                 <div class="description">
@@ -92,7 +93,7 @@
 
             <div class="field-group">
                 <label for="timesheet-hours-practical">Practical Hours</label>
-                <input readonly class="text" type="text" id="timesheet-hours-practical"
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-practical"
                        name="timesheet-hours-practical"
                        title="timesheet-hours-practical">
 
@@ -102,7 +103,7 @@
             </div>
             <div class="field-group">
                 <label for="timesheet-hours-theory">Theory Hours</label>
-                <input readonly class="text" type="text" id="timesheet-hours-theory" name="timesheet-hours-theory"
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-theory" name="timesheet-hours-theory"
                        title="timesheet-hours-theory">
 
                 <div class="description">
@@ -112,7 +113,7 @@
 
             <div class="field-group">
                 <label for="timesheet-hours-text">Timesheet Hours</label>
-                <input readonly class="text" type="text" id="timesheet-hours-text" name="timesheet-hours-text"
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-text" name="timesheet-hours-text"
                        title="timesheet-hours-text">
 
                 <div class="description">
@@ -203,10 +204,10 @@
                             <li>Select Fields in column <code>From/To</code></li>
                             <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
                                 Formats</strong> > <strong>Number Format</strong></li>
-                            <li>Paste <code>HH":"MM"</code> and confirm</li>
+                            <li>Paste <code>HH":"MM</code> and confirm</li>
                         </ol>
                     </li>
-                    <li>Select the rows you want to import, but ensure that the <code>Task Description</code> is not too long.</li>
+                    <li>Select the rows you want to import, but ensure that the <code>Task Description</code> is within 160 characters.</li>
                     <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
                     <li><strong>Attention - </strong> ensure that your import entries do not have <code>""</code>.</li>
                     <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
@@ -284,7 +285,7 @@
 
 <script>
     function drawTeamDiagram(data, labelData) {
-        new Morris.Bar({
+        new Morris.Area({
             // ID of the element in which to draw the chart.
             element: 'teamLineDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
@@ -293,7 +294,8 @@
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
-            ykeys: ['team1', 'team2', 'team3', 'team4', 'team5'],
+            ykeys: ['cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6', 'cat7', 'cat8', 'cat9', 'cat10',
+                'cat11', 'cat12', 'cat13', 'cat14', 'cat15'],
             // Labels for the ykeys -- will be displayed when you hover over the
             // chart.
             labels: labelData,

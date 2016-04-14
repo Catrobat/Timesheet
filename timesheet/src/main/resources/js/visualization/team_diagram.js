@@ -42,9 +42,10 @@ function assignTeamData(entries) {
 
         if (oldPos != pos || i == 0) {
             var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
-            var dataY = toFixed(totalHours + totalMinutes / 60, 2);
+            var dataY = toFixed((totalHours + totalMinutes) / 60, 2);
             dataPoints.push(dataX);
             dataPoints.push(dataY);
+
             totalHours = 0;
             totalMinutes = 0;
         }

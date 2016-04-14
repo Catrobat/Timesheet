@@ -72,6 +72,13 @@ function initSelectTimesheetButton() {
 
             selectedUser = AJS.$("#user-select2-field").val().split(',');
 
+            AJS.messages.generic({
+                title: 'Timesheet Information.',
+                body: '<p>You selected a timesheet of another user within the ' +
+                '"Team Information" tab. If you want to enable all your ' +
+                'visualizations again you have to refresh the page..</p>'
+            });
+
             AJS.$("#timesheet-export-csv-link").empty();
             AJS.$("#timesheet-export-csv-link").append("<h3>You are watching the TimePunch Timesheet Information of: " + selectedUser[0] + "</h3>");
             if (selectedUser[0] !== "") {
@@ -84,7 +91,6 @@ function initSelectTimesheetButton() {
             AJS.$("#timesheet-hours-save-button").hide();
 
             selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
-
             AJS.$("#timesheet-export-csv-link").empty();
             AJS.$("#timesheet-export-csv-link").append("<h3>You are watching the TimePunch Timesheet Information of: " + selectedUser[0] + "</h3>");
             isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;

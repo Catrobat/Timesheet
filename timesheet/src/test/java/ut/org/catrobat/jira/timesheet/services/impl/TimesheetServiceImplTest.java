@@ -150,7 +150,7 @@ public class TimesheetServiceImplTest {
         assertEquals(refSheet, checkSheet);
     }
 
-    @Test (expected = ServiceException.class)
+    @Test
     public void testGetTimesheetByMissingID() throws Exception {
         //Act
         Timesheet sheet = service.getTimesheetByID(12345);

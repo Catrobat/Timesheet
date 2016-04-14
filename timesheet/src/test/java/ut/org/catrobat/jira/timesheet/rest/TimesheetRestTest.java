@@ -6,6 +6,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserProfile;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;

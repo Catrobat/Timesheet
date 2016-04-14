@@ -67,7 +67,7 @@ function fetchTeamVisData() {
 
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetVisData)
-        .done(assignTeamVisData)
+        .done(computeTeamDiagramData)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching data.',
@@ -109,7 +109,11 @@ function populateVisTable(timesheetDataReply) {
 }
 
 function computeCategoryDiagramData(timesheetDataReply) {
-    assignCategoryDiagramData(timesheetDataReply[0]);
+    assignCategoryDiagramData(timesheetDataReply[0], false);
+}
+
+function computeTeamDiagramData(timesheetDataReply) {
+    assignTeamVisData(timesheetDataReply[0], true);
 }
 
 function calculateDuration(begin, end, pause) {

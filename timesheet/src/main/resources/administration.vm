@@ -229,13 +229,8 @@
         </form>
     </div>
     <div class="tabs-pane" id="tabs-scheduling">
+        <p></p>
         <h2>Task Scheduling</h2>
-        <p>
-            Interval has to be inserted as 'chron-expression'.
-            Please take a careful look at the <a
-                href="http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06">Quartz
-            Tutorial lesson 06</a> for further information.
-        </p>
         <form id="modify-scheduling" class="aui">
             <fieldset>
                 <div class="field-group">

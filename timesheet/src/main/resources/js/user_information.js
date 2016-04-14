@@ -56,7 +56,7 @@ AJS.toInit(function () {
     });
 
     function populateTable(allUsers, allTimesheets) {
-        users = allUsers[0];
+        users = allUsers[0].sort();
         timesheet = allTimesheets[0];
 
         AJS.$(".loadingDiv").show();
@@ -67,14 +67,8 @@ AJS.toInit(function () {
             var state = obj['active'] ? "active" : "inactive";
             var timesheetState = timesheet[i]['isActive'] ? "active" : "inactive";
 
-            if (!obj['active']) {
-                AJS.$("#user-body").append("<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
-                    "<td headers=\"basic-email\" class=\"email\"><del>" + obj['email'] + "</td>" +
-                    "<td headers=\"basic-state\" class=\"account\">" + state + "</td>" +
-                    "<td headers=\"basic-timesheet-state\" class=\"timesheet\"><del>" + "active" + "</td>" +
-                    "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + "Not Available" + "</td>" +
-                    "<td headers=\"basic-timesheet-disable\" class=\"disable\"></td></tr>");
-            } else {
+
+            if (obj['active']) {
                 if (timesheet[i]['isEnabled']) {
                     AJS.$("#user-body").append("<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
                         "<td headers=\"basic-email\" class=\"email\">" + obj['email'] + "</td>" +
@@ -200,4 +194,5 @@ AJS.toInit(function () {
             updateTimesheetStatus();
         }
     });
-});
+})
+;

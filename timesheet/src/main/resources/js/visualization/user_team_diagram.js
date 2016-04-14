@@ -1,31 +1,29 @@
 "use strict";
 
-function assignTeamVisData(timesheetDataReply) {
-    var availableEntries = timesheetDataReply[0].entries;
-    var availableTeams = timesheetDataReply[0].teams;
+//reverse order of the table from bottom to top
+function assignTeamVisData(timesheetData) {
 
-    var pos = 0;
+    var availableEntries = timesheetData;
+
+    var pos = availableEntries.length - 1;
+    var i = availableEntries.length - 1;
     //variables for the time calculation
     var totalHours = 0;
     var totalMinutes = 0;
+    var totalTimeHours = 0;
+    var totalTimeMinutes = 0;
+    //save data in an additional array
+    var dataPoints = [];
 
-    //data array
-    var data = {};
-    data['label'] = [];
-    data['year'] = [];
-    data['team'] = [];
-
-    for (var i = 0; i < availableEntries.length; i++) {
-        //calculate spent time for team
+    while (i >= 0) {
         var referenceEntryDate = new Date(availableEntries[pos].beginDate);
         var compareToDate = new Date(availableEntries[i].beginDate);
-        var actualTeamID = availableEntries[pos].teamID;
         var oldPos = pos;
 
-
-        if ((referenceEntryDate.getFullYear() == compareToDate.getFullYear()) &&
-            (referenceEntryDate.getMonth() == compareToDate.getMonth()) &&
-            (availableEntries[i].teamID == actualTeamID)) {
+        if ((referenceEntryDate.getFullYear() === compareToDate.getFullYear()) &&
+            (referenceEntryDate.getMonth() === compareToDate.getMonth())) {
+            totalHours = 0;
+            totalMinutes = 0;
             //add all times for the same year-month pairs
             var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
                 availableEntries[i].pauseMinutes).getHours();
@@ -41,44 +39,61 @@ function assignTeamVisData(timesheetDataReply) {
                 totalHours = totalHours + minutesToFullHours;
                 totalMinutes = totalMinutes - minutesToFullHours * 60;
             }
+
+            //add points
+            var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
+            var dataY = totalHours + totalMinutes / 60;
+            dataPoints.push(dataX);
+            dataPoints.push(dataY);
+            dataPoints.push(timesheetData.categories[availableEntries[i].categoryID].categoryName);
         } else {
             pos = i;
-            i = i - 1;
+            i = i + 1;
         }
 
-        if (oldPos != pos || i == availableEntries.length - 1) {
-            data['year'].push(referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1));
-            data['team'].push(toFixed((totalHours + totalMinutes / 60), 2));
-           //if (!containsElement(data['label'], availableTeams[actualTeamID].teamName))
-                data['label'].push(availableTeams[actualTeamID].teamName);
-            totalHours = 0;
-            totalMinutes = 0;
+        if (oldPos != pos || i === 0) {
+            if (totalTimeMinutes >= 60) {
+                var minutesToFullHours = Math.floor(totalTimeMinutes / 60); //get only full hours
+                totalTimeHours = totalTimeHours + minutesToFullHours;
+                totalTimeMinutes = totalTimeMinutes - minutesToFullHours * 60;
+            }
+        }
+
+        i = i - 1;
+    }
+
+    var categories = [];
+    //filter all category names
+    for (var i = 0; i < dataPoints.length; i++)
+        //read category name at position 3
+        if (i % 3 === 2)
+            if (!containsElement(categories, dataPoints[i]))
+                categories.push(dataPoints[i]);
+
+
+    var sortedDataArray = [];
+    var tempArray = [];
+
+    for (var k = 0; k < categories.length; k++) {
+        for (var i = 0; i < dataPoints.length; i++) {
+            //fill in category name at first pos of subarray
+            if (i === 0) {
+                tempArray.push(categories[k]);
+            }
+
+            //read category name at position 3
+            if ((i % 3 === 2) && (dataPoints[i] === categories[k])) {
+                tempArray.push(dataPoints[i - 2]);
+                tempArray.push(dataPoints[i - 1]);
+            }
+
+            //add subarray to array and pick next category
+            if (i === dataPoints.length - 1) {
+                sortedDataArray.push(tempArray);
+                tempArray = [];
+            }
         }
     }
-
-    var temp = []
-    //build data JSON object (year is represented on the x-axis; time on the y-axis
-    for (var i = 0; i < data['year'].length; i++) {
-        temp.push(data['year'][i]);
-        temp.push(data['label'][i]);
-        temp.push(data['team'][i]);
-    }
-
-    var dataJSON = [];
-    for (var i = 0; i < temp.length; i = i + 3) {
-        if (i % 2 == 0)
-            dataJSON.push({
-                year: temp[i],
-                team1: temp[i + 2],
-                team2: 0
-            });
-        else
-            dataJSON.push({
-                year: temp[i],
-                team1: 0,
-                team2: temp[i + 2]
-            });
-    }
-
-    drawTeamDiagram(dataJSON, data['label']);
+    
+    categoryDiagram(sortedDataArray, categories.length, true);
 }

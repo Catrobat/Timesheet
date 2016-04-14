@@ -191,30 +191,46 @@ public abstract class CsvExporter {
         sb.append("Date" + DELIMITER +
                 "Begin" + DELIMITER +
                 "End" + DELIMITER +
-                "Pause Minutes" + DELIMITER +
                 "Duration Minutes" + DELIMITER +
-                "Team" + DELIMITER +
+                "Pause Minutes" + DELIMITER +
                 "Category" + DELIMITER +
-                "Description" + NEW_LINE);
+                "Description" + DELIMITER +
+                "Team" + NEW_LINE);
 
         for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
             Integer hours = 0;
             Integer minutes = timesheetEntry.getDurationMinutes();
-
-            while (minutes - 60 >= 0) {
+            if(minutes < 0)
+                minutes = minutes * (-1);
+            while(minutes > 0) {
+                if(minutes - 60 < 0)
+                    break;
                 minutes = minutes - 60;
                 hours++;
             }
-            String duration = hours + ":" + minutes;
+            Integer remainingMinutes = timesheetEntry.getDurationMinutes() % 60;
+            if(remainingMinutes < 0)
+                remainingMinutes = remainingMinutes * (-1);
+            String duration = Integer.toString(hours) + ":" + Integer.toString(remainingMinutes);
 
+            Integer pauseHours = 0;
+            Integer pauseMinutes = timesheetEntry.getPauseMinutes();
+            while(pauseMinutes > 0) {
+                if(pauseMinutes - 60 < 0)
+                    break;
+                pauseMinutes = pauseMinutes - 60;
+                pauseHours++;
+            }
+            Integer remainingPauseMinutes = timesheetEntry.getPauseMinutes() % 60;
+            String pauseDuration = Integer.toString(pauseHours) + ":" + Integer.toString(remainingPauseMinutes);
             sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(0, 10).toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(12, 17).toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getEndDate().toString().subSequence(12, 17).toString())).append(DELIMITER);
-            sb.append(unescape(Integer.toString(timesheetEntry.getPauseMinutes()))).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(11, 16).toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getEndDate().toString().subSequence(11, 16).toString())).append(DELIMITER);
             sb.append(unescape(duration)).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(DELIMITER);
+            sb.append(unescape(pauseDuration)).append(DELIMITER);
             sb.append(unescape(timesheetEntry.getCategory().getName())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getDescription().toString())).append(NEW_LINE);
+            sb.append(unescape(timesheetEntry.getDescription().toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(NEW_LINE);
         }
         sb.append(NEW_LINE);
 
