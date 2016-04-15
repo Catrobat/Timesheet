@@ -39,6 +39,8 @@ public interface ConfigService {
                     String mailSubjectInactive, String mailSubjectEntry,
                     String mailBodyTime, String mailBodyInactive, String mailBodyEntry);
 
+    Config editSupervisedUsers(String supervisedUsers);
+
     List<String> getGroupsForRole(String teamName, TeamToGroup.Role role);
 
     List<String> getCategoryNamesForTeam(String teamName);

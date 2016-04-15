@@ -3,10 +3,11 @@
 var selectedUser;
 var isMTSheetSelected;
 
-function isUserApprovedUser(userName, config) {
-    for (var i = 0; i < config.approvedUsers.length; i++) {
-        var approvedUserName = config.approvedUsers[i].replace(/\s/g, '');
-        if (approvedUserName.localeCompare(userName) == 0) {
+function isSupervisedUser(userName, config) {
+    var supervisedUsers = config.supervisors.split(',');
+    console.log(supervisedUsers);
+    for (var i = 0; i < supervisedUsers.length; i++) {
+        if (supervisedUsers[i].localeCompare(userName) == 0) {
             return true;
         }
     }

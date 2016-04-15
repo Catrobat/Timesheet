@@ -4,7 +4,7 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
     var config = jsonConfig[0];
     var userName = jsonUser[0]['userName'];
     var isTeamCoordinator = false;
-    var isApprovedUser = isUserApprovedUser(userName, config);
+    var isApprovedUser = isSupervisedUser(userName, config);
     var listOfUsers = [];
 
     AJS.$("#coordinatorTimesheetSelect").append("<field-group>");

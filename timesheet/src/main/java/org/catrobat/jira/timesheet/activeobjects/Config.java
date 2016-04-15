@@ -20,7 +20,7 @@ import net.java.ao.Entity;
 import net.java.ao.OneToMany;
 import net.java.ao.Preload;
 import net.java.ao.schema.StringLength;
-
+import javax.annotation.Nullable;
 @Preload
 public interface Config extends Entity {
 
@@ -67,6 +67,12 @@ public interface Config extends Entity {
 
     @StringLength(StringLength.UNLIMITED)
     void setMailBodyEntry(String body);
+
+    @StringLength(StringLength.UNLIMITED)
+    String getSupervisedUsers();
+
+    @StringLength(StringLength.UNLIMITED)
+    void setSupervisedUsers(String supervisedUsers);
 
     @OneToMany(reverse = "getConfiguration")
     ApprovedGroup[] getApprovedGroups();

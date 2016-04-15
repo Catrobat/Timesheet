@@ -39,7 +39,7 @@ public final class JsonConfig {
     @XmlElement
     private List<String> approvedUsers;
     @XmlElement
-    private long userDirectoryId;
+    private String supervisors;
     @XmlElement
     private String mailFromName;
     @XmlElement
@@ -84,6 +84,12 @@ public final class JsonConfig {
             approvedGroups.add(approvedGroup.getGroupName());
         }
 
+        if(toCopy.getSupervisedUsers() != null) {
+            this.supervisors = toCopy.getSupervisedUsers();
+        } else {
+            supervisors = "Select Supervisors";
+        }
+
         this.mailFromName = toCopy.getMailFromName();
         this.mailFrom = toCopy.getMailFrom();
 
@@ -118,6 +124,14 @@ public final class JsonConfig {
 
     public void setApprovedUsers(List<String> approvedUsers) {
         this.approvedUsers = approvedUsers;
+    }
+
+    public String getSupervisors() {
+        return supervisors;
+    }
+
+    public void setSupervisors(String supervisors) {
+        this.supervisors = supervisors;
     }
 
     public String getMailFromName() {

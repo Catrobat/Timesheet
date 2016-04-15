@@ -58,6 +58,16 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
+    public Config editSupervisedUsers(String supervisedUsers) {
+        Config config = getConfiguration();
+        config.setSupervisedUsers(supervisedUsers);
+
+        config.save();
+
+        return config;
+    }
+
+    @Override
     public Config getConfiguration() {
         Config[] config = ao.find(Config.class);
         if (config.length == 0) {

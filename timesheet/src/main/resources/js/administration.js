@@ -81,6 +81,8 @@ AJS.toInit(function () {
                     AJS.$("#mail-body-inactive").val(config.mailBodyInactive);
                 if (config.mailBodyEntry)
                     AJS.$("#mail-body-entry-change").val(config.mailBodyEntry);
+                if (config.supervisors)
+                    AJS.$("#plugin-permission").val(config.supervisors);
 
                 //build team list
                 teams = [];
@@ -99,7 +101,8 @@ AJS.toInit(function () {
                     AJS.$("#teams").append("</fieldset>");
                 }
 
-                AJS.$("#plugin-permission").auiSelect2({
+                //TimePunch - plugin administrator picker
+                AJS.$("#plugin-administration").auiSelect2({
                     placeholder: "Search for users and groups",
                     minimumInputLength: 0,
                     tags: true,
@@ -150,13 +153,15 @@ AJS.toInit(function () {
                     }
                 }
 
-                AJS.$("#plugin-permission").auiSelect2("data", approved);
+                AJS.$("#plugin-administration").auiSelect2("data", approved);
 
+                //list of all available LDAP users
                 var userNameList = [];
                 for (var i = 0; i < allUsers[0].length; i++) {
                     userNameList.push(allUsers[0][i]['userName']);
                 }
 
+                //list of all available categories
                 var categoryList = [];
                 for (var i = 0; i < allCategories[0].length; i++) {
                     categoryList.push(allCategories[0][i]['categoryName']);
@@ -171,16 +176,25 @@ AJS.toInit(function () {
                     AJS.$("#categories").append("</fieldset>");
                 }
 
+                //TimePunch - supervisor picker
+                AJS.$("#plugin-permission").auiSelect2({
+                    placeholder: "Select supervisors",
+                    tags: userNameList.sort(),
+                    tokenSeparators: [",", " "]
+                });
+                //TimePunch - team coordinator picker
                 AJS.$(".coordinator").auiSelect2({
                     placeholder: "Select coordinators",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
+                //TimePunch - team user picker
                 AJS.$(".user").auiSelect2({
                     placeholder: "Select users",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
+                //TimePunch - team category picker
                 AJS.$(".category").auiSelect2({
                     placeholder: "Select categories",
                     tags: categoryList.sort(),
@@ -214,7 +228,9 @@ AJS.toInit(function () {
         config.mailBodyInactive = AJS.$("#mail-body-inactive").val();
         config.mailBodyEntry = AJS.$("#mail-body-entry-change").val();
 
-        var usersAndGroups = AJS.$("#plugin-permission").auiSelect2("val");
+        config.supervisors = AJS.$("#plugin-permission").val();
+
+        var usersAndGroups = AJS.$("#plugin-administration").auiSelect2("val");
         var approvedUsers = [];
         var approvedGroups = [];
         for (var i = 0; i < usersAndGroups.length; i++) {
@@ -334,8 +350,6 @@ AJS.toInit(function () {
                 // may be removed already
             }
         }
-
-        console.log(teamName);
 
         editTeamNameDialog = new AJS.Dialog({
             width: 600,

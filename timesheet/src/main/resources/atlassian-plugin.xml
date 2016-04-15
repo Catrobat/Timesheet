@@ -218,6 +218,20 @@
         <label>TimePunch - User Information</label>
         <link linkId="user_information_view_link">/plugins/servlet/timesheet/user/information</link>
     </web-item>
+
+    <!-- hidden administration links -->
+    <web-item key="timepunch_config" name="Link to Administration Servlet" section="system.top.navigation.bar" weight="30">
+        <label>TimePunch - Configuration</label>
+        <link linkId="timepunch_administration_link">/plugins/servlet/timesheet/administration</link>
+        <condition class="org.catrobat.jira.timesheet.helper.PermissionCondition"></condition>
+    </web-item>
+
+    <web-item key="timepunch_user_information" name="Link to User Information Servlet" section="system.top.navigation.bar" weight="35">
+        <label>TimePunch  - User Information</label>
+        <link linkId="timepunch_administration_link">/plugins/servlet/timesheet/user/information</link>
+        <condition class="org.catrobat.jira.timesheet.helper.PermissionCondition"></condition>
+    </web-item>
+
     <!-- end of web-items -->
 
 </atlassian-plugin>

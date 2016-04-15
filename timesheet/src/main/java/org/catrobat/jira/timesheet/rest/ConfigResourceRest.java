@@ -136,6 +136,8 @@ public class ConfigResourceRest {
                 jsonConfig.getMailSubjectEntry(), jsonConfig.getMailBodyTime(),
                 jsonConfig.getMailBodyInactive(), jsonConfig.getMailBodyEntry());
 
+        configService.editSupervisedUsers(jsonConfig.getSupervisors());
+
         if (jsonConfig.getApprovedGroups() != null) {
             configService.clearApprovedGroups();
             for (String approvedGroupName : jsonConfig.getApprovedGroups()) {

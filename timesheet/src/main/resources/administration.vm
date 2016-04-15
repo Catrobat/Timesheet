@@ -46,12 +46,31 @@
             <input style="display:none" type="text" name="fakeusernameremembered"/>
             <input style="display:none" type="password" name="fakepasswordremembered"/>
 
-            <h2>Global Timesheet Read Access</h2>
+            <h2>Supervisor Timesheet Read Access</h2>
             <fieldset>
                 <div class="field-group">
-                    <label for="plugin-permission">Allowed Groups/Users</label>
+                    <label for="plugin-permission">Supervisors</label>
                     <input class="text" type="text" id="plugin-permission" name="plugin-permission"
                            title="plugin-permission">
+
+                    <div class="description">
+                        <ul>
+                            <li>If nothing is given, every Jira Administrator may read/write</li>
+                            <li>If multiple users are given, every user and Jira Administrator may read/write</li>
+                            <li>If a single user is given and this user is a Jira Administrator this user may
+                                read/write
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </fieldset>
+
+            <h2>TimePunch Configuration Access</h2>
+            <fieldset>
+                <div class="field-group">
+                    <label for="plugin-administration">Allowed Groups/Users</label>
+                    <input class="text" type="text" id="plugin-administration" name="plugin-administration"
+                           title="plugin-administration">
 
                     <div class="description">
                         <ul>
@@ -196,6 +215,7 @@
         </form>
     </div>
     <div class="tabs-pane" id="tabs-teams">
+        <p></p>
         <h2>Team</h2>
         <p>Removing a team just effects the configuration and no user will be modified.</p>
         <form id="modify-team" class="aui">
@@ -212,6 +232,7 @@
         </form>
     </div>
     <div class="tabs-pane" id="tabs-categories">
+        <p></p>
         <h2>Category</h2>
         <p>Removing a category does not modify any user.</p>
         <form id="modify-categoryList" class="aui">

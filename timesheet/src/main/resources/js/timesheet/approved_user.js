@@ -3,7 +3,7 @@
 function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
     var config = jsonConfig[0];
     var userName = jsonUser[0]['userName'];
-    var isApprovedUser = isUserApprovedUser(userName, config);
+    var isApprovedUser = isSupervisedUser(userName, config);
     var listOfUsers = [];
 
     //Select Username of Timesheet
