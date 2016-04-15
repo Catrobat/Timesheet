@@ -8,7 +8,6 @@ function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
 
     //Select Username of Timesheet
     AJS.$("#approvedUserTimesheetSelect").append("<field-group>");
-    AJS.$("#approvedUserTimesheetSelect").append("<h3>Approved User Space</h3>");
     AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><label for=\"approvedUserSelect\">Timesheet Of</label><input class=\"text approvedUserSelectTimesheetOfUserField\" type=\"text\" id=\"approved-user-select2-field\"></div>");
     AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><label for=\"requestMTSheetCheckbox\">Get Master Thesis Timesheet</label><input class=\"checkbox\" type=\"checkbox\" name=\"requestMTSheetCheckbox\" id=\"requestMTSheetCheckbox\"></div>");
     AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Display\" class=\"aui-button aui-button-primary\"></field-group>");

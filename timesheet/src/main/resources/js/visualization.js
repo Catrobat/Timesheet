@@ -114,6 +114,7 @@ function computeCategoryDiagramData(timesheetDataReply) {
 
 function computeTeamDiagramData(timesheetDataReply) {
     assignTeamVisData(timesheetDataReply[0], true);
+    assignTeamData(timesheetDataReply[0]);
 }
 
 function calculateDuration(begin, end, pause) {

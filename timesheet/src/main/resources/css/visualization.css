@@ -96,6 +96,7 @@ code {
     width: 100%;
     height: 50%;
     margin-left: 10px;
+    visibility: hidden;
 }
 
 #categoryLineDiagram {

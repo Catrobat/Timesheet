@@ -25,11 +25,6 @@
     function showLineDiagram() {
         document.getElementById("lineDiagram").style.visibility = "visible";
         document.getElementById("lineDiagramTag").style.visibility = "visible";
-    }
-</script>
-
-<script type="application/javascript">
-    function showCategoryDiagram() {
         document.getElementById("categoryLineDiagram").style.visibility = "visible";
         document.getElementById("categoryLineDiagramTag").style.visibility = "visible";
     }
@@ -37,9 +32,10 @@
 
 <script type="application/javascript">
     function showTeamDiagram() {
+        AJS.tabs.setup();
+        document.getElementById("teamDataDiagram").style.visibility = "visible";
         document.getElementById("teamLineDiagram").style.visibility = "visible";
         document.getElementById("teamLineDiagramTag").style.visibility = "visible";
-
     }
 </script>
 
@@ -53,10 +49,7 @@
             <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-timesheet-information"><strong>Information</strong></a>
-        </li>
-        <li class="menu-item">
-            <a href="#tabs-timesheet-settings"><strong>Team Information</strong></a>
+            <a href="#tabs-timesheet-settings"><strong>Coordinators Private</strong></a>
         </li>
         <li class="menu-item">
             <a href="#tabs-overview" onclick="showOverview();">Summary</a>
@@ -65,10 +58,10 @@
             <a href="#tabs-line" onclick="showLineDiagram();">Time - Visualization</a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-category" onclick="showCategoryDiagram();">Category - Visualization</a>
+            <a href="#tabs-team" onclick="showTeamDiagram();">Team - Visualization</a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-team" onclick="showTeamDiagram();">Team - Visualization</a>
+            <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
         </li>
     </ul>
 
@@ -81,7 +74,8 @@
 
             <div class="field-group">
                 <label for="timesheet-hours-remain">Remaining Timesheet Hours</label>
-                <input disabled="disabled" class="text" type="text" id="timesheet-hours-remain" name="timesheet-hours-remain"
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-remain"
+                       name="timesheet-hours-remain"
                        title="timesheet-hours-remain">
 
                 <div class="description">
@@ -103,7 +97,8 @@
             </div>
             <div class="field-group">
                 <label for="timesheet-hours-theory">Theory Hours</label>
-                <input disabled="disabled" class="text" type="text" id="timesheet-hours-theory" name="timesheet-hours-theory"
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-theory"
+                       name="timesheet-hours-theory"
                        title="timesheet-hours-theory">
 
                 <div class="description">
@@ -113,7 +108,8 @@
 
             <div class="field-group">
                 <label for="timesheet-hours-text">Timesheet Hours</label>
-                <input disabled="disabled" class="text" type="text" id="timesheet-hours-text" name="timesheet-hours-text"
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-text"
+                       name="timesheet-hours-text"
                        title="timesheet-hours-text">
 
                 <div class="description">
@@ -156,10 +152,7 @@
         <form id="timesheet-settings" class="aui">
             <div id="coordinatorTimesheetSelect"></div>
             <div id="approvedUserTimesheetSelect"></div>
-            <div id="visualizationTeamSelect"></div>
         </form>
-        <!-- team visualization area -->
-        <div id="teamDataDiagram" style="height: 200px;"></div>
     </div>
 
     <div class="tabs-pane active-pane" id="tabs-timesheet">
@@ -207,7 +200,9 @@
                             <li>Paste <code>HH":"MM</code> and confirm</li>
                         </ol>
                     </li>
-                    <li>Select the rows you want to import, but ensure that the <code>Task Description</code> is within 160 characters.</li>
+                    <li>Select the rows you want to import, but ensure that the <code>Task Description</code> is within
+                        160 characters.
+                    </li>
                     <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
                     <li><strong>Attention - </strong> ensure that your import entries do not have <code>""</code>.</li>
                     <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
@@ -250,22 +245,25 @@
     </div>
     <div class="tabs-pane active-pane" id="tabs-line">
         <h3 id="lineDiagramTag">Visualization of your spent time</h3>
-        <div id="lineDiagram" style="height:250px;"></div>
-    </div>
-    <div class="tabs-pane active-pane" id="tabs-category">
+        <div id="lineDiagram" style="height:300px;"></div>
+
         <h3 id="categoryLineDiagramTag">Visualization of your spent time on categories</h3>
         <div id="categoryLineDiagram" style="height:400px;"></div>
     </div>
     <div class="tabs-pane active-pane" id="tabs-team">
-        <h3 id="teamLineDiagramTag">Team Visualization</h3>
-        <div id="teamLineDiagram" style="height: 400px;"></div>
+        <form id="team-visualization" class="aui">
+            <div id="visualizationTeamSelect"></div>
+            <div id="teamDataDiagram" style="height: 300px;"></div>
+            <h3 id="teamLineDiagramTag">Team Category Visualization</h3>
+            <div id="teamLineDiagram" style="height: 400px;"></div>
+        </form>
     </div>
 </div>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
 
 <script>
-    function drawSelectedTeamDiagram(data, labelData) {
+    function drawSelectedTeamDiagram(data) {
         new Morris.Line({
             // ID of the element in which to draw the chart.
             element: 'teamDataDiagram',

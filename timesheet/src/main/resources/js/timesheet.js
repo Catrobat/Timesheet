@@ -15,6 +15,16 @@ AJS.toInit(function () {
         AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as <a href=\"download/timesheet\">CSV</a>.");
     }
 
+    AJS.$("#tabs-team").submit(function (e) {
+        e.preventDefault();
+        if (AJS.$(document.activeElement).val() === 'Visualize') {
+            var selectedTeam = AJS.$("#select-team-select2-field").val().split(',');
+            if (selectedTeam[0] !== "") {
+                getDataOfTeam(selectedTeam[0]);
+            }
+        }
+    });
+
     if (isAdmin) {
         hideVisualizationTabs();
         fetchUsers();

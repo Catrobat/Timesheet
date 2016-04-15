@@ -15,19 +15,16 @@ function isUserApprovedUser(userName, config) {
 
 function hideVisualizationTabs() {
     document.getElementById("tabs-line").style.display = "none";
-    document.getElementById("tabs-category").style.display = "none";
     document.getElementById("tabs-team").style.display = "none";
 }
 
 function filterCategoriesPerTeam(selectedTeam, categories) {
-
     var categoriesPerTeam = [];
     selectedTeam.teamCategories.map(function (categoryID) {
         categoriesPerTeam.push(
             {id: categoryID, text: categories[categoryID].categoryName}
         );
     });
-
     return categoriesPerTeam;
 }
 
@@ -66,44 +63,36 @@ function initAdministratorButton() {
 function initSelectTimesheetButton() {
     AJS.$("#timesheet-settings").submit(function (e) {
         e.preventDefault();
+
+        AJS.$("#timesheet-export-csv-link").empty();
+        AJS.$("#timesheet-owner-information").empty();
+        AJS.messages.generic({
+            title: 'Timesheet Information.',
+            body: '<p>You selected a timesheet of another user. ' +
+            'If you want to enable all your ' +
+            'visualizations again you have to refresh the page..</p>'
+        });
+
         if (AJS.$(document.activeElement).val() === 'Show') {
             AJS.$("#timesheet-hours-save-button").hide();
             AJS.$("#timesheet-hours-save-button").hide();
 
             selectedUser = AJS.$("#user-select2-field").val().split(',');
 
-            AJS.messages.generic({
-                title: 'Timesheet Information.',
-                body: '<p>You selected a timesheet of another user within the ' +
-                '"Team Information" tab. If you want to enable all your ' +
-                'visualizations again you have to refresh the page..</p>'
-            });
-
             AJS.$("#timesheet-export-csv-link").empty();
-            AJS.$("#timesheet-export-csv-link").append("<h3>You are watching the TimePunch Timesheet Information of: " + selectedUser[0] + "</h3>");
             if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser, false);
-                AJS.$("#timesheet-owner-information").empty();
-                AJS.$("#timesheet-owner-information").append("<p><h3>You are watching the TimePunch Timesheet of: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();
             }
         } else if (AJS.$(document.activeElement).val() === 'Display') {
             AJS.$("#timesheet-hours-save-button").hide();
 
             selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
-            AJS.$("#timesheet-export-csv-link").empty();
-            AJS.$("#timesheet-export-csv-link").append("<h3>You are watching the TimePunch Timesheet Information of: " + selectedUser[0] + "</h3>");
+
             isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
             if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser, isMTSheetSelected);
-                AJS.$("#timesheet-owner-information").empty();
-                AJS.$("#timesheet-owner-information").append("<p><h3>You are watching the TimePunch Timesheet of: " + selectedUser[0] + "</h3>");
                 hideVisualizationTabs();
-            }
-        } else if (AJS.$(document.activeElement).val() === 'Visualize') {
-            var selectedTeam = AJS.$("#select-team-select2-field").val().split(',');
-            if (selectedTeam[0] !== "") {
-                getDataOfTeam(selectedTeam[0]);
             }
         }
     });

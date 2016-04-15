@@ -10,7 +10,10 @@ function assignTeamData(entries) {
     var totalMinutes = 0;
 
     //data array
-    var dataPoints = [];
+    var data = {};
+    data['year'] = [];
+    data['dataX'] = [];
+    data['dataY'] = [];
 
     for (var i = availableEntries.length - 1; i >= 0; i--) {
         //calculate spent time for team
@@ -42,18 +45,40 @@ function assignTeamData(entries) {
 
         if (oldPos != pos || i == 0) {
             var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
-            var dataY = toFixed((totalHours + totalMinutes) / 60, 2);
-            dataPoints.push(dataX);
-            dataPoints.push(dataY);
+            var dataY = toFixed(totalHours + (totalMinutes / 60), 2);
+            if (!containsElement(data['year'], dataX)) {
+                data['year'].push(dataX);
+            }
+            data['dataX'].push(dataX);
+            data['dataY'].push(dataY);
 
             totalHours = 0;
             totalMinutes = 0;
         }
     }
 
+    assignDataPoints(data);
+}
+
+function assignDataPoints(data) {
+    var dataPoints = [];
+    var sum = 0;
+
+    for(var i = 0; i < data['year'].length; i++) {
+        for(var j = 0; j < data['dataX'].length; j++) {
+            if(data['dataX'][j] == data['year'][i]) {
+                sum = sum + data['dataY'][j];
+            }
+        }
+        dataPoints.push(data['year'][i]);
+        dataPoints.push(sum);
+        sum = 0;
+    }
+
     //assign JSON data for line graph
     teamDiagram(dataPoints);
 }
+
 
 function teamDiagram(dataPoints) {
     var data = [];

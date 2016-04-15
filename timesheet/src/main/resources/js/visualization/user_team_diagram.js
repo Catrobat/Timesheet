@@ -10,15 +10,12 @@ function assignTeamVisData(timesheetData) {
     //variables for the time calculation
     var totalHours = 0;
     var totalMinutes = 0;
-    var totalTimeHours = 0;
-    var totalTimeMinutes = 0;
     //save data in an additional array
     var dataPoints = [];
 
     while (i >= 0) {
         var referenceEntryDate = new Date(availableEntries[pos].beginDate);
         var compareToDate = new Date(availableEntries[i].beginDate);
-        var oldPos = pos;
 
         if ((referenceEntryDate.getFullYear() === compareToDate.getFullYear()) &&
             (referenceEntryDate.getMonth() === compareToDate.getMonth())) {
@@ -49,14 +46,6 @@ function assignTeamVisData(timesheetData) {
         } else {
             pos = i;
             i = i + 1;
-        }
-
-        if (oldPos != pos || i === 0) {
-            if (totalTimeMinutes >= 60) {
-                var minutesToFullHours = Math.floor(totalTimeMinutes / 60); //get only full hours
-                totalTimeHours = totalTimeHours + minutesToFullHours;
-                totalTimeMinutes = totalTimeMinutes - minutesToFullHours * 60;
-            }
         }
 
         i = i - 1;
