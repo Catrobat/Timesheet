@@ -104,6 +104,8 @@ public class ExportConfigAsCSVServletTest {
         assertNotNull(configService.editMail("mailFromName", "mailFrom", "[Subject] Time",
                 "[Subject] Inactive", "[Subject] Entry", "bla", "blabla", "noch mehr bla"));
 
+        assertNotNull(configService.editSupervisedUsers("TestUser"));
+
         exportConfigAsCSVServlet.doGet(request, response);
     }
 }

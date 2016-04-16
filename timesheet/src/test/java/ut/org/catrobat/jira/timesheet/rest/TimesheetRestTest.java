@@ -3,10 +3,11 @@ package ut.org.catrobat.jira.timesheet.rest;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.mail.Email;
+import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
-import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserProfile;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
@@ -51,6 +52,7 @@ public class TimesheetRestTest {
     private com.atlassian.sal.api.user.UserManager userManagerLDAPMock;
     private com.atlassian.jira.user.util.UserManager userManagerJiraMock;
     private UserKeyService userKeyServiceMock;
+    private GroupManager groupManagerJiraMock;
 
     private CategoryService categoryService;
     private ConfigService configService;
@@ -70,7 +72,8 @@ public class TimesheetRestTest {
     private UserProfile userProfileMock;
     private Timesheet timesheetMock;
     private Category categoryMock;
-    private TimesheetEntry timesheetEntry;
+    private Team teamMock;
+    private TimesheetEntry timesheetEntryMock;
 
     private TimesheetRest timesheetRest;
     private TimesheetRest timesheetRestMock;
@@ -94,6 +97,7 @@ public class TimesheetRestTest {
         componentAccessorMock = Mockito.mock(ComponentAccessor.class, RETURNS_DEEP_STUBS);
         userManagerLDAPMock = Mockito.mock(com.atlassian.sal.api.user.UserManager.class, RETURNS_DEEP_STUBS);
         userManagerJiraMock = Mockito.mock(com.atlassian.jira.user.util.UserManager.class, RETURNS_DEEP_STUBS);
+        groupManagerJiraMock = Mockito.mock(GroupManager.class, RETURNS_DEEP_STUBS);
         userKeyServiceMock = Mockito.mock(UserKeyService.class, RETURNS_DEEP_STUBS);
         userUtilMock = Mockito.mock(UserUtil.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
@@ -115,7 +119,8 @@ public class TimesheetRestTest {
         userProfileMock = Mockito.mock(UserProfile.class);
         timesheetMock = Mockito.mock(Timesheet.class);
         categoryMock = Mockito.mock(Category.class);
-        timesheetEntry = Mockito.mock(TimesheetEntry.class);
+        teamMock = Mockito.mock(Team.class);
+        timesheetEntryMock = Mockito.mock(TimesheetEntry.class);
 
         timesheetRest = new TimesheetRest(timesheetEntryService, timesheetService, categoryService, userManagerLDAPMock, teamService, permissionService, configService);
 
@@ -708,6 +713,19 @@ public class TimesheetRestTest {
         JsonTimesheet jsonTimesheet = new JsonTimesheet(1, "Mobile Computing", "", 5.0, "2016-04-09", 50, 50, 150, 50,
                 0, true, true, false);
 
+        Date begin = new Date();
+        Date end = new Date(begin.getTime());
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        Date inactiveEndDate = new Date();
+
+        //Act
+        TimesheetEntry newEntry = timesheetEntryServiceMock.add(timesheetMock, begin, end, categoryMock, desc, pause, teamMock, isGoogleDocImport,
+                inactiveEndDate, jiraTicketID, pairProgrammingUserName);
+
         when(permissionService.checkIfUserExists(request)).thenReturn(userProfileMock);
 
         when(timesheetMock.getUserKey()).thenReturn(userKey);
@@ -735,19 +753,65 @@ public class TimesheetRestTest {
     }
 
     //TODO: mock the missing stuff - one of the biggest tests
-
     @Test
-    public void testPutTimesheetEntryOk() throws Exception {
+    public void testPutTimesheetEntryAdminChangedEntry() throws Exception {
         int timesheetID = 1;
+        int entryID = 1;
         Boolean isMTSheet = false;
+        String userKey = "USER_KEY";
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
                 new Date(), new Date(), new Date(),
                 0, "Description", 1, 1,
                 "CAT-1530", "Partner", false);
+        /*
+        Timesheet timesheet = timesheetService.add(userKey, 1, 1, 2, 2,
+                0, "Test", "So halt", 1.0, "not available", true, true, false);
+        */
+        TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, new Date(), new Date(), categoryMock,
+                "Test Entry", 0, teamMock, false, new Date(), "CAT-1530", "Partner");
+        TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
-        when(permissionService.checkIfUserExists(request)).thenReturn(userProfileMock);
 
-        response = timesheetRest.putTimesheetEntry(request, jsonTimesheetEntry, timesheetID, isMTSheet);
+        Category[] categories = {categoryMock};
+        Set<Team> teams = new LinkedHashSet<Team>();
+        teams.add(teamMock);
+        Collection<String> userGroups = new LinkedList<String>();
+        userGroups.add("jira-administrators");
+
+        when(teamMock.getCategories()).thenReturn(categories);
+
+        when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userProfileMock);
+
+        when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(true);
+
+        when(groupManagerJiraMock.getGroupNamesForUser(
+                ComponentAccessor.getUserManager().getUserByKey(userKey))).thenReturn(userGroups);
+
+        when(timesheetEntryServiceMock.getEntryByID(entryID)).thenReturn(timesheetEntryMock);
+
+        when(timesheetEntryMock.getTimeSheet()).thenReturn(timesheetMock);
+        when(timesheetEntryMock.getPairProgrammingUserName()).thenReturn("");
+        when(timesheetEntryMock.getTeam()).thenReturn(teamMock);
+        when(timesheetEntryMock.getCategory()).thenReturn(categoryMock);
+
+        when(permissionServiceMock.userCanViewTimesheet(userProfileMock, timesheetMock)).thenReturn(true);
+        when(userManagerLDAPMock.isAdmin(userProfileMock.getUserKey())).thenReturn(true);
+
+        when(timesheetMock.getIsEnabled()).thenReturn(true);
+
+        when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
+        when(teamServiceMock.getTeamByID(anyInt())).thenReturn(teamMock);
+        when(categoryServiceMock.getCategoryByID(anyInt())).thenReturn(categoryMock);
+
+        when(timesheetMock.getUserKey()).thenReturn(userKey);
+        when(userManagerLDAPMock.getUserProfile(userKey)).thenReturn(userProfileMock);
+        when(userProfileMock.getEmail()).thenReturn("test@test.at");
+        when(ComponentAccessor.getMailQueue()).thenReturn(mailQueueMock);
+
+        when(timesheetMock.getEntries()).thenReturn(timesheetEntries);
+        when(timesheetEntryServiceMock.getEntriesBySheet(timesheetMock)).thenReturn(timesheetEntries);
+
+        response = timesheetRestMock.putTimesheetEntry(request, jsonTimesheetEntry, timesheetID, isMTSheet);
         Assert.assertNotNull(response.getEntity());
     }
 

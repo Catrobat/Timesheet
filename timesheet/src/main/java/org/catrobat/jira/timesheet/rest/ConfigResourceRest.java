@@ -173,15 +173,15 @@ public class ConfigResourceRest {
         Response unauthorized = permissionService.checkPermission(request);
 
         if (unauthorized != null) {
-            return unauthorized;
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         } else if (teamName.isEmpty()) {
-            return Response.serverError().entity("Team name must not be empty.").build();
+            return Response.status(Response.Status.FORBIDDEN).entity("Team name must not be empty.").build();
         }
 
         Team[] teams = configService.getConfiguration().getTeams();
         for (Team team : teams) {
             if (team.getTeamName().compareTo(teamName) == 0) {
-                return Response.serverError().entity("Team name already exists.").build();
+                return Response.status(Response.Status.FORBIDDEN).entity("Team already exists.").build();
             }
         }
 
@@ -201,13 +201,13 @@ public class ConfigResourceRest {
         Response unauthorized = permissionService.checkPermission(request);
 
         if (unauthorized != null) {
-            return unauthorized;
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         } else if (teams == null || teams.length != 2) {
             return Response.serverError().build();
         } else if (teams[1].trim().isEmpty()) {
-            return Response.serverError().entity("Team name must not be empty.").build();
+            return Response.status(Response.Status.FORBIDDEN).entity("Team name must not be empty.").build();
         } else if (teams[1].equals(teams[0])) {
-            return Response.serverError().entity("New team name must be different.").build();
+            return Response.status(Response.Status.FORBIDDEN).entity("New team name must be different.").build();
         }
 
         boolean successful = configService.editTeamName(teams[0], teams[1]) != null;
@@ -226,9 +226,9 @@ public class ConfigResourceRest {
         Response unauthorized = permissionService.checkPermission(request);
 
         if (unauthorized != null) {
-            return unauthorized;
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         } else if (teamName.isEmpty()) {
-            return Response.serverError().entity("Team name must not be empty.").build();
+            return Response.status(Response.Status.FORBIDDEN).entity("Team name must not be empty.").build();
         }
 
         boolean successful = configService.removeTeam(teamName) != null;
@@ -247,18 +247,17 @@ public class ConfigResourceRest {
         Response unauthorized = permissionService.checkPermission(request);
 
         if (unauthorized != null) {
-            return unauthorized;
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         } else if (categoryName.isEmpty()) {
-            return Response.serverError().entity("Category name must not be empty.").build();
+            return Response.status(Response.Status.FORBIDDEN).entity("Category name must not be empty.").build();
         }
 
-        boolean successful = categoryService.add(categoryName) != null;
-
-        if (successful) {
-            return Response.noContent().build();
+        try {
+            categoryService.add(categoryName);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity("Category already exists.").build();
         }
-
-        return Response.serverError().build();
+        return Response.ok().build();
     }
 
     @PUT
@@ -268,19 +267,19 @@ public class ConfigResourceRest {
         Response unauthorized = permissionService.checkPermission(request);
 
         if (unauthorized != null) {
-            return unauthorized;
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         } else if (categories == null || categories.length != 2) {
-            return Response.serverError().build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Not enough arguments.").build();
         } else if (categories[1].trim().isEmpty()) {
-            return Response.serverError().entity("Category name must not be empty.").build();
+            return Response.status(Response.Status.FORBIDDEN).entity("Category name must not be empty.").build();
         } else if (categories[1].equals(categories[0])) {
-            return Response.serverError().entity("New category name must be different.").build();
+            return Response.status(Response.Status.FORBIDDEN).entity("New category name must be different.").build();
         }
 
         List<Category> categoryNames = categoryService.all();
         for (Category category : categoryNames) {
             if (category.getName().equals(categories[1]))
-                return Response.serverError().entity("Category name already exists.").build();
+                return Response.status(Response.Status.CONFLICT).entity("Category name already exists.").build();
         }
 
         boolean successful = configService.editCategoryName(categories[0], categories[1]) != null;
@@ -289,7 +288,7 @@ public class ConfigResourceRest {
             return Response.noContent().build();
         }
 
-        return Response.serverError().build();
+        return Response.status(Response.Status.FORBIDDEN).entity("Could not edit Category.").build();
     }
 
     @PUT
@@ -298,7 +297,7 @@ public class ConfigResourceRest {
     public Response removeCategory(final String modifyCategory, @Context HttpServletRequest request) throws ServiceException {
         Response unauthorized = permissionService.checkPermission(request);
         if (unauthorized != null) {
-            return unauthorized;
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         }
 
         boolean successful = categoryService.removeCategory(modifyCategory);
@@ -307,6 +306,6 @@ public class ConfigResourceRest {
             return Response.noContent().build();
         }
 
-        return Response.serverError().build();
+        return Response.status(Response.Status.CONFLICT).entity("Could not remove Category.").build();
     }
 }

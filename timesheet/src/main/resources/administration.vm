@@ -192,7 +192,8 @@
             <p>Download 'Config' as <a href="download/config">CSV</a>.</p>
 
             <h2><font color="red">Import</font></h2>
-            <p>Upload your new 'Config' <a href="upload/config">here</a>.</p>
+            <p>Upload an existing 'TimePunch - Configuration' <a href="upload/config">here</a>.</p>
+            <p>Upload existing 'TimePunch - Timesheets' <a href="upload/timesheets">here</a>.</p>
 
             <h2>Team Configuration</h2>
             <p>Provides: change Team name; assign users and/or categories to a team.</p>

@@ -42,6 +42,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Category getCategoryByName(String name) {
+        Category[] found = ao.find(Category.class, "NAME = ?", name);
+        return (found.length == 1) ? found[0] : null;
+    }
+
+    @Override
     public List<Category> all() {
         return newArrayList(ao.find(Category.class, Query.select().order("NAME ASC")));
     }

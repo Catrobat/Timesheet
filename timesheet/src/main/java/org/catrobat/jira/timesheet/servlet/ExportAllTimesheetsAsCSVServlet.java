@@ -49,8 +49,12 @@ public class ExportAllTimesheetsAsCSVServlet extends HelperServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
+        Date actualDate =  new Date();
         String filename = "attachment; filename=\"" +
-                new Date().toString() + "_TimePunch_ALL_Timesheets.csv\"";
+                actualDate.toString().substring(0,10) +
+                "-" +
+                actualDate.toString().substring(29,34) +
+                "_TimePunch_Timesheets.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);

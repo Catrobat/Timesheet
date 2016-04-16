@@ -100,6 +100,9 @@ public interface TimesheetService {
     @Nullable
     Timesheet getAdministratorTimesheet(String userKey) throws ServiceException;
 
+    @Nullable
+    Timesheet getTimesheetImport(String userKey) throws ServiceException;
+
     /**
      * Returns a timesheet with the corresponding id
      *

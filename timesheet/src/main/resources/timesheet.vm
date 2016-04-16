@@ -33,6 +33,7 @@
 <script type="application/javascript">
     function showTeamDiagram() {
         AJS.tabs.setup();
+        document.getElementById("teamDiagramTag").style.visibility = "visible";
         document.getElementById("teamDataDiagram").style.visibility = "visible";
         document.getElementById("teamLineDiagram").style.visibility = "visible";
         document.getElementById("teamLineDiagramTag").style.visibility = "visible";
@@ -252,7 +253,7 @@
     </div>
     <div class="tabs-pane active-pane" id="tabs-team">
         <form id="team-visualization" class="aui">
-            <div id="visualizationTeamSelect"></div>
+            <h3 id="teamDiagramTag">Team Visualization</h3>
             <div id="teamDataDiagram" style="height: 300px;"></div>
             <h3 id="teamLineDiagramTag">Team Category Visualization</h3>
             <div id="teamLineDiagram" style="height: 400px;"></div>

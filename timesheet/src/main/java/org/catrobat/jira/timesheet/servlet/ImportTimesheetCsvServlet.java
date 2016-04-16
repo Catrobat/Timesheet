@@ -20,34 +20,39 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.helper.CsvConfigImporter;
-import org.catrobat.jira.timesheet.services.CategoryService;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
+import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.helper.CsvTimesheetImporter;
+import org.catrobat.jira.timesheet.services.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 
-public class ImportConfigCsvServlet extends HelperServlet {
+public class ImportTimesheetCsvServlet extends HelperServlet {
 
     private final ConfigService configService;
+    private final TimesheetService timesheetService;
+    private final TimesheetEntryService timesheetEntryService;
     private final CategoryService categoryService;
     private final TeamService teamService;
     private final ActiveObjects activeObjects;
 
-    public ImportConfigCsvServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                  ConfigService configService, CategoryService categoryService,
-                                  TeamService teamService, ActiveObjects activeObjects,
-                                  PermissionService permissionService) {
+    public ImportTimesheetCsvServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
+                                     ConfigService configService, TimesheetService timesheetService,
+                                     TimesheetEntryService timesheetEntryService,
+                                     ActiveObjects activeObjects, PermissionService permissionService, CategoryService categoryService, TeamService teamService) {
         super(loginUriProvider, webSudoManager, permissionService);
         this.configService = configService;
+        this.timesheetService = timesheetService;
+        this.timesheetEntryService = timesheetEntryService;
+        this.activeObjects = activeObjects;
         this.categoryService = categoryService;
         this.teamService = teamService;
-        this.activeObjects = activeObjects;
     }
 
     @Override
@@ -56,8 +61,8 @@ public class ImportConfigCsvServlet extends HelperServlet {
 
         // Dangerous servlet - should be forbidden in production use
         /*
-        if (configService.getConfiguration().getTeams().length != 0) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Configuration - Import is not possible if teams exist");
+        if (!timesheetService.all().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Timesheet - Import is not possible if timesheets exist");
             return;
         }
         */
@@ -67,26 +72,11 @@ public class ImportConfigCsvServlet extends HelperServlet {
                 "<body>" +
                 "<h1>Dangerzone!</h1>" +
                 "Just upload files when you know what you're doing - this upload will manipulate the database!<br />" +
-                "<form action=\"config\" method=\"post\"><br />" +
+                "<form action=\"timesheets\" method=\"post\"><br />" +
                 "<textarea name=\"csv\" rows=\"20\" cols=\"175\" wrap=\"off\">" +
                 "# lines beginning with '#' are comments and will be ignored\n" +
-                "# Approved Users and Groups; add usernames e.g.: MaxMustermann\n" +
-                "# Email From Name; your@email.address;\n" +
-                "# Email From Mail-Address;NaN; \n" +
-                "# Email Out Of Time Subject;NaN; \n" +
-                "# Email Out Of Time Body;NaN; \n" +
-                "# Email Inactive Subject;NaN; \n" +
-                "# Email Inactive Body;NaN; \n" +
-                "# Email Admin Changed Entry Subject;NaN; \n" +
-                "# Email Admin Changed Entry Body;NaN; \n" +
-                "# \n" +
-                "# Assigned Coordinators;e.g.: MaxMustermann; \n" +
-                "# Assigned Users;e.g.: MaxMustermann; \n" +
-                "# Assigned Categories;Theory;Inactive;Programming;Meeting; \n" +
-                "# Team Name;Catroid; \n" +
-                "# \n" +
-                "# you can insert here several teams \n" +
-                "# all of them will be inserted \n" +
+                "# a valid configuration file must exist before importing timesheets\n" +
+                "# ensure that all teams, team members and categories are assigned correctly" +
                 "</textarea><br />\n" +
                 "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing table entries<br /><br />\n" +
                 "<input type=\"submit\" />" +
@@ -102,8 +92,8 @@ public class ImportConfigCsvServlet extends HelperServlet {
 
         // Dangerous servlet - should be forbidden in production use
         /*
-        if (configService.getConfiguration().getTeams().length != 0) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Configuration - Import is not possible if teams exist");
+        if (!timesheetService.all().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Timesheet - Import is not possible if timesheets exist");
             return;
         }
         */
@@ -114,11 +104,13 @@ public class ImportConfigCsvServlet extends HelperServlet {
             dropEntries();
         }
 
-        CsvConfigImporter csvImporter = new CsvConfigImporter(configService, categoryService, teamService);
+        CsvTimesheetImporter csvTimesheetImporter = new CsvTimesheetImporter(timesheetService, timesheetEntryService, categoryService, teamService, activeObjects);
         String errorString = null;
         try {
-            errorString = csvImporter.importCsv(csvString);
+            errorString = csvTimesheetImporter.importCsv(csvString);
         } catch (ServiceException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
@@ -129,13 +121,7 @@ public class ImportConfigCsvServlet extends HelperServlet {
     }
 
     private void dropEntries() {
-        activeObjects.deleteWithSQL(ApprovedGroup.class, "1=?", "1");
-        activeObjects.deleteWithSQL(ApprovedUser.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Category.class, "1=?", "1");
-        activeObjects.deleteWithSQL(CategoryToTeam.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Config.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Group.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Team.class, "1=?", "1");
-        activeObjects.deleteWithSQL(TeamToGroup.class, "1=?", "1");
+        activeObjects.deleteWithSQL(Timesheet.class, "1=?", "1");
+        activeObjects.deleteWithSQL(TimesheetEntry.class, "1=?", "1");
     }
 }

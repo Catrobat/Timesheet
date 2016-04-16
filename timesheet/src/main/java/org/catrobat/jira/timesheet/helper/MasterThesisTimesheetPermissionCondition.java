@@ -23,20 +23,18 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.user.UserManager;
-import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 
-import java.util.Collection;
 import java.util.Map;
 
-public class PermissionCondition extends AbstractPermissionCondition {
+public class MasterThesisTimesheetPermissionCondition extends AbstractPermissionCondition {
 
     private final ConfigService configurationService;
     private final GroupManager groupManager;
     private final UserManager userManager;
 
-    public PermissionCondition(PermissionManager permissionManager, ConfigService configurationService,
-                               UserManager userManager, GroupManager groupManager) {
+    public MasterThesisTimesheetPermissionCondition(PermissionManager permissionManager, ConfigService configurationService,
+                                                    UserManager userManager, GroupManager groupManager) {
         super(permissionManager);
         this.configurationService = configurationService;
         this.groupManager = groupManager;
@@ -55,23 +53,10 @@ public class PermissionCondition extends AbstractPermissionCondition {
     }
 
     public boolean hasPermission(ApplicationUser applicationUser) {
-        if (applicationUser == null || !ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators")) {
+        if (applicationUser == null) {
             return false;
-        }
-
-        Config config = configurationService.getConfiguration();
-        if (config.getApprovedGroups().length == 0 && config.getApprovedUsers().length == 0) {
+        } else if (ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Master-Students")) {
             return true;
-        }
-
-        if (configurationService.isUserApproved(applicationUser.getKey())) {
-            return true;
-        }
-
-        Collection<String> groupNameCollection = groupManager.getGroupNamesForUser(applicationUser);
-        for (String groupName : groupNameCollection) {
-            if (configurationService.isGroupApproved(groupName))
-                return true;
         }
 
         return false;

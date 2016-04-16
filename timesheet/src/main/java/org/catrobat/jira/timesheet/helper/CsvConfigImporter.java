@@ -46,6 +46,7 @@ public class CsvConfigImporter {
         List<String> assignedUsers = new LinkedList<String>();
         List<String> assignedCategories = new LinkedList<String>();
         List<String> addedCategories = new LinkedList<String>();
+        String  supervisors = "";
         //create new Config
         Config config = configService.getConfiguration();
 
@@ -63,7 +64,12 @@ public class CsvConfigImporter {
             //String[] columns = line.split(CsvExporter.DELIMITER, 24);
             String[] columns = line.split(CsvExporter.DELIMITER);
 
-            if (columns[0].equals("Approved Users and Groups") && columns.length > 0) {
+            if (columns[0].equals("Supervisors") && columns.length > 0) {
+                for (int i = 1; i < columns.length; i++) {
+                    supervisors += columns[i] +",";
+                }
+                config.setSupervisedUsers(supervisors.substring(0, supervisors.length()-1));
+            } else if (columns[0].equals("Approved Users and Groups") && columns.length > 0) {
                 for (int i = 1; i < columns.length; i++) {
                     if (!ComponentAccessor.getUserManager().getUserByName(columns[i]).getName().isEmpty()) {
                         configService.addApprovedUser(columns[i],

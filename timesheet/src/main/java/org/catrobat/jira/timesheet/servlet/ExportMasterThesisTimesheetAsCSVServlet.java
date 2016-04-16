@@ -52,8 +52,14 @@ public class ExportMasterThesisTimesheetAsCSVServlet extends HelperServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        String filename = "attachment; filename=\"" + new Date().toString() + "_" +
-                userManager.getRemoteUser(request).getUsername() + "_TimePunch_Master_Thesis_Timesheet.csv\"";
+        Date actualDate =  new Date();
+        String filename = "attachment; filename=\"" +
+                actualDate.toString().substring(0,10) +
+                "-" +
+                actualDate.toString().substring(29,34) +
+                "-" +
+                userManager.getRemoteUser(request).getUsername() +
+                "_TimePunch_MT_Timesheet.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);

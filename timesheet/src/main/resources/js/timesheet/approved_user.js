@@ -26,6 +26,7 @@ function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
         maximumSelectionSize: 1
     });
 
+    /*
     //Team Visualization
     var teamNameList = [];
     for (var i = 0; i < config.teams.length; i++) {
@@ -43,6 +44,7 @@ function initApprovedUserTimesheetSelect(jsonConfig, jsonUser, userList) {
         tokenSeparators: [",", " "],
         maximumSelectionSize: 1
     });
+    */
     if(isAdmin) {
         initAdministratorButton();
     }

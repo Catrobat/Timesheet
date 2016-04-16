@@ -49,6 +49,14 @@ public abstract class CsvExporter {
     private String fetchConfigData(Config config) {
         StringBuilder sb = new StringBuilder();
 
+        //Supervisors
+        sb.append("Supervisors" + DELIMITER);
+        if (!config.getSupervisedUsers().isEmpty())
+            for(String userName : config.getSupervisedUsers().split(","))
+                sb.append(userName).append(NEW_LINE);
+        else
+            sb.append(DEFAULT_VALUE + NEW_LINE);
+
         //Approved Users
         sb.append("Approved Users and Groups" + DELIMITER);
         for (ApprovedUser approvedUser : config.getApprovedUsers()) {
@@ -175,7 +183,8 @@ public abstract class CsvExporter {
                 "Remaining Hours" + DELIMITER +
                 "Penalty Text" + DELIMITER +
                 "ECTS" + DELIMITER +
-                "Lecture" + NEW_LINE);
+                "Lecture" + DELIMITER +
+                "isMTSheet" + NEW_LINE);
 
         sb.append(timesheet.getUserKey()).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHoursPractice())).append(DELIMITER);
@@ -186,16 +195,19 @@ public abstract class CsvExporter {
         sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getTargetHoursCompleted())).append(DELIMITER);
         sb.append(timesheet.getReason()).append(DELIMITER);
         sb.append(Double.toString(timesheet.getEcts())).append(DELIMITER);
-        sb.append(timesheet.getLectures()).append(NEW_LINE);
+        sb.append(timesheet.getLectures()).append(DELIMITER);
+        sb.append(timesheet.getIsMasterThesisTimesheet()).append(NEW_LINE);
 
-        sb.append("Date" + DELIMITER +
+        sb.append("Inactive Date" + DELIMITER +
+                "Date" + DELIMITER +
                 "Begin" + DELIMITER +
                 "End" + DELIMITER +
                 "Duration Minutes" + DELIMITER +
                 "Pause Minutes" + DELIMITER +
                 "Category" + DELIMITER +
                 "Description" + DELIMITER +
-                "Team" + NEW_LINE);
+                "Team" + DELIMITER +
+                "UserKey" + NEW_LINE);
 
         for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
             Integer hours = 0;
@@ -223,14 +235,22 @@ public abstract class CsvExporter {
             }
             Integer remainingPauseMinutes = timesheetEntry.getPauseMinutes() % 60;
             String pauseDuration = Integer.toString(pauseHours) + ":" + Integer.toString(remainingPauseMinutes);
-            sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(0, 10).toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getInactiveEndDate().toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getEndDate().toString())).append(DELIMITER);
+            //works with google doc import
+            /*
+             sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(0, 10).toString())).append(DELIMITER);
             sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(11, 16).toString())).append(DELIMITER);
             sb.append(unescape(timesheetEntry.getEndDate().toString().subSequence(11, 16).toString())).append(DELIMITER);
+             */
             sb.append(unescape(duration)).append(DELIMITER);
             sb.append(unescape(pauseDuration)).append(DELIMITER);
             sb.append(unescape(timesheetEntry.getCategory().getName())).append(DELIMITER);
             sb.append(unescape(timesheetEntry.getDescription().toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(NEW_LINE);
+            sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getTimeSheet().getUserKey())).append(NEW_LINE);
         }
         sb.append(NEW_LINE);
 

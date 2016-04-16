@@ -84,11 +84,7 @@ public final class JsonConfig {
             approvedGroups.add(approvedGroup.getGroupName());
         }
 
-        if(toCopy.getSupervisedUsers() != null) {
-            this.supervisors = toCopy.getSupervisedUsers();
-        } else {
-            supervisors = "Select Supervisors";
-        }
+        this.supervisors = toCopy.getSupervisedUsers();
 
         this.mailFromName = toCopy.getMailFromName();
         this.mailFrom = toCopy.getMailFrom();

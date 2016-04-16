@@ -29,6 +29,9 @@ public interface CategoryService {
     @Nullable
     Category getCategoryByID(int id);
 
+    @Nullable
+    Category getCategoryByName(String name);
+
     List<Category> all();
 
     Category add(String name) throws ServiceException;

@@ -203,6 +203,13 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
+    public Timesheet getTimesheetImport(String userKey)  {
+        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
+
+        return found.length > 0 ? found[0] : null;
+    }
+
+    @Override
     public Timesheet getTimesheetByID(int id) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "ID = ?", id);
 
