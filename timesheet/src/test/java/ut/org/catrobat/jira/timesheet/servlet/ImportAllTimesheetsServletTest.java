@@ -12,39 +12,30 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
-import org.catrobat.jira.timesheet.rest.TimesheetRest;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.servlet.ExportConfigAsCSVServlet;
 import org.catrobat.jira.timesheet.servlet.ImportConfigCsvServlet;
+import org.catrobat.jira.timesheet.servlet.ImportTimesheetCsvServlet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.PrintWriter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
+@RunWith(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
-@PrepareForTest({ComponentAccessor.class, TimesheetRest.class, TimesheetService.class,
-        TimesheetEntryService.class})
-public class ImportConfigAsCSVServletTest {
+public class ImportAllTimesheetsServletTest {
 
-    private ImportConfigCsvServlet importConfigCsvServlet;
+    private ImportTimesheetCsvServlet importTimesheetCsvServlet;
 
     private EntityManager entityManager;
     private ActiveObjects ao;
@@ -58,6 +49,7 @@ public class ImportConfigAsCSVServletTest {
     private Config config;
     private CategoryService categoryService;
     private TeamService teamService;
+    private TimesheetEntryService timesheetEntryService;
     private PrintWriter printWriter;
 
     private HttpServletResponse response;
@@ -89,10 +81,12 @@ public class ImportConfigAsCSVServletTest {
         config = Mockito.mock(Config.class);
         categoryService = Mockito.mock(CategoryService.class);
         teamService = Mockito.mock(TeamService.class);
+        timesheetEntryService = Mockito.mock(TimesheetEntryService.class);
         printWriter = Mockito.mock(PrintWriter.class);
 
-        importConfigCsvServlet = new ImportConfigCsvServlet(loginUriProvider, webSudoManager,
-                configService, categoryService, teamService, ao, permissionService);
+        importTimesheetCsvServlet = new ImportTimesheetCsvServlet(loginUriProvider, webSudoManager,
+                configService, timesheetService, timesheetEntryService, ao, permissionService,
+                categoryService, teamService);
 
         Mockito.when(userProfile.getUsername()).thenReturn("test");
         Mockito.when(userProfile.getUserKey()).thenReturn(test_key);
@@ -108,7 +102,7 @@ public class ImportConfigAsCSVServletTest {
 
     @Test
     public void testDoGet() throws Exception {
-        importConfigCsvServlet.doGet(request, response);
+        importTimesheetCsvServlet.doGet(request, response);
     }
 
     @Test
@@ -121,6 +115,6 @@ public class ImportConfigAsCSVServletTest {
         Mockito.when(request.getParameter("csv")).thenReturn(csvString);
         Mockito.when(request.getParameter("drop")).thenReturn(null);
 
-        importConfigCsvServlet.doPost(request, response);
+        importTimesheetCsvServlet.doPost(request, response);
     }
 }

@@ -3,7 +3,6 @@ package ut.org.catrobat.jira.timesheet.rest;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.mail.Email;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserUtil;

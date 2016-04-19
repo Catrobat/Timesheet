@@ -64,20 +64,6 @@ public class CsvTimesheetImporter {
 
             String[] columns = line.split(CsvExporter.DELIMITER);
 
-            /*
-            String userKey = "";
-            int practicalHours = 0;
-            int theoryHours = 0;
-            int totalHours = 0;
-            int completedHours = 0;
-            int removedHours = 0;
-            String lectures = "";
-            String adminReason = "";
-            Double ects = 0.0;
-            String lastEntryDate = "Not Available";
-            Boolean isActive, isEnabled = true;
-            Boolean isMTSheet = false;
-            */
             if ((columns[0].equals("Username") ||
                     columns[0].equals("Date")) &&
                     columns.length > 0) {

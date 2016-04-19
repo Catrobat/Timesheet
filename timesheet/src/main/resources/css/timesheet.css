@@ -112,3 +112,11 @@ code {
     height: 80px;
     overflow-x: scroll;
 }
+
+#approvedUserTimesheetSelect {
+    margin-top: 25px;
+}
+
+#coordinatorTimesheetSelect {
+    margin-top: 25px;
+}

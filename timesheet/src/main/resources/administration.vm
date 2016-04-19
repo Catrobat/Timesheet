@@ -158,7 +158,7 @@
                 </div>
             </fieldset>
 
-            <h3>Administrator Changed Timesheet Entry</h3>
+            <h3>Administrator Applied Timesheet Modifications</h3>
             <fieldset>
                 <div class="field-group">
                     <label for="mail-subject-entry-change">Subject</label>

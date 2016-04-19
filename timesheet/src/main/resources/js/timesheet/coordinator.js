@@ -13,7 +13,7 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
     AJS.$("#coordinatorTimesheetSelect").append("</field-group>");
 
     AJS.$("#coordinatorTimesheetSelect").append("<field-group>");
-    AJS.$("#coordinatorTimesheetSelect").append("<h3>Your Teams: </h3>");
+    AJS.$("#coordinatorTimesheetSelect").append("<h3>Coordinator of Team: </h3>");
     for (var i = 0; i < config.teams.length; i++) {
         var team = config.teams[i];
         //check if user is coordinator of a team
