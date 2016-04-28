@@ -31,10 +31,11 @@
         <resource type="download" name="visualization.js" location="/js/visualization.js"/>
 
         <!-- additional timesheet JS files -->
-        <resource type="download" name="approved_user.js" location="/js/timesheet/approved_user.js"/>
+        <resource type="download" name="supervisor.js" location="/js/timesheet/supervisor.js"/>
         <resource type="download" name="coordinator.js" location="/js/timesheet/coordinator.js"/>
         <resource type="download" name="functions.js" location="/js/timesheet/functions.js"/>
-        <resource type="download" name="google_import.js" location="/js/timesheet/google_import.js"/>
+        <resource type="download" name="import.js" location="/js/timesheet/import.js"/>
+        <resource type="download" name="table.js" location="/js/timesheet/table.js"/>
 
         <!-- additional visualization JS files -->
         <resource type="download" name="team_diagram.js" location="/js/visualization/team_diagram.js"/>
@@ -228,13 +229,13 @@
     </web-item>
 
     <!-- hidden administration links -->
-    <web-item key="timepunch_config" name="Link to Administration Servlet" section="system.top.navigation.bar" weight="30">
+    <web-item key="timepunch_config" name="Link to Administration Servlet" section="system.user.options/personal" weight="1">
         <label>TimePunch - Configuration</label>
         <link linkId="timepunch_administration_link">/plugins/servlet/timesheet/administration</link>
         <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
     </web-item>
 
-    <web-item key="timepunch_user_information" name="Link to User Information Servlet" section="system.top.navigation.bar" weight="35">
+    <web-item key="timepunch_user_information" name="Link to User Information Servlet" section="system.user.options/personal" weight="2">
         <label>TimePunch  - User Information</label>
         <link linkId="timepunch_administration_link">/plugins/servlet/timesheet/user/information</link>
         <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>

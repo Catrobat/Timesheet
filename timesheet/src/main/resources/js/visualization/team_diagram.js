@@ -56,7 +56,6 @@ function assignTeamData(entries) {
             totalMinutes = 0;
         }
     }
-
     assignDataPoints(data);
 }
 

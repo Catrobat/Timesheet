@@ -53,7 +53,7 @@ public class ExportAllTimesheetsAsCSVServlet extends HelperServlet {
         String filename = "attachment; filename=\"" +
                 actualDate.toString().substring(0,10) +
                 "-" +
-                actualDate.toString().substring(29,34) +
+                actualDate.toString().substring(25,28) +
                 "_TimePunch_Timesheets.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");

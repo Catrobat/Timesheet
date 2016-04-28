@@ -3,6 +3,38 @@
 var selectedUser;
 var isMTSheetSelected;
 
+function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply) {
+    var timesheetData = timesheetReply[0];
+    timesheetData.entries = entriesReply[0];
+    timesheetData.categories = [];
+    timesheetData.teams = [];
+    timesheetData['users'] = [];
+
+    //fill user names
+    for (var i = 0; i < usersReply[0].length; i++) {
+        if (usersReply[0][i]['active'])
+            timesheetData['users'].push(usersReply[0][i]['userName']);
+    }
+
+    categoriesReply[0].map(function (category) {
+        timesheetData.categories[category.categoryID] = {
+            categoryName: category.categoryName
+        };
+    });
+
+    teamsReply[0].map(function (team) {
+        timesheetData.teams[team.teamID] = {
+            teamName: team.teamName,
+            teamCategories: team.teamCategories
+        };
+    });
+
+    initTimesheetInformationValues(timesheetData);
+    updateTimesheetInformationValues(timesheetData);
+
+    return timesheetData;
+}
+
 function isSupervisedUser(userName, config) {
     var supervisedUsers = config.supervisors.split(',');
     console.log(supervisedUsers);

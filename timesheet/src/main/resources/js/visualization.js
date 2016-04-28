@@ -1,7 +1,5 @@
 "use strict";
 
-//var baseUrl, visualizationTable, timesheetForm, restBaseUrl;
-
 function fetchVisData() {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',

@@ -83,6 +83,5 @@ function assignTeamVisData(timesheetData) {
             }
         }
     }
-    
     categoryDiagram(sortedDataArray, categories.length, true);
 }
