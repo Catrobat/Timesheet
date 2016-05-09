@@ -1,3 +1,5 @@
+"use strict";
+
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
 

@@ -201,11 +201,10 @@
                             <li>Paste <code>HH":"MM</code> and confirm</li>
                         </ol>
                     </li>
-                    <li>Select the rows you want to import, but ensure that the <code>Task Description</code> is within
-                        160 characters.
+                    <li>Select the rows you want to import, but ensure your <code>Task Description</code> does not
+                        exceed 160 characters.
                     </li>
                     <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
-                    <li><strong>Attention - </strong> ensure that your import entries do not have <code>""</code>.</li>
                     <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
                     <li>Paste content in the text box below</li>
                 </ol>

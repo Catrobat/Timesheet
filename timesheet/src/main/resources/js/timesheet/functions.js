@@ -37,7 +37,6 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
 
 function isSupervisedUser(userName, config) {
     var supervisedUsers = config.supervisors.split(',');
-    console.log(supervisedUsers);
     for (var i = 0; i < supervisedUsers.length; i++) {
         if (supervisedUsers[i].localeCompare(userName) == 0) {
             return true;

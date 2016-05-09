@@ -37,7 +37,7 @@
             <a href="#tabs-categories"><strong>Add/Remove Category</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-scheduling"><strong>Backgroud Jobs</strong></a>
+            <a href="#tabs-scheduling"><strong>Background Jobs</strong></a>
         </li>
     </ul>
     <div class="tabs-pane active-pane" id="tabs-general">
@@ -196,15 +196,13 @@
             <p>Upload existing 'TimePunch - Timesheets' <a href="upload/timesheets">here</a>.</p>
 
             <h2>Team Configuration</h2>
-            <p>Provides: change Team name; assign users and/or categories to a team.</p>
-            <p><font color="red">Important Note: always 'save' immediately after you changed something.</font></p>
+            <p><font color="red">Important: Do not forget to 'save' your changes.</font></p>
             <p></p>
 
             <div id="teams"></div>
 
             <h2>Category Management</h2>
-            <p>Provides: change Category name.</p>
-            <p><font color="red">Important Note: please 'save' team modifications before renaming a 'Category'.</font>
+            <p><font color="red">Important Note: Do not forget to 'save' your changes.</font>
             </p>
             <p></p>
 
