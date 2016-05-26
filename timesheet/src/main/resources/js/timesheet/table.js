@@ -9,7 +9,7 @@ function populateTable(timesheetDataReply) {
             AJS.messages.generic({
                 title: 'Timesheet Information.',
                 body: '<p> Congratulations you sucessfully created your own ' +
-                'Timesheet. TimePunch provides tracking your time ' +
+                'Timesheet. The Timesheet add-on provides tracking your time ' +
                 'data in a comfortable way and offers several visualizations' +
                 'for your data. An Import-function for existing timesheet entries ' +
                 'from CSV / Google Doc Timesheets is provided in addition. ' +

@@ -65,7 +65,7 @@
                 </div>
             </fieldset>
 
-            <h2>TimePunch Configuration Access</h2>
+            <h2>Timesheet Configuration Access</h2>
             <fieldset>
                 <div class="field-group">
                     <label for="plugin-administration">Allowed Groups/Users</label>
@@ -192,8 +192,8 @@
             <p>Download 'Config' as <a href="download/config">CSV</a>.</p>
 
             <h2><font color="red">Import</font></h2>
-            <p>Upload an existing 'TimePunch - Configuration' <a href="upload/config">here</a>.</p>
-            <p>Upload existing 'TimePunch - Timesheets' <a href="upload/timesheets">here</a>.</p>
+            <p>Upload an existing 'Timesheet - Configuration' <a href="upload/config">here</a>.</p>
+            <p>Upload existing 'Timesheets' <a href="upload/timesheets">here</a>.</p>
 
             <h2>Team Configuration</h2>
             <p><font color="red">Important: Do not forget to 'save' your changes.</font></p>

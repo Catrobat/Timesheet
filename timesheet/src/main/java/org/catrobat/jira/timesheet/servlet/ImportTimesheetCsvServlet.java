@@ -60,12 +60,10 @@ public class ImportTimesheetCsvServlet extends HelperServlet {
         super.doGet(request, response);
 
         // Dangerous servlet - should be forbidden in production use
-        /*
         if (!timesheetService.all().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Timesheet - Import is not possible if timesheets exist");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Importing Timesheets is not possible if timesheets exist");
             return;
         }
-        */
 
         PrintWriter writer = response.getWriter();
         writer.print("<html>" +
@@ -91,12 +89,10 @@ public class ImportTimesheetCsvServlet extends HelperServlet {
         super.doPost(request, response);
 
         // Dangerous servlet - should be forbidden in production use
-        /*
         if (!timesheetService.all().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Timesheet - Import is not possible if timesheets exist");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Importing Timesheets is not possible if timesheets exist");
             return;
         }
-        */
 
         String csvString = request.getParameter("csv");
 

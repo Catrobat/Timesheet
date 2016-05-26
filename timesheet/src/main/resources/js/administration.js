@@ -101,7 +101,7 @@ AJS.toInit(function () {
                     AJS.$("#teams").append("</fieldset>");
                 }
 
-                //TimePunch - plugin administrator picker
+                //Timesheet - plugin administrator picker
                 AJS.$("#plugin-administration").auiSelect2({
                     placeholder: "Search for users and groups",
                     minimumInputLength: 0,
@@ -176,25 +176,25 @@ AJS.toInit(function () {
                     AJS.$("#categories").append("</fieldset>");
                 }
 
-                //TimePunch - supervisor picker
+                //Timesheet - supervisor picker
                 AJS.$("#plugin-permission").auiSelect2({
                     placeholder: "Select supervisors",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
-                //TimePunch - team coordinator picker
+                //Timesheet - team coordinator picker
                 AJS.$(".coordinator").auiSelect2({
                     placeholder: "Select coordinators",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
-                //TimePunch - team user picker
+                //Timesheet - team user picker
                 AJS.$(".user").auiSelect2({
                     placeholder: "Select users",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
-                //TimePunch - team category picker
+                //Timesheet - team category picker
                 AJS.$(".category").auiSelect2({
                     placeholder: "Select categories",
                     tags: categoryList.sort(),

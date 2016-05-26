@@ -59,7 +59,7 @@ public class ExportMasterThesisTimesheetAsCSVServlet extends HelperServlet {
                 actualDate.toString().substring(25,28) +
                 "-" +
                 userManager.getRemoteUser(request).getUsername() +
-                "_TimePunch_MT_Timesheet.csv\"";
+                "_Timesheet_MT_Timesheet.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);

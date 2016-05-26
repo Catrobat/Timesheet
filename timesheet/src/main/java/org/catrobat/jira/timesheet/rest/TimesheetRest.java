@@ -843,7 +843,7 @@ public class TimesheetRest {
         Config config = configService.getConfiguration();
 
         String mailSubject = config.getMailSubjectTime() != null && config.getMailSubjectTime().length() != 0
-                ? config.getMailSubjectTime() : "[TimePunch - Timesheet Out Of Time Notification]";
+                ? config.getMailSubjectTime() : "[Timesheet - Timesheet Out Of Time Notification]";
         String mailBody = config.getMailBodyTime() != null && config.getMailBodyTime().length() != 0
                 ? config.getMailBodyTime() : "Hi " + user.getFullName() + ",\n" +
                 "you have only" + sheet.getTargetHoursTheory() + " hours left! \n" +
@@ -862,7 +862,7 @@ public class TimesheetRest {
         Config config = configService.getConfiguration();
 
         String mailSubject = config.getMailSubjectInactive() != null && config.getMailSubjectInactive().length() != 0
-                ? config.getMailSubjectInactive() : "[TimePunch - Timesheet Inactive Notification]";
+                ? config.getMailSubjectInactive() : "[Timesheet - Timesheet Inactive Notification]";
         String mailBody = config.getMailBodyInactive() != null && config.getMailBodyInactive().length() != 0
                 ? config.getMailBodyInactive() : "Hi " + user.getFullName() + ",\n" +
                 "we could not see any activity in your timesheet since the last two weeks.\n" +
@@ -896,11 +896,11 @@ public class TimesheetRest {
 
         String mailSubject = config.getMailSubjectEntry() != null &&
                 config.getMailSubjectEntry().length() != 0
-                ? config.getMailSubjectEntry() : "[TimePunch - Timesheet Entry Changed Notification]";
+                ? config.getMailSubjectEntry() : "[Timesheet - Timesheet Entry Changed Notification]";
 
         String mailBody = config.getMailBodyEntry() != null &&
                 config.getMailBodyEntry().length() != 0
-                ? config.getMailBodyEntry() : "'TimePunch - Timesheet' Entry Changed Information \n\n" +
+                ? config.getMailBodyEntry() : "'Timesheet - Timesheet' Entry Changed Information \n\n" +
                 "Your Timesheet-Entry: \n" +
                 oldEntryData +
                 "\n was modyfied by an Administrator to \n" +
@@ -918,9 +918,9 @@ public class TimesheetRest {
     }
 
     private void buildEmailAdministratorDeletedEntry(String emailToAdministrator, String emailToUser, TimesheetEntry entry) throws ServiceException {
-        String mailSubject = "[TimePunch - Timesheet Entry Deleted Notification]";
+        String mailSubject = "[Timesheet - Timesheet Entry Deleted Notification]";
 
-        String mailBody = "'TimePunch - Timesheet' Entry Deleted Information \n\n" +
+        String mailBody = "'Timesheet - Timesheet' Entry Deleted Information \n\n" +
                 "Your Timesheet-Entry: \n" +
                 entry.getBeginDate() +
                 entry.getEndDate() +

@@ -48,7 +48,7 @@ public class ExportConfigAsCSVServlet extends HelperServlet {
                actualDate.toString().substring(0,10) +
                 "-" +
                 actualDate.toString().substring(25,28) +
-                "_TimePunch_Config.csv\"";
+                "_Timesheet_Config.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);

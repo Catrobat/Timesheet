@@ -59,7 +59,7 @@ public class ExportTimesheetAsCSVServlet extends HelperServlet {
                 actualDate.toString().substring(25,28) +
                 "-" +
                 userManager.getRemoteUser(request).getUsername() +
-                "_TimePunch_Timesheet.csv\"";
+                "_Timesheet_Timesheet.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);
