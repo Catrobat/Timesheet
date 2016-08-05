@@ -27,8 +27,14 @@
 <div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
 <div class="aui-tabs horizontal-tabs">
     <ul class="tabs-menu">
-        <li class="menu-item active-tab">
+        <li class="menu-item">
             <a href="#tabs-general"><strong>General Configuration</strong></a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-team-configuration"><strong>Team Configuration</strong></a>
+        </li>
+        <li class="menu-item">
+        <a href="#tabs-category-configuration"><strong>Category Configuration</strong></a>
         </li>
         <li class="menu-item">
             <a href="#tabs-teams"><strong>Add/Remove Team</strong></a>
@@ -195,17 +201,33 @@
             <p>Upload an existing 'Timesheet - Configuration' <a href="upload/config">here</a>.</p>
             <p>Upload existing 'Timesheets' <a href="upload/timesheets">here</a>.</p>
 
-            <h2>Team Configuration</h2>
-            <p><font color="red">Important: Do not forget to 'save' your changes.</font></p>
-            <p></p>
+            <!-- moved the team & category configuration to other tabs -->
 
+            <div class="field-group">
+                <input type="submit" value="Save" class="aui-button aui-button-primary">
+            </div>
+        </form>
+    </div>
+    <div class="tabs-pane" id="tabs-team-configuration">
+        <p></p>
+        <h2>Team Configuration</h2>
+        <p>Teams can be modified within this tab.</p>
+        <p><font color="red">Important: Do not forget to 'save' your changes.</font></p>
+        <p></p>
+        <form id="team-general" class="aui">
             <div id="teams"></div>
 
-            <h2>Category Management</h2>
-            <p><font color="red">Important Note: Do not forget to 'save' your changes.</font>
-            </p>
-            <p></p>
-
+            <div class="field-group">
+                <input type="submit" value="Save" class="aui-button aui-button-primary">
+            </div>
+        </form>
+    </div>
+    <div class="tabs-pane" id="tabs-category-configuration">
+        <p></p>
+        <h2>Category Management</h2>
+        <p>Categories can be renamed within this tab.</p>
+        <p><font color="red">Important Note: Do not forget to 'save' your changes.</font>
+        <form id="category-general" class="aui">
             <div id="categories"></div>
 
             <div class="field-group">

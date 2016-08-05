@@ -50,13 +50,16 @@ AJS.toInit(function () {
 
     var config;
     var timesheet = [];
-    var users = []
+    var users = [];
     getConfigAndCallback(baseUrl, function (ajaxConfig) {
         config = ajaxConfig;
     });
 
     function populateTable(allUsers, allTimesheets) {
-        users = allUsers[0].sort();
+        users = allUsers[0].sort(function(a, b){
+            return a['userName'].localeCompare(b['userName']);
+        });
+
         timesheet = allTimesheets[0];
 
         AJS.$(".loadingDiv").show();

@@ -7,10 +7,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.catrobat.jira</groupId>
     <artifactId>timesheet</artifactId>
-    <version>1.0.100</version>
+    <version>1.0.400</version>
 
     <organization>
-        <name>Example Company</name>
+        <name>Catrobat</name>
         <url>https://github/Catrobat/TimesheetPlugin</url>
     </organization>
 

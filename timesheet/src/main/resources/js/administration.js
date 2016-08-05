@@ -304,6 +304,8 @@ AJS.toInit(function () {
                     title: "Success!",
                     body: "'Team' added successfully."
                 });
+                //empty the team name text field
+                AJS.$("#team-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
@@ -329,6 +331,8 @@ AJS.toInit(function () {
                     title: "Success!",
                     body: "'Category' added successfully."
                 });
+                //empty the category name text field
+                AJS.$("#category-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
@@ -487,6 +491,8 @@ AJS.toInit(function () {
                     title: "Success!",
                     body: "'Team' deleted successfully."
                 });
+                //empty the team name text field
+                AJS.$("#team-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
             error: function () {
@@ -512,6 +518,8 @@ AJS.toInit(function () {
                     title: "Success!",
                     body: "'Category' deleted successfully."
                 });
+                //empty the team name text field
+                AJS.$("#category-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
             error: function () {
@@ -527,6 +535,32 @@ AJS.toInit(function () {
     fetchData();
 
     AJS.$("#general").submit(function (e) {
+        e.preventDefault();
+        if (AJS.$(document.activeElement).val() === 'Save') {
+            updateConfig();
+            scrollToAnchor('top');
+        } else if ((AJS.$(document.activeElement).val()[0] === "C") &&
+            (AJS.$(document.activeElement).val()[1] === "-")) {
+            editCategory(AJS.$(document.activeElement).val());
+        } else {
+            editTeam(AJS.$(document.activeElement).val());
+        }
+    });
+
+    AJS.$("#team-general").submit(function (e) {
+        e.preventDefault();
+        if (AJS.$(document.activeElement).val() === 'Save') {
+            updateConfig();
+            scrollToAnchor('top');
+        } else if ((AJS.$(document.activeElement).val()[0] === "C") &&
+            (AJS.$(document.activeElement).val()[1] === "-")) {
+            editCategory(AJS.$(document.activeElement).val());
+        } else {
+            editTeam(AJS.$(document.activeElement).val());
+        }
+    });
+
+    AJS.$("#category-general").submit(function (e) {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Save') {
             updateConfig();

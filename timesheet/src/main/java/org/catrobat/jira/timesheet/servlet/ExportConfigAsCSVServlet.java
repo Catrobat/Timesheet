@@ -47,7 +47,7 @@ public class ExportConfigAsCSVServlet extends HelperServlet {
         String filename = "attachment; filename=\"" +
                actualDate.toString().substring(0,10) +
                 "-" +
-                actualDate.toString().substring(25,28) +
+                actualDate.toString().substring(25, 29) +
                 "_Timesheet_Config.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");

@@ -33,10 +33,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Path("/user")
 public class UserRest extends PermissionServiceImpl {
@@ -68,9 +65,10 @@ public class UserRest extends PermissionServiceImpl {
         HashSet<User> systemAdmins = new HashSet<User>(userUtil.getJiraSystemAdministrators());
         for (User user : allUsers) {
 
-            if (systemAdmins.contains(user)) {
-                continue;
-            }
+            //otherwise admins will not be shown in user-selection fields
+            //if (systemAdmins.contains(user)) {
+            //    continue;
+            //}
 
             JsonUser jsonUser = new JsonUser();
             jsonUser.setEmail(user.getEmailAddress());

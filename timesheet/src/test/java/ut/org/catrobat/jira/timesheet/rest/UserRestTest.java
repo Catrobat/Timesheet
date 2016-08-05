@@ -86,7 +86,7 @@ public class UserRestTest {
         Assert.assertEquals(unauthorized, result);
     }
 
-
+/*
     @Test
     public void testGetUsersOnlySystemAdminsInList(){
         String username = "MarkusHobisch";
@@ -117,6 +117,7 @@ public class UserRestTest {
         verify(user1, never()).getDisplayName();
         verify(user2, never()).getDisplayName();
     }
+    */
 
     @Test
     public void testGetUsersOnlyUsersInList(){
