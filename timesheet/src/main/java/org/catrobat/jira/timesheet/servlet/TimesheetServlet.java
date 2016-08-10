@@ -22,6 +22,8 @@ import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
@@ -40,6 +42,8 @@ public class TimesheetServlet extends HttpServlet {
     private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
     private final PermissionService permissionService;
+    private final Logger logger;
+
 
     public TimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
                             final TimesheetService sheetService, final PermissionService permissionService) {
@@ -47,10 +51,14 @@ public class TimesheetServlet extends HttpServlet {
         this.templateRenderer = templateRenderer;
         this.sheetService = sheetService;
         this.permissionService = permissionService;
+
+        Logger.getRootLogger().setLevel(Level.INFO);
+        logger = Logger.getLogger(TimesheetServlet.class);
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         try {
             if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
                     !permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
@@ -65,8 +73,10 @@ public class TimesheetServlet extends HttpServlet {
             if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
                 paramMap.put("isadmin", true);
                 sheet = sheetService.getAdministratorTimesheet(userKey);
+                logger.info("You are Admin!");
             } else {
                 paramMap.put("isadmin", false);
+                logger.info("You are not a Admin!");
                 if(sheetService.userHasTimesheet(userKey, false)) {
                     sheet = sheetService.getTimesheetByUser(userKey, false);
                 } else {
