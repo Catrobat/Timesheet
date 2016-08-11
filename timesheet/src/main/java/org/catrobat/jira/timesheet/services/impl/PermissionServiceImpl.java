@@ -47,8 +47,14 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException {
-        UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUser(request).getUsername());
-        
+        UserProfile remoteUser = userManager.getRemoteUser(request);
+
+        if (remoteUser == null) {
+            throw new ServiceException("RemoteUser does not exist.");
+        }
+
+        UserProfile userProfile = userManager.getUserProfile(remoteUser.getUsername());
+
         if (userProfile == null) {
             throw new ServiceException("User does not exist.");
         }
@@ -56,22 +62,27 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName) {
-        String username = userManager.getRemoteUser(request).getUsername();
+        UserProfile remoteUser = userManager.getRemoteUser(request);
+
+        if (remoteUser == null) {
+            System.out.println("RemoteUser is null!");
+            return false;
+        }
+
+        String username = remoteUser.getUsername();
         UserProfile userProfile = userManager.getUserProfile(username);
 
         if (userProfile == null) {
+            System.out.println("UserProfile is null!");
             return false;
         }
 
         String userKey = ComponentAccessor.
-                getUserKeyService().getKeyForUsername(userProfile.getUsername());
+                getUserKeyService().getKeyForUsername(username);
         Collection<String> userGroups = ComponentAccessor.getGroupManager().getGroupNamesForUser(
                 ComponentAccessor.getUserManager().getUserByKey(userKey));
-        if (userGroups.contains(groupName)) {
-            return true;
-        }
 
-        return false;
+        return userGroups.contains(groupName);
     }
 
     public UserProfile checkIfUsernameExists(String userName) throws ServiceException {
@@ -86,11 +97,7 @@ public class PermissionServiceImpl implements PermissionService {
     public boolean checkIfUserExists(String userName) {
         UserProfile userProfile = userManager.getUserProfile(userName);
 
-        if (userProfile == null) {
-            return false;
-        }
-
-        return true;
+        return userProfile != null;
     }
 
     public Response checkPermission(HttpServletRequest request) {
@@ -225,5 +232,22 @@ public class PermissionServiceImpl implements PermissionService {
         DateTime datetime = new DateTime(date);
 
         return (datetime.compareTo(fiveYearsAgo) < 0);
+    }
+
+    @Override
+    public Collection<com.atlassian.crowd.embedded.api.Group> printALLUserGroups() {
+        return ComponentAccessor.getGroupManager().getAllGroups();
+    }
+
+    @Override
+    public Collection<String> getGroupNames(HttpServletRequest request) {
+        UserProfile remoteUser = userManager.getRemoteUser(request);
+        if (remoteUser == null) {
+            System.out.println("RemoteUser is null!");
+            return null;
+        }
+
+        String username = remoteUser.getUsername();
+        return ComponentAccessor.getGroupManager().getGroupNamesForUser(username);
     }
 }

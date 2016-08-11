@@ -52,12 +52,16 @@ public class TimesheetServlet extends HttpServlet {
         this.sheetService = sheetService;
         this.permissionService = permissionService;
 
-        Logger.getRootLogger().setLevel(Level.INFO);
         logger = Logger.getLogger(TimesheetServlet.class);
+        logger.setLevel(Level.INFO);
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (sheetService == null) {
+            logger.warn("sheetService is null!");
+            return;
+        }
 
         try {
             if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
@@ -70,14 +74,15 @@ public class TimesheetServlet extends HttpServlet {
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet sheet;
-            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+            //info: testuser added
+            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) { //                  permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")
+                logger.info("You are Admin!");
                 paramMap.put("isadmin", true);
                 sheet = sheetService.getAdministratorTimesheet(userKey);
-                logger.info("You are Admin!");
             } else {
-                paramMap.put("isadmin", false);
                 logger.info("You are not a Admin!");
-                if(sheetService.userHasTimesheet(userKey, false)) {
+                paramMap.put("isadmin", false);
+                if (sheetService.userHasTimesheet(userKey, false)) {
                     sheet = sheetService.getTimesheetByUser(userKey, false);
                 } else {
                     sheet = null;

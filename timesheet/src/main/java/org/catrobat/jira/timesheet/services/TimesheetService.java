@@ -19,6 +19,7 @@ package org.catrobat.jira.timesheet.services;
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.service.ServiceException;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,6 +57,7 @@ public interface TimesheetService {
      * @param ects
      * @return the new Timesheet
      */
+    @NotNull
     @Nonnull
     Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
@@ -67,6 +69,7 @@ public interface TimesheetService {
      *
      * @return
      */
+    @NotNull
     @Nonnull
     List<Timesheet> all();
 

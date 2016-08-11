@@ -9,7 +9,6 @@ import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import org.junit.Assert;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -20,18 +19,18 @@ import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -218,7 +217,7 @@ public class PermissionServiceImplTest {
         Assert.assertFalse(responseProfile == admin);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = ServiceException.class)
     public void testIfUserExistsExceptionHandling() throws ServiceException {
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(null);
         Assert.assertEquals(permissionService.checkIfUserExists(request), ServiceException.class);
