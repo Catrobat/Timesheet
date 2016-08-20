@@ -43,8 +43,10 @@
 <header id="inactive-header" role="banner"></header>
 
 <a name="top"></a>
+
 <div id="aui-message-bar"></div>
-<div class="aui-tabs horizontal-tabs">
+
+<div class="aui-tabs horizontal-tabs" id="table-header">
     <ul class="tabs-menu">
         <li class="menu-item active-tab">
             <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
@@ -222,9 +224,15 @@
                 </footer>
         </section>
 
+
         <div id="timesheet-table" class="aui aui-table-interactive aui-table-sortable table">
-            <div class="tr"><span class="td"><span class="aui-icon aui-icon-wait">Loading...</span></span></div>
+            <div class="tr">
+                <span class="td">
+                    <span class="aui-icon aui-icon-wait">Loading...</span>
+                </span>
+            </div>
         </div>
+
     </div>
 
     <div class="tabs-pane active-pane" id="tabs-overview">
@@ -352,6 +360,5 @@
         });
     }
 </script>
-
 </body>
 </html>

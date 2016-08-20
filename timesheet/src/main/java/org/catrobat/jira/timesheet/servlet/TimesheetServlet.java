@@ -73,28 +73,29 @@ public class TimesheetServlet extends HttpServlet {
             String userKey = ComponentAccessor.
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
             Map<String, Object> paramMap = Maps.newHashMap();
-            Timesheet sheet;
+            Timesheet timesheet;
             //info: testuser added
             if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) { //                  permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")
                 logger.info("You are Admin!");
                 paramMap.put("isadmin", true);
-                sheet = sheetService.getAdministratorTimesheet(userKey);
+                timesheet = sheetService.getAdministratorTimesheet(userKey);
             } else {
                 logger.info("You are not a Admin!");
                 paramMap.put("isadmin", false);
                 if (sheetService.userHasTimesheet(userKey, false)) {
-                    sheet = sheetService.getTimesheetByUser(userKey, false);
+                    timesheet = sheetService.getTimesheetByUser(userKey, false);
                 } else {
-                    sheet = null;
+                    timesheet = null;
                 }
             }
 
-            if (sheet == null) {
-                sheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
+            if (timesheet == null) {
+                timesheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
                         "Hint: Do not make other people angry.", 5, "Not Available", true, true, false);
+                logger.info("New timesheet is added to user: " + userProfile.getUsername());
             }
 
-            paramMap.put("timesheetid", sheet.getID());
+            paramMap.put("timesheetid", timesheet.getID());
             paramMap.put("ismasterthesistimesheet", false);
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());

@@ -167,7 +167,10 @@ public class TimesheetServiceImpl implements TimesheetService {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         if (found.length > 2) {
-            throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+            if (found != null) {
+                ao.delete(found);
+            }
+            throw new ServiceException("Found more than two Timesheets with the same UserKey. All timesheets will be deleted.");
         }
 
         if (isMasterThesisTimesheet) {
@@ -176,9 +179,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                     return true;
                 }
             }
-        }
-
-        if (!isMasterThesisTimesheet) {
+        } else {
             for (int i = 0; i < found.length; i++) {
                 if (!found[i].getIsMasterThesisTimesheet()) {
                     return true;

@@ -4,10 +4,13 @@ function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
 
     if (!isAdmin) {
+        //activate html banner
+        AJS.$("#inactive-header").show();
         //Information at the first use
         if (timesheetData.entries.length == 0)
             AJS.messages.generic({
                 title: 'Timesheet Information.',
+                closeable : true,
                 body: '<p> Congratulations you sucessfully created your own ' +
                 'Timesheet. The Timesheet add-on provides tracking your time ' +
                 'data in a comfortable way and offers several visualizations' +
@@ -20,21 +23,23 @@ function populateTable(timesheetDataReply) {
             });
 
         //Banner Informations for the User
-        if (!timesheetData.isActive) {
+        else if (!timesheetData.isActive) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
+                closeable : true,
                 body: '<p> Your Timesheet is marked as "inactive", because its last entry ' +
-                'date is older than two weeks, or your entry table is empty.</p>'
+                'date is older than two weeks.</p>'
             });
 
             require(['aui/banner'], function (banner) {
                 banner({
-                    body: 'Your Timesheet is marked as <strong>inactive</strong>.'
+                    body: 'Your Timesheet is marked as <strong>inactive</strong>.',
                 });
             });
         } else if (!timesheetData.isEnabled) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
+                closeable : true,
                 body: '<p> Your Timesheet is marked as "disabled".</p>' +
                 '<p> You are not able to apply any changes until it is "disabled" again by an Administrator.</p>'
             });
@@ -48,6 +53,7 @@ function populateTable(timesheetDataReply) {
 
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
+                closeable : true,
                 body: '<p> Congratulations you almost did it. Please contact an "Administrator", or your ' +
                 '"Coordinator" for further steps.</p>'
             });
@@ -58,6 +64,9 @@ function populateTable(timesheetDataReply) {
                     'your Team - Coordinator and/or an Administrator.'
                 });
             });
+        }
+        else{
+            AJS.$("#inactive-header").hide();
         }
     }
 
@@ -219,6 +228,8 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
 
     form.loadingSpinner.show();
 
+    console.log("Der böse entry soll nicht gehen in Firefox: entry: "+entry);
+
     AJS.$.ajax({
             type: saveOptions.httpMethod,
             url: saveOptions.ajaxUrl,
@@ -362,6 +373,9 @@ function prepareForm(entry, timesheetData) {
 function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetData) {
 
     var selectedTeam = timesheetData.teams[selectedTeamID];
+    if (selectedTeam == null || selectedTeam.teamCategories == null){
+        return;
+    }
     var categoryPerTeam = filterCategoriesPerTeam(selectedTeam, timesheetData.categories);
 
     categorySelect.auiSelect2({data: categoryPerTeam});

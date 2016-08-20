@@ -7,6 +7,25 @@ AJS.toInit(function () {
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
     AJS.$("#timesheet-export-csv-link").empty();
 
+    var isValid = checkContrains();
+
+    if (isValid == "true") {
+        console.log("User is valid!");
+    }
+    else {
+        console.log("User is not Valid!");
+        AJS.$("#timesheet-table").hide();
+        AJS.$(".tabs-pane").hide();
+        AJS.$("#table-header").hide();
+
+        AJS.messages.error({
+            title: 'Sorry, you have no timesheet',
+            body: 'You are not authorized to view this page. Please contact the administrator! </br> ' +
+            'Probably you are not added to a team or category!'
+        });
+        return;
+    }
+
     if (isMasterThesisTimesheet) {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
         document.getElementById("tabs-team").style.display = "none";
@@ -43,6 +62,14 @@ AJS.toInit(function () {
         AJS.$("#timesheet-hours-update-button").hide();
     }
 });
+
+function checkContrains() {
+    return AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'checkConstrains',
+        async: false
+    }).responseText;
+}
 
 function fetchUserTimesheetData(timesheetID) {
 
@@ -210,11 +237,11 @@ function updateTimesheetHours(existingTimesheetData) {
     };
 
     AJS.$.ajax({
-            type: 'POST',
-            url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID + '/' + existingTimesheetData.isMTSheet,
-            contentType: "application/json",
-            data: JSON.stringify(timesheetUpdateData)
-        })
+        type: 'POST',
+        url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID + '/' + existingTimesheetData.isMTSheet,
+        contentType: "application/json",
+        data: JSON.stringify(timesheetUpdateData)
+    })
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while updating the timesheet data.',

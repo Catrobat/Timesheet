@@ -61,7 +61,10 @@ function filterCategoriesPerTeam(selectedTeam, categories) {
 }
 
 function getselectedCategoryName(categoryID, timesheetData) {
-    return timesheetData.categories[categoryID].categoryName;
+    if (timesheetData && timesheetData.categories[categoryID]){
+        return timesheetData.categories[categoryID].categoryName;
+    }
+    return null;
 }
 
 function getCategoryID(categoryName, teamCategories, timesheetData) {

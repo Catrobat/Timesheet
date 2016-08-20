@@ -77,6 +77,32 @@ public class TimesheetRest {
     }
 
     @GET
+    @Path("checkConstrains")
+    public Response checkConstrains(@Context HttpServletRequest request) throws ServiceException {
+        UserProfile userProfile = null;
+        try {
+            userProfile = permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return Response.ok(false).build();
+        }
+
+        String userName = userProfile.getUsername();
+        Set<Team> teams = teamService.getTeamsOfUser(userName);
+        if (teams == null || teams.isEmpty()) {
+            return Response.ok(false).build();
+        }
+
+        for (Team team : teams) {
+            Category[] categories = team.getCategories();
+            if (categories == null || categories.length == 0) {
+                return Response.ok(false).build();
+            }
+        }
+
+        return Response.ok(true).build();
+    }
+
+    @GET
     @Path("teams")
     public Response getTeamsForUser(@Context HttpServletRequest request) throws ServiceException {
 
@@ -459,7 +485,9 @@ public class TimesheetRest {
         if (entry.getDescription().isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
         } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0)) {
-            return Response.status(Response.Status.FORBIDDEN).entity("The 'Inactive Date' is before your 'Entry Date'. That is not possible.").build();
+            String message = "The 'Inactive Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
+                    " but your inactive end date is " + entry.getInactiveEndDate();
+            return Response.status(Response.Status.FORBIDDEN).entity(message).build();
         } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
                 (!categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive"))) {
             return Response.status(Response.Status.FORBIDDEN).entity("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.").build();
