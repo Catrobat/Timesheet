@@ -55,7 +55,9 @@ public class PluginPermissionCondition extends AbstractPermissionCondition {
     }
 
     public boolean hasPermission(ApplicationUser applicationUser) {
-        if (applicationUser == null || !ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators")) {
+        if (applicationUser == null
+                || !(ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators")
+                || ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Jira-Test-Administrators"))) {
             return false;
         }
 

@@ -56,7 +56,9 @@ public class UserInformationPermissionCondition extends AbstractPermissionCondit
 
     public boolean hasPermission(ApplicationUser applicationUser) {
         //!applicationUser.getKey().equals("AnnemarieHarzl")
-        if (applicationUser == null || !ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators")) {
+        if (applicationUser == null
+                || !(ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators")
+                || ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Jira-Test-Administrators"))) {
             return false;
         }
 
