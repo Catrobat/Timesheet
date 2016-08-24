@@ -18,13 +18,22 @@ package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.search.SearchException;
+import com.atlassian.jira.issue.search.SearchResults;
+import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
+import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
+import com.atlassian.query.Query;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.*;
@@ -56,7 +65,7 @@ public class TimesheetRest {
     private final ConfigService configService;
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
-                         final UserManager um, final TeamService ts, PermissionService ps, final ConfigService ahcs) {
+            final UserManager um, final TeamService ts, PermissionService ps, final ConfigService ahcs) {
         this.userManager = um;
         this.teamService = ts;
         this.entryService = es;
@@ -131,14 +140,10 @@ public class TimesheetRest {
     @GET
     @Path("teams/{timesheetID}")
     public Response getTeamsForTimesheet(@Context HttpServletRequest request,
-                                         @PathParam("timesheetID") int timesheetID) throws ServiceException {
+            @PathParam("timesheetID") int timesheetID) throws ServiceException {
 
-        UserProfile userProfile = null;
-        try {
-            userProfile = permissionService.checkIfUserExists(request);
-        } catch (ServiceException e) {
+        if (checkPermission(request))
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
-        }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
@@ -164,12 +169,8 @@ public class TimesheetRest {
     @Path("categories")
     public Response getCategories(@Context HttpServletRequest request) throws ServiceException {
 
-        UserProfile userProfile = null;
-        try {
-            userProfile = permissionService.checkIfUserExists(request);
-        } catch (ServiceException e) {
+        if (checkPermission(request))
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
-        }
 
         List<JsonCategory> categories = new LinkedList<JsonCategory>();
 
@@ -180,16 +181,21 @@ public class TimesheetRest {
         return Response.ok(categories).build();
     }
 
+    private boolean checkPermission(@Context HttpServletRequest request) {
+        try {
+            permissionService.checkIfUserExists(request);
+        } catch (ServiceException e) {
+            return true;
+        }
+        return false;
+    }
+
     @GET
     @Path("teamInformation")
     public Response getAllTeams(@Context HttpServletRequest request) throws ServiceException {
 
-        UserProfile userProfile = null;
-        try {
-            userProfile = permissionService.checkIfUserExists(request);
-        } catch (ServiceException e) {
+        if (checkPermission(request))
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
-        }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
 
@@ -207,13 +213,9 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/{timesheetID}/teamEntries")
     public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
-                                                        @PathParam("timesheetID") int timesheetID) throws ServiceException {
-        UserProfile userProfile = null;
-        try {
-            userProfile = permissionService.checkIfUserExists(request);
-        } catch (ServiceException e) {
+            @PathParam("timesheetID") int timesheetID) throws ServiceException {
+        if (checkPermission(request))
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
-        }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<JsonTimesheetEntry>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
@@ -247,7 +249,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/{teamName}/entries")
     public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
-                                                  @PathParam("teamName") String teamName) throws ServiceException {
+            @PathParam("teamName") String teamName) throws ServiceException {
         try {
             permissionService.checkIfUserExists(request);
         } catch (ServiceException e) {
@@ -281,15 +283,11 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/timesheetID/{userName}/{getMTSheet}")
     public Response getTimesheetIDOFUser(@Context HttpServletRequest request,
-                                         @PathParam("userName") String userName,
-                                         @PathParam("getMTSheet") Boolean getMTSheet) throws ServiceException {
+            @PathParam("userName") String userName,
+            @PathParam("getMTSheet") Boolean getMTSheet) throws ServiceException {
 
-        UserProfile userProfile = null;
-        try {
-            userProfile = permissionService.checkIfUserExists(request);
-        } catch (ServiceException e) {
+        if (checkPermission(request))
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
-        }
 
         Timesheet sheet = null;
         try {
@@ -311,7 +309,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/owner/{timesheetID}")
     public Response getOwnerOfTimesheet(@Context HttpServletRequest request,
-                                        @PathParam("timesheetID") int timesheetID) throws ServiceException {
+            @PathParam("timesheetID") int timesheetID) throws ServiceException {
         UserProfile userProfile = null;
         try {
             userProfile = permissionService.checkIfUserExists(request);
@@ -341,8 +339,8 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/of/{userName}/{isMTSheet}")
     public Response getTimesheetForUsername(@Context HttpServletRequest request,
-                                            @PathParam("userName") String userName,
-                                            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
+            @PathParam("userName") String userName,
+            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
         Timesheet sheet;
         UserProfile user;
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
@@ -370,7 +368,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/{timesheetID}")
     public Response getTimesheet(@Context HttpServletRequest request,
-                                 @PathParam("timesheetID") int timesheetID) throws ServiceException {
+            @PathParam("timesheetID") int timesheetID) throws ServiceException {
 
         Timesheet sheet;
         UserProfile user;
@@ -406,7 +404,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/{timesheetID}/entries")
     public Response getTimesheetEntries(@Context HttpServletRequest request,
-                                        @PathParam("timesheetID") int timesheetID) throws ServiceException {
+            @PathParam("timesheetID") int timesheetID) throws ServiceException {
 
         Timesheet sheet;
         UserProfile user;
@@ -478,9 +476,9 @@ public class TimesheetRest {
     @POST
     @Path("timesheets/{timesheetID}/entry/{isMTSheet}")
     public Response postTimesheetEntry(@Context HttpServletRequest request,
-                                       final JsonTimesheetEntry entry,
-                                       @PathParam("timesheetID") int timesheetID,
-                                       @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException {
+            final JsonTimesheetEntry entry,
+            @PathParam("timesheetID") int timesheetID,
+            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException {
 
         if (entry.getDescription().isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
@@ -569,9 +567,9 @@ public class TimesheetRest {
     @POST
     @Path("timesheets/{timesheetID}/entries/{isMTSheet}")
     public Response postTimesheetEntries(@Context HttpServletRequest request,
-                                         final JsonTimesheetEntry[] entries,
-                                         @PathParam("timesheetID") int timesheetID,
-                                         @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
+            final JsonTimesheetEntry[] entries,
+            @PathParam("timesheetID") int timesheetID,
+            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
         Timesheet sheet;
         UserProfile user;
 
@@ -662,9 +660,9 @@ public class TimesheetRest {
     @POST
     @Path("timesheets/update/{timesheetID}/{isMTSheet}")
     public Response postTimesheetHours(@Context HttpServletRequest request,
-                                       final JsonTimesheet jsonTimesheet,
-                                       @PathParam("timesheetID") int timesheetID,
-                                       @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
+            final JsonTimesheet jsonTimesheet,
+            @PathParam("timesheetID") int timesheetID,
+            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
 
         Timesheet sheet;
         UserProfile user;
@@ -712,7 +710,7 @@ public class TimesheetRest {
     @POST
     @Path("timesheets/updateEnableStates")
     public Response postTimesheetEnableStates(@Context HttpServletRequest request,
-                                              final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
+            final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
 
         Timesheet sheet;
         permissionService.checkIfUserExists(request);
@@ -741,9 +739,9 @@ public class TimesheetRest {
     @PUT
     @Path("entries/{entryID}/{isMTSheet}")
     public Response putTimesheetEntry(@Context HttpServletRequest request,
-                                      final JsonTimesheetEntry jsonEntry,
-                                      @PathParam("entryID") int entryID,
-                                      @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
+            final JsonTimesheetEntry jsonEntry,
+            @PathParam("entryID") int entryID,
+            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
 
         if (jsonEntry.getDescription().isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
@@ -813,8 +811,8 @@ public class TimesheetRest {
     @DELETE
     @Path("entries/{entryID}/{isMTSheet}")
     public Response deleteTimesheetEntry(@Context HttpServletRequest request,
-                                         @PathParam("entryID") int entryID,
-                                         @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, com.atlassian.jira.exception.PermissionException {
+            @PathParam("entryID") int entryID,
+            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, com.atlassian.jira.exception.PermissionException {
         UserProfile user;
         TimesheetEntry entry;
         Timesheet sheet;
@@ -979,4 +977,55 @@ public class TimesheetRest {
         DateTime datetime = new DateTime(date);
         return (datetime.compareTo(twoWeeksAgo) < 0);
     }
+
+    // This is a demo API REST method to show you how to use the powerful and wonderful JqlQueryBuilder class
+    @GET
+    @Path("issueTickets")
+    public Response getIssueTickets(@Context HttpServletRequest request) throws ServiceException {
+
+        if (checkPermission(request))
+            return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+
+        SearchService searchService = ComponentAccessor.getComponentOfType(SearchService.class);
+        User currentUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+
+        final JqlQueryBuilder builder = JqlQueryBuilder.newBuilder();
+
+        //builder.where().project("DEMO");
+        builder.where().assigneeUser("Admin");
+        Query query = builder.buildQuery();
+
+        List<Issue> issues = null;
+
+        try {
+            SearchResults results = searchService.search(currentUser, query, PagerFilter.getUnlimitedFilter());
+            issues = results.getIssues();
+
+            for (Issue issue : issues) {
+                String displayName = issue.getAssignee().getDisplayName();
+                System.out.println("displayName = " + displayName);
+            }
+
+        } catch (SearchException e)
+
+        {
+            System.out.println("Error running search: " + e);
+        }
+
+        JSONObject jo = new JSONObject();
+        try {
+            for (Issue issue : issues) {
+                JSONObject item = new JSONObject();
+                item.put("assignee", issue.getAssignee());
+                item.put("id", issue.getId());
+                jo.append("issues", item);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return Response.ok(jo.toString()).build();
+    }
 }
+

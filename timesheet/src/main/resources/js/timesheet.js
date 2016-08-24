@@ -7,19 +7,23 @@ AJS.toInit(function () {
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
     AJS.$("#timesheet-export-csv-link").empty();
 
-    var isValid = checkContrains();
+    AJS.$("#timesheet-table").hide();
+    AJS.$("#table-header").hide();
+
+    var isValid = checkConstrains();
 
     if (isValid == "true") {
         console.log("User is valid!");
+        AJS.$("#timesheet-table").show();
+        AJS.$("#table-header").show();
     }
     else {
-        console.log("User is not Valid!");
+        console.log("User is not valid!");
         AJS.$("#timesheet-table").hide();
-        AJS.$(".tabs-pane").hide();
         AJS.$("#table-header").hide();
 
         AJS.messages.error({
-            title: 'Sorry, you have no timesheet',
+            title: 'Sorry, you do not have a timesheet!',
             body: 'You are not authorized to view this page. Please contact the administrator! </br> ' +
             'Probably you are not added to a team or category!'
         });
@@ -63,7 +67,7 @@ AJS.toInit(function () {
     }
 });
 
-function checkContrains() {
+function checkConstrains() {
     return AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'checkConstrains',

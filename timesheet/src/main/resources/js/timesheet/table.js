@@ -10,7 +10,7 @@ function populateTable(timesheetDataReply) {
         if (timesheetData.entries.length == 0)
             AJS.messages.generic({
                 title: 'Timesheet Information.',
-                closeable : true,
+                closeable: true,
                 body: '<p> Congratulations you sucessfully created your own ' +
                 'Timesheet. The Timesheet add-on provides tracking your time ' +
                 'data in a comfortable way and offers several visualizations' +
@@ -26,7 +26,7 @@ function populateTable(timesheetDataReply) {
         else if (!timesheetData.isActive) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
-                closeable : true,
+                closeable: true,
                 body: '<p> Your Timesheet is marked as "inactive", because its last entry ' +
                 'date is older than two weeks.</p>'
             });
@@ -39,7 +39,7 @@ function populateTable(timesheetDataReply) {
         } else if (!timesheetData.isEnabled) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
-                closeable : true,
+                closeable: true,
                 body: '<p> Your Timesheet is marked as "disabled".</p>' +
                 '<p> You are not able to apply any changes until it is "disabled" again by an Administrator.</p>'
             });
@@ -53,7 +53,7 @@ function populateTable(timesheetDataReply) {
 
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
-                closeable : true,
+                closeable: true,
                 body: '<p> Congratulations you almost did it. Please contact an "Administrator", or your ' +
                 '"Coordinator" for further steps.</p>'
             });
@@ -65,7 +65,7 @@ function populateTable(timesheetDataReply) {
                 });
             });
         }
-        else{
+        else {
             AJS.$("#inactive-header").hide();
         }
     }
@@ -219,7 +219,7 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
         categoryID: form.categorySelect.val(),
         isGoogleDocImport: existingIsGoogleDocImportValue,
         partner: form.partnerSelect.val(),
-        ticketID: form.ticketField.val()
+        ticketID: form.ticketSelect.val()
     };
 
     if (existingEntryID !== "new-id") {
@@ -228,14 +228,14 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
 
     form.loadingSpinner.show();
 
-    console.log("Der böse entry soll nicht gehen in Firefox: entry: "+entry);
+    console.log("Der entry soll nicht gehen in Firefox: entry: " + entry);
 
     AJS.$.ajax({
-            type: saveOptions.httpMethod,
-            url: saveOptions.ajaxUrl,
-            contentType: "application/json",
-            data: JSON.stringify(entry) //causes error in FIREFOX
-        })
+        type: saveOptions.httpMethod,
+        url: saveOptions.ajaxUrl,
+        contentType: "application/json",
+        data: JSON.stringify(entry) //causes error in FIREFOX
+    })
         .then(function (entry) {
             var augmentedEntry = augmentEntry(timesheetData, entry);
             saveOptions.callback(augmentedEntry, timesheetData, form);
@@ -302,7 +302,7 @@ function prepareForm(entry, timesheetData) {
         pauseTimeField: row.find('input.time.pause'),
         durationField: row.find('input.duration'),
         descriptionField: row.find('input.description'),
-        ticketField: row.find('input.ticket'),
+        ticketSelect: row.find('input.ticket'),
         categorySelect: row.find('span.category'),
         partnerSelect: row.find('span.partner'),
         teamSelect: row.find('select.team')
@@ -356,6 +356,61 @@ function prepareForm(entry, timesheetData) {
         width: 'resolve',
     })
 
+
+    var baseUrl = AJS.params.baseURL; // we have to reassign it otherwise it would be undefined
+    var queryString = "/rest/api/2/project?recent=20 ";
+    var projectKeys = [];
+
+    AJS.$.ajax({
+        type: 'GET',
+        url: baseUrl + queryString,
+        dataType: 'json',
+        success: function (data) {
+            console.log("second success");
+            for (var i = 0; i < data.length; i++) {
+                var key = data[i].key;
+                projectKeys[i] = key;
+                console.log("key: " + key);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("status: " + textStatus + "error message: " + errorThrown);
+        },
+        async: false
+    });
+
+    var tickets = new Array();
+    console.log("length projectkeys: " + projectKeys.length);
+    AJS.$.each(projectKeys, function (index, value) {
+        console.log("projectKey: index: " + index + " val: " + value);
+        var queryString = "/rest/api/latest/search?jql=project%20in%20(" + value + ")%20AND%20(status%20not%20in%20(closed,resolved,done))";
+
+        AJS.$.ajax({
+            type: 'GET',
+            url: baseUrl + queryString,
+            dataType: 'json',
+            success: function (data) {
+                console.log("Erfolgreich geladen!");
+                for (var i = 0; i < data.total; i++) {
+                    var key = data.issues[i].key;
+                    var summary = data.issues[i].fields.summary;
+                    tickets.push(key + " : " + summary);
+                    console.log("Ticket: " + tickets[i]);
+                }
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("status: " + textStatus + "error message: " + errorThrown);
+            },
+            async: false
+        });
+    });
+
+    form.ticketSelect.auiSelect2({
+        tags: tickets,
+        width: 'resolve'
+    })
+
     if (countDefinedElementsInArray(teams) < 2) {
         row.find(".team").hide();
     }
@@ -373,7 +428,7 @@ function prepareForm(entry, timesheetData) {
 function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetData) {
 
     var selectedTeam = timesheetData.teams[selectedTeamID];
-    if (selectedTeam == null || selectedTeam.teamCategories == null){
+    if (selectedTeam == null || selectedTeam.teamCategories == null) {
         return;
     }
     var categoryPerTeam = filterCategoriesPerTeam(selectedTeam, timesheetData.categories);
@@ -459,10 +514,10 @@ function deleteEntryClicked(viewRow, entryID) {
     spinner.show();
 
     AJS.$.ajax({
-            type: 'DELETE',
-            url: ajaxUrl,
-            contentType: "application/json"
-        })
+        type: 'DELETE',
+        url: ajaxUrl,
+        contentType: "application/json"
+    })
         .then(function () {
             var formRow = getFormRow(viewRow);
             if (formRow !== undefined) formRow.remove();
