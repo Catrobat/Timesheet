@@ -228,29 +228,29 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
 
     form.loadingSpinner.show();
 
-    console.log("Der entry soll nicht gehen in Firefox: entry: " + entry);
+    console.log("url: "+saveOptions.ajaxUrl);
 
-    AJS.$.ajax({
-        type: saveOptions.httpMethod,
-        url: saveOptions.ajaxUrl,
-        contentType: "application/json",
-        data: JSON.stringify(entry) //causes error in FIREFOX
-    })
-        .then(function (entry) {
-            var augmentedEntry = augmentEntry(timesheetData, entry);
-            saveOptions.callback(augmentedEntry, timesheetData, form);
-        })
-        .fail(function (error) {
-            console.log(error);
-            AJS.messages.error({
-                title: 'There was an error while saving.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-        })
-        .always(function () {
-            form.loadingSpinner.hide();
-            form.saveButton.prop('disabled', false);
-        });
+     AJS.$.ajax({
+     type: saveOptions.httpMethod,
+     url: saveOptions.ajaxUrl,
+     contentType: "application/json",
+     data: JSON.stringify(entry) //causes error in FIREFOX
+     })
+     .then(function (entryData) {
+     var augmentedEntry = augmentEntry(timesheetData, entryData);
+     saveOptions.callback(augmentedEntry, timesheetData, form);
+     })
+     .fail(function (error) {
+     console.log(error);
+     AJS.messages.error({
+     title: 'There was an error while saving.',
+     body: '<p>Reason: ' + error.responseText + '</p>'
+     });
+     })
+     .always(function () {
+     form.loadingSpinner.hide();
+     form.saveButton.prop('disabled', false);
+     });
 }
 
 /**

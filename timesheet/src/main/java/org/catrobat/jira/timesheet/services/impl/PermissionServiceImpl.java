@@ -113,7 +113,8 @@ public class PermissionServiceImpl implements PermissionService {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid " +
                     "'UserKey'.").build();
         } else if (!(checkIfUserIsGroupMember(request, "jira-administrators") ||
-                checkIfUserIsGroupMember(request, "Timesheet"))) {
+                checkIfUserIsGroupMember(request, "jira-administrators") ||
+                checkIfUserIsGroupMember(request, "Jira-Test-Administrators"))) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                     "'jira-administrators', or 'Timesheet' group.").build();
         }

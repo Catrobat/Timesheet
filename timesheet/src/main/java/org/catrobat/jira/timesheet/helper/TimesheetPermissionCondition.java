@@ -23,10 +23,8 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.user.UserManager;
-import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class TimesheetPermissionCondition extends AbstractPermissionCondition {
@@ -58,6 +56,7 @@ public class TimesheetPermissionCondition extends AbstractPermissionCondition {
         if (applicationUser == null) {
             return false;
         } else if (ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators") ||
+                ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Jira-Test-Administrators") ||
                 ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Timesheet")) {
             return true;
         }

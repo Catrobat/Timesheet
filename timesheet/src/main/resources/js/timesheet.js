@@ -30,6 +30,10 @@ AJS.toInit(function () {
         return;
     }
 
+    if (!isCoordinator){
+        AJS.$("#coord_private").hide();
+    }
+
     if (isMasterThesisTimesheet) {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
         document.getElementById("tabs-team").style.display = "none";

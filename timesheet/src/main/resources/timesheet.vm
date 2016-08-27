@@ -10,6 +10,7 @@
 <script type="text/javascript">
     var timesheetID = $timesheetid;
     var isAdmin = $isadmin;
+    var isCoordinator = $iscoordinator;
     var isMasterThesisTimesheet = $ismasterthesistimesheet;
 </script>
 
@@ -51,7 +52,7 @@
         <li class="menu-item active-tab">
             <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
         </li>
-        <li class="menu-item">
+        <li class="menu-item" id="coord_private">
             <a href="#tabs-timesheet-settings"><strong>Coordinators Private</strong></a>
         </li>
         <li class="menu-item">

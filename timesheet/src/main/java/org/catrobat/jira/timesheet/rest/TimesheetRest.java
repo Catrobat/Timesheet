@@ -839,7 +839,8 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         }
 
-        if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+        if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators") ||
+                permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
             buildEmailAdministratorDeletedEntry(user.getEmail(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry);
         }
 

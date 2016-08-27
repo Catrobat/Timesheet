@@ -46,7 +46,7 @@ public class TimesheetServlet extends HttpServlet {
 
 
     public TimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
-                            final TimesheetService sheetService, final PermissionService permissionService) {
+            final TimesheetService sheetService, final PermissionService permissionService) {
         this.loginUriProvider = loginUriProvider;
         this.templateRenderer = templateRenderer;
         this.sheetService = sheetService;
@@ -75,7 +75,8 @@ public class TimesheetServlet extends HttpServlet {
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet;
             //info: testuser added
-            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) { //                  permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")
+            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators") ||
+                    permissionService.checkIfUserIsGroupMember(request, "jira-test-administrators")) { //                  permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")
                 logger.info("You are Admin!");
                 paramMap.put("isadmin", true);
                 timesheet = sheetService.getAdministratorTimesheet(userKey);
@@ -87,6 +88,12 @@ public class TimesheetServlet extends HttpServlet {
                 } else {
                     timesheet = null;
                 }
+            }
+
+            if (permissionService.checkIfUserIsGroupMember(request, "Coordinators")) {
+                paramMap.put("iscoordinator", true);
+            } else {
+                paramMap.put("iscoordinator", false);
             }
 
             if (timesheet == null) {

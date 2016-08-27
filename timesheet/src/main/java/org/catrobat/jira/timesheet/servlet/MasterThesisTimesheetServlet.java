@@ -42,7 +42,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
     private final PermissionService permissionService;
 
     public MasterThesisTimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
-                                        final TimesheetService sheetService, final PermissionService permissionService) {
+            final TimesheetService sheetService, final PermissionService permissionService) {
         this.loginUriProvider = loginUriProvider;
         this.templateRenderer = templateRenderer;
         this.sheetService = sheetService;
@@ -60,7 +60,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
             String userKey = ComponentAccessor.
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
             Timesheet sheet = null;
-            if(sheetService.userHasTimesheet(userKey, true)) {
+            if (sheetService.userHasTimesheet(userKey, true)) {
                 sheet = sheetService.getTimesheetByUser(userKey, true);
             }
 
@@ -71,11 +71,18 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
 
             Map<String, Object> paramMap = Maps.newHashMap();
             paramMap.put("timesheetid", sheet.getID());
-            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators") ||
+                    permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
                 paramMap.put("isadmin", true);
             } else {
                 paramMap.put("isadmin", false);
             }
+            if (permissionService.checkIfUserIsGroupMember(request, "Coordinators")) {
+                paramMap.put("iscoordinator", true);
+            } else {
+                paramMap.put("iscoordinator", false);
+            }
+
             paramMap.put("ismasterthesistimesheet", true);
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
