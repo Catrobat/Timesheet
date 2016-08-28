@@ -1,4 +1,5 @@
 "use strict";
+var INDEX_OF_INACTIVE_VALUE = 2;
 
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
@@ -228,29 +229,29 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
 
     form.loadingSpinner.show();
 
-    console.log("url: "+saveOptions.ajaxUrl);
+    console.log("url: " + saveOptions.ajaxUrl);
 
-     AJS.$.ajax({
-     type: saveOptions.httpMethod,
-     url: saveOptions.ajaxUrl,
-     contentType: "application/json",
-     data: JSON.stringify(entry) //causes error in FIREFOX
-     })
-     .then(function (entryData) {
-     var augmentedEntry = augmentEntry(timesheetData, entryData);
-     saveOptions.callback(augmentedEntry, timesheetData, form);
-     })
-     .fail(function (error) {
-     console.log(error);
-     AJS.messages.error({
-     title: 'There was an error while saving.',
-     body: '<p>Reason: ' + error.responseText + '</p>'
-     });
-     })
-     .always(function () {
-     form.loadingSpinner.hide();
-     form.saveButton.prop('disabled', false);
-     });
+    AJS.$.ajax({
+        type: saveOptions.httpMethod,
+        url: saveOptions.ajaxUrl,
+        contentType: "application/json",
+        data: JSON.stringify(entry) //causes error in FIREFOX
+    })
+        .then(function (entryData) {
+            var augmentedEntry = augmentEntry(timesheetData, entryData);
+            saveOptions.callback(augmentedEntry, timesheetData, form);
+        })
+        .fail(function (error) {
+            console.log(error);
+            AJS.messages.error({
+                title: 'There was an error while saving.',
+                body: '<p>Reason: ' + error.responseText + '</p>'
+            });
+        })
+        .always(function () {
+            form.loadingSpinner.hide();
+            form.saveButton.prop('disabled', false);
+        });
 }
 
 /**
@@ -319,6 +320,27 @@ function prepareForm(entry, timesheetData) {
             {overrideBrowserDefault: true, languageCode: 'en'}
         );
 
+    form.inactiveEndDateField.change(function () {
+        form.categorySelect.auiSelect2("val", INDEX_OF_INACTIVE_VALUE);
+        form.descriptionField.val("Inactive, because "); // you can also write AJS.$("input.description").val("hello boy");
+    });
+
+    form.descriptionField.change(function () {
+        validation(form.descriptionField);
+    });
+
+    // input validation
+    function validation(form) {
+        var str = form.val().toLowerCase();
+        if (str.indexOf("<script>") !== -1) { // this increases the performance, because regex validation is high computationally
+            var isMatching = str.match(/.*<script>.*<\/script>/i);
+            if (isMatching) {
+                alert("Don't try to hack this, you nasty bastard! You have no change! ;)");
+                form.val("");
+            }
+        }
+    }
+
     row.find('input.time.start, input.time.end')
         .timepicker({
             showDuration: false,
@@ -366,11 +388,9 @@ function prepareForm(entry, timesheetData) {
         url: baseUrl + queryString,
         dataType: 'json',
         success: function (data) {
-            console.log("second success");
             for (var i = 0; i < data.length; i++) {
                 var key = data[i].key;
                 projectKeys[i] = key;
-                console.log("key: " + key);
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -380,9 +400,7 @@ function prepareForm(entry, timesheetData) {
     });
 
     var tickets = new Array();
-    console.log("length projectkeys: " + projectKeys.length);
     AJS.$.each(projectKeys, function (index, value) {
-        console.log("projectKey: index: " + index + " val: " + value);
         var queryString = "/rest/api/latest/search?jql=project%20in%20(" + value + ")%20AND%20(status%20not%20in%20(closed,resolved,done))";
 
         AJS.$.ajax({
@@ -390,12 +408,10 @@ function prepareForm(entry, timesheetData) {
             url: baseUrl + queryString,
             dataType: 'json',
             success: function (data) {
-                console.log("Erfolgreich geladen!");
                 for (var i = 0; i < data.total; i++) {
                     var key = data.issues[i].key;
                     var summary = data.issues[i].fields.summary;
                     tickets.push(key + " : " + summary);
-                    console.log("Ticket: " + tickets[i]);
                 }
 
             },

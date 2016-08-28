@@ -47,7 +47,9 @@
 
 <div id="aui-message-bar"></div>
 
+#*Tabs view*#
 <div class="aui-tabs horizontal-tabs" id="table-header">
+
     <ul class="tabs-menu">
         <li class="menu-item active-tab">
             <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
@@ -69,6 +71,128 @@
         </li>
     </ul>
 
+    #*content of the first tab "Timesheet"*#
+    <div class="tabs-pane active-pane" id="tabs-timesheet">
+
+        <div id="timesheet-owner-information"></div>
+
+        <div id="button-wrapper">
+            <button class="aui-button aui-button-subtle import-google-docs"><span
+                    class="aui-icon aui-icon-small aui-iconfont-devtools-checkout"></span> Import from Google Docs
+            </button>
+        </div>
+
+        <section role="dialog" class="import-dialog aui-layer aui-dialog2 aui-dialog2-large" aria-hidden="true">
+            <header class="aui-dialog2-header">
+                <h2 class="aui-dialog2-header-main">Import from Google Docs</h2>
+                <!-- Close icon -->
+                <a class="aui-dialog2-header-close">
+                    <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
+                </a>
+            </header>
+
+            <div class="aui-dialog2-content">
+                <ol>
+                    <li>
+                        Make sure the columns of your Google Doc Timesheet are in the following order:
+                        <code>Date</code>, <code>From</code>, <code>To</code>, <code>Duration in h</code>,
+                        <code>Pause</code>, <code>Category</code>, <code>Description</code>
+                    </li>
+                    <li>
+                        Make sure the values in column <code>Date</code> is formatted this way: <code>YYYY-MM-DD</code>
+                        (e.g. <code>2015-09-21</code>). You can achieve this by
+                        <ol>
+                            <li>Select Fields in column <code>Date</code></li>
+                            <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
+                                Formats</strong> > <strong>Number Format</strong></li>
+                            <li>Paste <code>yyyy"-"mm"-"dd</code> and confirm</li>
+                        </ol>
+                    </li>
+                    <li>Make sure the values in column <code>From</code> and <code>To</code> are formatted this way:
+                        <code>HH:MM</code> (e.g. <code>12:00</code>). You can achieve this by
+                        <ol>
+                            <li>Select Fields in column <code>From/To</code></li>
+                            <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
+                                Formats</strong> > <strong>Number Format</strong></li>
+                            <li>Paste <code>HH":"MM</code> and confirm</li>
+                        </ol>
+                    </li>
+                    <li>Select the rows you want to import, but ensure your <code>Task Description</code> does not
+                        exceed 160 characters.
+                    </li>
+                    <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
+                    <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
+                    <li>Paste content in the text box below</li>
+                </ol>
+                <i>(tested with Google Chrome)</i>
+
+                <form class="aui import-form">
+                    <!--<input type="text" name="import-text" class="text" />-->
+                    <textarea name="import-text" class="import-text"></textarea>
+                </form>
+
+                <footer class="aui-dialog2-footer">
+                    <div class="aui-dialog2-footer-actions">
+                        <button class="aui-button aui-button-primary start-import">Import</button>
+                    </div>
+                </footer>
+        </section>
+
+    #*content of timesheet table*#
+        <div id="timesheet-table" class="aui aui-table-interactive aui-table-sortable table">
+            <div class="tr">
+                <span class="td">
+                    <span class="aui-icon aui-icon-wait">Loading...</span>
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+ #*   content of the second tab "Summary"*#
+    <div class="tabs-pane" id="tabs-timesheet-settings">
+        <form id="timesheet-settings" class="aui">
+            <div id="coordinatorTimesheetSelect"></div>
+            <div id="approvedUserTimesheetSelect"></div>
+        </form>
+    </div>
+
+#*    content of the third tab "Time-Visualization"*#
+    <div class="tabs-pane active-pane" id="tabs-overview">
+        <table id="visualization-table" class="aui aui-table-interactive aui-table-sortable">
+            <thead>
+            <tr>
+                <th id="basic-date">Description</th>
+                <th id="basic-time">Value</th>
+            </tr>
+            </thead>
+            <tbody class="list" id="visualization-table-content">
+            #* will be filled out by JavaScript *#
+            </tbody>
+        </table>
+
+        <h3 id="piChartDiagramTag">Visualization of your theory - practical hours distribution</h3>
+        <div id="piChartDiagram" style="height: 200px;"></div>
+    </div>
+#*    content of the third tab "Time-Visualization"*#
+    <div class="tabs-pane active-pane" id="tabs-line">
+        <h3 id="lineDiagramTag">Visualization of your spent time</h3>
+        <div id="lineDiagram" style="height:300px;"></div>
+
+        <h3 id="categoryLineDiagramTag">Visualization of your spent time on categories</h3>
+        <div id="categoryLineDiagram" style="height:400px;"></div>
+    </div>
+#*    content of the third tab "Team-Visualization"*#
+    <div class="tabs-pane active-pane" id="tabs-team">
+        <form id="team-visualization" class="aui">
+            <h3 id="teamDiagramTag">Team Visualization</h3>
+            <div id="teamDataDiagram" style="height: 300px;"></div>
+            <h3 id="teamLineDiagramTag">Team Category Visualization</h3>
+            <div id="teamLineDiagram" style="height: 400px;"></div>
+        </form>
+    </div>
+
+#*    content of the last tab "Key Data"*#
     <div class="tabs-pane" id="tabs-timesheet-information">
         <p>
         <form id="timesheet-information" class="aui">
@@ -149,122 +273,6 @@
                 </div>
 
             </div>
-        </form>
-    </div>
-
-    <div class="tabs-pane" id="tabs-timesheet-settings">
-        <form id="timesheet-settings" class="aui">
-            <div id="coordinatorTimesheetSelect"></div>
-            <div id="approvedUserTimesheetSelect"></div>
-        </form>
-    </div>
-
-    <div class="tabs-pane active-pane" id="tabs-timesheet">
-
-        <div id="timesheet-owner-information"></div>
-
-        <div id="button-wrapper">
-            <button class="aui-button aui-button-subtle import-google-docs"><span
-                    class="aui-icon aui-icon-small aui-iconfont-devtools-checkout"></span> Import from Google Docs
-            </button>
-        </div>
-
-        <section role="dialog" class="import-dialog aui-layer aui-dialog2 aui-dialog2-large" aria-hidden="true">
-            <header class="aui-dialog2-header">
-                <h2 class="aui-dialog2-header-main">Import from Google Docs</h2>
-                <!-- Close icon -->
-                <a class="aui-dialog2-header-close">
-                    <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
-                </a>
-            </header>
-
-            <div class="aui-dialog2-content">
-                <ol>
-                    <li>
-                        Make sure the columns of your Google Doc Timesheet are in the following order:
-                        <code>Date</code>, <code>From</code>, <code>To</code>, <code>Duration in h</code>,
-                        <code>Pause</code>, <code>Category</code>, <code>Description</code>
-                    </li>
-                    <li>
-                        Make sure the values in column <code>Date</code> is formatted this way: <code>YYYY-MM-DD</code>
-                        (e.g. <code>2015-09-21</code>). You can achieve this by
-                        <ol>
-                            <li>Select Fields in column <code>Date</code></li>
-                            <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
-                                Formats</strong> > <strong>Number Format</strong></li>
-                            <li>Paste <code>yyyy"-"mm"-"dd</code> and confirm</li>
-                        </ol>
-                    </li>
-                    <li>Make sure the values in column <code>From</code> and <code>To</code> are formatted this way:
-                        <code>HH:MM</code> (e.g. <code>12:00</code>). You can achieve this by
-                        <ol>
-                            <li>Select Fields in column <code>From/To</code></li>
-                            <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
-                                Formats</strong> > <strong>Number Format</strong></li>
-                            <li>Paste <code>HH":"MM</code> and confirm</li>
-                        </ol>
-                    </li>
-                    <li>Select the rows you want to import, but ensure your <code>Task Description</code> does not
-                        exceed 160 characters.
-                    </li>
-                    <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
-                    <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
-                    <li>Paste content in the text box below</li>
-                </ol>
-                <i>(tested with Google Chrome)</i>
-
-                <form class="aui import-form">
-                    <!--<input type="text" name="import-text" class="text" />-->
-                    <textarea name="import-text" class="import-text"></textarea>
-                </form>
-
-                <footer class="aui-dialog2-footer">
-                    <div class="aui-dialog2-footer-actions">
-                        <button class="aui-button aui-button-primary start-import">Import</button>
-                    </div>
-                </footer>
-        </section>
-
-
-        <div id="timesheet-table" class="aui aui-table-interactive aui-table-sortable table">
-            <div class="tr">
-                <span class="td">
-                    <span class="aui-icon aui-icon-wait">Loading...</span>
-                </span>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="tabs-pane active-pane" id="tabs-overview">
-        <table id="visualization-table" class="aui aui-table-interactive aui-table-sortable">
-            <thead>
-            <tr>
-                <th id="basic-date">Description</th>
-                <th id="basic-time">Value</th>
-            </tr>
-            </thead>
-            <tbody class="list" id="visualization-table-content">
-            #* will be filled out by JavaScript *#
-            </tbody>
-        </table>
-
-        <h3 id="piChartDiagramTag">Visualization of your theory - practical hours distribution</h3>
-        <div id="piChartDiagram" style="height: 200px;"></div>
-    </div>
-    <div class="tabs-pane active-pane" id="tabs-line">
-        <h3 id="lineDiagramTag">Visualization of your spent time</h3>
-        <div id="lineDiagram" style="height:300px;"></div>
-
-        <h3 id="categoryLineDiagramTag">Visualization of your spent time on categories</h3>
-        <div id="categoryLineDiagram" style="height:400px;"></div>
-    </div>
-    <div class="tabs-pane active-pane" id="tabs-team">
-        <form id="team-visualization" class="aui">
-            <h3 id="teamDiagramTag">Team Visualization</h3>
-            <div id="teamDataDiagram" style="height: 300px;"></div>
-            <h3 id="teamLineDiagramTag">Team Category Visualization</h3>
-            <div id="teamLineDiagram" style="height: 400px;"></div>
         </form>
     </div>
 </div>
