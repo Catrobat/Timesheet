@@ -1,11 +1,22 @@
 "use strict";
 
 var restBaseUrl;
+var hostname = location.hostname;
+var baseUrl;
 
 AJS.toInit(function () {
-    var baseUrl = AJS.params.baseURL;
+    if (hostname.includes("catrob.at")) {
+        baseUrl = "https://" + hostname;
+    }
+    else {
+        baseUrl = AJS.params.baseURL;
+    }
+
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
+
     AJS.$("#timesheet-export-csv-link").empty();
+
+    // printDomainAttributes();
 
     AJS.$("#timesheet-table").hide();
     AJS.$("#table-header").hide();
@@ -13,12 +24,10 @@ AJS.toInit(function () {
     var isValid = checkConstrains();
 
     if (isValid == "true") {
-        console.log("User is valid!");
         AJS.$("#timesheet-table").show();
         AJS.$("#table-header").show();
     }
     else {
-        console.log("User is not valid!");
         AJS.$("#timesheet-table").hide();
         AJS.$("#table-header").hide();
 
@@ -30,7 +39,7 @@ AJS.toInit(function () {
         return;
     }
 
-    if (!isCoordinator){
+    if (!isCoordinator) {
         AJS.$("#coord_private").hide();
     }
 
@@ -327,4 +336,21 @@ function fetchData() {
             });
             console.log(error);
         });
+}
+
+function printDomainAttributes() {
+    var baseUrl = AJS.params.baseURL;
+    var hostname = AJS.$('<a>').prop('href', document.URL).prop('hostname');
+
+    console.log("Base address: " + baseUrl);
+    console.log("hostname: " + hostname);
+    console.log("location.hostname: " + location.hostname);
+    console.log("document.domain: " + document.domain);
+    console.log("document.URL : " + document.URL);
+    console.log("document.location.href : " + document.location.href);
+    console.log("document.location.origin : " + document.location.origin);
+    console.log("document.location.hostname : " + document.location.hostname);
+    console.log("document.location.host : " + document.location.host);
+    console.log("document.location.pathname : " + document.location.pathname);
+    console.log("window.location.hostname : " + window.location.hostname);
 }
