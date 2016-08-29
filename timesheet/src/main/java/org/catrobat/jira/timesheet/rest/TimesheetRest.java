@@ -680,7 +680,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
         }
 
-        if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+        if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)) {
             sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
                     jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
@@ -783,7 +783,7 @@ public class TimesheetRest {
                     jsonEntry.getInactiveEndDate(), jsonEntry.getTicketID(), programmingPartnerName);
 
             //inform user about Administrator changes
-            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)) {
                 buildEmailAdministratorChangedEntry(user.getEmail(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry, jsonEntry);
             }
 
@@ -839,8 +839,8 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         }
 
-        if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators") ||
-                permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
+        if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false) ||
+                permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators", false)) {
             buildEmailAdministratorDeletedEntry(user.getEmail(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry);
         }
 

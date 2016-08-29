@@ -64,8 +64,8 @@ public class TimesheetServlet extends HttpServlet {
         }
 
         try {
-            if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
-                    !permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+            if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet", false) &&
+                    !permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)) {
                 throw new ServletException("User is no Timesheet-Group member, or Administrator.");
             }
 
@@ -75,8 +75,8 @@ public class TimesheetServlet extends HttpServlet {
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet;
             //info: testuser added
-            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators") ||
-                    permissionService.checkIfUserIsGroupMember(request, "jira-test-administrators")) { //                  permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")
+            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false) ||
+                    permissionService.checkIfUserIsGroupMember(request, "jira-test-administrators", false)) { //                  permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")
                 logger.info("You are Admin!");
                 paramMap.put("isadmin", true);
                 timesheet = sheetService.getAdministratorTimesheet(userKey);
@@ -90,7 +90,7 @@ public class TimesheetServlet extends HttpServlet {
                 }
             }
 
-            if (permissionService.checkIfUserIsGroupMember(request, "Coordinators")) {
+            if (permissionService.checkIfUserIsGroupMember(request, "Coordinator", true)) {
                 paramMap.put("iscoordinator", true);
             } else {
                 paramMap.put("iscoordinator", false);

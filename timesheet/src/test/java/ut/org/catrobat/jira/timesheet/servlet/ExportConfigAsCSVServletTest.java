@@ -85,8 +85,8 @@ public class ExportConfigAsCSVServletTest {
 
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(userProfile);
 
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(false);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet", false)).thenReturn(true);
 
         Mockito.when(response.getOutputStream()).thenReturn(outputStream);
     }

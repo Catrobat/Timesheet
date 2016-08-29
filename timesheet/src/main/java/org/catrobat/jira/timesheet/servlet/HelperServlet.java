@@ -18,7 +18,6 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 
 import javax.servlet.ServletException;
@@ -53,9 +52,9 @@ public abstract class HelperServlet extends HttpServlet {
     }
 
     private void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
-                !permissionService.checkIfUserIsGroupMember(request, "jira-administrators") &&
-                !permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
+        if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet", false) &&
+                !permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false) &&
+                !permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators", false)) {
             redirectToLogin(request, response);
             return;
         }

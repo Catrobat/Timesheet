@@ -13,7 +13,6 @@ import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.MasterThesisTimesheetServlet;
-import org.catrobat.jira.timesheet.servlet.TimesheetServlet;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -85,13 +84,13 @@ public class MTTimesheetServletTest {
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
         Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet", false)).thenReturn(true);
         Mockito.when(timeSheet.getID()).thenReturn(1);
         Mockito.when(timeSheet.getUserKey()).thenReturn(admin_key.getStringValue());
         Mockito.when(timeSheet.getIsActive()).thenReturn(true);
         Mockito.when(timeSheet.getIsEnabled()).thenReturn(false);
         Mockito.when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(true);
     }
 
     //Maps is a Google Classe -> can not be mocked

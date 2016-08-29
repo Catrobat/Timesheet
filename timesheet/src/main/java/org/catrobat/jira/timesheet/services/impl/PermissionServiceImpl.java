@@ -40,7 +40,7 @@ public class PermissionServiceImpl implements PermissionService {
     private final ConfigService configService;
 
     public PermissionServiceImpl(UserManager userManager, TeamService teamService,
-                                 ConfigService configService) {
+            ConfigService configService) {
         this.userManager = userManager;
         this.teamService = teamService;
         this.configService = configService;
@@ -61,7 +61,7 @@ public class PermissionServiceImpl implements PermissionService {
         return userProfile;
     }
 
-    public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName) {
+    public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName, Boolean isSubstring) {
         UserProfile remoteUser = userManager.getRemoteUser(request);
 
         if (remoteUser == null) {
@@ -82,6 +82,13 @@ public class PermissionServiceImpl implements PermissionService {
         Collection<String> userGroups = ComponentAccessor.getGroupManager().getGroupNamesForUser(
                 ComponentAccessor.getUserManager().getUserByKey(userKey));
 
+        if (isSubstring) {
+            for (String userGroup : userGroups) {
+                if (userGroup.contains(groupName)) {
+                    return true;
+                }
+            }
+        }
         return userGroups.contains(groupName);
     }
 
@@ -112,9 +119,9 @@ public class PermissionServiceImpl implements PermissionService {
         if (userKey == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid " +
                     "'UserKey'.").build();
-        } else if (!(checkIfUserIsGroupMember(request, "jira-administrators") ||
-                checkIfUserIsGroupMember(request, "jira-administrators") ||
-                checkIfUserIsGroupMember(request, "Jira-Test-Administrators"))) {
+        } else if (!(checkIfUserIsGroupMember(request, "jira-administrators", false) ||
+                checkIfUserIsGroupMember(request, "jira-administrators", false) ||
+                checkIfUserIsGroupMember(request, "Jira-Test-Administrators", false))) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                     "'jira-administrators', or 'Timesheet' group.").build();
         }
@@ -165,8 +172,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     private boolean userCoordinatesTeamsOfSheet(UserProfile user, Timesheet sheet) {
         UserProfile owner = userManager.getUserProfile(sheet.getUserKey());
-        if (owner == null)
-            return false;
+        if (owner == null) { return false; }
 
         Set<Team> ownerTeams = teamService.getTeamsOfUser(owner.getUsername());
         Set<Team> userTeams = teamService.getCoordinatorTeamsOfUser(user.getUsername());

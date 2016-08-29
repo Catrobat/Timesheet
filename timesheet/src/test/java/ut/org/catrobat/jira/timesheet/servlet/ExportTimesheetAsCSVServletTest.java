@@ -22,7 +22,6 @@ import org.mockito.Mockito;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintStream;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -75,8 +74,8 @@ public class ExportTimesheetAsCSVServletTest {
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(userProfile);
         Mockito.when(userManager.getUserProfile(test_key)).thenReturn(userProfile);
 
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(false);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet", false)).thenReturn(true);
 
         Mockito.when(timesheet.getTargetHoursPractice()).thenReturn(50);
         Mockito.when(timesheet.getTargetHoursTheory()).thenReturn(100);

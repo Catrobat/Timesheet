@@ -14,6 +14,8 @@ AJS.toInit(function () {
 
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
+    console.log("restBaseUrl: "+restBaseUrl);
+
     AJS.$("#timesheet-export-csv-link").empty();
 
     // printDomainAttributes();

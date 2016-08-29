@@ -34,7 +34,7 @@ public interface PermissionService {
 
     UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException;
 
-    boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName);
+    boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName, Boolean isSubstring);
 
     UserProfile checkIfUsernameExists(String userName) throws ServiceException;
 

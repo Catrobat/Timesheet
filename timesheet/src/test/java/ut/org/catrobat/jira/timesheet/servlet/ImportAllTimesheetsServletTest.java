@@ -16,7 +16,6 @@ import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.servlet.ImportConfigCsvServlet;
 import org.catrobat.jira.timesheet.servlet.ImportTimesheetCsvServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,8 +92,8 @@ public class ImportAllTimesheetsServletTest {
 
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(userProfile);
 
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(false);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet", false)).thenReturn(true);
 
         Mockito.when(response.getOutputStream()).thenReturn(outputStream);
         Mockito.when(response.getWriter()).thenReturn(printWriter);

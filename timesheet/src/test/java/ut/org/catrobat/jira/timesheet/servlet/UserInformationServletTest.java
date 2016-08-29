@@ -10,7 +10,6 @@ import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.servlet.AdminServlet;
 import org.catrobat.jira.timesheet.servlet.UserInformationServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,8 +60,8 @@ public class UserInformationServletTest {
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(userProfile);
         Mockito.when(userManager.getUserProfile(test_key)).thenReturn(userProfile);
 
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(false);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet", false)).thenReturn(true);
     }
 
     @Test

@@ -1,5 +1,4 @@
 "use strict";
-var INDEX_OF_INACTIVE_VALUE = 2;
 
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
@@ -321,24 +320,36 @@ function prepareForm(entry, timesheetData) {
         );
 
     form.inactiveEndDateField.change(function () {
-        form.categorySelect.auiSelect2("val", INDEX_OF_INACTIVE_VALUE);
         form.descriptionField.val("Inactive, because "); // you can also write AJS.$("input.description").val("hello boy");
+
+        var index = getIndexOfCategoryOption("inactive");
+        form.categorySelect.auiSelect2("val", index);
+    });
+
+    form.partnerSelect.change(function () {
+        var index = getIndexOfCategoryOption("Pair programming");
+        form.categorySelect.auiSelect2("val", index);
     });
 
     form.descriptionField.change(function () {
         validation(form.descriptionField);
     });
 
-    // input validation
-    function validation(form) {
-        var str = form.val().toLowerCase();
-        if (str.indexOf("<script>") !== -1) { // this increases the performance, because regex validation is high computationally
-            var isMatching = str.match(/.*<script>.*<\/script>/i);
-            if (isMatching) {
-                alert("Don't try to hack this, you nasty bastard! You have no change! ;)");
-                form.val("");
+    //get index of option(=name) in category
+    function getIndexOfCategoryOption(categoryName) {
+        categoryName = categoryName.toLowerCase();
+        var index = 1;
+        while (true) {
+            var name = timesheetData.categories[index].categoryName.toLowerCase();
+            if (name == categoryName) {
+                break;
             }
+            if (name == null) {
+                break;
+            }
+            index++;
         }
+        return index;
     }
 
     row.find('input.time.start, input.time.end')
@@ -393,14 +404,17 @@ function prepareForm(entry, timesheetData) {
                 projectKeys[i] = key;
             }
         },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("status: " + textStatus + "error message: " + errorThrown);
+        error: function (jqXHR) {
+            console.log("error message: " + jqXHR.responseText);
         },
         async: false
     });
 
     var tickets = new Array();
     AJS.$.each(projectKeys, function (index, value) {
+        if (value === undefined) {
+            value = null; // null is a accepted value, but undefined is going worse
+        }
         var queryString = "/rest/api/latest/search?jql=project%20in%20(" + value + ")%20AND%20(status%20not%20in%20(closed,resolved,done))";
 
         AJS.$.ajax({
@@ -409,14 +423,16 @@ function prepareForm(entry, timesheetData) {
             dataType: 'json',
             success: function (data) {
                 for (var i = 0; i < data.total; i++) {
-                    var key = data.issues[i].key;
-                    var summary = data.issues[i].fields.summary;
-                    tickets.push(key + " : " + summary);
+                    if (data.issues[i] && data.issues[i].key) {
+                        var key = data.issues[i].key;
+                        var summary = data.issues[i].fields.summary;
+                        tickets.push(key + " : " + summary);
+                    }
                 }
 
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log("status: " + textStatus + "error message: " + errorThrown);
+            error: function (jqXHR) {
+                console.log("error message: " + jqXHR.responseText);
             },
             async: false
         });
@@ -432,6 +448,18 @@ function prepareForm(entry, timesheetData) {
     }
 
     return form;
+}
+
+// input validation
+function validation(form) {
+    var str = form.val().toLowerCase();
+    if (str.indexOf("<script>") !== -1) { // this increases the performance, because regex validation is high computationally
+        var isMatching = str.match(/.*<script>.*<\/script>/i);
+        if (isMatching) {
+            alert("Don't try to hack this, you nasty bastard! You have no change! ;)");
+            form.val("");
+        }
+    }
 }
 
 /**
