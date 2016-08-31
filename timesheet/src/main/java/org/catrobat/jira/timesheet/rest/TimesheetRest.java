@@ -506,8 +506,7 @@ public class TimesheetRest {
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         } catch (com.atlassian.jira.exception.PermissionException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity("'User' does not have the permission to " +
-                    "modify 'Timesheet Entries' of other users.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
         String programmingPartnerName = "";
@@ -644,8 +643,7 @@ public class TimesheetRest {
             } catch (ServiceException e) {
                 return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
             } catch (com.atlassian.jira.exception.PermissionException e) {
-                return Response.status(Response.Status.FORBIDDEN).entity("'User' does not have the permission to " +
-                        "modify 'Timesheet Entries' of other users.").build();
+                return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
             }
         }
 
@@ -770,8 +768,7 @@ public class TimesheetRest {
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         } catch (com.atlassian.jira.exception.PermissionException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity("'User' does not have the permission to " +
-                    "modify 'Timesheet Entries' of other users.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
         if (sheet.getIsEnabled()) {
@@ -825,8 +822,7 @@ public class TimesheetRest {
         try {
             permissionService.userCanDeleteTimesheetEntry(user, entry);
         } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have the permission to " +
-                    "modify 'Timesheet Entries' of other users.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
         //update latest date

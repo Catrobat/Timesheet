@@ -27,8 +27,7 @@ function populateTable(timesheetDataReply) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
-                body: '<p> Your Timesheet is marked as "inactive", because its last entry ' +
-                'date is older than two weeks.</p>'
+                body: '<p> Your Timesheet is marked as <em>inactive</em>.</p>'
             });
 
             require(['aui/banner'], function (banner) {
@@ -40,7 +39,7 @@ function populateTable(timesheetDataReply) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
-                body: '<p> Your Timesheet is marked as "disabled".</p>' +
+                body: '<p> Your Timesheet is marked as <em>disabled</em>.</p>' +
                 '<p> You are not able to apply any changes until it is "disabled" again by an Administrator.</p>'
             });
 
@@ -324,6 +323,12 @@ function prepareForm(entry, timesheetData) {
 
         var index = getIndexOfCategoryOption("inactive");
         form.categorySelect.auiSelect2("val", index);
+        
+        form.beginTimeField.hide();
+        form.endTimeField.hide();
+        form.pauseTimeField.hide();
+        form.durationField.hide();
+        AJS.$(".select2-choices").hide(); // hides the select2 boxes
     });
 
     form.partnerSelect.change(function () {
@@ -333,6 +338,27 @@ function prepareForm(entry, timesheetData) {
 
     form.descriptionField.change(function () {
         validation(form.descriptionField);
+    });
+
+    form.categorySelect.change(function () {
+        if (form.categorySelect.val() == getIndexOfCategoryOption("inactive")) {
+            form.beginTimeField.hide();
+            form.endTimeField.hide();
+            form.pauseTimeField.hide();
+            form.durationField.hide();
+            form.ticketSelect.hide();
+            form.partnerSelect.hide();
+            AJS.$(".select2-choices").hide();
+        }
+        else {
+            form.beginTimeField.show();
+            form.endTimeField.show();
+            form.pauseTimeField.show();
+            form.durationField.show();
+            form.ticketSelect.show();
+            form.partnerSelect.show();
+            AJS.$(".select2-choices").show(); // shows the select2 boxes
+        }
     });
 
     //get index of option(=name) in category

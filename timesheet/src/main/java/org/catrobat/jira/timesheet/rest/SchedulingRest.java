@@ -47,10 +47,9 @@ public class SchedulingRest {
     private final TimesheetService sheetService;
     private final TeamService teamService;
     private final UserManager userManager;
-    private final int PERIOD_OF_TIME = 14 * 24 * 60 * 60 * 1000; // 2 weeks in ms
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
-                          final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
+            final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.entryService = entryService;
@@ -72,48 +71,36 @@ public class SchedulingRest {
         Set<User> userList = ComponentAccessor.getUserManager().getAllUsers();
         Config config = configService.getConfiguration();
 
-        Date today = new Date();
-
         for (User user : userList) {
             String userKey = ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey();
             for (Timesheet timesheet : timesheetList) {
                 if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
                     continue;
                 }
-                TimesheetEntry timesheetFirstEntry = entryService.getEntriesBySheet(timesheet)[0];
                 if (timesheet.getUserKey().equals(userKey)) {
                     if (!timesheet.getIsActive()) { // user is inactive
-                        //check if user made an inactive entry and inactive date is more than 2 weeks old
-                        long diff = today.getTime() - timesheetFirstEntry.getInactiveEndDate().getTime();
-                        if (timesheetFirstEntry.getCategory().getName().equals("Inactive") &&
-                                diff > PERIOD_OF_TIME) { // > 2 weeks in ms
-                            //inform coordinators that he should be active by now
+                        TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
+                        if (isDateOlderThanTwoWeeks(latestInactiveEntry.getInactiveEndDate())) {
+                            //inform coordinators that he should be active since two weeks
                             for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                                 sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
-                                        "User: " + user.getName() + " should be 'active' since today, but is not."));
+                                        config.getMailBodyInactive()));
                             }
                         }
 
-                        //Email to users coordinators -- immer informiert?
-                        for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
-                            sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
-                                    config.getMailBodyInactive()));
-                        }
-
-                        //Email to admins -- immer informiert?
-                        for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
-                            sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
-                                    , config.getMailBodyInactive()));
-                        }
-                    } else { // user is active
-                        if (isDateOlderThanTwoMonths(timesheetFirstEntry.getBeginDate())) {
-                            //Email to admins is good but not enough -- nur system admins?
+                        if (isDateOlderThanOneMonth(latestInactiveEntry.getInactiveEndDate())) {
                             for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
                                 sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
                                         , config.getMailBodyInactive()));
                             }
-
-
+                        }
+                    } else { // user is active
+                        TimesheetEntry latestEntry = entryService.getEntriesBySheet(timesheet)[0];
+                        if (isDateOlderThanTwoMonths(latestEntry.getBeginDate())) {
+                            for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
+                                sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
+                                        , config.getMailBodyInactive()));
+                            }
                         }
                     }
                 }
@@ -154,25 +141,17 @@ public class SchedulingRest {
             return Response.serverError().entity("You are not authorized to trigger jobs.").build();
         }
 
+        Date today = new Date();
         List<Timesheet> timesheetList = sheetService.all();
         for (Timesheet timesheet : timesheetList) {
-            if (timesheet.getEntries().length > 0) {
-                TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
-                if (isDateOlderThanTwoWeeks(entries[0].getBeginDate())) {
+            TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
+            if (latestInactiveEntry != null) {
+                if (latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) {
                     timesheet.setIsActive(false);
-                    timesheet.save();
-                } else if ((entries[0].getCategory().getName().equals("Inactive")) &&
-                        (entries[0].getInactiveEndDate().compareTo(entries[0].getBeginDate()) > 0)) {
-                    timesheet.setIsActive(false);
-                    timesheet.save();
-                } else {
-                    //latest entry is not older than 2 weeks and user did not add inactive entry
-                    timesheet.setIsActive(true);
                     timesheet.save();
                 }
-            } else {
-                //no entry available
-                timesheet.setIsActive(false);
+            } else { // no inactive entry found
+                timesheet.setIsActive(true);
                 timesheet.save();
             }
         }
@@ -195,8 +174,8 @@ public class SchedulingRest {
 
         for (User user : userList) {
             for (Timesheet timesheet : timesheetList) {
-                if (timesheet.getUserKey().equals(
-                        ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey())) {
+                String userKey = ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey();
+                if (timesheet.getUserKey().equals(userKey)) {
                     if ((timesheet.getTargetHours() - timesheet.getTargetHoursCompleted()) <= 80) {
                         Email email = new Email(user.getEmailAddress());
                         email.setSubject(config.getMailSubjectTime());
@@ -217,9 +196,26 @@ public class SchedulingRest {
         return (datetime.compareTo(twoWeeksAgo) < 0);
     }
 
+    private boolean isDateOlderThanOneMonth(Date date) {
+        DateTime oneMonthAgo = new DateTime().minusMonths(1);
+        DateTime datetime = new DateTime(date);
+        return (datetime.compareTo(oneMonthAgo) < 0);
+    }
+
     private boolean isDateOlderThanTwoMonths(Date date) {
         DateTime twoMonthsAgo = new DateTime().minusMonths(2);
         DateTime datetime = new DateTime(date);
         return (datetime.compareTo(twoMonthsAgo) < 0);
+    }
+
+    private TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {
+        TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
+        for (TimesheetEntry entry : entries) {
+            if (entry.getCategory().getName().equals("Inactive")
+                    && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
+                return entry;
+            }
+        }
+        return null;
     }
 }
