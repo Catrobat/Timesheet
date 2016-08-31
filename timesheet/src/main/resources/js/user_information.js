@@ -56,7 +56,7 @@ AJS.toInit(function () {
     });
 
     function populateTable(allUsers, allTimesheets) {
-        users = allUsers[0].sort(function(a, b){
+        users = allUsers[0].sort(function (a, b) {
             return a['userName'].localeCompare(b['userName']);
         });
 
@@ -65,10 +65,16 @@ AJS.toInit(function () {
         AJS.$(".loadingDiv").show();
         AJS.$("#user-body").empty();
         for (var i = 0; i < users.length; i++) {
+
+            //check if user has timesheet
+            if (!timesheet[i]) {
+                continue;
+            }
             var obj = users[i];
             var username = obj['active'] ? obj['userName'] : "<del>" + obj['userName'] + "</del>";
             var state = obj['active'] ? "active" : "inactive";
-            var timesheetState = timesheet[i]['isActive'] ? "active" : "inactive";
+
+            var timesheetState = timesheet[i].isActive ? "active" : "inactive";
 
 
             if (obj['active']) {
