@@ -47,6 +47,8 @@ public class SchedulingRest {
     private final TimesheetService sheetService;
     private final TeamService teamService;
     private final UserManager userManager;
+    private HashSet<String> offlineSet = new HashSet<String>();
+    private HashSet<String> inactiveSet = new HashSet<String>();
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
             final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
@@ -80,18 +82,20 @@ public class SchedulingRest {
                 if (timesheet.getUserKey().equals(userKey)) {
                     if (!timesheet.getIsActive()) { // user is inactive
                         TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
-                        if (isDateOlderThanTwoWeeks(latestInactiveEntry.getInactiveEndDate())) {
-                            //inform coordinators that he should be active since two weeks
-                            for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
-                                sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
-                                        config.getMailBodyInactive()));
+                        if (latestInactiveEntry != null) {
+                            if (isDateOlderThanTwoWeeks(latestInactiveEntry.getInactiveEndDate())) {
+                                //inform coordinators that he should be active since two weeks
+                                for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+                                    sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
+                                            config.getMailBodyInactive()));
+                                }
                             }
-                        }
 
-                        if (isDateOlderThanOneMonth(latestInactiveEntry.getInactiveEndDate())) {
-                            for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
-                                sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
-                                        , config.getMailBodyInactive()));
+                            if (isDateOlderThanOneMonth(latestInactiveEntry.getInactiveEndDate())) {
+                                for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
+                                    sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
+                                            , config.getMailBodyInactive()));
+                                }
                             }
                         }
                     } else { // user is active
@@ -144,19 +148,78 @@ public class SchedulingRest {
         Date today = new Date();
         List<Timesheet> timesheetList = sheetService.all();
         for (Timesheet timesheet : timesheetList) {
+            TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
+            if (entries.length == 0) { continue; }
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null) {
-                if (latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) {
+                if (latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) { // user has set himself to inactive
                     timesheet.setIsActive(false);
+                    timesheet.setIsAutoInactive(false);
+                    timesheet.save();
+                    printStatusFlags(timesheet);
+                    continue;
+                }
+            }
+            // user is active, but latest entry is older than 2 weeks
+            if (timesheet.getIsActive() && isDateOlderThanTwoWeeks(entries[0].getBeginDate())) {
+                timesheet.setIsActive(false);
+                timesheet.setIsAutoInactive(true);
+                timesheet.save();
+            }
+            // user is still inactive since 2 months
+            else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() && isDateOlderThanTwoMonths(entries[0].getBeginDate())) {
+                timesheet.setIsOffline(true);
+                timesheet.setIsAutoOffline(true);
+                timesheet.setIsAutoInactive(false);
+                timesheet.save();
+
+            }
+            //user is back again
+            else if (!isDateOlderThanTwoWeeks(entries[0].getBeginDate())) {
+                timesheet.setIsActive(true);
+                timesheet.setIsOffline(false);
+                timesheet.setIsAutoInactive(false);
+                timesheet.setIsAutoOffline(false);
+                timesheet.save();
+                inactiveSet.remove(timesheet.getUserKey());
+                offlineSet.remove(timesheet.getUserKey());
+            }
+            // user has set himself inactive
+            else if (!timesheet.getIsActive() && !timesheet.getIsAutoInactive()) {
+                // user remains inactive, will be set to offline
+                if (isDateOlderThanOneWeek(entries[0].getBeginDate())) {
+                    timesheet.setIsActive(false);
+                    timesheet.setIsOffline(true);
+                    timesheet.setIsAutoInactive(false);
+                    timesheet.setIsAutoOffline(true);
                     timesheet.save();
                 }
-            } else { // no inactive entry found
-                timesheet.setIsActive(true);
-                timesheet.save();
+            }
+
+            //else: more possibilities with isActive: [false] isAutoInactive: [true]
+
+            printStatusFlags(timesheet);
+
+
+            if (timesheet.getIsOffline()) {
+                inactiveSet.remove(timesheet.getUserKey());
+                offlineSet.add(timesheet.getUserKey());
+            } else if (!timesheet.getIsActive()) {
+                inactiveSet.add(timesheet.getUserKey());
             }
         }
 
         return Response.noContent().build();
+    }
+
+    private String printStatusFlags(Timesheet timesheet) {
+        System.out.println("Status:     -----------------------------------------------------------------------");
+        String message = "isActive: [" +
+                timesheet.getIsActive() + "] isAutoInactive: [" + timesheet.getIsAutoInactive() + "] isOffline: [" +
+                timesheet.getIsOffline() + "] isAutoOffline: [" + timesheet.getIsAutoOffline() + "] |";
+        System.out.println(message);
+        System.out.println("END Status: -----------------------------------------------------------------------");
+        return message;
     }
 
     @GET
@@ -188,6 +251,12 @@ public class SchedulingRest {
         }
 
         return Response.noContent().build();
+    }
+
+    private boolean isDateOlderThanOneWeek(Date date) {
+        DateTime oneWeekAgo = new DateTime().minusWeeks(1);
+        DateTime datetime = new DateTime(date);
+        return (datetime.compareTo(oneWeekAgo) < 0);
     }
 
     private boolean isDateOlderThanTwoWeeks(Date date) {

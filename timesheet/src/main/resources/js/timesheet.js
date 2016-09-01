@@ -253,6 +253,9 @@ function updateTimesheetHours(existingTimesheetData) {
         - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
         isActive: existingTimesheetData.isActive,
+        isAutoInactive: existingTimesheetData.isAutoInactive,
+        isOffline : existingTimesheetData.isOffline,
+        isAutoOffline : existingTimesheetData.isAutoOffline,
         isEnabled: existingTimesheetData.isEnabled,
         isMTSheet: existingTimesheetData.isMTSheet
     };

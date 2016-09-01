@@ -142,8 +142,9 @@ public class TimesheetRest {
     public Response getTeamsForTimesheet(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) throws ServiceException {
 
-        if (checkPermission(request))
+        if (checkPermission(request)) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
@@ -169,8 +170,9 @@ public class TimesheetRest {
     @Path("categories")
     public Response getCategories(@Context HttpServletRequest request) throws ServiceException {
 
-        if (checkPermission(request))
+        if (checkPermission(request)) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonCategory> categories = new LinkedList<JsonCategory>();
 
@@ -194,8 +196,9 @@ public class TimesheetRest {
     @Path("teamInformation")
     public Response getAllTeams(@Context HttpServletRequest request) throws ServiceException {
 
-        if (checkPermission(request))
+        if (checkPermission(request)) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
 
@@ -214,8 +217,9 @@ public class TimesheetRest {
     @Path("timesheet/{timesheetID}/teamEntries")
     public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) throws ServiceException {
-        if (checkPermission(request))
+        if (checkPermission(request)) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<JsonTimesheetEntry>();
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
@@ -267,13 +271,14 @@ public class TimesheetRest {
             }
 
             for (TimesheetEntry timesheetEntry : timesheetEntries) {
-                if (timesheetEntry.getTeam().getTeamName().equals(teamName))
+                if (timesheetEntry.getTeam().getTeamName().equals(teamName)) {
                     jsonTimesheetEntries.add(new JsonTimesheetEntry(timesheetEntry.getID(),
                             timesheetEntry.getBeginDate(), timesheetEntry.getEndDate(),
                             timesheetEntry.getInactiveEndDate(), timesheetEntry.getPauseMinutes(),
                             timesheetEntry.getDescription(), timesheetEntry.getTeam().getID(),
                             timesheetEntry.getCategory().getID(), timesheetEntry.getJiraTicketID(),
                             timesheetEntry.getPairProgrammingUserName(), timesheetEntry.getIsGoogleDocImport()));
+                }
             }
         }
 
@@ -286,8 +291,9 @@ public class TimesheetRest {
             @PathParam("userName") String userName,
             @PathParam("getMTSheet") Boolean getMTSheet) throws ServiceException {
 
-        if (checkPermission(request))
+        if (checkPermission(request)) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         Timesheet sheet = null;
         try {
@@ -360,7 +366,8 @@ public class TimesheetRest {
         JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
                 sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
                 sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
+                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsAutoInactive(), sheet.getIsOffline(),
+                sheet.getIsAutoOffline(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
 
         return Response.ok(jsonTimesheet).build();
     }
@@ -396,7 +403,8 @@ public class TimesheetRest {
         JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
                 sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
                 sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
+                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsAutoInactive(), sheet.getIsOffline(),
+                sheet.getIsAutoOffline(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
 
         return Response.ok(jsonTimesheet).build();
     }
@@ -699,7 +707,8 @@ public class TimesheetRest {
         JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
                 sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(),
                 sheet.getTargetHours(), sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getIsActive(),
-                sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
+                sheet.getIsAutoInactive(), sheet.getIsOffline(), sheet.getIsAutoOffline(), sheet.getIsEnabled(),
+                sheet.getIsMasterThesisTimesheet());
 
         return Response.ok(newJsonTimesheet).build();
     }
@@ -725,7 +734,8 @@ public class TimesheetRest {
                 JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
                         sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                        sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
+                        sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsAutoInactive(), sheet.getIsOffline(),
+                        sheet.getIsAutoOffline(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
 
                 newJsonTimesheets.add(newJsonTimesheet);
             }
@@ -894,8 +904,9 @@ public class TimesheetRest {
                 "Catrobat-Admins";
 
         mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getFullName());
-        if (sheet.getEntries().length > 0)
+        if (sheet.getEntries().length > 0) {
             mailBody = mailBody.replaceAll("\\{\\{date\\}\\}", sheet.getEntries()[0].getBeginDate().toString());
+        }
 
         sendEmail(emailTo, mailSubject, mailBody);
     }
@@ -980,8 +991,9 @@ public class TimesheetRest {
     @Path("issueTickets")
     public Response getIssueTickets(@Context HttpServletRequest request) throws ServiceException {
 
-        if (checkPermission(request))
+        if (checkPermission(request)) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
+        }
 
         SearchService searchService = ComponentAccessor.getComponentOfType(SearchService.class);
         User currentUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();

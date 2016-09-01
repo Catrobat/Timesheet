@@ -48,13 +48,20 @@ public final class JsonTimesheet {
     @XmlElement
     private boolean isActive;
     @XmlElement
+    private boolean isAutoInactive;
+    @XmlElement
+    private boolean isOffline;
+    @XmlElement
+    private boolean isAutoOffline;
+
+    @XmlElement
     private boolean isEnabled;
     @XmlElement
     private boolean isMTSheet;
 
     public JsonTimesheet(int timesheetID, String lectures, String reason, double ects, String latestEntryDate, int targetHourPractice,
-                         int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
-                         boolean isEnabled, boolean isMTSheet) {
+            int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
+            boolean isAutoInactive, boolean isOffline, boolean isAutoOffline, boolean isEnabled, boolean isMTSheet) {
         this.timesheetID = timesheetID;
         this.lectures = lectures;
         this.reason = reason;
@@ -66,6 +73,9 @@ public final class JsonTimesheet {
         this.targetHoursCompleted = targetHoursCompleted;
         this.targetHoursRemoved = targetHoursRemoved;
         this.isActive = isActive;
+        this.isAutoInactive = isAutoInactive;
+        this.isOffline = isOffline;
+        this.isAutoOffline = isAutoOffline;
         this.isEnabled = isEnabled;
         this.isMTSheet = isMTSheet;
     }
@@ -169,23 +179,59 @@ public final class JsonTimesheet {
         isEnabled = enabled;
     }
 
+    public boolean isAutoInactive() {
+        return isAutoInactive;
+    }
+
+    public void setAutoInactive(boolean autoInactive) {
+        isAutoInactive = autoInactive;
+    }
+
+    public boolean isOffline() {
+        return isOffline;
+    }
+
+    public void setOffline(boolean offline) {
+        isOffline = offline;
+    }
+
+    public boolean isAutoOffline() {
+        return isAutoOffline;
+    }
+
+    public void setAutoOffline(boolean autoOffline) {
+        isAutoOffline = autoOffline;
+    }
+
+    public boolean isMTSheet() {
+        return isMTSheet;
+    }
+
+    public void setMTSheet(boolean MTSheet) {
+        isMTSheet = MTSheet;
+    }
+
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
 
         JsonTimesheet that = (JsonTimesheet) o;
 
-        if (timesheetID != that.timesheetID) return false;
-        if (ects != that.ects) return false;
-        if (latestEntryDate != that.latestEntryDate) return false;
-        if (targetHourPractice != that.targetHourPractice) return false;
-        if (targetHourTheory != that.targetHourTheory) return false;
-        if (targetHours != that.targetHours) return false;
-        if (targetHoursCompleted != that.targetHoursCompleted) return false;
-        if (targetHoursRemoved != that.targetHoursRemoved) return false;
-        if (isActive != that.isActive) return false;
-        if (isEnabled != that.isEnabled) return false;
+        if (timesheetID != that.timesheetID) { return false; }
+        if (ects != that.ects) { return false; }
+        if (latestEntryDate != that.latestEntryDate) { return false; }
+        if (targetHourPractice != that.targetHourPractice) { return false; }
+        if (targetHourTheory != that.targetHourTheory) { return false; }
+        if (targetHours != that.targetHours) { return false; }
+        if (targetHoursCompleted != that.targetHoursCompleted) { return false; }
+        if (targetHoursRemoved != that.targetHoursRemoved) { return false; }
+        if (isActive != that.isActive) { return false; }
+        if (isAutoInactive != that.isAutoInactive) { return false;}
+        if (isOffline != that.isOffline) { return false;}
+        if (isAutoOffline != that.isAutoOffline) { return false;}
+        if (isEnabled != that.isEnabled) { return false; }
 
         return lectures.equals(that.lectures);
     }
@@ -195,7 +241,7 @@ public final class JsonTimesheet {
         int result = timesheetID;
         result = 31 * result + lectures.hashCode();
         result = 31 * result + reason.hashCode();
-        result = 31 * result + (int)ects;
+        result = 31 * result + (int) ects;
         //result = 31 * result + latestEntryDate.hashCode();
         result = 31 * result + targetHourPractice;
         result = 31 * result + targetHourTheory;
@@ -203,6 +249,9 @@ public final class JsonTimesheet {
         result = 31 * result + targetHoursCompleted;
         result = 31 * result + targetHoursRemoved;
         result = 31 * result + (isActive ? 1 : 0);
+        result = 31 * result + (isAutoInactive ? 1 : 0);
+        result = 31 * result + (isOffline ? 1 : 0);
+        result = 31 * result + (isAutoOffline ? 1 : 0);
         result = 31 * result + (isEnabled ? 1 : 0);
         return result;
     }

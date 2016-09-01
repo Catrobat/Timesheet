@@ -21,13 +21,25 @@ function populateTable(timesheetDataReply) {
                 '<p> If you notice any uncommon plugin behaviour, or need support feel free to ' +
                 'contact one of the project "Coordinators", or an "Administrator".</p>'
             });
-
-        //Banner Informations for the User
-        else if (!timesheetData.isActive) {
+        else if (timesheetData.isOffline) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
-                body: '<p> Your Timesheet is marked as <em>inactive</em>.</p>'
+                body: '<p> Your Timesheet is marked as <em>offline</em>, because you weren\'t active for a very long time.</p>'
+            });
+
+            require(['aui/banner'], function (banner) {
+                banner({
+                    body: 'Your Timesheet is marked as <strong>offline</strong>.',
+                });
+            });
+        }
+        else if (timesheetData.isAutoInactive) {
+            AJS.messages.warning({
+                title: 'Timesheet Warning.',
+                closeable: true,
+                body: '<p> Your Timesheet was marked as <em>inactive</em> by the system, ' +
+                'because you wasn\'t active for a longer period in the past.</p>'
             });
 
             require(['aui/banner'], function (banner) {
@@ -35,7 +47,22 @@ function populateTable(timesheetDataReply) {
                     body: 'Your Timesheet is marked as <strong>inactive</strong>.',
                 });
             });
-        } else if (!timesheetData.isEnabled) {
+        }
+        //Banner Informations for the User
+        else if (!timesheetData.isActive) {
+            AJS.messages.warning({
+                title: 'Timesheet Warning.',
+                closeable: true,
+                body: '<p> Your Timesheet is marked as <em>inactive</em>, because you made an inactive entry.</p>'
+            });
+
+            require(['aui/banner'], function (banner) {
+                banner({
+                    body: 'Your Timesheet is marked as <strong>inactive</strong>.',
+                });
+            });
+        }
+        else if (!timesheetData.isEnabled) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
@@ -323,7 +350,7 @@ function prepareForm(entry, timesheetData) {
 
         var index = getIndexOfCategoryOption("inactive");
         form.categorySelect.auiSelect2("val", index);
-        
+
         form.beginTimeField.hide();
         form.endTimeField.hide();
         form.pauseTimeField.hide();
@@ -358,6 +385,7 @@ function prepareForm(entry, timesheetData) {
             form.ticketSelect.show();
             form.partnerSelect.show();
             AJS.$(".select2-choices").show(); // shows the select2 boxes
+            form.inactiveEndDateField.val(""); // clear input
         }
     });
 
