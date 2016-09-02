@@ -254,7 +254,7 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
 
     form.loadingSpinner.show();
 
-    console.log("url: " + saveOptions.ajaxUrl);
+    //console.log("url: " + saveOptions.ajaxUrl);
 
     AJS.$.ajax({
         type: saveOptions.httpMethod,

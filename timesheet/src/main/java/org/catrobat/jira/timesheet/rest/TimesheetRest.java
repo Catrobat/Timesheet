@@ -446,13 +446,16 @@ public class TimesheetRest {
         Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
         permissionService.checkIfUserExists(request);
 
-        UserUtil userUtil = ComponentAccessor.getUserUtil();
-        Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
+        //UserUtil userUtil = ComponentAccessor.getUserUtil();
+        //Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
 
         for (User user : allUsers) {
+            //this might be the problem for Annemarie
+            /*
             if (systemAdmins.contains(user)) {
                 continue;
             }
+            */
 
             JsonTimesheet jsonTimesheet = new JsonTimesheet();
 
@@ -547,6 +550,7 @@ public class TimesheetRest {
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         boolean isActive = sheet.getIsActive();
+
         if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
             isActive = false;
         }

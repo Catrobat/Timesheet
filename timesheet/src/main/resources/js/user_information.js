@@ -56,10 +56,12 @@ AJS.toInit(function () {
     });
 
     function populateTable(allUsers, allTimesheets) {
+        /*
         users = allUsers[0].sort(function (a, b) {
             return a['userName'].localeCompare(b['userName']);
         });
-
+        */
+        users = allUsers[0];
         timesheet = allTimesheets[0];
 
         AJS.$(".loadingDiv").show();
@@ -75,7 +77,6 @@ AJS.toInit(function () {
             var state = obj['active'] ? "active" : "inactive";
 
             var timesheetState = timesheet[i].isActive ? "active" : "inactive";
-
 
             if (obj['active']) {
                 if (timesheet[i]['isEnabled']) {
@@ -199,7 +200,7 @@ AJS.toInit(function () {
 
     AJS.$("#update-timesheet-status").submit(function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Refresh List') {
+        if (AJS.$(document.activeElement).val() === "Refresh List") {
             updateTimesheetStatus();
         }
     });

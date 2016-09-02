@@ -345,6 +345,7 @@ function fetchData() {
         });
 }
 
+/*
 function printDomainAttributes() {
     var baseUrl = AJS.params.baseURL;
     var hostname = AJS.$('<a>').prop('href', document.URL).prop('hostname');
@@ -361,6 +362,7 @@ function printDomainAttributes() {
     console.log("document.location.pathname : " + document.location.pathname);
     console.log("window.location.hostname : " + window.location.hostname);
 }
+*/
 
 
 //neue funktionen .....
@@ -381,7 +383,6 @@ function initHiddenDialog() {
     //global val
     var inactiveUsers = new Array();
     inactiveUsers.push("Markus Hobisch");
-    inactiveUsers.push("Adrian Schnedlitz");
 
 // Hides the dialog
     AJS.$("#dialog-submit-button").click(function (e) {
