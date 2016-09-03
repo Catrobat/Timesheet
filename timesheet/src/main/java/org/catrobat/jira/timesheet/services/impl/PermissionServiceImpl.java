@@ -92,6 +92,10 @@ public class PermissionServiceImpl implements PermissionService {
         return userGroups.contains(groupName);
     }
 
+    public boolean checkIfUserIsTeamCoordinator(HttpServletRequest request){
+        return teamService.getCoordinatorTeamsOfUser(userManager.getRemoteUser(request).getUsername()).isEmpty() ? false : true;
+    }
+
     public UserProfile checkIfUsernameExists(String userName) throws ServiceException {
         UserProfile userProfile = userManager.getUserProfile(userName);
 

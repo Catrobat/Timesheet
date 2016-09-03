@@ -36,6 +36,8 @@ public interface PermissionService {
 
     boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName, Boolean isSubstring);
 
+    boolean checkIfUserIsTeamCoordinator(HttpServletRequest request);
+
     UserProfile checkIfUsernameExists(String userName) throws ServiceException;
 
     boolean checkIfUserExists(String userName);

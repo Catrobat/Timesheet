@@ -14,8 +14,6 @@ AJS.toInit(function () {
 
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
-    console.log("restBaseUrl: " + restBaseUrl);
-
     AJS.$("#timesheet-export-csv-link").empty();
 
     // printDomainAttributes();
@@ -43,6 +41,8 @@ AJS.toInit(function () {
 
     if (!isCoordinator) {
         AJS.$("#coord_private").hide();
+    } else {
+        AJS.$("#coord_private").show();
     }
 
     if (isMasterThesisTimesheet) {
@@ -64,8 +64,11 @@ AJS.toInit(function () {
     });
 
     if (isAdmin) {
-        hideVisualizationTabs();
+        //hideVisualizationTabs();
         fetchUsers();
+        fetchData();
+        fetchVisData();
+        fetchTeamVisData();
         AJS.$("#timesheet-hours-save-button").hide();
         AJS.$("#timesheet-hours-update-button").show();
     } else {
