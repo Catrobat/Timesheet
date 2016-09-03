@@ -52,9 +52,9 @@ public abstract class HelperServlet extends HttpServlet {
     }
 
     private void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet", false) &&
-                !permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false) &&
-                !permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators", false)) {
+        if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
+                !permissionService.checkIfUserIsGroupMember(request, "jira-administrators") &&
+                !permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
             redirectToLogin(request, response);
             return;
         }

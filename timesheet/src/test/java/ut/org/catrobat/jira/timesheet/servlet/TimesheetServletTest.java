@@ -84,13 +84,13 @@ public class TimesheetServletTest {
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
         Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet", false)).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
         Mockito.when(timeSheet.getID()).thenReturn(1);
         Mockito.when(timeSheet.getUserKey()).thenReturn(admin_key.getStringValue());
         Mockito.when(timeSheet.getIsActive()).thenReturn(true);
         Mockito.when(timeSheet.getIsEnabled()).thenReturn(false);
         Mockito.when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(true);
     }
 
     //Maps is a Google Classe -> can not be mocked

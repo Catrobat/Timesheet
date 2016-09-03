@@ -277,9 +277,6 @@
     </div>
 </div>
 
-<!-- Create a trigger which will be used by the JavaScript -->
-<button id="dialog-show-button" class="aui-button">Show dialog</button>
-
 <!-- Render the dialog -->
 <section role="dialog" id="hidden-dialog" class="aui-layer aui-dialog2 aui-dialog2-medium aui-dialog2-warning"
          aria-hidden="true" data-aui-modal="true" data-aui-remove-on-hide="true" tabindex="-1"

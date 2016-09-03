@@ -74,8 +74,8 @@ public class ExportMTTimesheetAsCSVServletTest {
         Mockito.when(userManager.getRemoteUser(request)).thenReturn(userProfile);
         Mockito.when(userManager.getUserProfile(test_key)).thenReturn(userProfile);
 
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet", false)).thenReturn(true);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
+        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
 
         Mockito.when(timesheet.getTargetHoursPractice()).thenReturn(50);
         Mockito.when(timesheet.getTargetHoursTheory()).thenReturn(100);

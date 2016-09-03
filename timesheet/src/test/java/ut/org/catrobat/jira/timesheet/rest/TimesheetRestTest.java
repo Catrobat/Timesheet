@@ -731,7 +731,7 @@ public class TimesheetRestTest {
         when(ComponentAccessor.getUserKeyService().getKeyForUsername(userProfileMock.getUsername())).thenReturn(userKey);
 
         when(permissionServiceMock.userCanViewTimesheet(userProfileMock, timesheetMock)).thenReturn(true);
-        when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(true);
+        when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(true);
 
 
         response = timesheetRest.postTimesheetHours(request, jsonTimesheet, timesheetID, isMTSheet);
@@ -781,7 +781,7 @@ public class TimesheetRestTest {
 
         when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userProfileMock);
 
-        when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(true);
+        when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(true);
 
         when(groupManagerJiraMock.getGroupNamesForUser(
                 ComponentAccessor.getUserManager().getUserByKey(userKey))).thenReturn(userGroups);

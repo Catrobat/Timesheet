@@ -224,10 +224,21 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     var inactiveDate = form.inactiveEndDateField.val();
     var validInactiveDateFormat = new Date(inactiveDate);
 
+    if (isDateMoreThanTwoMonthsAhead(inactiveDate)){
+        AJS.$('input.inactive').val("");
+        AJS.messages.error({
+            title: 'The inactive end date is too far away.',
+            body: '<p>Your inactive end date is too far away in the future. Please take a shorter period of time!</p>'
+        });
+        return;
+    }
+    else{
+        console.log("Date is ok");
+    }
+
     if ((inactiveDate == "") || (!isValidDate(validInactiveDateFormat))) {
         inactiveDate = new Date().toJSON().slice(0, 10);
     }
-
     var inactiveEndDate = new Date(inactiveDate + " " + toTimeString(beginTime));
 
     //change entry to 0min duration for inactive entry
@@ -253,8 +264,6 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     }
 
     form.loadingSpinner.show();
-
-    //console.log("url: " + saveOptions.ajaxUrl);
 
     AJS.$.ajax({
         type: saveOptions.httpMethod,

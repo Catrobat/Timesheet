@@ -61,7 +61,7 @@ function filterCategoriesPerTeam(selectedTeam, categories) {
 }
 
 function getselectedCategoryName(categoryID, timesheetData) {
-    if (timesheetData && timesheetData.categories[categoryID]){
+    if (timesheetData && timesheetData.categories[categoryID]) {
         return timesheetData.categories[categoryID].categoryName;
     }
     return null;
@@ -305,4 +305,13 @@ function getMinutesFromTimeString(timeString) {
     } else {
         return 0;
     }
+}
+
+function isDateMoreThanTwoMonthsAhead(inactiveDate) {
+    var date = new Date(inactiveDate);
+    var today = new Date();
+    if ((new Date(today.getFullYear(), today.getMonth(), today.getDate() + 61)) < date) {
+        return true;
+    }
+    return false;
 }

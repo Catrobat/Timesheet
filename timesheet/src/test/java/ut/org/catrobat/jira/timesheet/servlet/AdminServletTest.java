@@ -93,8 +93,8 @@ public class AdminServletTest {
         Mockito.when(userManagerMock.getRemoteUser(request)).thenReturn(userProfileMock);
         Mockito.when(userManagerMock.getUserProfile(test_key)).thenReturn(userProfileMock);
 
-        Mockito.when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators", false)).thenReturn(false);
-        Mockito.when(permissionServiceMock.checkIfUserIsGroupMember(request, "Timesheet", false)).thenReturn(true);
+        Mockito.when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
+        Mockito.when(permissionServiceMock.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
     }
 
     @Test

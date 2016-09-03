@@ -24,10 +24,8 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.net.SyslogAppender;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import javax.servlet.ServletException;
@@ -66,8 +64,8 @@ public class TimesheetServlet extends HttpServlet {
         }
 
         try {
-            if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet", false) &&
-                    !permissionService.checkIfUserIsGroupMember(request, "jira-administrators", false)) {
+            if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
+                    !permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
                 throw new ServletException("User is no Timesheet-Group member, or Administrator.");
             }
 
@@ -78,8 +76,8 @@ public class TimesheetServlet extends HttpServlet {
             Timesheet timesheet;
             //info: testuser added
 
-            if (permissionService.checkIfUserIsGroupMember(request, "Administrators", true) ||
-                    permissionService.checkIfUserIsGroupMember(request, "administrators", true)) {
+            if (permissionService.checkIfUserIsGroupMember(request, "Administrators") ||
+                    permissionService.checkIfUserIsGroupMember(request, "administrators")) {
                 logger.info("You are Admin!");
                 paramMap.put("isadmin", true);
                 //timesheet = sheetService.getAdministratorTimesheet(userKey);
@@ -97,8 +95,8 @@ public class TimesheetServlet extends HttpServlet {
             //check if user is Team-Coordinator
 
 
-            if (permissionService.checkIfUserIsGroupMember(request, "Administrators", true) ||
-                    permissionService.checkIfUserIsGroupMember(request, "administrators", true) ||
+            if (permissionService.checkIfUserIsGroupMember(request, "Administrators") ||
+                    permissionService.checkIfUserIsGroupMember(request, "administrators") ||
                     permissionService.checkIfUserIsTeamCoordinator(request)) {
                 paramMap.put("iscoordinator", true);
             } else {
