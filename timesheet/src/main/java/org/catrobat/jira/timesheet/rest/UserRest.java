@@ -23,6 +23,7 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
+import org.catrobat.jira.timesheet.rest.json.RestUtils;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl;
 
@@ -62,8 +63,8 @@ public class UserRest extends PermissionServiceImpl {
         UserUtil userUtil = ComponentAccessor.getUserUtil();
         List<JsonUser> jsonUserList = new ArrayList<JsonUser>();
         Set<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        HashSet<User> systemAdmins = new HashSet<User>(userUtil.getJiraSystemAdministrators());
-        for (User user : allUsers) {
+        TreeSet<User> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
+        for (User user : allSortedUsers) {
 
             //otherwise admins will not be shown in user-selection fields
             //if (systemAdmins.contains(user)) {

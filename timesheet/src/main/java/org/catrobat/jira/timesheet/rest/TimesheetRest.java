@@ -442,13 +442,16 @@ public class TimesheetRest {
 
         List<Timesheet> timesheetList = sheetService.all();
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<JsonTimesheet>();
-        Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
+        Set<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
         permissionService.checkIfUserExists(request);
+
+
+        TreeSet<User> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
 
         //UserUtil userUtil = ComponentAccessor.getUserUtil();
         //Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
 
-        for (User user : allUsers) {
+        for (User user : allSortedUsers) {
             //this might be the problem for Annemarie
             /*
             if (systemAdmins.contains(user)) {
