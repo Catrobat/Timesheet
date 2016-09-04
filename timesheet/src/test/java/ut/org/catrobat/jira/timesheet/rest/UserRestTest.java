@@ -10,6 +10,7 @@ import com.atlassian.jira.user.MockApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.UserRest;
+import org.catrobat.jira.timesheet.rest.json.RestUtils;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,7 +23,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.mockito.Mockito.*;
 
@@ -144,8 +148,10 @@ public class UserRestTest {
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(userUtil.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
 
-        PowerMockito.when(user1.getDisplayName()).thenReturn("useless string");
-        PowerMockito.when(user2.getDisplayName()).thenReturn("useless string");
+        PowerMockito.when(user1.getDisplayName()).thenReturn("User 1");
+        PowerMockito.when(user2.getDisplayName()).thenReturn("User 2");
+        PowerMockito.when(user1.getName()).thenReturn("User 1");
+        PowerMockito.when(user2.getName()).thenReturn("User 2");
 
         spyUserRest.getUsers(httpRequest);
 
@@ -178,9 +184,10 @@ public class UserRestTest {
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(userUtil.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
 
-        String displayName = "useless";
-        PowerMockito.when(user1.getDisplayName()).thenReturn(displayName);
-        PowerMockito.when(user2.getDisplayName()).thenReturn(displayName);
+        PowerMockito.when(user1.getDisplayName()).thenReturn("User 1");
+        PowerMockito.when(user2.getDisplayName()).thenReturn("User 2");
+        PowerMockito.when(user1.getName()).thenReturn("User 1");
+        PowerMockito.when(user2.getName()).thenReturn("User 2");
 
         Group group = mock(Group.class);
         TreeSet<Group> treeSet = new TreeSet(Arrays.asList(group));
@@ -191,5 +198,9 @@ public class UserRestTest {
 
         verify(user1, times(1)).getDisplayName();
         verify(user2, times(1)).getDisplayName();
+
+        TreeSet<User> sortedUsers = RestUtils.getInstance().getSortedUsers(usersSet);
+        Assert.assertEquals(2,sortedUsers.size());
+
     }
 }
