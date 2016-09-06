@@ -45,7 +45,17 @@ AJS.toInit(function () {
             var username = obj['active'] ? obj['userName'] : "<del>" + obj['userName'] + "</del>";
             var state = obj['active'] ? "active" : "inactive";
 
-            var timesheetState = timesheet[i].isActive ? "active" : "inactive";
+            var timesheetState;
+
+            if (timesheet[i].isActive){
+                timesheetState = "active";
+            }
+            else if (timesheet[i].isOffline){
+                timesheetState = "offline";
+            }
+            else{
+                timesheetState = "inactive";
+            }
 
             if (obj['active']) {
                 if (timesheet[i]['isEnabled']) {

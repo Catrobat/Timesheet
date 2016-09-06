@@ -39,10 +39,12 @@
 
         <!-- additional visualization JS files -->
         <resource type="download" name="team_diagram.js" location="/js/visualization/team_diagram.js"/>
-        <resource type="download" name="user_category_diagram.js" location="/js/visualization/user_category_diagram.js"/>
+        <resource type="download" name="user_category_diagram.js"
+                  location="/js/visualization/user_category_diagram.js"/>
         <resource type="download" name="user_line_diagram.js" location="/js/visualization/user_line_diagram.js"/>
         <resource type="download" name="user_overview_table.js" location="/js/visualization/user_overview_table.js"/>
-        <resource type="download" name="user_pi_chart_diagram.js" location="/js/visualization/user_pi_chart_diagram.js"/>
+        <resource type="download" name="user_pi_chart_diagram.js"
+                  location="/js/visualization/user_pi_chart_diagram.js"/>
         <resource type="download" name="user_team_diagram.js" location="/js/visualization/user_team_diagram.js"/>
 
         <resource type="download" name="jquery.datepair.min.js" location="/js/jquery.datepair.min.js"/>
@@ -91,7 +93,8 @@
         <url-pattern>/timesheet</url-pattern>
     </servlet>
 
-    <servlet key="master-thesis-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.MasterThesisTimesheetServlet">
+    <servlet key="master-thesis-timesheet-servlet"
+             class="org.catrobat.jira.timesheet.servlet.MasterThesisTimesheetServlet">
         <url-pattern>/timesheet/masterthesis</url-pattern>
     </servlet>
 
@@ -115,7 +118,8 @@
         <url-pattern>/download/timesheet</url-pattern>
     </servlet>
 
-    <servlet key="download-master-thesis-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportMasterThesisTimesheetAsCSVServlet">
+    <servlet key="download-master-thesis-timesheet-servlet"
+             class="org.catrobat.jira.timesheet.servlet.ExportMasterThesisTimesheetAsCSVServlet">
         <url-pattern>/timesheet/download/masterthesis</url-pattern>
     </servlet>
 
@@ -204,7 +208,8 @@
         <condition class="org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition"/>
     </web-item>
 
-    <web-item key="master_thesis_timesheet_view" name="Link to Master Thesis Timsheet View" section="system.user.options/personal" weight="35">
+    <web-item key="master_thesis_timesheet_view" name="Link to Master Thesis Timsheet View"
+              section="system.user.options/personal" weight="35">
         <label>Master Thesis Timesheet</label>
         <link linkId="master_thesis_timesheet_view_link">/plugins/servlet/timesheet/masterthesis</link>
         <condition class="org.catrobat.jira.timesheet.helper.MasterThesisTimesheetPermissionCondition"/>
@@ -229,14 +234,16 @@
     </web-item>
 
     <!-- hidden administration links -->
-    <web-item key="timesheet_config" name="Link to Administration Servlet" section="system.user.options/personal" weight="1">
+    <web-item key="timesheet_config" name="Link to Administration Servlet" section="system.user.options/personal"
+              weight="1">
         <label>Timesheet - Configuration</label>
         <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/administration</link>
         <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
     </web-item>
 
-    <web-item key="timesheet_user_information" name="Link to User Information Servlet" section="system.user.options/personal" weight="2">
-        <label>Timesheet  - User Information</label>
+    <web-item key="timesheet_user_information" name="Link to User Information Servlet"
+              section="system.user.options/personal" weight="2">
+        <label>Timesheet - User Information</label>
         <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/user/information</link>
         <condition class="org.catrobat.jira.timesheet.helper.UserInformationPermissionCondition"/>
     </web-item>

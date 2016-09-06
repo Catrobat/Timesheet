@@ -19,6 +19,7 @@ package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.sal.api.user.UserManager;
@@ -47,8 +48,8 @@ public class SchedulingRest {
     private final TimesheetService sheetService;
     private final TeamService teamService;
     private final UserManager userManager;
-    private HashSet<String> offlineSet = new HashSet<String>();
-    private HashSet<String> inactiveSet = new HashSet<String>();
+
+    private TreeMap<User, List<ApplicationUser>> notifyUsersTreeMap = new TreeMap<>();
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
             final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
@@ -80,7 +81,29 @@ public class SchedulingRest {
                     continue;
                 }
                 if (timesheet.getUserKey().equals(userKey)) {
-                    if (!timesheet.getIsActive()) { // user is inactive
+                    if (timesheet.getIsOffline()) {  // user is offline
+
+                        ArrayList<ApplicationUser> notifiedUserList = new ArrayList<>(getCoordinators(user));
+
+                        //inform coordinators
+                        for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+                            sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
+                                    config.getMailBodyInactive()));
+                        }
+
+                        //inform timesheet admins
+                        Collection<User> usersInTimesheetGroup = ComponentAccessor.getGroupManager().getUsersInGroup("Timesheet"); //Todo:  Timesheet Admin
+                        for (User timesheetUser : usersInTimesheetGroup) {
+                            sendMail(createEmail(timesheetUser.getEmailAddress(), config.getMailSubjectInactive(), // Todo: user offline message, not inactive message
+                                    config.getMailBodyInactive()));
+                            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(timesheetUser.getName());
+                            if (!notifiedUserList.contains(applicationUser)) {
+                                notifiedUserList.add(applicationUser);
+                            }
+                        }
+                        notifyUsersTreeMap.put(user, notifiedUserList);
+                    } else if (!timesheet.getIsActive()) { // user is inactive
+                        //inform coordinators
                         TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
                         if (latestInactiveEntry != null) {
                             if (isDateOlderThanTwoWeeks(latestInactiveEntry.getInactiveEndDate())) {
@@ -90,20 +113,16 @@ public class SchedulingRest {
                                             config.getMailBodyInactive()));
                                 }
                             }
-
-                            if (isDateOlderThanOneMonth(latestInactiveEntry.getInactiveEndDate())) {
-                                for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
-                                    sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
-                                            , config.getMailBodyInactive()));
-                                }
-                            }
                         }
-                    } else { // user is active
-                        TimesheetEntry latestEntry = entryService.getEntriesBySheet(timesheet)[0];
-                        if (isDateOlderThanTwoMonths(latestEntry.getBeginDate())) {
-                            for (User administrator : ComponentAccessor.getUserUtil().getJiraSystemAdministrators()) {
-                                sendMail(createEmail(administrator.getEmailAddress(), config.getMailSubjectInactive()
-                                        , config.getMailBodyInactive()));
+                        ArrayList<ApplicationUser> notifiedUserList = new ArrayList<>(getCoordinators(user));
+                        notifyUsersTreeMap.put(user, notifiedUserList);
+                    } else { // user is active again
+                        for (Map.Entry<User, List<ApplicationUser>> entry : notifyUsersTreeMap.entrySet()) {
+                            User aUser = entry.getKey(); // TODO: include username in message: USer xy ist wieder aktiv
+                            List<ApplicationUser> appUserList = entry.getValue();
+                            for (ApplicationUser appUser : appUserList) {
+                                sendMail(createEmail(appUser.getEmailAddress(), config.getMailSubjectInactive(), // Todo: sende Nachricht User ist wieder aktiv
+                                        config.getMailBodyInactive()));
                             }
                         }
                     }
@@ -122,6 +141,16 @@ public class SchedulingRest {
         }
 
         return coordinatorMailAddressList;
+    }
+
+    private List<ApplicationUser> getCoordinators(User user) {
+        List<ApplicationUser> coordinatorList = new LinkedList<>();
+        for (Team team : teamService.getTeamsOfUser(user.getName())) {
+            for (String coordinator : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR)) {
+                coordinatorList.add(ComponentAccessor.getUserManager().getUserByName(coordinator));
+            }
+        }
+        return coordinatorList;
     }
 
     private Email createEmail(String emailAddress, String emailSubject, String emailBody) {
@@ -181,8 +210,6 @@ public class SchedulingRest {
                 timesheet.setIsAutoInactive(false);
                 timesheet.setIsAutoOffline(false);
                 timesheet.save();
-                inactiveSet.remove(timesheet.getUserKey());
-                offlineSet.remove(timesheet.getUserKey());
             }
             // user has set himself inactive
             else if (!timesheet.getIsActive() && !timesheet.getIsAutoInactive()) {
@@ -199,14 +226,6 @@ public class SchedulingRest {
             //else: more possibilities with isActive: [false] isAutoInactive: [true]
 
             printStatusFlags(timesheet);
-
-
-            if (timesheet.getIsOffline()) {
-                inactiveSet.remove(timesheet.getUserKey());
-                offlineSet.add(timesheet.getUserKey());
-            } else if (!timesheet.getIsActive()) {
-                inactiveSet.add(timesheet.getUserKey());
-            }
         }
 
         return Response.noContent().build();
