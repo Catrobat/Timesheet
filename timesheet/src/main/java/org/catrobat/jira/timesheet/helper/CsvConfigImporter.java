@@ -85,9 +85,9 @@ public class CsvConfigImporter {
             } else if (columns[0].equals("Email Out Of Time Body") && columns.length > 0) {
                 config.setMailBodyTime(columns[1]);
             } else if (columns[0].equals("Email Inactive Subject") && columns.length > 0) {
-                config.setMailSubjectInactive(columns[1]);
+                config.setMailSubjectInactiveState(columns[1]);
             } else if (columns[0].equals("Email Inactive Body") && columns.length > 0) {
-                config.setMailBodyInactive(columns[1]);
+                config.setMailBodyInactiveState(columns[1]);
             } else if (columns[0].equals("Email Admin Changed Entry Subject") && columns.length > 0) {
                 config.setMailSubjectEntry(columns[1]);
             } else if (columns[0].equals("Email Admin Changed Entry Body") && columns.length > 0) {

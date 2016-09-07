@@ -102,7 +102,8 @@ public class ExportConfigAsCSVServletTest {
         assertTrue(approvedUsers.length > 0);
 
         assertNotNull(configService.editMail("mailFromName", "mailFrom", "[Subject] Time",
-                "[Subject] Inactive", "[Subject] Entry", "bla", "blabla", "noch mehr bla"));
+                "[Subject] Inactive", "[Subject] Offline", "[Subject] Active", "[Subject] Entry", "bla", "blabla",
+                "blub", "blub blub", "noch mehr bla"));
 
         assertNotNull(configService.editSupervisedUsers("TestUser"));
 

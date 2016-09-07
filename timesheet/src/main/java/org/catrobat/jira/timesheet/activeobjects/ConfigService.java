@@ -36,8 +36,8 @@ public interface ConfigService {
     Config removeTeam(String teamName);
 
     Config editMail(String mailFromName, String mailFrom, String mailSubjectTime,
-                    String mailSubjectInactive, String mailSubjectEntry,
-                    String mailBodyTime, String mailBodyInactive, String mailBodyEntry);
+            String mailSubjectInactive, String mailSubjectOffline, String mailSubjectActive, String mailSubjectEntry,
+            String mailBodyTime, String mailBodyInactive, String mailBodyOffline, String mailBodyActive, String mailBodyEntry);
 
     Config editSupervisedUsers(String supervisedUsers);
 

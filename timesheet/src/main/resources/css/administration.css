@@ -94,6 +94,14 @@ div.change-details {
     border: solid;
 }
 
+#mail-body-offline{
+    border: solid;
+}
+
+#mail-body-active{
+    border: solid;
+}
+
 #mail-body-entry-change{
     border: solid;
 }

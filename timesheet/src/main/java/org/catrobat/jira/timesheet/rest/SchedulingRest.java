@@ -87,15 +87,15 @@ public class SchedulingRest {
 
                         //inform coordinators
                         for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
-                            sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
-                                    config.getMailBodyInactive()));
+                            sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactiveState(),
+                                    config.getMailBodyInactiveState()));
                         }
 
                         //inform timesheet admins
                         Collection<User> usersInTimesheetGroup = ComponentAccessor.getGroupManager().getUsersInGroup("Timesheet"); //Todo:  Timesheet Admin
                         for (User timesheetUser : usersInTimesheetGroup) {
-                            sendMail(createEmail(timesheetUser.getEmailAddress(), config.getMailSubjectInactive(), // Todo: user offline message, not inactive message
-                                    config.getMailBodyInactive()));
+                            sendMail(createEmail(timesheetUser.getEmailAddress(), config.getMailSubjectInactiveState(), // Todo: user offline message, not inactive message
+                                    config.getMailBodyInactiveState()));
                             ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(timesheetUser.getName());
                             if (!notifiedUserList.contains(applicationUser)) {
                                 notifiedUserList.add(applicationUser);
@@ -109,8 +109,8 @@ public class SchedulingRest {
                             if (isDateOlderThanTwoWeeks(latestInactiveEntry.getInactiveEndDate())) {
                                 //inform coordinators that he should be active since two weeks
                                 for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
-                                    sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactive(),
-                                            config.getMailBodyInactive()));
+                                    sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactiveState(),
+                                            config.getMailBodyInactiveState()));
                                 }
                             }
                         }
@@ -121,8 +121,8 @@ public class SchedulingRest {
                             User aUser = entry.getKey(); // TODO: include username in message: USer xy ist wieder aktiv
                             List<ApplicationUser> appUserList = entry.getValue();
                             for (ApplicationUser appUser : appUserList) {
-                                sendMail(createEmail(appUser.getEmailAddress(), config.getMailSubjectInactive(), // Todo: sende Nachricht User ist wieder aktiv
-                                        config.getMailBodyInactive()));
+                                sendMail(createEmail(appUser.getEmailAddress(), config.getMailSubjectInactiveState(), // Todo: sende Nachricht User ist wieder aktiv
+                                        config.getMailBodyInactiveState()));
                             }
                         }
                     }

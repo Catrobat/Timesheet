@@ -20,7 +20,6 @@ import net.java.ao.Entity;
 import net.java.ao.OneToMany;
 import net.java.ao.Preload;
 import net.java.ao.schema.StringLength;
-import javax.annotation.Nullable;
 @Preload
 public interface Config extends Entity {
 
@@ -39,10 +38,22 @@ public interface Config extends Entity {
     void setMailSubjectTime(String subject);
 
     @StringLength(StringLength.UNLIMITED)
-    String getMailSubjectInactive();
+    String getMailSubjectInactiveState();
 
     @StringLength(StringLength.UNLIMITED)
-    void setMailSubjectInactive(String subject);
+    String getMailSubjectOfflineState();
+
+    @StringLength(StringLength.UNLIMITED)
+    void setMailSubjectOfflineState(String subject);
+
+    @StringLength(StringLength.UNLIMITED)
+    String getMailSubjectActiveState();
+
+    @StringLength(StringLength.UNLIMITED)
+    void setMailSubjectActiveState(String subject);
+
+    @StringLength(StringLength.UNLIMITED)
+    void setMailSubjectInactiveState(String subject);
 
     @StringLength(StringLength.UNLIMITED)
     String getMailSubjectEntry();
@@ -57,10 +68,22 @@ public interface Config extends Entity {
     void setMailBodyTime(String body);
 
     @StringLength(StringLength.UNLIMITED)
-    String getMailBodyInactive();
+    String getMailBodyInactiveState();
 
     @StringLength(StringLength.UNLIMITED)
-    void setMailBodyInactive(String body);
+    void setMailBodyInactiveState(String body);
+
+    @StringLength(StringLength.UNLIMITED)
+    String getMailBodyOfflineState();
+
+    @StringLength(StringLength.UNLIMITED)
+    void setMailBodyOfflineState(String body);
+
+    @StringLength(StringLength.UNLIMITED)
+    String getMailBodyActiveState();
+
+    @StringLength(StringLength.UNLIMITED)
+    void setMailBodyActiveState(String body);
 
     @StringLength(StringLength.UNLIMITED)
     String getMailBodyEntry();

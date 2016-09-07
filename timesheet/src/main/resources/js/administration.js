@@ -67,18 +67,28 @@ AJS.toInit(function () {
                     AJS.$("#mail-from-name").val(config.mailFromName);
                 if (config.mailFrom)
                     AJS.$("#mail-from").val(config.mailFrom);
-                //mange mail subjects
+
+                //manage mail subjects
                 if (config.mailSubjectTime)
                     AJS.$("#mail-subject-out-of-time").val(config.mailSubjectTime);
                 if (config.mailSubjectInactive)
                     AJS.$("#mail-subject-inactive").val(config.mailSubjectInactive);
+                if (config.mailSubjectOffline)
+                    AJS.$("#mail-subject-offline").val(config.mailSubjectOffline);
+                if (config.mailSubjectActive)
+                    AJS.$("#mail-subject-active").val(config.mailSubjectActive);
                 if (config.mailSubjectEntry)
                     AJS.$("#mail-subject-entry-change").val(config.mailSubjectEntry);
-                //mange mail bodies
+
+                //manage mail bodies
                 if (config.mailBodyTime)
                     AJS.$("#mail-body-out-of-time").val(config.mailBodyTime);
                 if (config.mailBodyInactive)
                     AJS.$("#mail-body-inactive").val(config.mailBodyInactive);
+                if (config.mailBodyOffline)
+                    AJS.$("#mail-body-offline").val(config.mailBodyOffline);
+                if (config.mailBodyActive)
+                    AJS.$("#mail-body-active").val(config.mailBodyActive);
                 if (config.mailBodyEntry)
                     AJS.$("#mail-body-entry-change").val(config.mailBodyEntry);
                 if (config.supervisors)
@@ -222,10 +232,14 @@ AJS.toInit(function () {
 
         config.mailSubjectTime = AJS.$("#mail-subject-out-of-time").val();
         config.mailSubjectInactive = AJS.$("#mail-subject-inactive").val();
+        config.mailSubjectOffline = AJS.$("#mail-subject-offline").val();
+        config.mailSubjectActive = AJS.$("#mail-subject-active").val();
         config.mailSubjectEntry = AJS.$("#mail-subject-entry-change").val();
 
         config.mailBodyTime = AJS.$("#mail-body-out-of-time").val();
         config.mailBodyInactive = AJS.$("#mail-body-inactive").val();
+        config.mailBodyOffline = AJS.$("#mail-body-offline").val();
+        config.mailBodyActive = AJS.$("#mail-body-active").val();
         config.mailBodyEntry = AJS.$("#mail-body-entry-change").val();
 
         config.supervisors = AJS.$("#plugin-permission").val();

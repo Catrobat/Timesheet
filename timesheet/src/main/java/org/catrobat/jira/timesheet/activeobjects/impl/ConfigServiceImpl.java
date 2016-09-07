@@ -38,18 +38,22 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public Config editMail(String mailFromName, String mailFrom, String mailSubjectTime,
-                           String mailSubjectInactive, String mailSubjectEntry,
-                           String mailBodyTime, String mailBodyInactive, String mailBodyEntry) {
+            String mailSubjectInactive, String mailSubjectOffline, String mailSubjectActive, String mailSubjectEntry,
+            String mailBodyTime, String mailBodyInactive, String mailBodyOffline, String mailBodyActive, String mailBodyEntry) {
         Config config = getConfiguration();
         config.setMailFromName(mailFromName);
         config.setMailFrom(mailFrom);
 
         config.setMailSubjectTime(mailSubjectTime);
-        config.setMailSubjectInactive(mailSubjectInactive);
+        config.setMailSubjectInactiveState(mailSubjectInactive);
+        config.setMailSubjectOfflineState(mailSubjectOffline);
+        config.setMailSubjectActiveState(mailSubjectActive);
         config.setMailSubjectEntry(mailSubjectEntry);
 
         config.setMailBodyTime(mailBodyTime);
-        config.setMailBodyInactive(mailBodyInactive);
+        config.setMailBodyInactiveState(mailBodyInactive);
+        config.setMailBodyOfflineState(mailBodyOffline);
+        config.setMailBodyActiveState(mailBodyActive);
         config.setMailBodyEntry(mailBodyEntry);
 
         config.save();

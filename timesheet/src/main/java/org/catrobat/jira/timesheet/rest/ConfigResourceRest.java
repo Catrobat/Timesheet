@@ -60,7 +60,10 @@ public class ConfigResourceRest {
 
     @GET
     @Path("/getCategories")
-    public Response getCategories(@Context HttpServletRequest request) {
+    public Response getCategories(@Context HttpServletRequest request) throws ServiceException {
+        if (permissionService.checkIfUserExists(request) == null) {
+            Response.serverError().entity("Access denied.");
+        }
 
         List<JsonCategory> categories = new LinkedList<JsonCategory>();
 
@@ -133,8 +136,8 @@ public class ConfigResourceRest {
 
         configService.editMail(jsonConfig.getMailFromName(), jsonConfig.getMailFrom(),
                 jsonConfig.getMailSubjectTime(), jsonConfig.getMailSubjectInactive(),
-                jsonConfig.getMailSubjectEntry(), jsonConfig.getMailBodyTime(),
-                jsonConfig.getMailBodyInactive(), jsonConfig.getMailBodyEntry());
+                jsonConfig.getMailSubjectOffline(), jsonConfig.getMailSubjectActive(), jsonConfig.getMailSubjectEntry(), jsonConfig.getMailBodyTime(),
+                jsonConfig.getMailBodyInactive(), jsonConfig.getMailBodyOffline(), jsonConfig.getMailBodyActive(), jsonConfig.getMailBodyEntry());
 
         configService.editSupervisedUsers(jsonConfig.getSupervisors());
 

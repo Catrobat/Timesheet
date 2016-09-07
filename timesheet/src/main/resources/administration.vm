@@ -34,7 +34,7 @@
             <a href="#tabs-team-configuration"><strong>Team Configuration</strong></a>
         </li>
         <li class="menu-item">
-        <a href="#tabs-category-configuration"><strong>Category Configuration</strong></a>
+            <a href="#tabs-category-configuration"><strong>Category Configuration</strong></a>
         </li>
         <li class="menu-item">
             <a href="#tabs-teams"><strong>Add/Remove Team</strong></a>
@@ -153,6 +153,58 @@
                 <div class="field-group">
                     <label for="mail-body-inactive">Body</label>
                     <textarea name="mail-body-inactive" id="mail-body-inactive" rows="10" cols="70"
+                              placeholder="Text Of The Email"></textarea>
+                    <div class="description">
+                        The text of the mail. Following strings will be replaced by Confluence automatically:
+                        <ul>
+                            <li><span class="mono">{{name}}</span>: The name of the user</li>
+                            <li><span class="mono">{{date}}</span>: The date of the users last entry</li>
+                        </ul>
+                    </div>
+                </div>
+            </fieldset>
+
+            <h3>Offline</h3>
+            <fieldset>
+                <div class="field-group">
+                    <label for="mail-subject-offline">Subject</label>
+                    <input class="text" type="text" id="mail-subject-offline" name="mail-subject-offline"
+                           title="mail-subject-offline" placeholder="e.g.: [Offline Notification] ...">
+                    <div class="description">
+                        The subject of the mail, if a student was not active since two months.
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div class="field-group">
+                    <label for="mail-body-offline">Body</label>
+                    <textarea name="mail-body-offline" id="mail-body-offline" rows="10" cols="70"
+                              placeholder="Text Of The Email"></textarea>
+                    <div class="description">
+                        The text of the mail. Following strings will be replaced by Confluence automatically:
+                        <ul>
+                            <li><span class="mono">{{name}}</span>: The name of the user</li>
+                            <li><span class="mono">{{date}}</span>: The date of the users last entry</li>
+                        </ul>
+                    </div>
+                </div>
+            </fieldset>
+
+            <h3>Active</h3>
+            <fieldset>
+                <div class="field-group">
+                    <label for="mail-subject-active">Subject</label>
+                    <input class="text" type="text" id="mail-subject-active" name="mail-subject-active"
+                           title="mail-subject-active" placeholder="e.g.: [active Notification] ...">
+                    <div class="description">
+                        The subject of the mail, if a student is active again.
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div class="field-group">
+                    <label for="mail-body-active">Body</label>
+                    <textarea name="mail-body-active" id="mail-body-active" rows="10" cols="70"
                               placeholder="Text Of The Email"></textarea>
                     <div class="description">
                         The text of the mail. Following strings will be replaced by Confluence automatically:

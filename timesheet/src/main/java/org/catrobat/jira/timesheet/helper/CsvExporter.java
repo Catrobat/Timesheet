@@ -95,14 +95,14 @@ public abstract class CsvExporter {
 
         //Email Inactive
         sb.append("Email Inactive Subject" + DELIMITER);
-        if (!config.getMailSubjectInactive().isEmpty())
-            sb.append(unescape(config.getMailSubjectInactive())).append(NEW_LINE);
+        if (!config.getMailSubjectInactiveState().isEmpty())
+            sb.append(unescape(config.getMailSubjectInactiveState())).append(NEW_LINE);
         else
             sb.append(DEFAULT_VALUE + NEW_LINE);
 
         sb.append("Email Inactive Body" + DELIMITER);
-        if (!config.getMailBodyInactive().isEmpty())
-            sb.append(unescape(config.getMailBodyInactive())).append(NEW_LINE);
+        if (!config.getMailBodyInactiveState().isEmpty())
+            sb.append(unescape(config.getMailBodyInactiveState())).append(NEW_LINE);
         else
             sb.append(DEFAULT_VALUE + NEW_LINE);
 

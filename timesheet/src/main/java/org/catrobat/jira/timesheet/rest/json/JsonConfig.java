@@ -49,11 +49,19 @@ public final class JsonConfig {
     @XmlElement
     private String mailSubjectInactive;
     @XmlElement
+    private String mailSubjectOffline;
+    @XmlElement
+    private String mailSubjectActive;
+    @XmlElement
     private String mailSubjectEntry;
     @XmlElement
     private String mailBodyTime;
     @XmlElement
     private String mailBodyInactive;
+    @XmlElement
+    private String mailBodyOffline;
+    @XmlElement
+    private String mailBodyActive;
     @XmlElement
     private String mailBodyEntry;
 
@@ -90,11 +98,15 @@ public final class JsonConfig {
         this.mailFrom = toCopy.getMailFrom();
 
         this.mailSubjectTime = toCopy.getMailSubjectTime();
-        this.mailSubjectInactive = toCopy.getMailSubjectInactive();
+        this.mailSubjectInactive = toCopy.getMailSubjectInactiveState();
+        this.mailSubjectOffline = toCopy.getMailSubjectOfflineState();
+        this.mailSubjectActive = toCopy.getMailSubjectActiveState();
         this.mailSubjectEntry = toCopy.getMailSubjectEntry();
 
         this.mailBodyTime = toCopy.getMailBodyTime();
-        this.mailBodyInactive = toCopy.getMailBodyInactive();
+        this.mailBodyInactive = toCopy.getMailBodyInactiveState();
+        this.mailBodyOffline = toCopy.getMailBodyOfflineState();
+        this.mailBodyActive = toCopy.getMailBodyActiveState();
         this.mailBodyEntry = toCopy.getMailBodyEntry();
     }
 
@@ -192,5 +204,37 @@ public final class JsonConfig {
 
     public void setMailBodyEntry(String mailBodyEntry) {
         this.mailBodyEntry = mailBodyEntry;
+    }
+
+    public String getMailSubjectOffline() {
+        return mailSubjectOffline;
+    }
+
+    public void setMailSubjectOffline(String mailSubjectOffline) {
+        this.mailSubjectOffline = mailSubjectOffline;
+    }
+
+    public String getMailSubjectActive() {
+        return mailSubjectActive;
+    }
+
+    public void setMailSubjectActive(String mailSubjectActive) {
+        this.mailSubjectActive = mailSubjectActive;
+    }
+
+    public String getMailBodyOffline() {
+        return mailBodyOffline;
+    }
+
+    public void setMailBodyOffline(String mailBodyOffline) {
+        this.mailBodyOffline = mailBodyOffline;
+    }
+
+    public String getMailBodyActive() {
+        return mailBodyActive;
+    }
+
+    public void setMailBodyActive(String mailBodyActive) {
+        this.mailBodyActive = mailBodyActive;
     }
 }

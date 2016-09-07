@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -70,7 +69,6 @@ public class ConfigServiceImplTest {
     }
 
 
-
     @Test
     public void testEditMail() {
         Config config = configurationService.getConfiguration();
@@ -78,8 +76,10 @@ public class ConfigServiceImplTest {
         assertNull(config.getMailFrom());
         assertNull(config.getMailSubjectTime());
         assertNull(config.getMailBodyTime());
-        assertNull(config.getMailSubjectInactive());
-        assertNull(config.getMailBodyInactive());
+        assertNull(config.getMailSubjectInactiveState());
+        assertNull(config.getMailSubjectOfflineState());
+        assertNull(config.getMailSubjectActiveState());
+        assertNull(config.getMailBodyInactiveState());
         assertNull(config.getMailSubjectEntry());
         assertNull(config.getMailBodyEntry());
 
@@ -98,15 +98,20 @@ public class ConfigServiceImplTest {
                 "Your Catrobat-Admins";
 
         assertNotNull(configurationService.editMail("mailFromName", "mailFrom", "[Subject] Time",
-                "[Subject] Inactive", "[Subject] Entry" ,mailDummyText, mailDummyText, mailDummyText));
+                "[Subject] Inactive", "[Subject] Offline", "[Subject] Active", "[Subject] Entry",
+                mailDummyText, mailDummyText, mailDummyText, mailDummyText, mailDummyText));
         ao.flushAll();
         config = configurationService.getConfiguration();
         assertEquals("mailFromName", config.getMailFromName());
         assertEquals("mailFrom", config.getMailFrom());
         assertEquals("[Subject] Time", config.getMailSubjectTime());
         assertEquals(mailDummyText, config.getMailBodyTime());
-        assertEquals("[Subject] Inactive", config.getMailSubjectInactive());
-        assertEquals(mailDummyText, config.getMailBodyInactive());
+        assertEquals("[Subject] Inactive", config.getMailSubjectInactiveState());
+        assertEquals(mailDummyText, config.getMailBodyInactiveState());
+        assertEquals("[Subject] Offline", config.getMailSubjectOfflineState());
+        assertEquals(mailDummyText, config.getMailBodyOfflineState());
+        assertEquals("[Subject] Active", config.getMailSubjectActiveState());
+        assertEquals(mailDummyText, config.getMailBodyActiveState());
         assertEquals("[Subject] Entry", config.getMailSubjectEntry());
         assertEquals(mailDummyText, config.getMailBodyEntry());
     }

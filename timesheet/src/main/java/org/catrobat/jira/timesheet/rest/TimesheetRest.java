@@ -900,10 +900,10 @@ public class TimesheetRest {
     private void buildEmailInactive(String emailTo, Timesheet sheet, UserProfile user) {
         Config config = configService.getConfiguration();
 
-        String mailSubject = config.getMailSubjectInactive() != null && config.getMailSubjectInactive().length() != 0
-                ? config.getMailSubjectInactive() : "[Timesheet - Timesheet Inactive Notification]";
-        String mailBody = config.getMailBodyInactive() != null && config.getMailBodyInactive().length() != 0
-                ? config.getMailBodyInactive() : "Hi " + user.getFullName() + ",\n" +
+        String mailSubject = config.getMailSubjectInactiveState() != null && config.getMailSubjectInactiveState().length() != 0
+                ? config.getMailSubjectInactiveState() : "[Timesheet - Timesheet Inactive Notification]";
+        String mailBody = config.getMailBodyInactiveState() != null && config.getMailBodyInactiveState().length() != 0
+                ? config.getMailBodyInactiveState() : "Hi " + user.getFullName() + ",\n" +
                 "we could not see any activity in your timesheet since the last two weeks.\n" +
                 "Information: an inactive entry was created automatically.\n\n" +
                 "Best regards,\n" +
