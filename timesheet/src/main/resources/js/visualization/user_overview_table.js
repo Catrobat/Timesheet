@@ -101,7 +101,7 @@ function appendEntriesToVisTable(timesheetData) {
     var totalTime = totalTimeHours * 60 + totalTimeMinutes;
 
     //append total time
-    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Total Spent Time" + "</td>" +
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Total Time Spent" + "</td>" +
         "<td headers=\"basic-time\" class=\"time\">" + totalTimeHours + "hours " + totalTimeMinutes + "mins" + "</td>" +
         "</tr>");
 

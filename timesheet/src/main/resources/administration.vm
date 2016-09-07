@@ -52,7 +52,7 @@
             <input style="display:none" type="text" name="fakeusernameremembered"/>
             <input style="display:none" type="password" name="fakepasswordremembered"/>
 
-            <h2>Supervisor Timesheet Read Access</h2>
+            <h2>Timesheet Read Only</h2>
             <fieldset>
                 <div class="field-group">
                     <label for="plugin-permission">Supervisors</label>
@@ -61,20 +61,17 @@
 
                     <div class="description">
                         <ul>
-                            <li>If nothing is given, every Jira Administrator may read/write</li>
-                            <li>If multiple users are given, every user and Jira Administrator may read/write</li>
-                            <li>If a single user is given and this user is a Jira Administrator this user may
-                                read/write
+                            <li>If a single member is given this member may read all available Timesheets.
                             </li>
                         </ul>
                     </div>
                 </div>
             </fieldset>
 
-            <h2>Timesheet Configuration Access</h2>
+            <h2>Timesheet Administrator</h2>
             <fieldset>
                 <div class="field-group">
-                    <label for="plugin-administration">Allowed Groups/Users</label>
+                    <label for="plugin-administration">Allowed Groups/Members</label>
                     <input class="text" type="text" id="plugin-administration" name="plugin-administration"
                            title="plugin-administration">
 
@@ -82,7 +79,7 @@
                         <ul>
                             <li>If nothing is given, every Jira Administrator may read/write</li>
                             <li>If a group is given, every Jira Administrator within this group may read/write</li>
-                            <li>If a single user is given and this user is a Jira Administrator this user may
+                            <li>If a single member is given and this member is a Jira Administrator this member may
                                 read/write
                             </li>
                         </ul>
@@ -131,8 +128,8 @@
                     <div class="description">
                         The text of the mail. Following strings will be replaced by Confluence automatically:
                         <ul>
-                            <li><span class="mono">{{name}}</span>: The name of the user</li>
-                            <li><span class="mono">{{time}}</span>: The remaining timesheet hours of the user</li>
+                            <li><span class="mono">{{name}}</span>: The name of the member</li>
+                            <li><span class="mono">{{time}}</span>: The remaining timesheet hours of the member</li>
                         </ul>
                     </div>
                 </div>
@@ -157,8 +154,8 @@
                     <div class="description">
                         The text of the mail. Following strings will be replaced by Confluence automatically:
                         <ul>
-                            <li><span class="mono">{{name}}</span>: The name of the user</li>
-                            <li><span class="mono">{{date}}</span>: The date of the users last entry</li>
+                            <li><span class="mono">{{name}}</span>: The name of the member</li>
+                            <li><span class="mono">{{date}}</span>: The date of the members last entry</li>
                         </ul>
                     </div>
                 </div>
@@ -183,8 +180,8 @@
                     <div class="description">
                         The text of the mail. Following strings will be replaced by Confluence automatically:
                         <ul>
-                            <li><span class="mono">{{name}}</span>: The name of the user</li>
-                            <li><span class="mono">{{date}}</span>: The date of the users last entry</li>
+                            <li><span class="mono">{{name}}</span>: The name of the member</li>
+                            <li><span class="mono">{{date}}</span>: The date of the members last entry</li>
                         </ul>
                     </div>
                 </div>
@@ -209,8 +206,8 @@
                     <div class="description">
                         The text of the mail. Following strings will be replaced by Confluence automatically:
                         <ul>
-                            <li><span class="mono">{{name}}</span>: The name of the user</li>
-                            <li><span class="mono">{{date}}</span>: The date of the users last entry</li>
+                            <li><span class="mono">{{name}}</span>: The name of the member</li>
+                            <li><span class="mono">{{date}}</span>: The date of the members last entry</li>
                         </ul>
                     </div>
                 </div>
@@ -223,7 +220,7 @@
                     <input class="text" type="text" id="mail-subject-entry-change" name="mail-subject-entry-change"
                            title="mail-subject-entry-change" placeholder="e.g.: [Timesheet Entry Change] ...">
                     <div class="description">
-                        The subject of the mail, if an administrator changed an user timesheet entry.
+                        The subject of the mail, if an administrator changed an member timesheet entry.
                     </div>
                 </div>
             </fieldset>
@@ -235,9 +232,9 @@
                     <div class="description">
                         The text of the mail. Following strings will be replaced by Confluence automatically:
                         <ul>
-                            <li><span class="mono">{{name}}</span>: The name of the user</li>
-                            <li><span class="mono">{{original}}</span>: The original user entry</li>
-                            <li><span class="mono">{{actual}}</span>: The actual user entry (changed by the
+                            <li><span class="mono">{{name}}</span>: The name of the member</li>
+                            <li><span class="mono">{{original}}</span>: The original member entry</li>
+                            <li><span class="mono">{{actual}}</span>: The actual member entry (changed by the
                                 Administrator)
                             </li>
                         </ul>
@@ -276,7 +273,7 @@
     </div>
     <div class="tabs-pane" id="tabs-category-configuration">
         <p></p>
-        <h2>Category Management</h2>
+        <h2>Categories Management</h2>
         <p>Categories can be renamed within this tab.</p>
         <p><font color="red">Important Note: Do not forget to 'save' your changes.</font>
         <form id="category-general" class="aui">
@@ -290,7 +287,7 @@
     <div class="tabs-pane" id="tabs-teams">
         <p></p>
         <h2>Team</h2>
-        <p>Removing a team just effects the configuration and no user will be modified.</p>
+        <p>Removing a team just effects the configuration and no member will be modified.</p>
         <form id="modify-team" class="aui">
             <fieldset>
                 <div class="field-group">
@@ -306,8 +303,8 @@
     </div>
     <div class="tabs-pane" id="tabs-categories">
         <p></p>
-        <h2>Category</h2>
-        <p>Removing a category does not modify any user.</p>
+        <h2>Categories</h2>
+        <p>Removing a category does not modify any member.</p>
         <form id="modify-categoryList" class="aui">
             <fieldset>
                 <div class="field-group">
@@ -331,16 +328,23 @@
                     <label for="activity-verification-job">Trigger - Activity Verification Job Manually</label>
                     <input type="submit" value="Activity Verification" id="applyActivityVerificationInterval"
                            class="aui-button aui-button-primary">
+                    <p>Iterates over all available Timesheets and verifies if a member is 'active', 'inactive'
+                        and updates all Timesheet-States in the database.</p>
                 </div>
                 <div class="field-group">
                     <label for="activity-notification-job">Trigger - Activity Notification Job Manually</label>
                     <input type="submit" value="Activity Notification" id="applyActivityNotificationInterval"
                            class="aui-button aui-button-primary">
+                    <p>Iterates over all available Timesheets and verifies if a member is 'active', 'inactive'
+                        and sends email notifications to the Timesheet owner/coordinator/administrator.</p>
                 </div>
                 <div class="field-group">
                     <label for="out-of-time-verification-job">Trigger - Out Of Time Notification Job Manually</label>
                     <input type="submit" value="Out Of Time" id="applyOutOfTimeInterval"
                            class="aui-button aui-button-primary">
+                    <p>Iterates over all available Timesheets and verifies how many remaining Timesheet-Hours a member
+                        has left. If the remaining hours are below a predefined limit, an email notification
+                        is automatically send to the member and his coordinator.</p>
                 </div>
             </fieldset>
         </form>

@@ -54,8 +54,8 @@
         <li class="menu-item active-tab">
             <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
         </li>
-        <li class="menu-item" id="coord_private">
-            <a href="#tabs-timesheet-settings"><strong>Coordinators Private</strong></a>
+        <li class="menu-item">
+            <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
         </li>
         <li class="menu-item">
             <a href="#tabs-overview" onclick="showOverview();">Summary</a>
@@ -66,8 +66,8 @@
         <li class="menu-item">
             <a href="#tabs-team" onclick="showTeamDiagram();">Team - Visualization</a>
         </li>
-        <li class="menu-item">
-            <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
+        <li class="menu-item" id="coord_private">
+            <a href="#tabs-timesheet-settings"><strong>View Other Timesheets</strong></a>
         </li>
     </ul>
 
@@ -176,10 +176,10 @@
     </div>
 #*    content of the third tab "Time-Visualization"*#
     <div class="tabs-pane active-pane" id="tabs-line">
-        <h3 id="lineDiagramTag">Visualization of your spent time</h3>
+        <h3 id="lineDiagramTag">Visualization of your working time</h3>
         <div id="lineDiagram" style="height:300px;"></div>
 
-        <h3 id="categoryLineDiagramTag">Visualization of your spent time on categories</h3>
+        <h3 id="categoryLineDiagramTag">Visualization of your working time related on categories</h3>
         <div id="categoryLineDiagram" style="height:400px;"></div>
     </div>
 #*    content of the third tab "Team-Visualization"*#
