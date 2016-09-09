@@ -23,7 +23,6 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
-import org.catrobat.jira.timesheet.rest.json.RestUtils;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl;
 

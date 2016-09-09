@@ -10,7 +10,7 @@ import com.atlassian.jira.user.MockApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.UserRest;
-import org.catrobat.jira.timesheet.rest.json.RestUtils;
+import org.catrobat.jira.timesheet.rest.RestUtils;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.junit.Assert;
 import org.junit.Before;

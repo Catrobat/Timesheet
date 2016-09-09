@@ -18,6 +18,9 @@ package org.catrobat.jira.timesheet.helper;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.CategoryService;
@@ -31,12 +34,14 @@ public class CsvConfigImporter {
     private final ConfigService configService;
     private final CategoryService categoryService;
     private final TeamService teamService;
+    private final UserManager userManager;
 
-    public CsvConfigImporter(ConfigService configService, CategoryService categoryService, TeamService teamService) {
+    public CsvConfigImporter(ConfigService configService, CategoryService categoryService, TeamService teamService, UserManager userManager) {
 
         this.configService = configService;
         this.categoryService = categoryService;
         this.teamService = teamService;
+        this.userManager = userManager;
     }
 
     public String importCsv(String csvString) throws ServiceException {
@@ -46,7 +51,7 @@ public class CsvConfigImporter {
         List<String> assignedUsers = new LinkedList<String>();
         List<String> assignedCategories = new LinkedList<String>();
         List<String> addedCategories = new LinkedList<String>();
-        String  supervisors = "";
+        String supervisors = "";
         //create new Config
         Config config = configService.getConfiguration();
 
@@ -66,14 +71,15 @@ public class CsvConfigImporter {
 
             if (columns[0].equals("Supervisors") && columns.length > 0) {
                 for (int i = 1; i < columns.length; i++) {
-                    supervisors += columns[i] +",";
+                    supervisors += columns[i] + ",";
                 }
-                config.setSupervisedUsers(supervisors.substring(0, supervisors.length()-1));
+                config.setSupervisedUsers(supervisors.substring(0, supervisors.length() - 1));
             } else if (columns[0].equals("Approved Users and Groups") && columns.length > 0) {
                 for (int i = 1; i < columns.length; i++) {
-                    if (!ComponentAccessor.getUserManager().getUserByName(columns[i]).getName().isEmpty()) {
-                        configService.addApprovedUser(columns[i],
-                                ComponentAccessor.getUserManager().getUserByName(columns[i]).getKey());
+                    ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(columns[i]);
+                    if (!user.getName().isEmpty()) {
+                        UserProfile userProfile = userManager.getUserProfile(user.getName());
+                        configService.addApprovedUser(userProfile);
                     }
                 }
             } else if (columns[0].equals("Email From Name") && columns.length > 0) {

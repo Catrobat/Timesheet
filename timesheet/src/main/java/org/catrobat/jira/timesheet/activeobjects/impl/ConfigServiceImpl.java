@@ -17,23 +17,32 @@
 package org.catrobat.jira.timesheet.activeobjects.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import com.mysema.commons.lang.Assert;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class ConfigServiceImpl implements ConfigService {
 
     private final ActiveObjects ao;
     private final CategoryService cs;
+    private final UserManager userManager;
 
-    public ConfigServiceImpl(ActiveObjects ao, CategoryService cs) {
+    private ConcurrentSkipListMap<ApprovedGroup, Vector<ApprovedUser>> approvedMap; // thread save
+
+    public ConfigServiceImpl(ActiveObjects ao, CategoryService cs, UserManager userManager) {
         this.ao = ao;
         this.cs = cs;
+        this.userManager = userManager;
+        approvedMap = new ConcurrentSkipListMap<>();
     }
 
     @Override
@@ -84,7 +93,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public Team addTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups,
-                        List<String> teamCategoryNames) {
+            List<String> teamCategoryNames) {
         if (teamName == null || teamName.trim().length() == 0) {
             return null;
         }
@@ -296,7 +305,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public Team editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups,
-                         List<String> teamCategoryNames) {
+            List<String> teamCategoryNames) {
 
         teamName = teamName.trim();
 
@@ -396,15 +405,30 @@ public class ConfigServiceImpl implements ConfigService {
         ApprovedGroup[] approvedGroupArray = ao.find(ApprovedGroup.class, Query.select()
                 .where("upper(\"GROUP_NAME\") = upper(?)", approvedGroupName));
         if (approvedGroupArray.length == 0) {
-            ApprovedGroup approvedGroup = ao.create(ApprovedGroup.class);
-            approvedGroup.setGroupName(approvedGroupName);
-            approvedGroup.setConfiguration(getConfiguration());
-            approvedGroup.save();
-
-            return approvedGroup;
+            return createApprovedGroup(approvedGroupName);
         } else {
-            return approvedGroupArray[0];
+            return createApprovedGroup(approvedGroupName);
         }
+    }
+
+    //iterate through list, add new ApprovedUser, then take necessary methods from UserProfile
+    private ApprovedGroup createApprovedGroup(String approvedGroupName) {
+        Vector<ApprovedUser> vector = new Vector<>();
+        Collection<User> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
+        for (User user : usersInGroup) {
+            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(user.getName());
+            UserProfile userProfile = userManager.getUserProfile(applicationUser.getName());
+            vector.add(addApprovedUser(userProfile));
+        }
+        ApprovedGroup approvedGroup = ao.create(ApprovedGroup.class);
+        approvedGroup.setGroupName(approvedGroupName);
+        approvedGroup.setConfiguration(getConfiguration());
+        approvedGroup.save();
+
+        //map group to user
+        approvedMap.put(approvedGroup, vector);
+
+        return approvedGroup;
     }
 
     @Override
@@ -440,25 +464,34 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public ApprovedUser addApprovedUser(String approvedUserName, String approvedUserKey) {
-        if (approvedUserKey == null || approvedUserKey.trim().length() == 0) {
+    public ApprovedUser addApprovedUser(UserProfile userProfile) {
+        String userKey = userProfile.getUserKey().getStringValue();
+        if (userKey == null || userKey.trim().length() == 0) {
             return null;
         }
-        approvedUserKey = approvedUserKey.trim();
+        userKey = userKey.trim();
 
         ApprovedUser[] approvedUserArray = ao.find(ApprovedUser.class, Query.select()
-                .where("upper(\"USER_KEY\") = upper(?)", approvedUserKey));
+                .where("upper(\"USER_KEY\") = upper(?)", userKey));
         if (approvedUserArray.length == 0) {
-            ApprovedUser approvedUser = ao.create(ApprovedUser.class);
-            approvedUser.setUserKey(approvedUserKey);
-            approvedUser.setUserName(approvedUserName);
-            approvedUser.setConfiguration(getConfiguration());
-            approvedUser.save();
-
-            return approvedUser;
+            return createApprovedUser(userProfile);
         } else {
             return approvedUserArray[0];
         }
+    }
+
+    private ApprovedUser createApprovedUser(UserProfile userProfile) {
+        String userKey = userProfile.getUserKey().getStringValue();
+
+        ApprovedUser approvedUser = ao.create(ApprovedUser.class);
+        approvedUser.setUserKey(userKey);
+        approvedUser.setUserName(userProfile.getUsername());
+        approvedUser.setEmailAddress(userProfile.getEmail());
+        approvedUser.setFullName(userProfile.getFullName());
+        approvedUser.setConfiguration(getConfiguration());
+        approvedUser.save();
+
+        return approvedUser;
     }
 
     @Override
@@ -511,5 +544,72 @@ public class ConfigServiceImpl implements ConfigService {
         ao.delete(approvedUserArray[0]);
 
         return getConfiguration();
+    }
+
+    //first refresh list before returning
+    //attention: public setter method would be problematic because of persistence reasons
+    public ConcurrentSkipListMap<ApprovedGroup, Vector<ApprovedUser>> getApprovedMap() {
+        //delete the map ...
+        removeMap(approvedMap);
+        Assert.isTrue(approvedMap.isEmpty(), "Map is not empty!");
+
+        //... and create new map
+        ApprovedGroup[] approvedGroups = getConfiguration().getApprovedGroups();
+        for (ApprovedGroup approvedGroup : approvedGroups) {
+            createApprovedGroup(approvedGroup.getGroupName());
+        }
+
+        return approvedMap;
+    }
+
+    private boolean removeVectorElement(Vector<ApprovedUser> vector, ApprovedUser element) {
+        if (vector.isEmpty() || element == null) {
+            System.out.println("Vector is either empty or element is null!");
+            return false;
+        }
+
+        for (Iterator<ApprovedUser> iter = vector.iterator(); iter.hasNext(); ) {
+            ApprovedUser approvedUser = iter.next();
+            if (approvedUser.equals(element)) {
+                removeApprovedUser(approvedUser.getUserKey());
+                iter.remove();
+                Assert.isFalse(vector.contains(approvedUser), "Element is still in vector but should be deleted!");
+                return true;
+            }
+        }
+        System.out.println("Element not found!");
+        return false;
+    }
+
+    private boolean removeVector(Vector<ApprovedUser> vector) {
+        if (vector.isEmpty()) {
+            System.out.println("Vector is empty!");
+            return false;
+        }
+
+        for (Iterator<ApprovedUser> iter = vector.iterator(); iter.hasNext(); ) {
+            ApprovedUser approvedUser = iter.next();
+            removeApprovedUser(approvedUser.getUserKey());
+            iter.remove();
+        }
+        Assert.isTrue(vector.isEmpty(), "Vector is not empty!");
+        return true;
+    }
+
+    private boolean removeMap(ConcurrentSkipListMap<ApprovedGroup, Vector<ApprovedUser>> map) {
+        if (map.isEmpty()) {
+            System.out.println("Map is empty!");
+            return false;
+        }
+
+        for (Map.Entry<ApprovedGroup, Vector<ApprovedUser>> entry : map.entrySet()) {
+            ApprovedGroup group = entry.getKey();
+            Vector<ApprovedUser> vector = entry.getValue();
+            removeVector(vector);
+            removeApprovedGroup(group.getGroupName());
+        }
+        map.clear();
+        Assert.isTrue(map.isEmpty(), "Map is not empty!");
+        return true;
     }
 }

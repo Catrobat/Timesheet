@@ -224,16 +224,13 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     var inactiveDate = form.inactiveEndDateField.val();
     var validInactiveDateFormat = new Date(inactiveDate);
 
-    if (isDateMoreThanTwoMonthsAhead(inactiveDate)){
+    if (isDateMoreThanTwoMonthsAhead(inactiveDate)) {
         AJS.$('input.inactive').val("");
         AJS.messages.error({
             title: 'The inactive end date is too far away.',
             body: '<p>Your inactive end date is too far away in the future. Please take a shorter period of time!</p>'
         });
         return;
-    }
-    else{
-        console.log("Date is ok");
     }
 
     if ((inactiveDate == "") || (!isValidDate(validInactiveDateFormat))) {
@@ -360,10 +357,17 @@ function prepareForm(entry, timesheetData) {
         var index = getIndexOfCategoryOption("inactive");
         form.categorySelect.auiSelect2("val", index);
 
-        form.beginTimeField.hide();
-        form.endTimeField.hide();
-        form.pauseTimeField.hide();
-        form.durationField.hide();
+        //hide and delete input
+        /* form.beginTimeField.hide();
+         form.endTimeField.hide();
+         form.pauseTimeField.hide();
+         form.durationField.hide();
+
+         form.beginTimeField.val("");
+         form.endTimeField.val("");
+         form.pauseTimeField.val("");
+         form.durationField.val("");*/
+
         AJS.$(".select2-choices").hide(); // hides the select2 boxes
     });
 
@@ -378,21 +382,26 @@ function prepareForm(entry, timesheetData) {
 
     form.categorySelect.change(function () {
         if (form.categorySelect.val() == getIndexOfCategoryOption("inactive")) {
-            form.beginTimeField.hide();
-            form.endTimeField.hide();
-            form.pauseTimeField.hide();
-            form.durationField.hide();
-            form.ticketSelect.hide();
-            form.partnerSelect.hide();
-            AJS.$(".select2-choices").hide();
+            /*form.beginTimeField.hide();
+             form.endTimeField.hide();
+             form.pauseTimeField.hide();
+             form.durationField.hide();*/
+
+            /*  form.beginTimeField.val("");
+             form.endTimeField.val("");
+             form.pauseTimeField.val("");
+             form.durationField.val("");*/
+
+            form.ticketSelect.select2("val", "");
+            form.partnerSelect.select2("val", "");
+
         }
         else {
-            form.beginTimeField.show();
-            form.endTimeField.show();
-            form.pauseTimeField.show();
-            form.durationField.show();
-            form.ticketSelect.show();
-            form.partnerSelect.show();
+            /* form.beginTimeField.show();
+             form.endTimeField.show();
+             form.pauseTimeField.show();
+             form.durationField.show();*/
+
             AJS.$(".select2-choices").show(); // shows the select2 boxes
             form.inactiveEndDateField.val(""); // clear input
         }

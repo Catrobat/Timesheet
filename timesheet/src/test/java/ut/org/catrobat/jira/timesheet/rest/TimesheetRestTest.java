@@ -7,6 +7,7 @@ import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
@@ -87,6 +88,7 @@ public class TimesheetRestTest {
 
     private TestActiveObjects ao;
     private EntityManager entityManager;
+    private UserManager userManager;
 
     @Before
     public void setUp() throws Exception {
@@ -109,7 +111,7 @@ public class TimesheetRestTest {
         mailQueueMock = Mockito.mock(MailQueue.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService);
+        configService = new ConfigServiceImpl(ao, categoryService, userManager);
         teamService = new TeamServiceImpl(ao, configService);
         permissionService = new PermissionServiceImpl(userManagerLDAPMock, teamService, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);

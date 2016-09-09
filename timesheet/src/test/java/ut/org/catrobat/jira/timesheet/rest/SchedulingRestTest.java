@@ -5,6 +5,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
@@ -17,7 +18,6 @@ import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.services.impl.*;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
@@ -65,6 +64,7 @@ public class SchedulingRestTest {
     private TimesheetServiceImpl timesheetService;
     private SchedulingRest schedulingRest;
     private UserProfile userProfileMock;
+    private UserManager userManager;
 
     @Before
     public void setUp() throws Exception {
@@ -85,7 +85,7 @@ public class SchedulingRestTest {
         userProfileMock = mock(UserProfile.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService);
+        configService = new ConfigServiceImpl(ao, categoryService, userManager);
         teamService = new TeamServiceImpl(ao, configService);
         permissionService = new PermissionServiceImpl(userManagerLDAPMock, teamService, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);

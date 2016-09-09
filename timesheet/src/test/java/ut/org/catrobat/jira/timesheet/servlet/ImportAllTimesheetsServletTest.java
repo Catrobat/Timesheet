@@ -6,6 +6,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -58,6 +59,7 @@ public class ImportAllTimesheetsServletTest {
     private UserProfile userProfile;
     private ServletOutputStream outputStream;
     private CategoryService cs;
+    private UserManager userManager;
 
     @Before
     public void setUp() throws Exception {
@@ -65,7 +67,7 @@ public class ImportAllTimesheetsServletTest {
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        configService = new ConfigServiceImpl(ao, cs);
+        configService = new ConfigServiceImpl(ao, cs, userManager);
 
         loginUriProvider = Mockito.mock(LoginUriProvider.class);
         templateRenderer = Mockito.mock(TemplateRenderer.class);

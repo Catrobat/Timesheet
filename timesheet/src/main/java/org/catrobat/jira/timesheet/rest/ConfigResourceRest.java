@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.rest;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -49,8 +48,8 @@ public class ConfigResourceRest {
     private final PermissionService permissionService;
 
     public ConfigResourceRest(final UserManager userManager, final ConfigService configService,
-                              final TeamService teamService, final CategoryService categoryService,
-                              final PermissionService permissionService) {
+            final TeamService teamService, final CategoryService categoryService,
+            final PermissionService permissionService) {
         this.configService = configService;
         this.teamService = teamService;
         this.userManager = userManager;
@@ -153,8 +152,8 @@ public class ConfigResourceRest {
             for (String approvedUserName : jsonConfig.getApprovedUsers()) {
                 UserProfile userProfile = userManager.getUserProfile(approvedUserName);
                 if (userProfile != null) {
-                    configService.addApprovedUser(userProfile.getUsername(), ComponentAccessor.
-                            getUserKeyService().getKeyForUsername(userProfile.getUsername()));
+                    configService.addApprovedUser(userProfile);
+                    RestUtils.getInstance().printUserInformation(approvedUserName, userProfile);
                 }
             }
         }
@@ -281,8 +280,9 @@ public class ConfigResourceRest {
 
         List<Category> categoryNames = categoryService.all();
         for (Category category : categoryNames) {
-            if (category.getName().equals(categories[1]))
+            if (category.getName().equals(categories[1])) {
                 return Response.status(Response.Status.CONFLICT).entity("Category name already exists.").build();
+            }
         }
 
         boolean successful = configService.editCategoryName(categories[0], categories[1]) != null;

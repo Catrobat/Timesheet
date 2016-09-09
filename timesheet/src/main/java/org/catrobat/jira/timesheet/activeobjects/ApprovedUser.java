@@ -33,4 +33,10 @@ public interface ApprovedUser extends Entity {
     String getUserName();
 
     void setUserName(String userName);
+
+    void setFullName(String name);
+
+    String getEmailAddress();
+
+    void setEmailAddress(String mailAddress);
 }

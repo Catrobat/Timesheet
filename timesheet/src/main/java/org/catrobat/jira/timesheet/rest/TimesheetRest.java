@@ -531,7 +531,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("The Timesheet your are looking for is NULL.").build();
         } else if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
-        } else if (!category.getName().equals("Pair programming") && !programmingPartnerName.equals("")) {
+        } else if (!category.getName().toLowerCase().equals("pair programming") && !programmingPartnerName.equals("")) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You can not select a 'Pair programming' " +
                     "Partner without selecting the 'Pair programming' category.").build();
         }

@@ -38,6 +38,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 @Path("/scheduling")
 @Produces({MediaType.APPLICATION_JSON})
@@ -49,7 +50,7 @@ public class SchedulingRest {
     private final TeamService teamService;
     private final UserManager userManager;
 
-    private TreeMap<User, List<ApplicationUser>> notifyUsersTreeMap = new TreeMap<>();
+    private ConcurrentSkipListMap<User, Vector<ApplicationUser>> notifyUsersMap = new ConcurrentSkipListMap<>(); // thread save
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
             final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
@@ -83,7 +84,7 @@ public class SchedulingRest {
                 if (timesheet.getUserKey().equals(userKey)) {
                     if (timesheet.getIsOffline()) {  // user is offline
 
-                        ArrayList<ApplicationUser> notifiedUserList = new ArrayList<>(getCoordinators(user));
+                        Vector<ApplicationUser> notifiedUserVector = new Vector<>(getCoordinators(user));
 
                         //inform coordinators
                         for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
@@ -91,17 +92,21 @@ public class SchedulingRest {
                                     config.getMailBodyInactiveState()));
                         }
 
+                        //we need configserviceimpl
+
+                        //Todo: inform all user in approved group
+                        ApprovedUser[] approvedUsers = configService.getConfiguration().getApprovedUsers();
                         //inform timesheet admins
-                        Collection<User> usersInTimesheetGroup = ComponentAccessor.getGroupManager().getUsersInGroup("Timesheet"); //Todo:  Timesheet Admin
-                        for (User timesheetUser : usersInTimesheetGroup) {
-                            sendMail(createEmail(timesheetUser.getEmailAddress(), config.getMailSubjectInactiveState(), // Todo: user offline message, not inactive message
-                                    config.getMailBodyInactiveState()));
-                            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(timesheetUser.getName());
-                            if (!notifiedUserList.contains(applicationUser)) {
-                                notifiedUserList.add(applicationUser);
+                        for (ApprovedUser approvedUser : approvedUsers) {
+                            System.out.println("approvedUser.getUserName() = " + approvedUser.getUserName());
+                            sendMail(createEmail(approvedUser.getEmailAddress(), config.getMailSubjectOfflineState(),
+                                    config.getMailBodyOfflineState()));
+                            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(approvedUser.getUserName());
+                            if (!notifiedUserVector.contains(applicationUser)) {
+                                notifiedUserVector.add(applicationUser);
                             }
                         }
-                        notifyUsersTreeMap.put(user, notifiedUserList);
+                        notifyUsersMap.put(user, notifiedUserVector);
                     } else if (!timesheet.getIsActive()) { // user is inactive
                         //inform coordinators
                         TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
@@ -114,15 +119,14 @@ public class SchedulingRest {
                                 }
                             }
                         }
-                        ArrayList<ApplicationUser> notifiedUserList = new ArrayList<>(getCoordinators(user));
-                        notifyUsersTreeMap.put(user, notifiedUserList);
+                        Vector<ApplicationUser> notifiedUserVector = new Vector<>(getCoordinators(user));
+                        notifyUsersMap.put(user, notifiedUserVector);
                     } else { // user is active again
-                        for (Map.Entry<User, List<ApplicationUser>> entry : notifyUsersTreeMap.entrySet()) {
-                            User aUser = entry.getKey(); // TODO: include username in message: USer xy ist wieder aktiv
+                        for (Map.Entry<User, Vector<ApplicationUser>> entry : notifyUsersMap.entrySet()) {
                             List<ApplicationUser> appUserList = entry.getValue();
                             for (ApplicationUser appUser : appUserList) {
-                                sendMail(createEmail(appUser.getEmailAddress(), config.getMailSubjectInactiveState(), // Todo: sende Nachricht User ist wieder aktiv
-                                        config.getMailBodyInactiveState()));
+                                sendMail(createEmail(appUser.getEmailAddress(), config.getMailSubjectActiveState(),
+                                        config.getMailBodyActiveState()));
                             }
                         }
                     }

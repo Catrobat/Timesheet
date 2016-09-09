@@ -62,6 +62,7 @@ public class AdminServletTest {
 
     UserKey test_key = new UserKey("test_key");
     private UserProfile userProfileMock;
+    private UserManager userManager;
 
     @Before
     public void setUp() throws Exception {
@@ -79,7 +80,7 @@ public class AdminServletTest {
         response = Mockito.mock(HttpServletResponse.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService);
+        configService = new ConfigServiceImpl(ao, categoryService, userManager);
         teamService = new TeamServiceImpl(ao, configService);
         permissionService = new PermissionServiceImpl(userManagerMock, teamService, configService);
 

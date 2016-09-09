@@ -29,4 +29,11 @@ public interface ApprovedGroup extends Entity {
     String getGroupName();
 
     void setGroupName(String groupName);
+
+    //Vector<ApprovedUser> getApprovedUsers();
+
+    //void setApprovedUsers(Vector<ApprovedUser> approvedUsers);
+
+    //ToDO: create oneToMany relationship: One Group has many ApprovedUsers
+    // How could be done this?
 }
