@@ -15,6 +15,8 @@
  */
 package org.catrobat.jira.timesheet.rest.json;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,12 +32,15 @@ public final class JsonTimesheetEntry {
     private int entryID;
 
     @XmlElement
+    @JsonDeserialize(using=DateAndTimeDeserialize.class)
     private Date beginDate;
 
     @XmlElement
+    @JsonDeserialize(using=DateAndTimeDeserialize.class)
     private Date endDate;
 
     @XmlElement
+    @JsonDeserialize(using=DateAndTimeDeserialize.class)
     private Date inactiveEndDate;
 
     @XmlElement

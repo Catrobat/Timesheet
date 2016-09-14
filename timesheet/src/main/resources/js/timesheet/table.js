@@ -216,6 +216,7 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
         endTime = new Date();
     }
 
+    date = date.replace(/-/g, "/");
     var pauseTime = form.pauseTimeField.timepicker('getTime');
     var beginDate = new Date(date + " " + toTimeString(beginTime));
     var endDate = new Date(date + " " + toTimeString(endTime));
@@ -236,6 +237,7 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     if ((inactiveDate == "") || (!isValidDate(validInactiveDateFormat))) {
         inactiveDate = new Date().toJSON().slice(0, 10);
     }
+    inactiveDate = inactiveDate.replace(/-/g, "/");
     var inactiveEndDate = new Date(inactiveDate + " " + toTimeString(beginTime));
 
     //change entry to 0min duration for inactive entry
@@ -369,6 +371,8 @@ function prepareForm(entry, timesheetData) {
          form.durationField.val("");*/
 
         AJS.$(".select2-choices").hide(); // hides the select2 boxes
+        form.pauseTimeField.val('00:00');
+        form.pauseTimeField.hide();
     });
 
     form.partnerSelect.change(function () {
@@ -395,6 +399,8 @@ function prepareForm(entry, timesheetData) {
             form.ticketSelect.select2("val", "");
             form.partnerSelect.select2("val", "");
 
+            form.pauseTimeField.val('00:00');
+            form.pauseTimeField.hide();
         }
         else {
             /* form.beginTimeField.show();
@@ -404,6 +410,7 @@ function prepareForm(entry, timesheetData) {
 
             AJS.$(".select2-choices").show(); // shows the select2 boxes
             form.inactiveEndDateField.val(""); // clear input
+            form.pauseTimeField.show();
         }
     });
 
@@ -487,7 +494,8 @@ function prepareForm(entry, timesheetData) {
         if (value === undefined) {
             value = null; // null is a accepted value, but undefined is going worse
         }
-        var queryString = "/rest/api/latest/search?jql=project%20in%20(" + value + ")%20AND%20(status%20not%20in%20(closed,resolved,done))";
+        var queryString = "/rest/api/latest/search?jql=project%20in%20(" + value +
+            ")%20AND%20(status%20not%20in%20(closed))";
 
         AJS.$.ajax({
             type: 'GET',
@@ -501,6 +509,7 @@ function prepareForm(entry, timesheetData) {
                         tickets.push(key + " : " + summary);
                     }
                 }
+                console.log("Amount of fetched issues: " + i);
 
             },
             error: function (jqXHR) {

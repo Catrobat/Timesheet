@@ -310,4 +310,10 @@ public class SchedulingRest {
         }
         return null;
     }
+
+    private boolean isDateOlderThanXDays(Date date, int days){
+        DateTime xDaysAgo = new DateTime().minusDays(days);
+        DateTime datetime = new DateTime(date);
+        return (datetime.compareTo(xDaysAgo) < 0);
+    }
 }

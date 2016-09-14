@@ -55,9 +55,6 @@
             <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
-        </li>
-        <li class="menu-item">
             <a href="#tabs-overview" onclick="showOverview();">Summary</a>
         </li>
         <li class="menu-item">
@@ -68,6 +65,9 @@
         </li>
         <li class="menu-item" id="coord_private">
             <a href="#tabs-timesheet-settings"><strong>View Other Timesheets</strong></a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
         </li>
     </ul>
 
@@ -322,7 +322,7 @@
             element: 'teamDataDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
             // the chart.
-            data,
+            data: data,
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
@@ -341,7 +341,7 @@
             element: 'teamLineDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
             // the chart.
-            data,
+            data: data,
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
@@ -362,7 +362,7 @@
             element: 'piChartDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
             // the chart.
-            data,
+            data: data,
         });
     }
 </script>
@@ -374,7 +374,7 @@
             element: 'lineDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
             // the chart.
-            data,
+            data: data,
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
@@ -393,7 +393,7 @@
             element: 'categoryLineDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
             // the chart.
-            data,
+            data: data,
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
