@@ -234,15 +234,28 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
         return;
     }
 
+    var inactiveEndDate;
     if ((inactiveDate == "") || (!isValidDate(validInactiveDateFormat))) {
-        inactiveDate = new Date().toJSON().slice(0, 10);
+        inactiveEndDate = beginDate;
     }
-    inactiveDate = inactiveDate.replace(/-/g, "/");
-    var inactiveEndDate = new Date(inactiveDate + " " + toTimeString(beginTime));
+    else {
+        inactiveDate = inactiveDate.replace(/-/g, "/");
+        inactiveEndDate = new Date(inactiveDate + " " + toTimeString(beginTime));
+    }
 
     //change entry to 0min duration for inactive entry
     if (getselectedCategoryName(form.categorySelect.val(), timesheetData) === "Inactive") {
         endDate = beginDate;
+    }
+
+    if (inactiveEndDate.getDay() == beginDate.getDay() &&
+        form.categorySelect.val() == getIndexOfCategoryOption("inactive", timesheetData)) {
+
+        require('aui/flag')({
+            type: 'info',
+            title: 'Attention: No inactive end date ',
+            body: "Your inactivity is only valid until " + endDate
+        });
     }
 
     var entry = {
@@ -356,7 +369,7 @@ function prepareForm(entry, timesheetData) {
     form.inactiveEndDateField.change(function () {
         form.descriptionField.val("Inactive, because "); // you can also write AJS.$("input.description").val("hello boy");
 
-        var index = getIndexOfCategoryOption("inactive");
+        var index = getIndexOfCategoryOption("inactive", timesheetData);
         form.categorySelect.auiSelect2("val", index);
 
         //hide and delete input
@@ -376,7 +389,7 @@ function prepareForm(entry, timesheetData) {
     });
 
     form.partnerSelect.change(function () {
-        var index = getIndexOfCategoryOption("Pair programming");
+        var index = getIndexOfCategoryOption("Pair programming", timesheetData);
         form.categorySelect.auiSelect2("val", index);
     });
 
@@ -385,7 +398,7 @@ function prepareForm(entry, timesheetData) {
     });
 
     form.categorySelect.change(function () {
-        if (form.categorySelect.val() == getIndexOfCategoryOption("inactive")) {
+        if (form.categorySelect.val() == getIndexOfCategoryOption("inactive", timesheetData)) {
             /*form.beginTimeField.hide();
              form.endTimeField.hide();
              form.pauseTimeField.hide();
@@ -413,23 +426,6 @@ function prepareForm(entry, timesheetData) {
             form.pauseTimeField.show();
         }
     });
-
-    //get index of option(=name) in category
-    function getIndexOfCategoryOption(categoryName) {
-        categoryName = categoryName.toLowerCase();
-        var index = 1;
-        while (true) {
-            var name = timesheetData.categories[index].categoryName.toLowerCase();
-            if (name == categoryName) {
-                break;
-            }
-            if (name == null) {
-                break;
-            }
-            index++;
-        }
-        return index;
-    }
 
     row.find('input.time.start, input.time.end')
         .timepicker({
@@ -529,6 +525,23 @@ function prepareForm(entry, timesheetData) {
     }
 
     return form;
+}
+
+//get index of option(=name) in category
+function getIndexOfCategoryOption(categoryName, timesheetData) {
+    categoryName = categoryName.toLowerCase();
+    var index = 1;
+    while (true) {
+        var name = timesheetData.categories[index].categoryName.toLowerCase();
+        if (name == categoryName) {
+            break;
+        }
+        if (name == null) {
+            break;
+        }
+        index++;
+    }
+    return index;
 }
 
 // input validation
