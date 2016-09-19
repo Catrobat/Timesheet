@@ -26,7 +26,7 @@ public interface Category extends Entity {
 
     void setName(String name);
 
-    @ManyToMany(value = CategoryToTeam.class, through = "getTeam", reverse = "getCategory")
+    @ManyToMany(value = CategoryToTeam.class, reverse = "getCategory", through = "getTeam")
     Team[] getTeams();
 
     @OneToMany(reverse = "getCategory")

@@ -14,31 +14,23 @@ AJS.toInit(function () {
 
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    if (isFirefox) {
+        AJS.messages.error({
+            title: 'Sorry, Firefox is not supported at the moment!',
+            body: 'Firefox has an critical bug so would you be so kind and take an different browser.'
+        });
+        return;
+    }
+
     AJS.$("#timesheet-export-csv-link").empty();
 
     // printDomainAttributes();
 
     AJS.$("#timesheet-table").hide();
     AJS.$("#table-header").hide();
-
-    var isValid = checkConstrains();
-
-    if (isValid == "true") {
-        AJS.$("#timesheet-table").show();
-        AJS.$("#table-header").show();
-    }
-    else {
-        AJS.$("#timesheet-table").hide();
-        AJS.$("#table-header").hide();
-
-        AJS.messages.error({
-            title: 'Sorry, you do not have a timesheet!',
-            body: 'You are not authorized to view this page. Please contact the administrator! </br> ' +
-            'Probably you are not added to a team or category!'
-        });
-        return;
-    }
-
+    checkConstrains();
+    
     if (!isCoordinator) {
         AJS.$("#coord_private").hide();
     } else {
@@ -91,7 +83,23 @@ function checkConstrains() {
     return AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'checkConstrains',
-        async: false
+        success: function (isValid) {
+
+            if (isValid == true) {
+                AJS.$("#timesheet-table").show();
+                AJS.$("#table-header").show();
+            }
+            else {
+                AJS.$("#timesheet-table").hide();
+                AJS.$("#table-header").hide();
+
+                AJS.messages.error({
+                    title: 'Sorry, you do not have a timesheet!',
+                    body: 'You are not authorized to view this page. Please contact the administrator! </br> ' +
+                    'Probably you are not added to a team or category!'
+                });
+            }
+        }
     }).responseText;
 }
 
@@ -257,8 +265,8 @@ function updateTimesheetHours(existingTimesheetData) {
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
         isActive: existingTimesheetData.isActive,
         isAutoInactive: existingTimesheetData.isAutoInactive,
-        isOffline : existingTimesheetData.isOffline,
-        isAutoOffline : existingTimesheetData.isAutoOffline,
+        isOffline: existingTimesheetData.isOffline,
+        isAutoOffline: existingTimesheetData.isAutoOffline,
         isEnabled: existingTimesheetData.isEnabled,
         isMTSheet: existingTimesheetData.isMTSheet
     };
@@ -365,7 +373,6 @@ function fetchData() {
 //     console.log("document.location.pathname : " + document.location.pathname);
 //     console.log("window.location.hostname : " + window.location.hostname);
 // }
-
 
 
 //neue funktionen .....

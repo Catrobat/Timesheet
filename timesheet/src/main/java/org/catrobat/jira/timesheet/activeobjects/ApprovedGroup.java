@@ -30,10 +30,6 @@ public interface ApprovedGroup extends Entity {
 
     void setGroupName(String groupName);
 
-    //Vector<ApprovedUser> getApprovedUsers();
-
-    //void setApprovedUsers(Vector<ApprovedUser> approvedUsers);
-
-    //ToDO: create oneToMany relationship: One Group has many ApprovedUsers
-    // How could be done this?
+    //@OneToMany(reverse = "getApprovedGroup")
+    //ApprovedUser[] getApprovedUsers();
 }

@@ -18,9 +18,20 @@ package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
 import net.java.ao.Preload;
+import net.java.ao.schema.Table;
 
 @Preload
+@Table("TeamToGroup")
 public interface TeamToGroup extends Entity {
+
+    /*  -------------------------------------------
+        | TeamToGroup |
+        -------------------------------------------
+        | Team | Group | Role |
+        -------------------------------------------
+        Team : Group (m:m)
+        Role = attribute of the relationship, no part of Team or Group
+     */
 
     Team getTeam();
 
@@ -30,11 +41,12 @@ public interface TeamToGroup extends Entity {
 
     void setGroup(Group group);
 
+    //further informations about the relationship
     Role getRole();
 
     void setRole(Role role);
 
-    public enum Role {
+    enum Role {
         COORDINATOR, DEVELOPER
     }
 }

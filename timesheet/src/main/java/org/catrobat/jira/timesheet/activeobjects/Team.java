@@ -33,7 +33,7 @@ public interface Team extends Entity {
     @ManyToMany(value = TeamToGroup.class, reverse = "getTeam", through = "getGroup")
     Group[] getGroups();
 
-    @ManyToMany(value = CategoryToTeam.class, through = "getCategory", reverse = "getTeam")
+    @ManyToMany(value = CategoryToTeam.class, reverse = "getTeam", through = "getCategory")
     Category[] getCategories();
 
     @OneToMany(reverse = "getTeam")

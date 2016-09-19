@@ -1,21 +1,22 @@
 package ut.org.catrobat.jira.timesheet.activeobjects;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import net.java.ao.EntityManager;
-import static org.junit.Assert.*;
-
-import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
+import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
+import static org.junit.Assert.*;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
