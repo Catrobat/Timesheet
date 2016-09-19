@@ -1,9 +1,9 @@
 package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.groups.GroupManager;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
@@ -16,7 +16,9 @@ import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.rest.ConfigResourceRest;
 import org.catrobat.jira.timesheet.rest.TimesheetRest;
-import org.catrobat.jira.timesheet.rest.json.*;
+import org.catrobat.jira.timesheet.rest.json.JsonCategory;
+import org.catrobat.jira.timesheet.rest.json.JsonConfig;
+import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.*;
 import org.junit.Assert;
@@ -33,9 +35,12 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
@@ -152,10 +157,10 @@ public class ConfigResourceRestTest {
         teams.add(team1);
         teams.add(team2);
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<ApplicationUser>(Arrays.asList(user1, user2));
         when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
 
         //user1 should be the testUser
@@ -195,14 +200,14 @@ public class ConfigResourceRestTest {
         when(team2.getTeamName()).thenReturn("IRC");
         when(team2.getCategories()).thenReturn(new Category[0]);
 
-        Set<Team> teams = new HashSet<Team>();
+        Set<Team> teams = new HashSet<>();
         teams.add(team1);
         teams.add(team2);
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
         when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
 
         //user1 should be the testUser

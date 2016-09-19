@@ -17,7 +17,6 @@
 package org.catrobat.jira.timesheet.activeobjects.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.user.UserManager;
@@ -414,8 +413,8 @@ public class ConfigServiceImpl implements ConfigService {
     //iterate through list, add new ApprovedUser, then take necessary methods from UserProfile
     private ApprovedGroup createApprovedGroup(String approvedGroupName) {
         Vector<ApprovedUser> vector = new Vector<>();
-        Collection<User> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
-        for (User user : usersInGroup) {
+        Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
+        for (ApplicationUser user : usersInGroup) {
             ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(user.getName());
             UserProfile userProfile = userManager.getUserProfile(applicationUser.getName());
             vector.add(addApprovedUser(userProfile));

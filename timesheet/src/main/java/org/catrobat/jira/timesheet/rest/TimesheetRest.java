@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.rest;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.InvalidCredentialException;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -146,11 +145,10 @@ public class TimesheetRest {
         }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
-        Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
+        Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
-        for (User user : allUsers) {
-            if (sheetService.getTimesheetByID(timesheetID).getUserKey().equals(
-                    ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey())) {
+        for (ApplicationUser user : allUsers) {
+            if (sheetService.getTimesheetByID(timesheetID).getUserKey().equals(user.getKey())) {
                 for (Team team : teamService.getTeamsOfUser(user.getName())) {
                     Category[] categories = team.getCategories();
                     int[] categoryIDs = new int[categories.length];
@@ -221,9 +219,9 @@ public class TimesheetRest {
         }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<JsonTimesheetEntry>();
-        Collection<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
+        Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
-        for (User user : allUsers) {
+        for (ApplicationUser user : allUsers) {
             //get all teams of that user
             for (Team team : teamService.getTeamsOfUser(user.getName())) {
                 //get all team members
@@ -442,16 +440,16 @@ public class TimesheetRest {
 
         List<Timesheet> timesheetList = sheetService.all();
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<JsonTimesheet>();
-        Set<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
+        Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
         permissionService.checkIfUserExists(request);
 
 
-        TreeSet<User> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
+        TreeSet<ApplicationUser> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
 
         //UserUtil userUtil = ComponentAccessor.getUserUtil();
         //Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
 
-        for (User user : allSortedUsers) {
+        for (ApplicationUser user : allSortedUsers) {
             //this might be the problem for Annemarie
             /*
             if (systemAdmins.contains(user)) {
@@ -1002,7 +1000,7 @@ public class TimesheetRest {
         }
 
         SearchService searchService = ComponentAccessor.getComponentOfType(SearchService.class);
-        User currentUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        ApplicationUser currentUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         final JqlQueryBuilder builder = JqlQueryBuilder.newBuilder();
 

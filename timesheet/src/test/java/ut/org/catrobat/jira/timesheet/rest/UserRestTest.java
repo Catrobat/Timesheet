@@ -1,7 +1,6 @@
 package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.crowd.embedded.api.Group;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -9,8 +8,8 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.MockApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.rest.UserRest;
 import org.catrobat.jira.timesheet.rest.RestUtils;
+import org.catrobat.jira.timesheet.rest.UserRest;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,10 +61,10 @@ public class UserRestTest {
         userRest = new UserRest(userManagerLDAP, configService, teamService);
         spyUserRest = spy(userRest);
 
-        final ApplicationUser fred = new MockApplicationUser("Fred");
+        final ApplicationUser mockApplicationUser = new MockApplicationUser("Fred");
         final JiraAuthenticationContext jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
-        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(fred);
-        Mockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(fred.getDirectoryUser());
+        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(mockApplicationUser);
+        Mockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(mockApplicationUser);
         new MockComponentWorker()
                 .addMock(JiraAuthenticationContext.class, jiraAuthenticationContext)
                 .addMock(UserUtil.class, userUtil)
@@ -133,17 +132,16 @@ public class UserRestTest {
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJira);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtil);
 
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
-
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         // In this testcase all users are normal users
-        User sysAdmin1 = mock(User.class);
-        User sysAdmin2 = mock(User.class);
+        ApplicationUser sysAdmin1 = mock(ApplicationUser.class);
+        ApplicationUser sysAdmin2 = mock(ApplicationUser.class);
 
-        Set<User> sysAdminsSet = new HashSet<User>(Arrays.asList(sysAdmin1, sysAdmin2));
+        Set<ApplicationUser> sysAdminsSet = new HashSet<>(Arrays.asList(sysAdmin1, sysAdmin2));
 
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(userUtil.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
@@ -170,16 +168,16 @@ public class UserRestTest {
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtil);
 
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         // In this testcase all users are normal users
-        User sysAdmin1 = mock(User.class);
-        User sysAdmin2 = mock(User.class);
+        ApplicationUser sysAdmin1 = mock(ApplicationUser.class);
+        ApplicationUser sysAdmin2 = mock(ApplicationUser.class);
 
-        Set<User> sysAdminsSet = new HashSet<User>(Arrays.asList(sysAdmin1, sysAdmin2));
+        Set<ApplicationUser> sysAdminsSet = new HashSet<>(Arrays.asList(sysAdmin1, sysAdmin2));
 
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(userUtil.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
@@ -199,7 +197,7 @@ public class UserRestTest {
         verify(user1, times(1)).getDisplayName();
         verify(user2, times(1)).getDisplayName();
 
-        TreeSet<User> sortedUsers = RestUtils.getInstance().getSortedUsers(usersSet);
+        TreeSet<ApplicationUser> sortedUsers = RestUtils.getInstance().getSortedUsers(usersSet);
         Assert.assertEquals(2,sortedUsers.size());
 
     }

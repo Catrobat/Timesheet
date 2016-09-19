@@ -19,19 +19,19 @@ public class RestUtils {
         return InstanceHolder.instance;
     }
 
-    public TreeSet<User> getSortedUsers(Set<User> allUsers) {
+    public TreeSet<ApplicationUser> getSortedUsers(Set<ApplicationUser> allUsers) {
 
-        Comparator<User> userComparator = new Comparator<User>() {
+        Comparator<ApplicationUser> userComparator = new Comparator<ApplicationUser>() {
 
             @Override
-            public int compare(User o1, User o2) {
+            public int compare(ApplicationUser o1, ApplicationUser o2) {
                 return o1.getName().compareTo(o2.getName());
             }
         };
 
-        TreeSet<User> users = new TreeSet<User>(userComparator);
+        TreeSet<ApplicationUser> users = new TreeSet<ApplicationUser>(userComparator);
 
-        for (User user : allUsers) {
+        for (ApplicationUser user : allUsers) {
             users.add(user);
         }
         return users;

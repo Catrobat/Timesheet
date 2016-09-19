@@ -1,8 +1,8 @@
 package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.sal.api.user.UserManager;
@@ -127,9 +127,9 @@ public class SchedulingRestTest {
         timesheetService.add("key 2", 450, 0, 450, 450, 0, "bachelor thesis", "", 15, "", true, false, false); // disabled
         timesheetService.add("key 3", 450, 0, 450, 200, 20, "seminar paper", "", 7.5, "", false, true, false); // inactive
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
-        Set<User> userSet = new HashSet<User>(Arrays.asList(user1, user2));
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
+        Set<ApplicationUser> userSet = new HashSet<>(Arrays.asList(user1, user2));
         when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(userSet);
 
         when(user1.getName()).thenReturn("MarkusHobisch");
@@ -164,10 +164,10 @@ public class SchedulingRestTest {
         Category categoryDrone = categoryService.add("Drone");
         Team droneTeam = teamService.add("Drone Team");
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
-        Set<User> userSet = new HashSet<User>(Arrays.asList(user1, user2));
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(userSet);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
+        Set<ApplicationUser> userSet = new HashSet<>(Arrays.asList(user1, user2));
+        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(userSet); //todo: use new method
 
         when(user1.getName()).thenReturn("MarkusHobisch");
         when(user2.getName()).thenReturn("AdrianSchnedlitz");

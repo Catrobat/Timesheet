@@ -4,6 +4,7 @@ import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.groups.GroupManager;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
@@ -37,7 +38,7 @@ import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
@@ -155,10 +156,10 @@ public class TimesheetRestTest {
         teams.add(team1);
         teams.add(team2);
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
         when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
 
         //user1 should be the testUser
@@ -187,10 +188,10 @@ public class TimesheetRestTest {
 
         when(teamServiceMock.getTeamsOfUser(username)).thenReturn(teams);
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
@@ -252,10 +253,10 @@ public class TimesheetRestTest {
 
         when(teamServiceMock.getTeamsOfUser(username)).thenReturn(teams);
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
@@ -371,10 +372,10 @@ public class TimesheetRestTest {
         teams.add(team1);
         teams.add(team2);
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
@@ -432,10 +433,10 @@ public class TimesheetRestTest {
         teams.add(team1);
         teams.add(team2);
 
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
@@ -651,9 +652,9 @@ public class TimesheetRestTest {
         List<Timesheet> timesheets = new LinkedList<Timesheet>();
         timesheets.add(timesheetMock);
 
-        User user1 = mock(User.class);
+        ApplicationUser user1 = mock(ApplicationUser.class);
         when(user1.getName()).thenReturn(userName);
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1));
+        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);

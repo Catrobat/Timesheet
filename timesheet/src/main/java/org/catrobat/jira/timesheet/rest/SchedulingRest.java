@@ -17,7 +17,6 @@
 package org.catrobat.jira.timesheet.rest;
 
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.mail.Email;
@@ -50,7 +49,7 @@ public class SchedulingRest {
     private final TeamService teamService;
     private final UserManager userManager;
 
-    private ConcurrentSkipListMap<User, Vector<ApplicationUser>> notifyUsersMap = new ConcurrentSkipListMap<>(); // thread save
+    private ConcurrentSkipListMap<ApplicationUser, Vector<ApplicationUser>> notifyUsersMap = new ConcurrentSkipListMap<>(); // thread save
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
             final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
@@ -72,11 +71,11 @@ public class SchedulingRest {
         }
 
         List<Timesheet> timesheetList = sheetService.all();
-        Set<User> userList = ComponentAccessor.getUserManager().getAllUsers();
+        Set<ApplicationUser> userList = ComponentAccessor.getUserManager().getAllUsers(); //Todo: use new methods
         Config config = configService.getConfiguration();
 
-        for (User user : userList) {
-            String userKey = ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey();
+        for (ApplicationUser user : userList) {
+            String userKey = user.getKey();
             for (Timesheet timesheet : timesheetList) {
                 if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
                     continue;
@@ -122,7 +121,7 @@ public class SchedulingRest {
                         Vector<ApplicationUser> notifiedUserVector = new Vector<>(getCoordinators(user));
                         notifyUsersMap.put(user, notifiedUserVector);
                     } else { // user is active again
-                        for (Map.Entry<User, Vector<ApplicationUser>> entry : notifyUsersMap.entrySet()) {
+                        for (Map.Entry<ApplicationUser, Vector<ApplicationUser>> entry : notifyUsersMap.entrySet()) {
                             List<ApplicationUser> appUserList = entry.getValue();
                             for (ApplicationUser appUser : appUserList) {
                                 sendMail(createEmail(appUser.getEmailAddress(), config.getMailSubjectActiveState(),
@@ -137,7 +136,7 @@ public class SchedulingRest {
         return Response.noContent().build();
     }
 
-    private List<String> getCoordinatorsMailAddress(User user) {
+    private List<String> getCoordinatorsMailAddress(ApplicationUser user) {
         List<String> coordinatorMailAddressList = new LinkedList<String>();
         for (Team team : teamService.getTeamsOfUser(user.getName())) {
             for (String coordinator : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
@@ -147,7 +146,7 @@ public class SchedulingRest {
         return coordinatorMailAddressList;
     }
 
-    private List<ApplicationUser> getCoordinators(User user) {
+    private List<ApplicationUser> getCoordinators(ApplicationUser user) {
         List<ApplicationUser> coordinatorList = new LinkedList<>();
         for (Team team : teamService.getTeamsOfUser(user.getName())) {
             for (String coordinator : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR)) {
@@ -255,12 +254,12 @@ public class SchedulingRest {
         }
 
         List<Timesheet> timesheetList = sheetService.all();
-        Collection<User> userList = ComponentAccessor.getUserManager().getAllUsers();
+        Set<ApplicationUser> userList = ComponentAccessor.getUserManager().getAllUsers();
         Config config = configService.getConfiguration();
 
-        for (User user : userList) {
+        for (ApplicationUser user : userList) {
             for (Timesheet timesheet : timesheetList) {
-                String userKey = ComponentAccessor.getUserManager().getUserByName(user.getName()).getKey();
+                String userKey = user.getKey();
                 if (timesheet.getUserKey().equals(userKey)) {
                     if ((timesheet.getTargetHours() - timesheet.getTargetHoursCompleted()) <= 80) {
                         Email email = new Email(user.getEmailAddress());

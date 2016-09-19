@@ -17,8 +17,8 @@
 package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.crowd.embedded.api.Group;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
@@ -33,7 +33,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Path("/user")
 public class UserRest extends PermissionServiceImpl {
@@ -61,9 +64,9 @@ public class UserRest extends PermissionServiceImpl {
 
         UserUtil userUtil = ComponentAccessor.getUserUtil();
         List<JsonUser> jsonUserList = new ArrayList<JsonUser>();
-        Set<User> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        TreeSet<User> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
-        for (User user : allSortedUsers) {
+        Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
+        TreeSet<ApplicationUser> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
+        for (ApplicationUser user : allSortedUsers) {
 
             //otherwise admins will not be shown in user-selection fields
             //if (systemAdmins.contains(user)) {
