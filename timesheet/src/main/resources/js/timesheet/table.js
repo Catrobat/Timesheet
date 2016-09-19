@@ -532,6 +532,9 @@ function getIndexOfCategoryOption(categoryName, timesheetData) {
     categoryName = categoryName.toLowerCase();
     var index = 1;
     while (true) {
+        if(!timesheetData.hasOwnProperty("<categoryName>")){
+            break;
+        }
         var name = timesheetData.categories[index].categoryName.toLowerCase();
         if (name == categoryName) {
             break;
