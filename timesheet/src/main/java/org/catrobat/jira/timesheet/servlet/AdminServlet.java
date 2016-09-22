@@ -16,6 +16,7 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -30,14 +31,23 @@ public class AdminServlet extends HelperServlet {
     private final TemplateRenderer renderer;
 
     public AdminServlet(LoginUriProvider loginUriProvider, TemplateRenderer renderer,
-                        WebSudoManager webSudoManager, PermissionService permissionService) {
+            WebSudoManager webSudoManager, PermissionService permissionService) {
         super(loginUriProvider, webSudoManager, permissionService);
         this.renderer = renderer;
+        // this.userManager = checkNotNull(userManager);
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
+        enforceLoggedIn(request, response);
         renderer.render("administration.vm", response.getWriter());
+    }
+
+    private void enforceLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser() == null)  // (3)
+        {
+            res.sendRedirect(req.getContextPath() + "/plugins/servlet/login");
+        }
     }
 }
