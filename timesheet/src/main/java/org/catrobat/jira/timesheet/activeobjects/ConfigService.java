@@ -17,7 +17,7 @@
 package org.catrobat.jira.timesheet.activeobjects;
 
 import com.atlassian.activeobjects.tx.Transactional;
-import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.jira.user.ApplicationUser;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public interface ConfigService {
 
     Config removeApprovedGroup(String approvedGroupName);
 
-    ApprovedUser addApprovedUser(UserProfile userProfile);
+    ApprovedUser addApprovedUser(ApplicationUser user);
 
     Config removeApprovedUser(String approvedUserKey);
 

@@ -20,11 +20,10 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-import com.mysema.commons.lang.Assert;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
+import org.junit.Assert;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -415,9 +414,7 @@ public class ConfigServiceImpl implements ConfigService {
         Vector<ApprovedUser> vector = new Vector<>();
         Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
         for (ApplicationUser user : usersInGroup) {
-            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(user.getName());
-            UserProfile userProfile = userManager.getUserProfile(applicationUser.getName());
-            vector.add(addApprovedUser(userProfile));
+            vector.add(addApprovedUser(user));
         }
         ApprovedGroup approvedGroup = ao.create(ApprovedGroup.class);
         approvedGroup.setGroupName(approvedGroupName);
@@ -463,8 +460,8 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public ApprovedUser addApprovedUser(UserProfile userProfile) {
-        String userKey = userProfile.getUserKey().getStringValue();
+    public ApprovedUser addApprovedUser(ApplicationUser user) {
+        String userKey = user.getKey();
         if (userKey == null || userKey.trim().length() == 0) {
             return null;
         }
@@ -473,20 +470,20 @@ public class ConfigServiceImpl implements ConfigService {
         ApprovedUser[] approvedUserArray = ao.find(ApprovedUser.class, Query.select()
                 .where("upper(\"USER_KEY\") = upper(?)", userKey));
         if (approvedUserArray.length == 0) {
-            return createApprovedUser(userProfile);
+            return createApprovedUser(user);
         } else {
             return approvedUserArray[0];
         }
     }
 
-    private ApprovedUser createApprovedUser(UserProfile userProfile) {
-        String userKey = userProfile.getUserKey().getStringValue();
+    private ApprovedUser createApprovedUser(ApplicationUser user) {
+        String userKey = user.getKey();
 
         ApprovedUser approvedUser = ao.create(ApprovedUser.class);
         approvedUser.setUserKey(userKey);
-        approvedUser.setUserName(userProfile.getUsername());
-        approvedUser.setEmailAddress(userProfile.getEmail());
-        approvedUser.setFullName(userProfile.getFullName());
+        approvedUser.setUserName(user.getUsername());
+        approvedUser.setEmailAddress(user.getEmailAddress());
+        approvedUser.setFullName(user.getDisplayName());
         approvedUser.setConfiguration(getConfiguration());
         approvedUser.save();
 
@@ -550,7 +547,7 @@ public class ConfigServiceImpl implements ConfigService {
     public ConcurrentSkipListMap<ApprovedGroup, Vector<ApprovedUser>> getApprovedMap() {
         //delete the map ...
         removeMap(approvedMap);
-        Assert.isTrue(approvedMap.isEmpty(), "Map is not empty!");
+        Assert.assertTrue("Map is not empty!", approvedMap.isEmpty());
 
         //... and create new map
         ApprovedGroup[] approvedGroups = getConfiguration().getApprovedGroups();
@@ -572,7 +569,8 @@ public class ConfigServiceImpl implements ConfigService {
             if (approvedUser.equals(element)) {
                 removeApprovedUser(approvedUser.getUserKey());
                 iter.remove();
-                Assert.isFalse(vector.contains(approvedUser), "Element is still in vector but should be deleted!");
+                Assert.assertFalse("Element is still in vector but should be deleted!", vector.contains(approvedUser));
+
                 return true;
             }
         }
@@ -591,7 +589,8 @@ public class ConfigServiceImpl implements ConfigService {
             removeApprovedUser(approvedUser.getUserKey());
             iter.remove();
         }
-        Assert.isTrue(vector.isEmpty(), "Vector is not empty!");
+        Assert.assertTrue("Vector is not empty!", vector.isEmpty());
+
         return true;
     }
 
@@ -608,7 +607,7 @@ public class ConfigServiceImpl implements ConfigService {
             removeApprovedGroup(group.getGroupName());
         }
         map.clear();
-        Assert.isTrue(map.isEmpty(), "Map is not empty!");
+        Assert.assertTrue("Map is not empty!", map.isEmpty());
         return true;
     }
 }

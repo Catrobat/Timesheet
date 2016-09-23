@@ -78,8 +78,7 @@ public class CsvConfigImporter {
                 for (int i = 1; i < columns.length; i++) {
                     ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(columns[i]);
                     if (!user.getName().isEmpty()) {
-                        UserProfile userProfile = userManager.getUserProfile(user.getName());
-                        configService.addApprovedUser(userProfile);
+                        configService.addApprovedUser(user);
                     }
                 }
             } else if (columns[0].equals("Email From Name") && columns.length > 0) {

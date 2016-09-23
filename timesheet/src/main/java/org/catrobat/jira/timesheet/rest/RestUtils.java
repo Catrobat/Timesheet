@@ -48,8 +48,6 @@ public class RestUtils {
         ApplicationUser userByName = ComponentAccessor.getUserManager().getUserByName(approvedUserName);
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userProfile.getUsername());
 
-        if (userProfile.getUserKey() == null) return;
-
         System.out.println();
         System.out.println("userProfile.getEmail()      = " + userProfile.getEmail());
         System.out.println("userByKey.getEmailAddress() = " + userByName.getEmailAddress());
@@ -65,7 +63,6 @@ public class RestUtils {
         System.out.println("-------------------------------------------------------------------------");
         System.out.println("userKey (CA) userKeyService = " + userKey);
         System.out.println("userByName.getKey()         = " + userByName.getKey());
-        System.out.println("userProfile.getUserKey()    = " + userProfile.getUserKey().getStringValue());
         System.out.println("########################################################################");
     }
 }

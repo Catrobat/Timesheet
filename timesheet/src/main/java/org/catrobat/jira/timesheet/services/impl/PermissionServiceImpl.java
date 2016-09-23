@@ -19,6 +19,7 @@ package org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.*;
@@ -47,13 +48,13 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException {
-        UserProfile remoteUser = userManager.getRemoteUser(request);
+        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        if (remoteUser == null) {
-            throw new ServiceException("RemoteUser does not exist.");
+        if (loggedInUser == null) {
+            throw new ServiceException("loggedInUser does not exist.");
         }
 
-        UserProfile userProfile = userManager.getUserProfile(remoteUser.getUsername());
+        UserProfile userProfile = userManager.getUserProfile(loggedInUser.getUsername());
 
         if (userProfile == null) {
             throw new ServiceException("User does not exist.");
@@ -62,14 +63,14 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName) {
-        UserProfile remoteUser = userManager.getRemoteUser(request);
+        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        if (remoteUser == null) {
-            System.out.println("RemoteUser is null!");
+        if (loggedInUser == null) {
+            System.out.println("loggedInUser is null!");
             return false;
         }
 
-        String username = remoteUser.getUsername();
+        String username = loggedInUser.getUsername();
         UserProfile userProfile = userManager.getUserProfile(username);
 
         if (userProfile == null) {
@@ -86,7 +87,9 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean checkIfUserIsTeamCoordinator(HttpServletRequest request){
-        return teamService.getCoordinatorTeamsOfUser(userManager.getRemoteUser(request).getUsername()).isEmpty() ? false : true;
+        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        String username = loggedInUser.getUsername();
+        return teamService.getCoordinatorTeamsOfUser(username).isEmpty() ? false : true;
     }
 
     public UserProfile checkIfUsernameExists(String userName) throws ServiceException {
@@ -105,7 +108,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public Response checkPermission(HttpServletRequest request) {
-        UserProfile userProfile = userManager.getRemoteUser(request);
+        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        UserProfile userProfile = userManager.getUserProfile(loggedInUser.getUsername());
 
         if (userProfile == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid profil.").build();
@@ -125,7 +129,7 @@ public class PermissionServiceImpl implements PermissionService {
         return null;
     }
 
-    public boolean isApproved(UserProfile userProfile) {
+    public boolean isApproved(ApplicationUser user) {
         Config config = configService.getConfiguration();
 
         if (config.getApprovedUsers().length == 0 && config.getApprovedGroups().length == 0) {
@@ -133,11 +137,11 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         if (configService.isUserApproved(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(userProfile.getUsername()))) {
+                getUserKeyService().getKeyForUsername(user.getUsername()))) {
             return true;
         }
 
-        Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(userProfile.getUsername());
+        Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(user.getUsername());
         for (String groupName : groupNameCollection) {
             if (configService.isGroupApproved(groupName)) {
                 return true;
@@ -147,11 +151,7 @@ public class PermissionServiceImpl implements PermissionService {
         return false;
     }
 
-    public boolean isApproved(String userName) {
-        return isApproved(userManager.getUserProfile(userName));
-    }
-
-    private boolean userOwnsSheet(UserProfile user, Timesheet sheet) {
+    private boolean userOwnsSheet(ApplicationUser user, Timesheet sheet) {
         if (sheet == null || user == null) {
             return false;
         }
@@ -162,11 +162,11 @@ public class PermissionServiceImpl implements PermissionService {
         return sheetKey.equals(userKey);
     }
 
-    private boolean userIsAdmin(UserProfile userProfile) {
-        return userManager.isAdmin(userProfile.getUserKey());
+    private boolean isUserAdmin(ApplicationUser user) {
+        return userManager.isAdmin(user.getKey());
     }
 
-    private boolean userCoordinatesTeamsOfSheet(UserProfile user, Timesheet sheet) {
+    private boolean userCoordinatesTeamsOfSheet(ApplicationUser user, Timesheet sheet) {
         UserProfile owner = userManager.getUserProfile(sheet.getUserKey());
         if (owner == null) { return false; }
 
@@ -179,16 +179,16 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public boolean userCanViewTimesheet(UserProfile user, Timesheet sheet) {
+    public boolean userCanViewTimesheet(ApplicationUser user, Timesheet sheet) {
         return user != null && sheet != null &&
                 (userOwnsSheet(user, sheet)
-                        || userIsAdmin(user)
+                        || isUserAdmin(user)
                         || userCoordinatesTeamsOfSheet(user, sheet)
                         || isApproved(user));
     }
 
     @Override
-    public void userCanEditTimesheetEntry(UserProfile user, Timesheet sheet, JsonTimesheetEntry entry) throws PermissionException {
+    public void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, JsonTimesheetEntry entry) throws PermissionException {
 
         if (userOwnsSheet(user, sheet)) {
             if (!entry.getIsGoogleDocImport()) {
@@ -200,13 +200,13 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not edit an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!userIsAdmin(user)) {
+        } else if (!isUserAdmin(user)) {
             throw new PermissionException("You are not Admin.");
         }
     }
 
     @Override
-    public void userCanDeleteTimesheetEntry(UserProfile user, TimesheetEntry entry) throws PermissionException {
+    public void userCanDeleteTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException {
 
         if (userOwnsSheet(user, entry.getTimeSheet())) {
             if (!entry.getIsGoogleDocImport()) {
@@ -218,7 +218,7 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not delete an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!userIsAdmin(user)) {
+        } else if (!isUserAdmin(user)) {
             throw new PermissionException("You are not Admin.");
         }
     }
@@ -244,13 +244,13 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public Collection<String> getGroupNames(HttpServletRequest request) {
-        UserProfile remoteUser = userManager.getRemoteUser(request);
-        if (remoteUser == null) {
-            System.out.println("RemoteUser is null!");
+        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        if (loggedInUser == null) {
+            System.out.println("loggedInUser is null!");
             return null;
         }
 
-        String username = remoteUser.getUsername();
+        String username = loggedInUser.getUsername();
         return ComponentAccessor.getGroupManager().getGroupNamesForUser(username);
     }
 }

@@ -16,7 +16,9 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -52,13 +54,14 @@ public class ExportMasterThesisTimesheetAsCSVServlet extends HelperServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
+        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         Date actualDate =  new Date();
         String filename = "attachment; filename=\"" +
                 actualDate.toString().substring(0,10) +
                 "-" +
                 actualDate.toString().substring(25,28) +
                 "-" +
-                userManager.getRemoteUser(request).getUsername() +
+               loggedInUser.getUsername() +
                 "_Timesheet_MT_Timesheet.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
@@ -66,7 +69,7 @@ public class ExportMasterThesisTimesheetAsCSVServlet extends HelperServlet {
 
         Timesheet timesheet = null;
         try {
-            timesheet = timesheetService.getTimesheetByUser(userManager.getRemoteUser(request).getUserKey().getStringValue(), true);
+            timesheet = timesheetService.getTimesheetByUser(loggedInUser.getKey(), true);
         } catch (ServiceException e) {
             e.printStackTrace();
         }

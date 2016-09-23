@@ -18,10 +18,10 @@ package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
+import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetService;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;

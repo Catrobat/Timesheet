@@ -1,4 +1,6 @@
 <atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+
+    <!-- project specified -->
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
@@ -87,6 +89,7 @@
         <context>modify</context>
     </web-resource>
     <!-- end of web-resources -->
+    <!-- end of project specified -->
 
     <!-- servlets -->
     <servlet key="timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.TimesheetServlet">

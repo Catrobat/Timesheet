@@ -152,7 +152,7 @@ public class ConfigResourceRest {
             for (String approvedUserName : jsonConfig.getApprovedUsers()) {
                 UserProfile userProfile = userManager.getUserProfile(approvedUserName);
                 if (userProfile != null) {
-                    configService.addApprovedUser(userProfile);
+                    //configService.addApprovedUser(approvedUserName); // TODO: fix it
                     RestUtils.getInstance().printUserInformation(approvedUserName, userProfile);
                 }
             }

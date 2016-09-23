@@ -54,8 +54,8 @@ public class UserRest extends PermissionServiceImpl {
     @Path("/getUsers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@Context HttpServletRequest request) {
-        String username = userManager.getRemoteUser().getUsername();
-        if (!isApproved(username)) {
+        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        if (!isApproved(loggedInUser)) {
             Response unauthorized = checkPermission(request);
             if (unauthorized != null) {
                 return unauthorized;
