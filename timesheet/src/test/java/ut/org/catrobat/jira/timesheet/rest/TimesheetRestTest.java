@@ -166,7 +166,7 @@ public class TimesheetRestTest {
 
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID).getUserKey()).thenReturn(userKey);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
         when(timesheetServiceMock.getTimesheetByID(timesheetID).getUserKey()).thenReturn(userKey);
@@ -195,7 +195,7 @@ public class TimesheetRestTest {
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
@@ -234,7 +234,7 @@ public class TimesheetRestTest {
         teams.add(team1);
         teams.add(team2);
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
         response = timesheetRestMock.getTeamsForUser(requestMock);
@@ -272,6 +272,7 @@ public class TimesheetRestTest {
     @Test
     public void testGetTeamsUserDoesNotExist() throws Exception {
         when(userManagerLDAPMock.getUserProfile(userProfileMock.getUsername())).thenReturn(null);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
         //execution & verifying
         response = timesheetRest.getTeamsForUser(requestMock);
 
@@ -383,7 +384,7 @@ public class TimesheetRestTest {
         when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
         List<String> developerList = new LinkedList<String>();
@@ -444,7 +445,7 @@ public class TimesheetRestTest {
         when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
         List<String> developerList = new LinkedList<String>();
@@ -487,7 +488,7 @@ public class TimesheetRestTest {
 
         ApplicationUser user1 = mock(ApplicationUser.class);
 
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         List<String> developerList = new LinkedList<String>();
         developerList.add(userName);
@@ -528,7 +529,7 @@ public class TimesheetRestTest {
     public void testGetTimesheetIDOfUserOk() throws Exception {
         String userName = "test";
         Boolean isMTSheet = false;
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         response = timesheetRestMock.getTimesheetIDOFUser(requestMock, userName, isMTSheet);
         assertNotNull(response.getEntity());
@@ -539,7 +540,7 @@ public class TimesheetRestTest {
         //preparations
         int timesheetID = 1;
         String userName = "test";
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
 
         when(userProfileMock.getUsername()).thenReturn(userName);
@@ -556,7 +557,7 @@ public class TimesheetRestTest {
         //preparations
         int timesheetID = 1;
         String userName = "test";
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
 
         //execution & verifying
@@ -568,7 +569,7 @@ public class TimesheetRestTest {
     public void testGetOwnerOfTimesheetIsNull() throws Exception {
         //preparations
         int timesheetID = 1;
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(null);
 
         //execution & verifying
@@ -593,7 +594,7 @@ public class TimesheetRestTest {
         //preparations
         String userName = "test";
         String userKey = "USER_KEY";
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByUser(userKey, false)).thenReturn(timesheetMock);
 
         when(userProfileMock.getUsername()).thenReturn(userName);
@@ -609,7 +610,7 @@ public class TimesheetRestTest {
     @Test
     public void testGetTimesheetOk() throws Exception {
         int timesheetID = 1;
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         response = timesheetRest.getTimesheet(requestMock, timesheetID);
         assertNotNull(response.getEntity());
@@ -618,7 +619,7 @@ public class TimesheetRestTest {
     @Test
     public void testGetTimesheetBuildEmail() throws Exception {
         int timesheetID = 1;
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
 
@@ -636,7 +637,7 @@ public class TimesheetRestTest {
     @Test
     public void testGetTimesheetEntriesOk() throws Exception {
         int timesheetID = 1;
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         response = timesheetRest.getTimesheetEntries(requestMock, timesheetID);
         assertNotNull(response.getEntity());
@@ -646,7 +647,7 @@ public class TimesheetRestTest {
     public void testGetTimesheetsOk() throws Exception {
         String userKey = "USER_KEY";
         String userName = "test";
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         List<Timesheet> timesheets = new LinkedList<Timesheet>();
         timesheets.add(timesheetMock);
@@ -681,7 +682,7 @@ public class TimesheetRestTest {
                 0, "Description", 1, 1,
                 "CAT-1530", "Partner", false);
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         response = timesheetRest.postTimesheetEntry(requestMock, jsonTimesheetEntry, timesheetID, isMTSheet);
         assertNotNull(response.getEntity());
@@ -700,7 +701,7 @@ public class TimesheetRestTest {
 
         JsonTimesheetEntry[] jsonTimesheetEntries = {jsonTimesheetEntry};
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         response = timesheetRest.postTimesheetEntries(requestMock, jsonTimesheetEntries, timesheetID, isMTSheet);
         assertNotNull(response.getEntity());
@@ -727,7 +728,7 @@ public class TimesheetRestTest {
         TimesheetEntry newEntry = timesheetEntryServiceMock.add(timesheetMock, begin, end, categoryMock, desc, pause, teamMock, isGoogleDocImport,
                 inactiveEndDate, jiraTicketID, pairProgrammingUserName);
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         when(timesheetMock.getUserKey()).thenReturn(userKey);
         when(ComponentAccessor.getUserKeyService().getKeyForUsername(userProfileMock.getUsername())).thenReturn(userKey);
@@ -747,7 +748,7 @@ public class TimesheetRestTest {
 
         JsonTimesheet[] jsonTimesheets = {jsonTimesheet};
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         response = timesheetRest.postTimesheetEnableStates(requestMock, jsonTimesheets);
         assertNotNull(response.getEntity());
@@ -781,7 +782,7 @@ public class TimesheetRestTest {
 
         when(teamMock.getCategories()).thenReturn(categories);
 
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         when(permissionServiceMock.checkIfUserIsGroupMember(requestMock, "jira-administrators")).thenReturn(true);
 
@@ -821,7 +822,7 @@ public class TimesheetRestTest {
         int entryID = 1;
         Boolean isMTSheet = false;
 
-        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userProfileMock);
+        when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
 
         response = timesheetRest.deleteTimesheetEntry(requestMock, entryID, isMTSheet);
         assertNotNull(response.getEntity());

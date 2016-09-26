@@ -20,7 +20,6 @@ import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportConfigAsCSVServlet;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
@@ -109,9 +108,4 @@ public class ExportConfigAsCSVServletTest {
 
         exportConfigAsCSVServlet.doGet(request, response);
     }*/
-
-    @Test
-    public void dummyTest(){
-        assertTrue(true);
-    }
 }

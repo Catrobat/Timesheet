@@ -134,6 +134,9 @@ public class ConfigResourceRestTest {
         PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyServiceMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
+
+        //additional mocks
+        when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userMock);
     }
 
     @Test
@@ -168,7 +171,6 @@ public class ConfigResourceRestTest {
 
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
-        when(permissionService.checkIfUserExists(request)).thenReturn(userProfileMock);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
         response = configResourceRest.getTeams(request);
@@ -215,7 +217,7 @@ public class ConfigResourceRestTest {
 
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
-        when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userProfileMock);
+       
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(categoryServiceMock.removeCategory(anyString())).thenReturn(true);
 
@@ -244,7 +246,7 @@ public class ConfigResourceRestTest {
 
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
-        when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userProfileMock);
+       
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
 
@@ -282,9 +284,7 @@ public class ConfigResourceRestTest {
         when(approvedGroup.getGroupName()).thenReturn("ApprovedGroup");
 
         ApprovedGroup[] approvedGroups = {approvedGroup};
-
-
-        when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userProfileMock);
+        
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getApprovedGroups()).thenReturn(approvedGroups);
@@ -326,8 +326,6 @@ public class ConfigResourceRestTest {
 
         ApprovedGroup[] approvedGroups = {approvedGroup};
 
-
-        when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userProfileMock);
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getApprovedGroups()).thenReturn(approvedGroups);
