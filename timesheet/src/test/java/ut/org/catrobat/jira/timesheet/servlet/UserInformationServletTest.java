@@ -2,10 +2,9 @@ package ut.org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
@@ -33,8 +32,8 @@ public class UserInformationServletTest {
     private HttpServletResponse response;
     private HttpServletRequest request;
 
-    UserKey test_key = new UserKey("test_key");
-    private UserProfile userProfile;
+    String test_key = "test_key";
+    private ApplicationUser user;
 
     @Before
     public void setUp() throws Exception {
@@ -46,19 +45,19 @@ public class UserInformationServletTest {
         webSudoManager = Mockito.mock(WebSudoManager.class);
         permissionService = Mockito.mock(PermissionService.class);
         componentAccessor = Mockito.mock(ComponentAccessor.class);
-        userProfile = Mockito.mock(UserProfile.class);
+        user = Mockito.mock(ApplicationUser.class);
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
 
         userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, webSudoManager, permissionService);
 
-        Mockito.when(userProfile.getUsername()).thenReturn("test");
-        Mockito.when(userProfile.getUserKey()).thenReturn(test_key);
+        Mockito.when(user.getUsername()).thenReturn("test");
+        Mockito.when(user.getKey()).thenReturn(test_key);
 
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(userProfile);
+        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(user);
 
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(userProfile);
-        Mockito.when(userManager.getUserProfile(test_key)).thenReturn(userProfile);
+        //Mockito.when(userManager.getRemoteUser(request)).thenReturn(user);
+        //Mockito.when(userManager.getUserProfile(test_key)).thenReturn(user);
 
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);

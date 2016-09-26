@@ -2,10 +2,9 @@ package ut.org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
@@ -39,8 +38,8 @@ public class ExportAllTimesheetsAsCSVServletTest {
     private HttpServletResponse response;
     private HttpServletRequest request;
 
-    UserKey test_key = new UserKey("test_key");
-    private UserProfile userProfile;
+    String test_key = "test_key";
+    private ApplicationUser user;
     private ServletOutputStream outputStream;
 
     @Before
@@ -54,7 +53,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         permissionService = Mockito.mock(PermissionService.class);
         componentAccessor = Mockito.mock(ComponentAccessor.class);
         timesheetService = Mockito.mock(TimesheetService.class);
-        userProfile = Mockito.mock(UserProfile.class);
+        user = Mockito.mock(ApplicationUser.class);
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         timesheet = Mockito.mock(Timesheet.class);
@@ -63,13 +62,13 @@ public class ExportAllTimesheetsAsCSVServletTest {
         exportAllTimesheetsAsCSVServlet = new ExportAllTimesheetsAsCSVServlet(loginUriProvider, webSudoManager, timesheetService,
                 configService, permissionService);
 
-        Mockito.when(userProfile.getUsername()).thenReturn("test");
-        Mockito.when(userProfile.getUserKey()).thenReturn(test_key);
+        Mockito.when(user.getUsername()).thenReturn("test");
+        Mockito.when(user.getKey()).thenReturn(test_key);
 
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(userProfile);
+        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(user);
 
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(userProfile);
-        Mockito.when(userManager.getUserProfile(test_key)).thenReturn(userProfile);
+        //Mockito.when(userManager.getRemoteUser(request)).thenReturn(user);
+        //Mockito.when(userManager.getUserProfile(test_key)).thenReturn(user);
 
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
@@ -95,7 +94,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
     @Test
     public void testDoGet() throws Exception {
         Mockito.when(timesheetService.getTimesheetByUser(componentAccessor.getUserKeyService().
-                getKeyForUsername(userProfile.getUsername()), false)).thenReturn(timesheet);
+                getKeyForUsername(user.getUsername()), false)).thenReturn(timesheet);
 
         exportAllTimesheetsAsCSVServlet.doGet(request, response);
     }

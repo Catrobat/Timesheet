@@ -2,10 +2,9 @@ package ut.org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
@@ -30,7 +29,7 @@ public class TimesheetServletTest {
     private PermissionService permissionService;
 
     private Timesheet timeSheet;
-    private UserProfile userProfile;
+    private ApplicationUser user;
     private TeamService teamService;
     private UserManager userManager;
 
@@ -40,7 +39,7 @@ public class TimesheetServletTest {
     private ComponentAccessor componentAccessor;
 
     private Team team;
-    private UserProfile admin;
+    private ApplicationUser admin;
 
     final String userKey = "USER_001";
     final int targetHoursPractice = 150;
@@ -65,7 +64,7 @@ public class TimesheetServletTest {
         permissionService = Mockito.mock(PermissionService.class);
         componentAccessor = Mockito.mock(ComponentAccessor.class);
 
-        userProfile = Mockito.mock(UserProfile.class);
+        user = Mockito.mock(ApplicationUser.class);
         timeSheet = Mockito.mock(Timesheet.class);
         sheetService = Mockito.mock(TimesheetService.class);
         team = Mockito.mock(Team.class);
@@ -75,18 +74,18 @@ public class TimesheetServletTest {
 
         timesheetServlet = new TimesheetServlet(loginUriProvider, templateRenderer, sheetService, permissionService);
 
-        admin = Mockito.mock(UserProfile.class);
-        UserKey admin_key = new UserKey("admin_key");
-        Mockito.when(admin.getUserKey()).thenReturn(admin_key);
+        admin = Mockito.mock(ApplicationUser.class);
+        String admin_key = "admin_key";
+        Mockito.when(admin.getKey()).thenReturn(admin_key);
         Mockito.when(admin.getUsername()).thenReturn("admin");
         Mockito.when(userManager.isAdmin(admin_key)).thenReturn(true);
-        Mockito.when(userManager.getUserProfile(admin_key.getStringValue())).thenReturn(admin);
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
+        //Mockito.when(userManager.getUserProfile(admin_key.getStringValue())).thenReturn(admin);
+        //Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
         Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
         Mockito.when(timeSheet.getID()).thenReturn(1);
-        Mockito.when(timeSheet.getUserKey()).thenReturn(admin_key.getStringValue());
+        Mockito.when(timeSheet.getUserKey()).thenReturn(admin_key);
         Mockito.when(timeSheet.getIsActive()).thenReturn(true);
         Mockito.when(timeSheet.getIsEnabled()).thenReturn(false);
         Mockito.when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
@@ -108,7 +107,7 @@ public class TimesheetServletTest {
 
     @Test(expected = NullPointerException.class)
     public void testDoGetNullPointerException() throws Exception {
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
+        //Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
         Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(null);
 

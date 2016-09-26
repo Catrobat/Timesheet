@@ -4,10 +4,9 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
@@ -62,8 +61,8 @@ public class ImportConfigAsCSVServletTest {
     private HttpServletResponse response;
     private HttpServletRequest request;
 
-    UserKey test_key = new UserKey("test_key");
-    private UserProfile userProfile;
+    String test_key = "test_key";
+    private ApplicationUser user;
     private ServletOutputStream outputStream;
     private CategoryService cs;
     private UserManager userManager;
@@ -82,7 +81,7 @@ public class ImportConfigAsCSVServletTest {
         permissionService = Mockito.mock(PermissionService.class);
         componentAccessor = Mockito.mock(ComponentAccessor.class);
         timesheetService = Mockito.mock(TimesheetService.class);
-        userProfile = Mockito.mock(UserProfile.class);
+        user = Mockito.mock(ApplicationUser.class);
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         outputStream = Mockito.mock(ServletOutputStream.class);
@@ -95,10 +94,10 @@ public class ImportConfigAsCSVServletTest {
         importConfigCsvServlet = new ImportConfigCsvServlet(loginUriProvider, webSudoManager,
                 configService, categoryService, teamService, ao, permissionService, userManager);
 
-        Mockito.when(userProfile.getUsername()).thenReturn("test");
-        Mockito.when(userProfile.getUserKey()).thenReturn(test_key);
+        Mockito.when(user.getUsername()).thenReturn("test");
+        Mockito.when(user.getKey()).thenReturn(test_key);
 
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(userProfile);
+        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(user);
 
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
