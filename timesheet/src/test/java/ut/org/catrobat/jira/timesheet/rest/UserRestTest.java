@@ -1,12 +1,15 @@
 package ut.org.catrobat.jira.timesheet.rest;
 
+import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.MockApplicationUser;
+import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserUtil;
+import net.java.ao.EntityManager;
+import net.java.ao.test.jdbc.Data;
+import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
@@ -15,10 +18,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -27,110 +31,71 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
+@Data(MySampleDatabaseUpdater.class)
 @PrepareForTest(ComponentAccessor.class)
 public class UserRestTest {
 
-
-    private ComponentAccessor componentAccessor;
-
-    private com.atlassian.sal.api.user.UserManager userManagerLDAP;
-    private com.atlassian.jira.user.util.UserManager userManagerJira;
-    private ConfigService configService;
-    private TeamService teamService;
+    private com.atlassian.sal.api.user.UserManager userManagerLDAPMock;
+    private com.atlassian.jira.user.util.UserManager userManagerJiraMock;
+    private ConfigService configServiceMock;
+    private TeamService teamServiceMock;
     private UserRest spyUserRest;
-    private HttpServletRequest httpRequest;
+    private HttpServletRequest httpRequestMock;
     private UserRest userRest;
-    private UserUtil userUtil;
+    private UserUtil userUtilMock;
+    private ApplicationUser userMock;
+    private EntityManager entityManager;
+    private TestActiveObjects ao;
+    private JiraAuthenticationContext jiraAuthMock;
+    private UserKeyService userKeyServiceMock;
 
     @Before
     public void setUp() throws Exception {
-        new MockComponentWorker().init();
+        assertNotNull(entityManager);
+        ao = new TestActiveObjects(entityManager);
 
-        componentAccessor = Mockito.mock(ComponentAccessor.class, RETURNS_DEEP_STUBS);
-        userManagerLDAP = Mockito.mock(com.atlassian.sal.api.user.UserManager.class, RETURNS_DEEP_STUBS);
-        userManagerJira = Mockito.mock(com.atlassian.jira.user.util.UserManager.class, RETURNS_DEEP_STUBS);
-        userUtil = Mockito.mock(UserUtil.class, RETURNS_DEEP_STUBS);
+        userManagerLDAPMock = mock(com.atlassian.sal.api.user.UserManager.class, RETURNS_DEEP_STUBS);
+        userManagerJiraMock = mock(com.atlassian.jira.user.util.UserManager.class, RETURNS_DEEP_STUBS);
+        userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
+        configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
+        teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
+        httpRequestMock = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
+        userKeyServiceMock = mock(UserKeyService.class, RETURNS_DEEP_STUBS);
+        userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
+        jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
 
-        configService = Mockito.mock(ConfigService.class);
-        teamService = Mockito.mock(TeamService.class);
-        httpRequest = Mockito.mock(HttpServletRequest.class);
-
-        userRest = new UserRest(userManagerLDAP, configService, teamService);
+        userRest = new UserRest(userManagerLDAPMock, configServiceMock, teamServiceMock);
         spyUserRest = spy(userRest);
 
-        final ApplicationUser mockApplicationUser = new MockApplicationUser("Fred");
-        final JiraAuthenticationContext jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
-        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(mockApplicationUser);
-        Mockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(mockApplicationUser);
-        new MockComponentWorker()
-                .addMock(JiraAuthenticationContext.class, jiraAuthenticationContext)
-                .addMock(UserUtil.class, userUtil)
-                .addMock(com.atlassian.sal.api.user.UserManager.class, userManagerLDAP)
-                .addMock(com.atlassian.jira.user.util.UserManager.class, userManagerJira)
-                .init();
-
         PowerMockito.mockStatic(ComponentAccessor.class);
-
+        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
+        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
+        PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyServiceMock);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
     }
 
     @Test
     public void testGetUsersUnauthorized() {
-        String username = "MarkusHobisch";
-        when(userManagerLDAP.getRemoteUser().getUsername()).thenReturn(username);
-
-        doReturn(false).when(spyUserRest).isApproved(username);
+        doReturn(false).when(spyUserRest).isApproved(userMock);
         Response unauthorized = Response.status(Response.Status.UNAUTHORIZED).build();
-        doReturn(unauthorized).when(spyUserRest).checkPermission(httpRequest);
+        doReturn(unauthorized).when(spyUserRest).checkPermission(httpRequestMock);
 
-        Response result = spyUserRest.getUsers(httpRequest);
+        Response result = spyUserRest.getUsers(httpRequestMock);
         Assert.assertEquals(unauthorized, result);
     }
 
-/*
     @Test
-    public void testGetUsersOnlySystemAdminsInList(){
-        String username = "MarkusHobisch";
-        when(userManagerLDAP.getRemoteUser().getUsername()).thenReturn(username);
-        doReturn(true).when(spyUserRest).isApproved(username);
+    public void testGetUsersOnlyUsersInList() {
+        doReturn(true).when(spyUserRest).isApproved(userMock);
 
-
-        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJira);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtil);
-
-
-        User user1 = mock(User.class);
-        User user2 = mock(User.class);
-
-        Set<User> usersSet = new HashSet<User>(Arrays.asList(user1, user2));
-
-        // In this testcase all users are system admins
-        User sysAdmin1 = user1;
-        User sysAdmin2 = user2;
-
-        Set<User> sysAdminsSet = new HashSet<User>(Arrays.asList(sysAdmin1, sysAdmin2));
-
-        PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
-        PowerMockito.when(userUtil.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
-
-        spyUserRest.getUsers(httpRequest);
-
-        verify(user1, never()).getDisplayName();
-        verify(user2, never()).getDisplayName();
-    }
-    */
-
-    @Test
-    public void testGetUsersOnlyUsersInList(){
-        String username = "MarkusHobisch";
-        when(userManagerLDAP.getRemoteUser().getUsername()).thenReturn(username);
-        doReturn(true).when(spyUserRest).isApproved(username);
-
-
-        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJira);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtil);
+        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
+        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
@@ -144,29 +109,25 @@ public class UserRestTest {
         Set<ApplicationUser> sysAdminsSet = new HashSet<>(Arrays.asList(sysAdmin1, sysAdmin2));
 
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
-        PowerMockito.when(userUtil.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
+        PowerMockito.when(userUtilMock.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
 
         PowerMockito.when(user1.getDisplayName()).thenReturn("User 1");
         PowerMockito.when(user2.getDisplayName()).thenReturn("User 2");
         PowerMockito.when(user1.getName()).thenReturn("User 1");
         PowerMockito.when(user2.getName()).thenReturn("User 2");
 
-        spyUserRest.getUsers(httpRequest);
+        spyUserRest.getUsers(httpRequestMock);
 
         verify(user1, times(1)).getDisplayName();
         verify(user2, times(1)).getDisplayName();
     }
 
     @Test
-    public void testGetUsersUnusualCases(){
-        String username = "MarkusHobisch";
-        when(userManagerLDAP.getRemoteUser().getUsername()).thenReturn(username);
-        doReturn(true).when(spyUserRest).isApproved(username);
+    public void testGetUsersUnusualCases() {
+        doReturn(true).when(spyUserRest).isApproved(userMock);
 
-
-        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJira);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtil);
-
+        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
+        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
@@ -180,7 +141,7 @@ public class UserRestTest {
         Set<ApplicationUser> sysAdminsSet = new HashSet<>(Arrays.asList(sysAdmin1, sysAdmin2));
 
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
-        PowerMockito.when(userUtil.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
+        PowerMockito.when(userUtilMock.getJiraSystemAdministrators()).thenReturn(sysAdminsSet);
 
         PowerMockito.when(user1.getDisplayName()).thenReturn("User 1");
         PowerMockito.when(user2.getDisplayName()).thenReturn("User 2");
@@ -190,15 +151,15 @@ public class UserRestTest {
         Group group = mock(Group.class);
         TreeSet<Group> treeSet = new TreeSet(Arrays.asList(group));
         PowerMockito.when(group.getName()).thenReturn("DISABLED");
-        PowerMockito.when(userUtil.getGroupsForUser(anyString())).thenReturn(treeSet);
+        PowerMockito.when(userUtilMock.getGroupsForUser(anyString())).thenReturn(treeSet);
 
-        spyUserRest.getUsers(httpRequest);
+        spyUserRest.getUsers(httpRequestMock);
 
         verify(user1, times(1)).getDisplayName();
         verify(user2, times(1)).getDisplayName();
 
         TreeSet<ApplicationUser> sortedUsers = RestUtils.getInstance().getSortedUsers(usersSet);
-        Assert.assertEquals(2,sortedUsers.size());
+        Assert.assertEquals(2, sortedUsers.size());
 
     }
 }

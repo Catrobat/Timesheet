@@ -67,12 +67,6 @@ public class UserRest extends PermissionServiceImpl {
         Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
         TreeSet<ApplicationUser> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
         for (ApplicationUser user : allSortedUsers) {
-
-            //otherwise admins will not be shown in user-selection fields
-            //if (systemAdmins.contains(user)) {
-            //    continue;
-            //}
-
             JsonUser jsonUser = new JsonUser();
             jsonUser.setEmail(user.getEmailAddress());
             jsonUser.setUserName(user.getName());

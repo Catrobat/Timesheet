@@ -74,16 +74,13 @@ public class TimesheetServlet extends HttpServlet {
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet;
-            //info: testuser added
 
+            //info: testuser added
             if (permissionService.checkIfUserIsGroupMember(request, "Administrators") ||
                     permissionService.checkIfUserIsGroupMember(request, "administrators")) {
-                logger.info("You are Admin!");
                 paramMap.put("isadmin", true);
-                //timesheet = sheetService.getAdministratorTimesheet(userKey);
                 timesheet = sheetService.getTimesheetByUser(userKey, false);
             } else {
-                logger.info("You are not a Admin!");
                 paramMap.put("isadmin", false);
                 if (sheetService.userHasTimesheet(userKey, false)) {
                     timesheet = sheetService.getTimesheetByUser(userKey, false);
@@ -93,8 +90,6 @@ public class TimesheetServlet extends HttpServlet {
             }
 
             //check if user is Team-Coordinator
-
-
             if (permissionService.checkIfUserIsGroupMember(request, "Administrators") ||
                     permissionService.checkIfUserIsGroupMember(request, "administrators") ||
                     permissionService.checkIfUserIsTeamCoordinator(request)) {
