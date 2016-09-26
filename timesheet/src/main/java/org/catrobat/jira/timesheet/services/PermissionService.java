@@ -21,7 +21,6 @@ import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
@@ -33,13 +32,13 @@ import java.util.Collection;
 @Transactional
 public interface PermissionService {
 
-    UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException;
+    ApplicationUser checkIfUserExists(HttpServletRequest request) throws ServiceException;
 
     boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName);
 
     boolean checkIfUserIsTeamCoordinator(HttpServletRequest request);
 
-    UserProfile checkIfUsernameExists(String userName) throws ServiceException;
+    ApplicationUser checkIfUsernameExists(String userName) throws ServiceException;
 
     boolean checkIfUserExists(String userName);
 

@@ -86,14 +86,14 @@ public class TimesheetRest {
     @GET
     @Path("checkConstrains")
     public Response checkConstrains(@Context HttpServletRequest request) throws ServiceException {
-        UserProfile userProfile = null;
+        ApplicationUser user = null;
         try {
-            userProfile = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists(request);
         } catch (ServiceException e) {
             return Response.ok(false).build();
         }
 
-        String userName = userProfile.getUsername();
+        String userName = user.getUsername();
         Set<Team> teams = teamService.getTeamsOfUser(userName);
         if (teams == null || teams.isEmpty()) {
             return Response.ok(false).build();
@@ -113,15 +113,15 @@ public class TimesheetRest {
     @Path("teams")
     public Response getTeamsForUser(@Context HttpServletRequest request) throws ServiceException {
 
-        UserProfile userProfile = null;
+        ApplicationUser user = null;
         try {
-            userProfile = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists(request);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
         }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
-        String userName = userProfile.getUsername();
+        String userName = user.getUsername();
 
         for (Team team : teamService.getTeamsOfUser(userName)) {
             Category[] categories = team.getCategories();
@@ -313,9 +313,9 @@ public class TimesheetRest {
     @Path("timesheets/owner/{timesheetID}")
     public Response getOwnerOfTimesheet(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) throws ServiceException {
-        UserProfile userProfile = null;
+        ApplicationUser user = null;
         try {
-            userProfile = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists(request);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("User does not exist.").build();
         }
@@ -336,7 +336,7 @@ public class TimesheetRest {
         }
 
         JsonUser jsonUser = new JsonUser();
-        jsonUser.setUserName(userProfile.getUsername());
+        jsonUser.setUserName(user.getUsername());
 
         return Response.ok(jsonUser).build();
     }
@@ -347,7 +347,7 @@ public class TimesheetRest {
             @PathParam("userName") String userName,
             @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
         Timesheet sheet;
-        UserProfile user;
+        ApplicationUser user;
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
         try {
             user = permissionService.checkIfUserExists(request);
@@ -379,7 +379,7 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID) throws ServiceException {
 
         Timesheet sheet;
-        UserProfile user;
+        ApplicationUser user;
 
         try {
             user = permissionService.checkIfUserExists(request);
@@ -400,7 +400,7 @@ public class TimesheetRest {
         int targetTime = sheet.getTargetHours();
 
         if ((targetTime - completeTime) <= 80) {
-            buildEmailOutOfTime(user.getEmail(), sheet, user);
+            buildEmailOutOfTime(user.getEmailAddress(), sheet, user);
         }
 
         JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
@@ -418,7 +418,7 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID) throws ServiceException {
 
         Timesheet sheet;
-        UserProfile user;
+        ApplicationUser user;
 
         try {
             user = permissionService.checkIfUserExists(request);
@@ -509,7 +509,7 @@ public class TimesheetRest {
         }
 
         Timesheet sheet;
-        UserProfile user;
+        ApplicationUser user;
         Category category;
         Team team;
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
@@ -589,7 +589,7 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
         Timesheet sheet;
-        UserProfile user;
+        ApplicationUser user;
 
         try {
             user = permissionService.checkIfUserExists(request);
@@ -683,7 +683,7 @@ public class TimesheetRest {
             @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException {
 
         Timesheet sheet;
-        UserProfile user;
+        ApplicationUser user;
 
         try {
             user = permissionService.checkIfUserExists(request);
@@ -769,7 +769,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
         }
 
-        UserProfile user;
+        ApplicationUser user;
         TimesheetEntry entry;
         Category category;
         Team team;
@@ -806,7 +806,7 @@ public class TimesheetRest {
 
             //inform user about Administrator changes
             if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
-                buildEmailAdministratorChangedEntry(user.getEmail(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry, jsonEntry);
+                buildEmailAdministratorChangedEntry(user.getEmailAddress(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry, jsonEntry);
             }
 
             if (sheet.getEntries().length == 1) {
@@ -835,13 +835,13 @@ public class TimesheetRest {
     public Response deleteTimesheetEntry(@Context HttpServletRequest request,
             @PathParam("entryID") int entryID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, com.atlassian.jira.exception.PermissionException {
-        UserProfile userProfile;
+        ApplicationUser user;
         TimesheetEntry entry;
         Timesheet sheet;
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        userProfile = permissionService.checkIfUserExists(request);
+        user = permissionService.checkIfUserExists(request);
         entry = entryService.getEntryByID(entryID);
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
@@ -853,7 +853,7 @@ public class TimesheetRest {
 
         //update latest date
         sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(userProfile.getUsername()), false);
+                getUserKeyService().getKeyForUsername(user.getUsername()), false);
 
         if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
@@ -863,7 +863,7 @@ public class TimesheetRest {
 
         if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators") ||
                 permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
-            buildEmailAdministratorDeletedEntry(userProfile.getEmail(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry);
+            buildEmailAdministratorDeletedEntry(user.getEmailAddress(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry);
         }
 
         entryService.delete(entry);
@@ -872,7 +872,7 @@ public class TimesheetRest {
         if (sheet.getEntries().length > 0) {
             if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
                 sheetService.editTimesheet(ComponentAccessor.
-                                getUserKeyService().getKeyForUsername(userProfile.getUsername()), sheet.getTargetHoursPractice(),
+                                getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                         df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
@@ -880,7 +880,7 @@ public class TimesheetRest {
             }
         } else {
             sheetService.editTimesheet(ComponentAccessor.
-                            getUserKeyService().getKeyForUsername(userProfile.getUsername()), sheet.getTargetHoursPractice(),
+                            getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                     sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                     sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
                     "Not Available", sheet.getIsActive(), sheet.getIsEnabled(), isMTSheet);
@@ -888,20 +888,20 @@ public class TimesheetRest {
         return Response.ok().build();
     }
 
-    private void buildEmailOutOfTime(String emailTo, Timesheet sheet, UserProfile user) {
+    private void buildEmailOutOfTime(String emailTo, Timesheet sheet, ApplicationUser user) {
         Config config = configService.getConfiguration();
 
         String mailSubject = config.getMailSubjectTime() != null && config.getMailSubjectTime().length() != 0
                 ? config.getMailSubjectTime() : "[Timesheet - Timesheet Out Of Time Notification]";
         String mailBody = config.getMailBodyTime() != null && config.getMailBodyTime().length() != 0
-                ? config.getMailBodyTime() : "Hi " + user.getFullName() + ",\n" +
+                ? config.getMailBodyTime() : "Hi " + user.getDisplayName() + ",\n" +
                 "you have only" + sheet.getTargetHoursTheory() + " hours left! \n" +
                 "Please contact you coordinator, or one of the administrators\n\n" +
                 "Best regards,\n" +
                 "Catrobat-Admins";
 
 
-        mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getFullName());
+        mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getDisplayName());
         mailBody = mailBody.replaceAll("\\{\\{time\\}\\}", Integer.toString(sheet.getTargetHoursTheory()));
 
         sendEmail(emailTo, mailSubject, mailBody);

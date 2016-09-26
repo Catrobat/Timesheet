@@ -18,8 +18,8 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
@@ -56,7 +56,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
                 throw new ServletException("User is no Master-Students-Group member.");
             }
 
-            UserProfile userProfile = permissionService.checkIfUserExists(request);
+            ApplicationUser userProfile = permissionService.checkIfUserExists(request);
             String userKey = ComponentAccessor.
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
             Timesheet sheet = null;

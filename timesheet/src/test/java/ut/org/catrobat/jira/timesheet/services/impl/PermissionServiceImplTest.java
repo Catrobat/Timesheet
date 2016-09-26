@@ -4,11 +4,11 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.service.ServiceException;
-import com.atlassian.sal.api.user.UserKey;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -26,6 +26,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.*;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
@@ -35,9 +39,10 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-@RunWith(ActiveObjectsJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(PermissionServiceImplTest.MyDatabaseUpdater.class)
-
+@PrepareForTest(ComponentAccessor.class)
 public class PermissionServiceImplTest {
 
     private static Team catroid, html5, drone;
@@ -47,8 +52,8 @@ public class PermissionServiceImplTest {
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private PermissionServiceImpl permissionService, permissionServiceException;
     private TeamService teamService;
-    private UserManager userManager;
-    private UserProfile coord, owner, eve, test, admin;
+    private com.atlassian.sal.api.user.UserManager userManager;
+    private ApplicationUser coord, owner, eve, test, admin;
     private Timesheet sheet;
     private TimesheetEntry timeSheetEntry;
     private HttpServletRequest request;
@@ -62,27 +67,33 @@ public class PermissionServiceImplTest {
     private GroupManager groupManager;
     private EntityManager entityManager;
     private Collection<String> userGroupNames;
+    private UserManager jiraUserManager;
+    private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Before
     public void setUp() throws Exception {
         new MockComponentWorker().init();
+        PowerMockito.mockStatic(ComponentAccessor.class);
+
 
         teamService = Mockito.mock(TeamService.class);
-        userManager = Mockito.mock(UserManager.class);
+        userManager = Mockito.mock(com.atlassian.sal.api.user.UserManager.class);
         config = Mockito.mock(Config.class);
         configService = Mockito.mock(ConfigService.class);
         groupManager = Mockito.mock(GroupManager.class);
+        jiraUserManager = Mockito.mock(UserManager.class);
+        jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
 
         assertNotNull(entityManager);
 
         permissionService = new PermissionServiceImpl(userManager, teamService, configService);
 
         //arrange
-        coord = Mockito.mock(UserProfile.class);
-        owner = Mockito.mock(UserProfile.class);
-        eve = Mockito.mock(UserProfile.class);
-        test = Mockito.mock(UserProfile.class);
-        admin = Mockito.mock(UserProfile.class);
+        coord = Mockito.mock(ApplicationUser.class);
+        owner = Mockito.mock(ApplicationUser.class);
+        eve = Mockito.mock(ApplicationUser.class);
+        test = Mockito.mock(ApplicationUser.class);
+        admin = Mockito.mock(ApplicationUser.class);
         sheet = Mockito.mock(Timesheet.class);
         sheetService = Mockito.mock(TimesheetService.class);
         entryService = Mockito.mock(TimesheetEntryService.class);
@@ -94,19 +105,19 @@ public class PermissionServiceImplTest {
         config = Mockito.mock(Config.class);
         userGroupNames = Mockito.mock(Collection.class);
 
-        UserKey coord_key = new UserKey("coord_key");
-        UserKey owner_key = new UserKey("owner_key");
-        UserKey eve_key = new UserKey("eve_key");
-        UserKey test_key = new UserKey("test_key");
-        UserKey admin_key = new UserKey("admin_key");
+        String coord_key = "coord_key";
+        String owner_key = "owner_key";
+        String eve_key = "eve_key";
+        String test_key = "test_key";
+        String admin_key = "admin_key";
 
         Mockito.when(sheet.getUserKey()).thenReturn("owner_key");
 
-        Mockito.when(coord.getUserKey()).thenReturn(coord_key);
-        Mockito.when(owner.getUserKey()).thenReturn(owner_key);
-        Mockito.when(eve.getUserKey()).thenReturn(eve_key);
-        Mockito.when(test.getUserKey()).thenReturn(test_key);
-        Mockito.when(admin.getUserKey()).thenReturn(admin_key);
+        Mockito.when(coord.getKey()).thenReturn(coord_key);
+        Mockito.when(owner.getKey()).thenReturn(owner_key);
+        Mockito.when(eve.getKey()).thenReturn(eve_key);
+        Mockito.when(test.getKey()).thenReturn(test_key);
+        Mockito.when(admin.getKey()).thenReturn(admin_key);
 
         Mockito.when(coord.getUsername()).thenReturn("coord");
         Mockito.when(owner.getUsername()).thenReturn("owner");
@@ -120,23 +131,26 @@ public class PermissionServiceImplTest {
         Mockito.when(userManager.isAdmin(test_key)).thenReturn(false);
         Mockito.when(userManager.isAdmin(admin_key)).thenReturn(true);
 
-        Mockito.when(userManager.getUserProfile(owner_key.getStringValue())).thenReturn(owner);
-        Mockito.when(userManager.getUserProfile(admin_key.getStringValue())).thenReturn(admin);
-        Mockito.when(userManager.getUserProfile(eve_key.getStringValue())).thenReturn(eve);
-        Mockito.when(userManager.getUserProfile(test_key.getStringValue())).thenReturn(test);
-        Mockito.when(userManager.getUserProfile(coord_key.getStringValue())).thenReturn(coord);
+        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(jiraUserManager);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
 
-        Mockito.when(userManager.getUserProfile(owner.getUsername())).thenReturn(owner);
-        Mockito.when(userManager.getUserProfile(admin.getUsername())).thenReturn(admin);
-        Mockito.when(userManager.getUserProfile(eve.getUsername())).thenReturn(eve);
-        Mockito.when(userManager.getUserProfile(test.getUsername())).thenReturn(test);
-        Mockito.when(userManager.getUserProfile(coord.getUsername())).thenReturn(coord);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(owner_key)).thenReturn(owner);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(admin_key)).thenReturn(admin);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(eve_key)).thenReturn(eve);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(test_key)).thenReturn(test);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(coord_key)).thenReturn(coord);
 
-        Mockito.when(userManager.isAdmin(owner.getUserKey())).thenReturn(false);
-        Mockito.when(userManager.isAdmin(eve.getUserKey())).thenReturn(false);
-        Mockito.when(userManager.isAdmin(coord.getUserKey())).thenReturn(false);
-        Mockito.when(userManager.isAdmin(test.getUserKey())).thenReturn(false);
-        Mockito.when(userManager.isAdmin(admin.getUserKey())).thenReturn(true);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(owner.getUsername())).thenReturn(owner);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(admin.getUsername())).thenReturn(admin);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(eve.getUsername())).thenReturn(eve);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(test.getUsername())).thenReturn(test);
+        PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(coord.getUsername())).thenReturn(coord);
+
+        Mockito.when(userManager.isAdmin(owner.getKey())).thenReturn(false);
+        Mockito.when(userManager.isAdmin(eve.getKey())).thenReturn(false);
+        Mockito.when(userManager.isAdmin(coord.getKey())).thenReturn(false);
+        Mockito.when(userManager.isAdmin(test.getKey())).thenReturn(false);
+        Mockito.when(userManager.isAdmin(admin.getKey())).thenReturn(true);
 
         Set<Team> owner_teams = new HashSet<Team>();
         Set<Team> eve_teams = new HashSet<Team>();
@@ -203,23 +217,23 @@ public class PermissionServiceImplTest {
 
     @Test
     public void testIfUserExistsOk() throws Exception {
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(owner);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(owner);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(owner);
-        UserProfile responseProfile = permissionService.checkIfUserExists(request);
+        ApplicationUser responseProfile = permissionService.checkIfUserExists(request);
         assertTrue(responseProfile.equals(owner));
     }
 
     @Test
     public void testIfUserExistsWrongUserProfile() throws Exception {
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(admin);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(eve);
-        UserProfile responseProfile = permissionService.checkIfUserExists(request);
+        ApplicationUser responseProfile = permissionService.checkIfUserExists(request);
         Assert.assertFalse(responseProfile == admin);
     }
 
     @Test(expected = ServiceException.class)
     public void testIfUserExistsExceptionHandling() throws ServiceException {
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(null);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
         Assert.assertEquals(permissionService.checkIfUserExists(request), ServiceException.class);
     }
 
@@ -308,7 +322,8 @@ public class PermissionServiceImplTest {
 
     @Test(expected = ServiceException.class)
     public void userDoesNotExistException() throws Exception {
-        Mockito.when(userManager.getRemoteUser(request)).thenReturn(eve);
+
+        Mockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(eve);
         Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(null);
         permissionService.checkIfUserExists(request);
     }

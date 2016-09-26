@@ -21,7 +21,6 @@ import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.PermissionService;
@@ -41,20 +40,20 @@ public class PermissionServiceImpl implements PermissionService {
     private final ConfigService configService;
 
     public PermissionServiceImpl(UserManager userManager, TeamService teamService,
-            ConfigService configService) {
+                                 ConfigService configService) {
         this.userManager = userManager;
         this.teamService = teamService;
         this.configService = configService;
     }
 
-    public UserProfile checkIfUserExists(HttpServletRequest request) throws ServiceException {
+    public ApplicationUser checkIfUserExists(HttpServletRequest request) throws ServiceException {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         if (loggedInUser == null) {
             throw new ServiceException("loggedInUser does not exist.");
         }
 
-        UserProfile userProfile = userManager.getUserProfile(loggedInUser.getUsername());
+        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByKey(loggedInUser.getKey());
 
         if (userProfile == null) {
             throw new ServiceException("User does not exist.");
@@ -70,8 +69,8 @@ public class PermissionServiceImpl implements PermissionService {
             return false;
         }
 
-        String username = loggedInUser.getUsername();
-        UserProfile userProfile = userManager.getUserProfile(username);
+        String userName = loggedInUser.getUsername();
+        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(userName);
 
         if (userProfile == null) {
             System.out.println("UserProfile is null!");
@@ -79,7 +78,7 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         String userKey = ComponentAccessor.
-                getUserKeyService().getKeyForUsername(username);
+                getUserKeyService().getKeyForUsername(userName);
         Collection<String> userGroups = ComponentAccessor.getGroupManager().getGroupNamesForUser(
                 ComponentAccessor.getUserManager().getUserByKey(userKey));
 
@@ -92,8 +91,8 @@ public class PermissionServiceImpl implements PermissionService {
         return teamService.getCoordinatorTeamsOfUser(username).isEmpty() ? false : true;
     }
 
-    public UserProfile checkIfUsernameExists(String userName) throws ServiceException {
-        UserProfile userProfile = userManager.getUserProfile(userName);
+    public ApplicationUser checkIfUsernameExists(String userName) throws ServiceException {
+        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(userName);
 
         if (userProfile == null) {
             throw new ServiceException("User does not exist.");
@@ -102,14 +101,14 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean checkIfUserExists(String userName) {
-        UserProfile userProfile = userManager.getUserProfile(userName);
+        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(userName);
 
         return userProfile != null;
     }
 
     public Response checkPermission(HttpServletRequest request) {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        UserProfile userProfile = userManager.getUserProfile(loggedInUser.getUsername());
+        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(loggedInUser.getName());
 
         if (userProfile == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid profil.").build();
@@ -157,7 +156,8 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         String sheetKey = sheet.getUserKey();
-        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername());
+        //String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername());
+        String userKey = user.getKey();
 
         return sheetKey.equals(userKey);
     }
@@ -167,7 +167,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     private boolean userCoordinatesTeamsOfSheet(ApplicationUser user, Timesheet sheet) {
-        UserProfile owner = userManager.getUserProfile(sheet.getUserKey());
+        ApplicationUser owner = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey());
+
         if (owner == null) { return false; }
 
         Set<Team> ownerTeams = teamService.getTeamsOfUser(owner.getUsername());

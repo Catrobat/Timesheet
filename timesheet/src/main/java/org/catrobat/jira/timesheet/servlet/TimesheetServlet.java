@@ -18,8 +18,8 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 import org.apache.log4j.Level;
@@ -69,7 +69,7 @@ public class TimesheetServlet extends HttpServlet {
                 throw new ServletException("User is no Timesheet-Group member, or Administrator.");
             }
 
-            UserProfile userProfile = permissionService.checkIfUserExists(request);
+            ApplicationUser userProfile = permissionService.checkIfUserExists(request);
             String userKey = ComponentAccessor.
                     getUserKeyService().getKeyForUsername(userProfile.getUsername());
             Map<String, Object> paramMap = Maps.newHashMap();
