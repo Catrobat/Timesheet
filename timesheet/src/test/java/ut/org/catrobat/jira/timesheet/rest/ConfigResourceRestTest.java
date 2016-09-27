@@ -163,9 +163,6 @@ public class ConfigResourceRestTest {
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<ApplicationUser> usersSet = new HashSet<ApplicationUser>(Arrays.asList(user1, user2));
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
-
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);
 
@@ -208,9 +205,6 @@ public class ConfigResourceRestTest {
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
-
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);
