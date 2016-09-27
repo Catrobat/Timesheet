@@ -15,12 +15,18 @@ import org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/*@RunWith(PowerMockRunner.class)
+@PrepareForTest({ComponentAccessor.class})*/
 public class ExportAllTimesheetsAsCSVServletTest {
 
     private ExportAllTimesheetsAsCSVServlet exportAllTimesheetsAsCSVServlet;
@@ -44,6 +50,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
 
     @Before
     public void setUp() throws Exception {
+
         new MockComponentWorker().init();
 
         loginUriProvider = Mockito.mock(LoginUriProvider.class);
@@ -51,7 +58,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         userManager = Mockito.mock(UserManager.class);
         webSudoManager = Mockito.mock(WebSudoManager.class);
         permissionService = Mockito.mock(PermissionService.class);
-        componentAccessor = Mockito.mock(ComponentAccessor.class);
+        //componentAccessor = Mockito.mock(ComponentAccessor.class);
         timesheetService = Mockito.mock(TimesheetService.class);
         user = Mockito.mock(ApplicationUser.class);
         request = Mockito.mock(HttpServletRequest.class);
@@ -62,6 +69,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         exportAllTimesheetsAsCSVServlet = new ExportAllTimesheetsAsCSVServlet(loginUriProvider, webSudoManager, timesheetService,
                 configService, permissionService);
 
+        PowerMockito.mockStatic(ComponentAccessor.class);
         Mockito.when(user.getUsername()).thenReturn("test");
         Mockito.when(user.getKey()).thenReturn(test_key);
 
@@ -89,6 +97,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         Mockito.when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
 
         Mockito.when(response.getOutputStream()).thenReturn(outputStream);
+
     }
 
     @Test

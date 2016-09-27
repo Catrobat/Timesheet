@@ -72,7 +72,6 @@ public class PermissionServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        new MockComponentWorker().init();
         PowerMockito.mockStatic(ComponentAccessor.class);
 
 

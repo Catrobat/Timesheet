@@ -55,7 +55,6 @@ public class ExportTimesheetAsCSVServletTest {
 
     @Before
     public void setUp() throws Exception {
-        new MockComponentWorker().init();
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         loginUriProvider = Mockito.mock(LoginUriProvider.class);

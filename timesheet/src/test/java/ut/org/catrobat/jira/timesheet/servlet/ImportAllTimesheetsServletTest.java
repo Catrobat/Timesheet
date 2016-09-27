@@ -61,8 +61,7 @@ public class ImportAllTimesheetsServletTest {
     private UserManager userManager;
 
     @Before
-    public void setUp() throws Exception {
-        new MockComponentWorker().init();
+    public void setUp() throws Exception {;
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);

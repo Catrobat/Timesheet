@@ -12,6 +12,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
@@ -20,6 +21,7 @@ import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportConfigAsCSVServlet;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
@@ -46,6 +48,7 @@ public class ExportConfigAsCSVServletTest {
     private ComponentAccessor componentAccessor;
     private TimesheetService timesheetService;
     private Config config;
+    private ApplicationUser applicationUser;
 
     private HttpServletResponse response;
     private HttpServletRequest request;
@@ -58,7 +61,6 @@ public class ExportConfigAsCSVServletTest {
 
     @Before
     public void setUp() throws Exception {
-        new MockComponentWorker().init();
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
@@ -75,6 +77,7 @@ public class ExportConfigAsCSVServletTest {
         response = Mockito.mock(HttpServletResponse.class);
         outputStream = Mockito.mock(ServletOutputStream.class);
         config = Mockito.mock(Config.class);
+        applicationUser = Mockito.mock(ApplicationUser.class);
 
         exportConfigAsCSVServlet = new ExportConfigAsCSVServlet(loginUriProvider, webSudoManager,
                 configService, permissionService);
@@ -88,12 +91,13 @@ public class ExportConfigAsCSVServletTest {
         Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
 
         Mockito.when(response.getOutputStream()).thenReturn(outputStream);
+        Mockito.when(applicationUser.getKey()).thenReturn(test_key);
     }
 
-    /*@Test
+    @Test
     public void testDoGet() throws Exception {
         assertEquals(0, ao.find(ApprovedUser.class).length);
-        assertNotNull(configService.addApprovedUser("blob"));
+        assertNotNull(configService.addApprovedUser(applicationUser));
         ao.flushAll();
         assertEquals(1, ao.find(ApprovedUser.class).length);
 
@@ -107,5 +111,5 @@ public class ExportConfigAsCSVServletTest {
         assertNotNull(configService.editSupervisedUsers("TestUser"));
 
         exportConfigAsCSVServlet.doGet(request, response);
-    }*/
+    }
 }
