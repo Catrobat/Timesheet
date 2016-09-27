@@ -27,69 +27,66 @@ import static org.junit.Assert.*;
  */
 public class ActiveObjectsTest {
 
-	private EntityManager entityManager;
-	private ActiveObjects ao;
+    private EntityManager entityManager;
+    private ActiveObjects ao;
 
-	@Before
-	public void setUp() throws Exception
-	{
-		assertNotNull(entityManager);
-		ao = new TestActiveObjects(entityManager);
-	}
+    @Before
+    public void setUp() throws Exception {
+        assertNotNull(entityManager);
+        ao = new TestActiveObjects(entityManager);
+    }
 
-	@Test
-	public void testTeamToCategoryMapping() throws Exception
-	{
-		Team[] teams = ao.find(Team.class, "TEAM_NAME = ?", "CATROBAT");
+    @Test
+    public void testTeamToCategoryMapping() throws Exception {
+        Team[] teams = ao.find(Team.class, "TEAM_NAME = ?", "CATROBAT");
 
-		assertEquals(teams.length, 1);
+        assertEquals(teams.length, 1);
 
-		Team catrobatTeam = teams[0];
+        Team catrobatTeam = teams[0];
 
-		assertEquals(catrobatTeam.getEntries().length, 1);
-		assertEquals(catrobatTeam.getCategories().length, 2);
-	}
+        assertEquals(catrobatTeam.getEntries().length, 1);
+        assertEquals(catrobatTeam.getCategories().length, 2);
+    }
 
-	@Test
-	public void testSheetToTeamMapping() throws Exception
-	{
-		Timesheet[] sheets = ao.find(Timesheet.class, "USER_KEY = ?", "chris");
+    @Test
+    public void testSheetToTeamMapping() throws Exception {
+        Timesheet[] sheets = ao.find(Timesheet.class, "USER_KEY = ?", "chris");
 
-		assertEquals(sheets.length, 1);
+        assertEquals(sheets.length, 1);
 
-		Timesheet chrisSheet = sheets[0];
-		TimesheetEntry[] entries = chrisSheet.getEntries();
+        Timesheet chrisSheet = sheets[0];
+        TimesheetEntry[] entries = chrisSheet.getEntries();
 
-		assertEquals(entries.length, 1);
+        assertEquals(entries.length, 1);
 
-		TimesheetEntry entry1 = entries[0];
+        TimesheetEntry entry1 = entries[0];
 
-		assertEquals(entry1.getDescription(), "Besprechung: Team Fetcher");
+        assertEquals(entry1.getDescription(), "Besprechung: Team Fetcher");
 
-		Team scratchTeam = entry1.getTeam();
+        Team scratchTeam = entry1.getTeam();
 
-		assertEquals(scratchTeam.getTeamName(), "SCRATCH");
+        assertEquals(scratchTeam.getTeamName(), "SCRATCH");
 
-		Category meetingCategory = entry1.getCategory();
+        Category meetingCategory = entry1.getCategory();
 
-		assertEquals(meetingCategory.getName(), "Meeting");
+        assertEquals(meetingCategory.getName(), "Meeting");
 
-		Team[] projectsOfMeeting = meetingCategory.getTeams();
+        Team[] projectsOfMeeting = meetingCategory.getTeams();
 
-		assertEquals(projectsOfMeeting.length, 2);
-	}
+        assertEquals(projectsOfMeeting.length, 2);
+    }
 
-	@Test
-	public void testDateQueries() throws Exception {
-		//get all time sheet entries where duration < 20 minutes
-		SimpleDateFormat tf = new SimpleDateFormat("HH:mm");
-		tf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    @Test
+    public void testDateQueries() throws Exception {
+        //get all time sheet entries where duration < 20 minutes
+        SimpleDateFormat tf = new SimpleDateFormat("HH:mm");
+        tf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-		TimesheetEntry[] entries = ao.find(TimesheetEntry.class,
-						"DATEDIFF('minute', BEGIN_DATE, END_DATE) - PAUSE_MINUTES < 20" );
+        TimesheetEntry[] entries = ao.find(TimesheetEntry.class,
+                "DATEDIFF('minute', BEGIN_DATE, END_DATE) - PAUSE_MINUTES < 20");
 
-		//assert
-		assertEquals(entries.length, 1);
-		assertEquals(entries[0].getDescription(), "Master Fixen");
-	}
+        //assert
+        assertEquals(entries.length, 1);
+        assertEquals(entries[0].getDescription(), "Master Fixen");
+    }
 }

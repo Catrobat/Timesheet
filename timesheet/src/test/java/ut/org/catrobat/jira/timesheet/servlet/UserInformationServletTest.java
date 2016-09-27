@@ -12,15 +12,16 @@ import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.servlet.UserInformationServlet;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static org.mockito.Mockito.*;
+
 public class UserInformationServletTest {
 
+    String test_key = "test_key";
     private UserInformationServlet userInformationServlet;
-
     private LoginUriProvider loginUriProvider;
     private TemplateRenderer templateRenderer;
     private PermissionService permissionService;
@@ -28,39 +29,31 @@ public class UserInformationServletTest {
     private WebSudoManager webSudoManager;
     private ConfigService configService;
     private ComponentAccessor componentAccessor;
-
     private HttpServletResponse response;
     private HttpServletRequest request;
-
-    String test_key = "test_key";
     private ApplicationUser user;
 
     @Before
     public void setUp() throws Exception {
         new MockComponentWorker().init();
 
-        loginUriProvider = Mockito.mock(LoginUriProvider.class);
-        templateRenderer = Mockito.mock(TemplateRenderer.class);
-        userManager = Mockito.mock(UserManager.class);
-        webSudoManager = Mockito.mock(WebSudoManager.class);
-        permissionService = Mockito.mock(PermissionService.class);
-        componentAccessor = Mockito.mock(ComponentAccessor.class);
-        user = Mockito.mock(ApplicationUser.class);
-        request = Mockito.mock(HttpServletRequest.class);
-        response = Mockito.mock(HttpServletResponse.class);
+        loginUriProvider = mock(LoginUriProvider.class);
+        templateRenderer = mock(TemplateRenderer.class);
+        userManager = mock(UserManager.class);
+        webSudoManager = mock(WebSudoManager.class);
+        permissionService = mock(PermissionService.class);
+        componentAccessor = mock(ComponentAccessor.class);
+        user = mock(ApplicationUser.class);
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
 
         userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, webSudoManager, permissionService);
 
-        Mockito.when(user.getUsername()).thenReturn("test");
-        Mockito.when(user.getKey()).thenReturn(test_key);
-
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(user);
-
-        //Mockito.when(userManager.getRemoteUser(request)).thenReturn(user);
-        //Mockito.when(userManager.getUserProfile(test_key)).thenReturn(user);
-
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        when(user.getUsername()).thenReturn("test");
+        when(user.getKey()).thenReturn(test_key);
+        when(permissionService.checkIfUserExists(request)).thenReturn(user);
+        when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
+        when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
     }
 
     @Test

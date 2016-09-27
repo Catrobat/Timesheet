@@ -18,7 +18,6 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import org.junit.Assert;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -30,14 +29,14 @@ import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
 @Data(TimesheetEntryServiceImplTest.MyDatabaseUpdater.class)
@@ -54,17 +53,6 @@ public class TimesheetEntryServiceImplTest {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
         service = new TimesheetEntryServiceImpl(ao);
-    }
-
-    public static class MyDatabaseUpdater implements DatabaseUpdater {
-
-        @Override
-        public void update(EntityManager em) throws Exception {
-            em.migrate(Timesheet.class);
-            em.migrate(Category.class);
-            em.migrate(Team.class);
-            em.migrate(TimesheetEntry.class);
-        }
     }
 
     @Test
@@ -255,5 +243,16 @@ public class TimesheetEntryServiceImplTest {
 
         //Assert
         Assert.assertEquals(receivedEntry, entryList[0]);
+    }
+
+    public static class MyDatabaseUpdater implements DatabaseUpdater {
+
+        @Override
+        public void update(EntityManager em) throws Exception {
+            em.migrate(Timesheet.class);
+            em.migrate(Category.class);
+            em.migrate(Team.class);
+            em.migrate(TimesheetEntry.class);
+        }
     }
 }

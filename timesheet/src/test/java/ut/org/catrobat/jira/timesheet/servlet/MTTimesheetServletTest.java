@@ -14,10 +14,11 @@ import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.MasterThesisTimesheetServlet;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.mockito.Mockito.*;
 
 public class MTTimesheetServletTest {
 
@@ -41,75 +42,48 @@ public class MTTimesheetServletTest {
     private Team team;
     private ApplicationUser admin;
 
-    final String userKey = "USER_001";
-    final int targetHoursPractice = 150;
-    final int targetHoursTheory = 0;
-    final int targeHours = 300;
-    final int targetHoursCompleted = 150;
-    final int targetHoursRemoved = 0;
-    final int ects = 10;
-    final String latestEntryDate = "Not Available";
-    final String lectures = "Mobile Applications (705.881)";
-    final String reason = "Agathe Bauer";
-
     @Before
     public void setUp() throws Exception {
         new MockComponentWorker().init();
 
-        teamService = Mockito.mock(TeamService.class);
-        userManager = Mockito.mock(UserManager.class);
-        loginUriProvider = Mockito.mock(LoginUriProvider.class);
-        templateRenderer = Mockito.mock(TemplateRenderer.class);
-        sheetService = Mockito.mock(TimesheetService.class);
-        permissionService = Mockito.mock(PermissionService.class);
-        componentAccessor = Mockito.mock(ComponentAccessor.class);
+        teamService = mock(TeamService.class);
+        userManager = mock(UserManager.class);
+        loginUriProvider = mock(LoginUriProvider.class);
+        templateRenderer = mock(TemplateRenderer.class);
+        sheetService = mock(TimesheetService.class);
+        permissionService = mock(PermissionService.class);
+        componentAccessor = mock(ComponentAccessor.class);
 
-        user = Mockito.mock(ApplicationUser.class);
-        timeSheet = Mockito.mock(Timesheet.class);
-        sheetService = Mockito.mock(TimesheetService.class);
-        team = Mockito.mock(Team.class);
+        user = mock(ApplicationUser.class);
+        timeSheet = mock(Timesheet.class);
+        sheetService = mock(TimesheetService.class);
+        team = mock(Team.class);
 
-        request = Mockito.mock(HttpServletRequest.class);
-        response = Mockito.mock(HttpServletResponse.class);
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
 
         masterThesisTimesheetServlet = new MasterThesisTimesheetServlet(loginUriProvider, templateRenderer, sheetService, permissionService);
 
-        admin = Mockito.mock(ApplicationUser.class);
+        admin = mock(ApplicationUser.class);
         String admin_key = "admin_key";
-        Mockito.when(admin.getKey()).thenReturn(admin_key);
-        Mockito.when(admin.getUsername()).thenReturn("admin");
-        Mockito.when(userManager.isAdmin(admin_key)).thenReturn(true);
-        //Mockito.when(userManager.getUserProfile(admin_key.getStringValue())).thenReturn(admin);
-        //Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
-        Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
-        Mockito.when(timeSheet.getID()).thenReturn(1);
-        Mockito.when(timeSheet.getUserKey()).thenReturn(admin_key);
-        Mockito.when(timeSheet.getIsActive()).thenReturn(true);
-        Mockito.when(timeSheet.getIsEnabled()).thenReturn(false);
-        Mockito.when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(true);
+        when(admin.getKey()).thenReturn(admin_key);
+        when(admin.getUsername()).thenReturn("admin");
+        when(userManager.isAdmin(admin_key)).thenReturn(true);
+        when(permissionService.checkIfUserExists(request)).thenReturn(admin);
+        when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
+        when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        when(timeSheet.getID()).thenReturn(1);
+        when(timeSheet.getUserKey()).thenReturn(admin_key);
+        when(timeSheet.getIsActive()).thenReturn(true);
+        when(timeSheet.getIsEnabled()).thenReturn(false);
+        when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
+        when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(true);
     }
-
-    //Maps is a Google Classe -> can not be mocked
-    /*
-    @Test
-    public void testDoGet() throws Exception {
-        timeSheet = sheetService.add(userKey, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted, targetHoursRemoved, lectures, reason, ects, latestEntryDate, true, true, false);
-        Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
-        Mockito.when(sheetService.getTimesheetByUser(componentAccessor.getUserKeyService().
-                getKeyForUsername(admin.getUsername()), false)).thenReturn(timeSheet);
-
-        timesheetServlet.doGet(request, response);
-    }
-    */
 
     @Test(expected = NullPointerException.class)
     public void testDoGetNullPointerException() throws Exception {
-        //Mockito.when(userManager.getRemoteUser(request)).thenReturn(admin);
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(admin);
-        Mockito.when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(null);
+        when(permissionService.checkIfUserExists(request)).thenReturn(admin);
+        when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(null);
 
         masterThesisTimesheetServlet.doGet(request, response);
     }

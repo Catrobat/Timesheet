@@ -30,10 +30,10 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.PrintWriter;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
@@ -42,8 +42,8 @@ import static org.junit.Assert.*;
         TimesheetEntryService.class})
 public class ImportConfigAsCSVServletTest {
 
+    String test_key = "test_key";
     private ImportConfigCsvServlet importConfigCsvServlet;
-
     private EntityManager entityManager;
     private ActiveObjects ao;
     private LoginUriProvider loginUriProvider;
@@ -57,11 +57,8 @@ public class ImportConfigAsCSVServletTest {
     private CategoryService categoryService;
     private TeamService teamService;
     private PrintWriter printWriter;
-
     private HttpServletResponse response;
     private HttpServletRequest request;
-
-    String test_key = "test_key";
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private CategoryService cs;
@@ -75,35 +72,35 @@ public class ImportConfigAsCSVServletTest {
         ao = new TestActiveObjects(entityManager);
         configService = new ConfigServiceImpl(ao, cs, userManager);
 
-        loginUriProvider = Mockito.mock(LoginUriProvider.class);
-        templateRenderer = Mockito.mock(TemplateRenderer.class);
-        webSudoManager = Mockito.mock(WebSudoManager.class);
-        permissionService = Mockito.mock(PermissionService.class);
-        componentAccessor = Mockito.mock(ComponentAccessor.class);
-        timesheetService = Mockito.mock(TimesheetService.class);
-        user = Mockito.mock(ApplicationUser.class);
-        request = Mockito.mock(HttpServletRequest.class);
-        response = Mockito.mock(HttpServletResponse.class);
-        outputStream = Mockito.mock(ServletOutputStream.class);
-        config = Mockito.mock(Config.class);
-        categoryService = Mockito.mock(CategoryService.class);
-        teamService = Mockito.mock(TeamService.class);
-        printWriter = Mockito.mock(PrintWriter.class);
-        userManager = Mockito.mock(UserManager.class);
+        loginUriProvider = mock(LoginUriProvider.class);
+        templateRenderer = mock(TemplateRenderer.class);
+        webSudoManager = mock(WebSudoManager.class);
+        permissionService = mock(PermissionService.class);
+        componentAccessor = mock(ComponentAccessor.class);
+        timesheetService = mock(TimesheetService.class);
+        user = mock(ApplicationUser.class);
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        outputStream = mock(ServletOutputStream.class);
+        config = mock(Config.class);
+        categoryService = mock(CategoryService.class);
+        teamService = mock(TeamService.class);
+        printWriter = mock(PrintWriter.class);
+        userManager = mock(UserManager.class);
 
         importConfigCsvServlet = new ImportConfigCsvServlet(loginUriProvider, webSudoManager,
                 configService, categoryService, teamService, ao, permissionService, userManager);
 
-        Mockito.when(user.getUsername()).thenReturn("test");
-        Mockito.when(user.getKey()).thenReturn(test_key);
+        when(user.getUsername()).thenReturn("test");
+        when(user.getKey()).thenReturn(test_key);
 
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(user);
+        when(permissionService.checkIfUserExists(request)).thenReturn(user);
 
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
+        when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
 
-        Mockito.when(response.getOutputStream()).thenReturn(outputStream);
-        Mockito.when(response.getWriter()).thenReturn(printWriter);
+        when(response.getOutputStream()).thenReturn(outputStream);
+        when(response.getWriter()).thenReturn(printWriter);
     }
 
     @Test
