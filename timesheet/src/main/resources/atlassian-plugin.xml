@@ -256,7 +256,7 @@
               section="system.user.options/personal" weight="2">
         <label>Timesheet - User Information</label>
         <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/user/information</link>
-        <condition class="org.catrobat.jira.timesheet.helper.UserInformationPermissionCondition"/>
+        <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
     </web-item>
 
     <!-- end of web-items -->
