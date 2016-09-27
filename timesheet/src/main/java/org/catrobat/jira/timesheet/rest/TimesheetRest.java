@@ -144,19 +144,17 @@ public class TimesheetRest {
         }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
-        Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
-        for (ApplicationUser user : allUsers) {
-            if (sheetService.getTimesheetByID(timesheetID).getUserKey().equals(user.getKey())) {
-                for (Team team : teamService.getTeamsOfUser(user.getName())) {
-                    Category[] categories = team.getCategories();
-                    int[] categoryIDs = new int[categories.length];
-                    for (int i = 0; i < categories.length; i++) {
-                        categoryIDs[i] = categories[i].getID();
-                    }
-                    teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
-                }
+        String userKey = sheetService.getTimesheetByID(timesheetID).getUserKey();
+        ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
+
+        for (Team team : teamService.getTeamsOfUser(user.getName())) {
+            Category[] categories = team.getCategories();
+            int[] categoryIDs = new int[categories.length];
+            for (int i = 0; i < categories.length; i++) {
+                categoryIDs[i] = categories[i].getID();
             }
+            teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
         }
 
         return Response.ok(teams).build();
