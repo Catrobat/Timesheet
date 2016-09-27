@@ -56,9 +56,9 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
                 throw new ServletException("User is no Master-Students-Group member.");
             }
 
-            ApplicationUser userProfile = permissionService.checkIfUserExists(request);
+            ApplicationUser user = permissionService.checkIfUserExists(request);
             String userKey = ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(userProfile.getUsername());
+                    getUserKeyService().getKeyForUsername(user.getUsername());
             Timesheet sheet = null;
             if (sheetService.userHasTimesheet(userKey, true)) {
                 sheet = sheetService.getTimesheetByUser(userKey, true);

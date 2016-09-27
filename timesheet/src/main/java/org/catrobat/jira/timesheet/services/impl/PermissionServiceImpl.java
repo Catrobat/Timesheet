@@ -40,7 +40,7 @@ public class PermissionServiceImpl implements PermissionService {
     private final ConfigService configService;
 
     public PermissionServiceImpl(UserManager userManager, TeamService teamService,
-                                 ConfigService configService) {
+            ConfigService configService) {
         this.userManager = userManager;
         this.teamService = teamService;
         this.configService = configService;
@@ -50,7 +50,7 @@ public class PermissionServiceImpl implements PermissionService {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         if (loggedInUser == null) {
-            throw new ServiceException("loggedInUser does not exist.");
+            throw new ServiceException("LoggedInUser does not exist.");
         }
 
         ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByKey(loggedInUser.getKey());
@@ -70,13 +70,6 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         String userName = loggedInUser.getUsername();
-        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(userName);
-
-        if (userProfile == null) {
-            System.out.println("UserProfile is null!");
-            return false;
-        }
-
         String userKey = ComponentAccessor.
                 getUserKeyService().getKeyForUsername(userName);
         Collection<String> userGroups = ComponentAccessor.getGroupManager().getGroupNamesForUser(
@@ -85,7 +78,7 @@ public class PermissionServiceImpl implements PermissionService {
         return userGroups.contains(groupName);
     }
 
-    public boolean checkIfUserIsTeamCoordinator(HttpServletRequest request){
+    public boolean checkIfUserIsTeamCoordinator(HttpServletRequest request) {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         String username = loggedInUser.getUsername();
         return teamService.getCoordinatorTeamsOfUser(username).isEmpty() ? false : true;
@@ -111,7 +104,7 @@ public class PermissionServiceImpl implements PermissionService {
         ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(loggedInUser.getName());
 
         if (userProfile == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid profil.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid profile.").build();
         }
 
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userProfile.getUsername());
@@ -169,7 +162,9 @@ public class PermissionServiceImpl implements PermissionService {
     private boolean userCoordinatesTeamsOfSheet(ApplicationUser user, Timesheet sheet) {
         ApplicationUser owner = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey());
 
-        if (owner == null) { return false; }
+        if (owner == null) {
+            return false;
+        }
 
         Set<Team> ownerTeams = teamService.getTeamsOfUser(owner.getUsername());
         Set<Team> userTeams = teamService.getCoordinatorTeamsOfUser(user.getUsername());

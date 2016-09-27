@@ -69,9 +69,9 @@ public class TimesheetServlet extends HttpServlet {
                 throw new ServletException("User is no Timesheet-Group member, or Administrator.");
             }
 
-            ApplicationUser userProfile = permissionService.checkIfUserExists(request);
+            ApplicationUser user = permissionService.checkIfUserExists(request);
             String userKey = ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(userProfile.getUsername());
+                    getUserKeyService().getKeyForUsername(user.getUsername());
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet;
 
@@ -101,7 +101,7 @@ public class TimesheetServlet extends HttpServlet {
             if (timesheet == null) {
                 timesheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
                         "", 5, "Not Available", true, true, false);
-                logger.info("New timesheet is added to user: " + userProfile.getUsername());
+                logger.info("New timesheet is added to user: " + user.getUsername());
             }
 
             paramMap.put("timesheetid", timesheet.getID());

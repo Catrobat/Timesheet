@@ -33,7 +33,6 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.query.Query;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
@@ -774,8 +773,6 @@ public class TimesheetRest {
         Category category;
         Team team;
         Timesheet sheet;
-        ApplicationUser pairProgrammingUser;
-        Response response;
         String programmingPartnerName = "";
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
@@ -907,19 +904,19 @@ public class TimesheetRest {
         sendEmail(emailTo, mailSubject, mailBody);
     }
 
-    private void buildEmailInactive(String emailTo, Timesheet sheet, UserProfile user) {
+    private void buildEmailInactive(String emailTo, Timesheet sheet, ApplicationUser user) {
         Config config = configService.getConfiguration();
 
         String mailSubject = config.getMailSubjectInactiveState() != null && config.getMailSubjectInactiveState().length() != 0
                 ? config.getMailSubjectInactiveState() : "[Timesheet - Timesheet Inactive Notification]";
         String mailBody = config.getMailBodyInactiveState() != null && config.getMailBodyInactiveState().length() != 0
-                ? config.getMailBodyInactiveState() : "Hi " + user.getFullName() + ",\n" +
+                ? config.getMailBodyInactiveState() : "Hi " + user.getDisplayName() + ",\n" +
                 "we could not see any activity in your timesheet since the last two weeks.\n" +
                 "Information: an inactive entry was created automatically.\n\n" +
                 "Best regards,\n" +
                 "Catrobat-Admins";
 
-        mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getFullName());
+        mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getDisplayName());
         if (sheet.getEntries().length > 0) {
             mailBody = mailBody.replaceAll("\\{\\{date\\}\\}", sheet.getEntries()[0].getBeginDate().toString());
         }
