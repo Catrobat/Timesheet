@@ -1,8 +1,8 @@
 package ut.org.catrobat.jira.timesheet.services.impl;
 
-import org.junit.Assert;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.services.CategoryService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

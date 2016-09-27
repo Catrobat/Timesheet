@@ -23,7 +23,6 @@ import org.catrobat.jira.timesheet.servlet.AdminServlet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -33,16 +32,16 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
 @PrepareForTest(ComponentAccessor.class)
 public class AdminServletTest {
+    String test_key = "test_key";
     private AdminServlet adminServlet;
-
     private LoginUriProvider loginUriProviderMock;
     private TemplateRenderer templateRendererMock;
     private PermissionService permissionServiceMock;
@@ -50,18 +49,14 @@ public class AdminServletTest {
     private WebSudoManager webSudoManagerMock;
     private ConfigService configServiceMock;
     private ComponentAccessor componentAccessorMock;
-
     private TeamService teamService;
     private PermissionService permissionService;
     private ConfigService configService;
     private CategoryService categoryService;
     private TestActiveObjects ao;
     private EntityManager entityManager;
-
     private HttpServletResponse response;
     private HttpServletRequest request;
-
-    String test_key = "test_key";
     private ApplicationUser userMock;
     private UserManager userManager;
     private JiraAuthenticationContext jiraAuthenticationContext;
@@ -72,15 +67,16 @@ public class AdminServletTest {
         ao = new TestActiveObjects(entityManager);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
-        loginUriProviderMock = Mockito.mock(LoginUriProvider.class, RETURNS_DEEP_STUBS);
-        templateRendererMock = Mockito.mock(TemplateRenderer.class, RETURNS_DEEP_STUBS);
-        userManagerMock = Mockito.mock(UserManager.class, RETURNS_DEEP_STUBS);
-        webSudoManagerMock = Mockito.mock(WebSudoManager.class, RETURNS_DEEP_STUBS);
-        permissionServiceMock = Mockito.mock(PermissionService.class, RETURNS_DEEP_STUBS);
-        userMock = Mockito.mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
-        request = Mockito.mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
-        response = Mockito.mock(HttpServletResponse.class, RETURNS_DEEP_STUBS);
-        jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
+
+        loginUriProviderMock = mock(LoginUriProvider.class, RETURNS_DEEP_STUBS);
+        templateRendererMock = mock(TemplateRenderer.class, RETURNS_DEEP_STUBS);
+        userManagerMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
+        webSudoManagerMock = mock(WebSudoManager.class, RETURNS_DEEP_STUBS);
+        permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
+        userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
+        request = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
+        response = mock(HttpServletResponse.class, RETURNS_DEEP_STUBS);
+        jiraAuthenticationContext = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
         configService = new ConfigServiceImpl(ao, categoryService, userManager);
@@ -89,14 +85,14 @@ public class AdminServletTest {
 
         adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock);
 
-        Mockito.when(userMock.getUsername()).thenReturn("test");
-        Mockito.when(userMock.getKey()).thenReturn(test_key);
+        when(userMock.getUsername()).thenReturn("test");
+        when(userMock.getKey()).thenReturn(test_key);
+
+        when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
+        when(permissionServiceMock.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(userMock);
-
-        Mockito.when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionServiceMock.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
     }
 
     @Test

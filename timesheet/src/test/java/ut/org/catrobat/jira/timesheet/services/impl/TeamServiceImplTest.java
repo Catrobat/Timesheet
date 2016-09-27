@@ -20,31 +20,28 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.*;
 import org.powermock.api.support.membermodification.MemberModifier;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
 @Data(TeamServiceImplTest.MyDatabaseUpdater.class)
 
 public class TeamServiceImplTest {
 
+    private static Team catroid, html5, drone;
+    @Rule
+    public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private EntityManager entityManager;
     private TeamService service;
     private GroupManager gm;
     private ConfigService cs;
-    private static Team catroid, html5, drone;
     private ActiveObjects ao;
-
-    @Rule
-    public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Before
     public void setUp() throws Exception {
@@ -52,25 +49,6 @@ public class TeamServiceImplTest {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
         service = new TeamServiceImpl(ao, cs);
-    }
-
-    public static class MyDatabaseUpdater implements DatabaseUpdater {
-
-        @Override
-        public void update(EntityManager em) throws Exception {
-            em.migrate(Team.class);
-            catroid = em.create(Team.class);
-            catroid.setTeamName("Catroid");
-            catroid.save();
-
-            html5 = em.create(Team.class);
-            html5.setTeamName("HTML5");
-            html5.save();
-
-            drone = em.create(Team.class);
-            drone.setTeamName("Drone");
-            drone.save();
-        }
     }
 
     @Test
@@ -90,9 +68,9 @@ public class TeamServiceImplTest {
     @Test
     public void testGetTeamByIDIsNull() throws IllegalAccessException, ServiceException {
         ActiveObjects ao = Mockito.mock(ActiveObjects.class);
-        
+
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service , ao);
+        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
 
         Mockito.doReturn(null).when(ao).find(Team.class, "ID = ?", 0);
 
@@ -107,7 +85,7 @@ public class TeamServiceImplTest {
         ActiveObjects ao = Mockito.mock(ActiveObjects.class);
 
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service , ao);
+        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
 
         Mockito.doReturn(null).when(ao).find(Team.class, "TEAM_NAME = ?", "Test");
 
@@ -122,7 +100,7 @@ public class TeamServiceImplTest {
         ActiveObjects ao = Mockito.mock(ActiveObjects.class);
 
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service , ao);
+        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
 
         Team team1 = Mockito.mock(Team.class);
         Team team2 = Mockito.mock(Team.class);
@@ -140,7 +118,7 @@ public class TeamServiceImplTest {
         ActiveObjects ao = Mockito.mock(ActiveObjects.class);
 
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service , ao);
+        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
 
         Team team1 = Mockito.mock(Team.class);
         Team team2 = Mockito.mock(Team.class);
@@ -157,7 +135,7 @@ public class TeamServiceImplTest {
         ActiveObjects ao = Mockito.mock(ActiveObjects.class);
 
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service , ao);
+        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
 
         Team team1 = Mockito.mock(Team.class);
 
@@ -176,13 +154,13 @@ public class TeamServiceImplTest {
         ActiveObjects ao = Mockito.mock(ActiveObjects.class);
 
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service , ao);
+        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
 
         Mockito.doReturn(null).when(ao).find(Team.class, "TEAM_NAME = ?", "Test");
 
         boolean result = service.removeTeam("Test");
 
-       assertEquals(false, result);
+        assertEquals(false, result);
 
         Mockito.verify(ao).find(Team.class, "TEAM_NAME = ?", "Test");
     }
@@ -192,7 +170,7 @@ public class TeamServiceImplTest {
         ActiveObjects ao = Mockito.mock(ActiveObjects.class);
 
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service , ao);
+        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
 
         Team team1 = Mockito.mock(Team.class);
         Team team2 = Mockito.mock(Team.class);
@@ -205,7 +183,7 @@ public class TeamServiceImplTest {
     }
 
     @Test
-    public void testAll(){
+    public void testAll() {
         List<Team> teamList = service.all();
 
         assertEquals(3, teamList.size());
@@ -218,7 +196,7 @@ public class TeamServiceImplTest {
         Config config = Mockito.mock(Config.class);
 
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "configService").set(service ,configService);
+        MemberModifier.field(TeamServiceImpl.class, "configService").set(service, configService);
 
         Team teamA = Mockito.mock(Team.class);
         Team teamB = Mockito.mock(Team.class);
@@ -228,7 +206,7 @@ public class TeamServiceImplTest {
         Mockito.doReturn("teamB").when(teamB).getTeamName();
         Mockito.doReturn("teamC").when(teamC).getTeamName();
 
-        Team[] teams = {teamA,teamB,teamC};
+        Team[] teams = {teamA, teamB, teamC};
 
         List<String> developerListA = new ArrayList<String>();
         developerListA.add("MarkusHobisch");
@@ -248,7 +226,7 @@ public class TeamServiceImplTest {
         Mockito.doReturn(developerListC).when(configService).getGroupsForRole("teamC", TeamToGroup.Role.DEVELOPER);
 
         Set<Team> teamsOfUser = service.getTeamsOfUser("MarkusHobisch");
-        assertEquals(2,teamsOfUser.size());
+        assertEquals(2, teamsOfUser.size());
         assertTrue(teamsOfUser.contains(teamA));
         assertTrue(teamsOfUser.contains(teamC));
 
@@ -261,7 +239,7 @@ public class TeamServiceImplTest {
         Config config = Mockito.mock(Config.class);
 
         // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "configService").set(service ,configService);
+        MemberModifier.field(TeamServiceImpl.class, "configService").set(service, configService);
 
         Team teamA = Mockito.mock(Team.class);
         Team teamB = Mockito.mock(Team.class);
@@ -271,7 +249,7 @@ public class TeamServiceImplTest {
         Mockito.doReturn("teamB").when(teamB).getTeamName();
         Mockito.doReturn("teamC").when(teamC).getTeamName();
 
-        Team[] teams = {teamA,teamB,teamC};
+        Team[] teams = {teamA, teamB, teamC};
 
         List<String> coordinatorListA = new ArrayList<String>();
         coordinatorListA.add("MarkusHobisch");
@@ -291,9 +269,28 @@ public class TeamServiceImplTest {
         Mockito.doReturn(coordinatorListC).when(configService).getGroupsForRole("teamC", TeamToGroup.Role.COORDINATOR);
 
         Set<Team> teamsOfCoords = service.getCoordinatorTeamsOfUser("MarkusHobisch");
-        assertEquals(2,teamsOfCoords.size());
+        assertEquals(2, teamsOfCoords.size());
         assertTrue(teamsOfCoords.contains(teamA));
         assertTrue(teamsOfCoords.contains(teamC));
 
+    }
+
+    public static class MyDatabaseUpdater implements DatabaseUpdater {
+
+        @Override
+        public void update(EntityManager em) throws Exception {
+            em.migrate(Team.class);
+            catroid = em.create(Team.class);
+            catroid.setTeamName("Catroid");
+            catroid.save();
+
+            html5 = em.create(Team.class);
+            html5.setTeamName("HTML5");
+            html5.save();
+
+            drone = em.create(Team.class);
+            drone.setTeamName("Drone");
+            drone.save();
+        }
     }
 }

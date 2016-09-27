@@ -217,7 +217,7 @@ public class ConfigResourceRestTest {
 
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
-       
+
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(categoryServiceMock.removeCategory(anyString())).thenReturn(true);
 
@@ -246,7 +246,7 @@ public class ConfigResourceRestTest {
 
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
-       
+
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
 
@@ -284,7 +284,7 @@ public class ConfigResourceRestTest {
         when(approvedGroup.getGroupName()).thenReturn("ApprovedGroup");
 
         ApprovedGroup[] approvedGroups = {approvedGroup};
-        
+
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getApprovedGroups()).thenReturn(approvedGroups);

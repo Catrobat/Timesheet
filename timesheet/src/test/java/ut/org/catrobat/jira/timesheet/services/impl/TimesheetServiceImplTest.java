@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -23,10 +22,6 @@ import static org.junit.Assert.*;
 @Data(TimesheetServiceImplTest.MyDatabaseUpdater.class)
 
 public class TimesheetServiceImplTest {
-
-    private EntityManager entityManager;
-    private TimesheetService service;
-    private ActiveObjects ao;
 
     final String userKey = "USER_001";
     final int targetHoursPractice = 150;
@@ -38,24 +33,15 @@ public class TimesheetServiceImplTest {
     final String latestEntryDate = "2016-04-09";
     final String lectures = "Mobile Applications (705.881)";
     final String reason = "Agathe Bauer";
+    private EntityManager entityManager;
+    private TimesheetService service;
+    private ActiveObjects ao;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
         service = new TimesheetServiceImpl(ao);
-    }
-
-    public static class MyDatabaseUpdater implements DatabaseUpdater {
-
-        @Override
-        public void update(EntityManager em) throws Exception {
-            em.migrate(Timesheet.class);
-
-            Timesheet sheet = em.create(Timesheet.class);
-            sheet.setUserKey("USER_000");
-            sheet.save();
-        }
     }
 
     @Test
@@ -174,5 +160,17 @@ public class TimesheetServiceImplTest {
         refSheet.setTargetHoursPractice(newPracticalHours);
         //Assert
         assertTrue(refSheet.getTargetHoursPractice() == 300);
+    }
+
+    public static class MyDatabaseUpdater implements DatabaseUpdater {
+
+        @Override
+        public void update(EntityManager em) throws Exception {
+            em.migrate(Timesheet.class);
+
+            Timesheet sheet = em.create(Timesheet.class);
+            sheet.setUserKey("USER_000");
+            sheet.save();
+        }
     }
 }

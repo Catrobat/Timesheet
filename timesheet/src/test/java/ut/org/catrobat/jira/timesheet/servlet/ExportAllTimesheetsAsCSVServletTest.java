@@ -15,22 +15,19 @@ import org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/*@RunWith(PowerMockRunner.class)
-@PrepareForTest({ComponentAccessor.class})*/
+import static org.mockito.Mockito.*;
+
 public class ExportAllTimesheetsAsCSVServletTest {
 
+    String test_key = "test_key";
     private ExportAllTimesheetsAsCSVServlet exportAllTimesheetsAsCSVServlet;
-
     private LoginUriProvider loginUriProvider;
     private TemplateRenderer templateRenderer;
     private PermissionService permissionService;
@@ -40,11 +37,8 @@ public class ExportAllTimesheetsAsCSVServletTest {
     private ComponentAccessor componentAccessor;
     private TimesheetService timesheetService;
     private Timesheet timesheet;
-
     private HttpServletResponse response;
     private HttpServletRequest request;
-
-    String test_key = "test_key";
     private ApplicationUser user;
     private ServletOutputStream outputStream;
 
@@ -53,12 +47,11 @@ public class ExportAllTimesheetsAsCSVServletTest {
 
         new MockComponentWorker().init();
 
-        loginUriProvider = Mockito.mock(LoginUriProvider.class);
+        loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = Mockito.mock(TemplateRenderer.class);
         userManager = Mockito.mock(UserManager.class);
         webSudoManager = Mockito.mock(WebSudoManager.class);
         permissionService = Mockito.mock(PermissionService.class);
-        //componentAccessor = Mockito.mock(ComponentAccessor.class);
         timesheetService = Mockito.mock(TimesheetService.class);
         user = Mockito.mock(ApplicationUser.class);
         request = Mockito.mock(HttpServletRequest.class);
@@ -70,33 +63,29 @@ public class ExportAllTimesheetsAsCSVServletTest {
                 configService, permissionService);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
-        Mockito.when(user.getUsername()).thenReturn("test");
-        Mockito.when(user.getKey()).thenReturn(test_key);
 
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(user);
+        when(user.getUsername()).thenReturn("test");
+        when(user.getKey()).thenReturn(test_key);
+        when(permissionService.checkIfUserExists(request)).thenReturn(user);
 
-        //Mockito.when(userManager.getRemoteUser(request)).thenReturn(user);
-        //Mockito.when(userManager.getUserProfile(test_key)).thenReturn(user);
+        when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
+        when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
 
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        Mockito.when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
-
-        Mockito.when(timesheet.getTargetHoursPractice()).thenReturn(50);
-        Mockito.when(timesheet.getTargetHoursTheory()).thenReturn(100);
-        Mockito.when(timesheet.getTargetHours()).thenReturn(300);
-        Mockito.when(timesheet.getTargetHoursCompleted()).thenReturn(150);
-        Mockito.when(timesheet.getEcts()).thenReturn(10.0);
-        Mockito.when(timesheet.getLatestEntryDate()).thenReturn(new DateTime().toString());
-        Mockito.when(timesheet.getLectures()).thenReturn("Mobile Computing");
-        Mockito.when(timesheet.getIsActive()).thenReturn(true);
-        Mockito.when(timesheet.getIsEnabled()).thenReturn(true);
-        Mockito.when(timesheet.getUserKey()).thenReturn("test_key");
-        Mockito.when(timesheet.getTargetHoursRemoved()).thenReturn(0);
-        Mockito.when(timesheet.getReason()).thenReturn("Agathe Bauer");
-        Mockito.when(timesheet.getIsEnabled()).thenReturn(true);
-        Mockito.when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
-
-        Mockito.when(response.getOutputStream()).thenReturn(outputStream);
+        when(timesheet.getTargetHoursPractice()).thenReturn(50);
+        when(timesheet.getTargetHoursTheory()).thenReturn(100);
+        when(timesheet.getTargetHours()).thenReturn(300);
+        when(timesheet.getTargetHoursCompleted()).thenReturn(150);
+        when(timesheet.getEcts()).thenReturn(10.0);
+        when(timesheet.getLatestEntryDate()).thenReturn(new DateTime().toString());
+        when(timesheet.getLectures()).thenReturn("Mobile Computing");
+        when(timesheet.getIsActive()).thenReturn(true);
+        when(timesheet.getIsEnabled()).thenReturn(true);
+        when(timesheet.getUserKey()).thenReturn("test_key");
+        when(timesheet.getTargetHoursRemoved()).thenReturn(0);
+        when(timesheet.getReason()).thenReturn("Agathe Bauer");
+        when(timesheet.getIsEnabled()).thenReturn(true);
+        when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
+        when(response.getOutputStream()).thenReturn(outputStream);
 
     }
 

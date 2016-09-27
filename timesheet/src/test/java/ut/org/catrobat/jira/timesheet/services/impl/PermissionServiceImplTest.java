@@ -3,7 +3,6 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
-import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.service.ServiceException;
@@ -48,6 +47,7 @@ public class PermissionServiceImplTest {
     private static Team catroid, html5, drone;
     private static ApprovedUser approvedUser;
     private static ApprovedGroup approvedGroup;
+    private static Config config;
     @Rule
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private PermissionServiceImpl permissionService, permissionServiceException;
@@ -62,7 +62,6 @@ public class PermissionServiceImplTest {
     private TimesheetEntryService entryService;
     private SimpleDateFormat sdf;
     private ConfigService configService;
-    private static Config config;
     private ComponentAccessor componentAccessor;
     private GroupManager groupManager;
     private EntityManager entityManager;
