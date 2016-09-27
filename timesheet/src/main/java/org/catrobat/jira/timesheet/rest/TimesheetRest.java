@@ -803,7 +803,8 @@ public class TimesheetRest {
 
             //inform user about Administrator changes
             if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
-                buildEmailAdministratorChangedEntry(user.getEmailAddress(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry, jsonEntry);
+                String userEmail = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress();
+                buildEmailAdministratorChangedEntry(user.getEmailAddress(), userEmail, entry, jsonEntry);
             }
 
             if (sheet.getEntries().length == 1) {
