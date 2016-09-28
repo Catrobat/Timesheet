@@ -5,11 +5,9 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.UserKeyService;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -34,7 +32,6 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,9 +46,7 @@ import static org.mockito.Mockito.*;
         TimesheetEntryService.class})
 public class ConfigResourceRestTest {
 
-    private com.atlassian.sal.api.user.UserManager userManagerLDAPMock;
-    private com.atlassian.jira.user.util.UserManager userManagerJiraMock;
-    private UserKeyService userKeyServiceMock;
+    private UserManager userManagerJiraMock;
     private GroupManager groupManagerJiraMock;
 
     private CategoryService categoryService;
@@ -69,7 +64,6 @@ public class ConfigResourceRestTest {
     private ConfigService configServiceMock;
 
     private UserUtil userUtilMock;
-    private UserProfile userProfileMock;
     private Timesheet timesheetMock;
     private Category categoryMock;
     private Team teamMock;
@@ -97,10 +91,8 @@ public class ConfigResourceRestTest {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
 
-        userManagerLDAPMock = mock(com.atlassian.sal.api.user.UserManager.class, RETURNS_DEEP_STUBS);
-        userManagerJiraMock = mock(com.atlassian.jira.user.util.UserManager.class, RETURNS_DEEP_STUBS);
+        userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         groupManagerJiraMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
-        userKeyServiceMock = mock(UserKeyService.class, RETURNS_DEEP_STUBS);
         userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         categoryServiceMock = mock(CategoryService.class, RETURNS_DEEP_STUBS);
@@ -110,7 +102,6 @@ public class ConfigResourceRestTest {
         teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         request = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         mailQueueMock = mock(MailQueue.class, RETURNS_DEEP_STUBS);
-        userProfileMock = mock(UserProfile.class, RETURNS_DEEP_STUBS);
         timesheetMock = mock(Timesheet.class, RETURNS_DEEP_STUBS);
         categoryMock = mock(Category.class, RETURNS_DEEP_STUBS);
         teamMock = mock(Team.class, RETURNS_DEEP_STUBS);
@@ -119,19 +110,18 @@ public class ConfigResourceRestTest {
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService, userManager);
+        configService = new ConfigServiceImpl(ao, categoryService);
         teamService = new TeamServiceImpl(ao, configService);
-        permissionService = new PermissionServiceImpl(userManagerLDAPMock, teamService, configService);
+        permissionService = new PermissionServiceImpl(teamService, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
-        configResourceRest = new ConfigResourceRest(userManagerLDAPMock, configService, teamService, categoryService, permissionService);
+        configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionService);
 
-        configResourceRestMock = new ConfigResourceRest(userManagerLDAPMock, configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock);
+        configResourceRestMock = new ConfigResourceRest(configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
-        PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyServiceMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
 

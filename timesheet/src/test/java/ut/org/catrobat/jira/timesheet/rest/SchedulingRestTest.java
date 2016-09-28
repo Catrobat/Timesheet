@@ -3,10 +3,9 @@ package ut.org.catrobat.jira.timesheet.rest;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -43,8 +42,7 @@ import static org.mockito.Mockito.*;
 public class SchedulingRestTest {
 
     private SchedulingRest schedulingRestMock;
-    private com.atlassian.jira.user.util.UserManager userManagerJiraMock;
-    private com.atlassian.sal.api.user.UserManager userManagerLDAPMock;
+    private UserManager userManagerJiraMock;
     private ConfigService configServiceMock;
     private PermissionService permissionServiceMock;
     private TimesheetEntryService timesheetEntryServiceMock;
@@ -63,9 +61,6 @@ public class SchedulingRestTest {
     private TimesheetEntryServiceImpl timesheetEntryService;
     private TimesheetServiceImpl timesheetService;
     private SchedulingRest schedulingRest;
-    private UserProfile userProfileMock;
-    private UserManager userManager;
-
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
@@ -76,28 +71,26 @@ public class SchedulingRestTest {
         timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
         timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
         teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
-        userManagerLDAPMock = mock(com.atlassian.sal.api.user.UserManager.class, RETURNS_DEEP_STUBS);
-        userManagerJiraMock = mock(com.atlassian.jira.user.util.UserManager.class, RETURNS_DEEP_STUBS);
+        userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
         mailQueueMock = mock(MailQueue.class, RETURNS_DEEP_STUBS);
         httpRequest = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         response = mock(Response.class, RETURNS_DEEP_STUBS);
-        userProfileMock = mock(UserProfile.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService, userManager);
+        configService = new ConfigServiceImpl(ao, categoryService);
         teamService = new TeamServiceImpl(ao, configService);
-        permissionService = new PermissionServiceImpl(userManagerLDAPMock, teamService, configService);
+        permissionService = new PermissionServiceImpl(teamService, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
 
         // For some tests we need a mock...
         schedulingRestMock = new SchedulingRest(configServiceMock, permissionServiceMock, timesheetEntryServiceMock,
-                timesheetServiceMock, teamServiceMock, userManagerLDAPMock);
+                timesheetServiceMock, teamServiceMock);
 
         // ... and for some tests we need a real instance of the class
         schedulingRest = new SchedulingRest(configService, permissionService, timesheetEntryService,
-                timesheetService, teamService, userManagerLDAPMock);
+                timesheetService, teamService);
 
         // ... and sometimes you would like to mix them together (see in test method)
 
@@ -121,7 +114,7 @@ public class SchedulingRestTest {
     @Test
     public void testActivityNotification_TimesheetEntryIsEmpty() throws Exception {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
-                timesheetService, teamService, userManagerLDAPMock);
+                timesheetService, teamService);
 
         timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, "", true, true, true); // master thesis
         timesheetService.add("key 2", 450, 0, 450, 450, 0, "bachelor thesis", "", 15, "", true, false, false); // disabled
@@ -148,7 +141,7 @@ public class SchedulingRestTest {
     @Test
     public void testActivityNotification_differentKindsOfTimesheets() throws Exception {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
-                timesheetService, teamService, userManagerLDAPMock);
+                timesheetService, teamService);
 
         Timesheet timesheet1 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, "", true, true, true);
 

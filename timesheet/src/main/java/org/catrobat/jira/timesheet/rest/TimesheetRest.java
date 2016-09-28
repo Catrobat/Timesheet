@@ -32,7 +32,6 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.query.Query;
-import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
@@ -57,13 +56,11 @@ public class TimesheetRest {
     private final TimesheetService sheetService;
     private final CategoryService categoryService;
     private final TeamService teamService;
-    private final UserManager userManager;
     private final PermissionService permissionService;
     private final ConfigService configService;
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
-            final UserManager um, final TeamService ts, PermissionService ps, final ConfigService ahcs) {
-        this.userManager = um;
+                         final TeamService ts, PermissionService ps, final ConfigService ahcs) {
         this.teamService = ts;
         this.entryService = es;
         this.sheetService = ss;
@@ -859,7 +856,7 @@ public class TimesheetRest {
 
         if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators") ||
                 permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
-            buildEmailAdministratorDeletedEntry(user.getEmailAddress(), userManager.getUserProfile(sheet.getUserKey()).getEmail(), entry);
+            buildEmailAdministratorDeletedEntry(user.getEmailAddress(), ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress(), entry);
         }
 
         entryService.delete(entry);

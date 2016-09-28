@@ -19,7 +19,6 @@ package org.catrobat.jira.timesheet.helper;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.CategoryService;
@@ -33,14 +32,12 @@ public class CsvConfigImporter {
     private final ConfigService configService;
     private final CategoryService categoryService;
     private final TeamService teamService;
-    private final UserManager userManager;
 
-    public CsvConfigImporter(ConfigService configService, CategoryService categoryService, TeamService teamService, UserManager userManager) {
+    public CsvConfigImporter(ConfigService configService, CategoryService categoryService, TeamService teamService) {
 
         this.configService = configService;
         this.categoryService = categoryService;
         this.teamService = teamService;
-        this.userManager = userManager;
     }
 
     public String importCsv(String csvString) throws ServiceException {

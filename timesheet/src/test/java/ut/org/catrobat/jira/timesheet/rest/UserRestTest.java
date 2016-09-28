@@ -5,7 +5,7 @@ import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.UserKeyService;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
@@ -40,8 +40,7 @@ import static org.mockito.Mockito.*;
 @PrepareForTest(ComponentAccessor.class)
 public class UserRestTest {
 
-    private com.atlassian.sal.api.user.UserManager userManagerLDAPMock;
-    private com.atlassian.jira.user.util.UserManager userManagerJiraMock;
+    private UserManager userManagerJiraMock;
     private ConfigService configServiceMock;
     private TeamService teamServiceMock;
     private UserRest spyUserRest;
@@ -52,30 +51,26 @@ public class UserRestTest {
     private EntityManager entityManager;
     private TestActiveObjects ao;
     private JiraAuthenticationContext jiraAuthMock;
-    private UserKeyService userKeyServiceMock;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
 
-        userManagerLDAPMock = mock(com.atlassian.sal.api.user.UserManager.class, RETURNS_DEEP_STUBS);
-        userManagerJiraMock = mock(com.atlassian.jira.user.util.UserManager.class, RETURNS_DEEP_STUBS);
+        userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         httpRequestMock = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
-        userKeyServiceMock = mock(UserKeyService.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
 
-        userRest = new UserRest(userManagerLDAPMock, configServiceMock, teamServiceMock);
+        userRest = new UserRest(configServiceMock, teamServiceMock);
         spyUserRest = spy(userRest);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
-        PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyServiceMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
     }

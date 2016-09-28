@@ -4,7 +4,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
@@ -38,7 +37,6 @@ public class ExportMTTimesheetAsCSVServletTest {
     private LoginUriProvider loginUriProvider;
     private TemplateRenderer templateRenderer;
     private PermissionService permissionService;
-    private UserManager userManager;
     private WebSudoManager webSudoManager;
     private ConfigService configService;
     private ComponentAccessor componentAccessor;
@@ -57,7 +55,6 @@ public class ExportMTTimesheetAsCSVServletTest {
 
         loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = mock(TemplateRenderer.class);
-        userManager = mock(UserManager.class);
         webSudoManager = mock(WebSudoManager.class);
         permissionService = mock(PermissionService.class);
         componentAccessor = mock(ComponentAccessor.class);
@@ -70,7 +67,7 @@ public class ExportMTTimesheetAsCSVServletTest {
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
 
         exportMasterThesisTimesheetAsCSVServlet = new ExportMasterThesisTimesheetAsCSVServlet(loginUriProvider, webSudoManager, timesheetService,
-                configService, permissionService, userManager);
+                configService, permissionService);
 
         when(user.getUsername()).thenReturn("test");
         when(user.getKey()).thenReturn(test_key);

@@ -16,9 +16,9 @@
 
 package org.catrobat.jira.timesheet.rest;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Team;
@@ -42,17 +42,14 @@ import java.util.List;
 @Produces({MediaType.APPLICATION_JSON})
 public class ConfigResourceRest {
     private final ConfigService configService;
-    private final UserManager userManager;
     private final TeamService teamService;
     private final CategoryService categoryService;
     private final PermissionService permissionService;
 
-    public ConfigResourceRest(final UserManager userManager, final ConfigService configService,
-            final TeamService teamService, final CategoryService categoryService,
-            final PermissionService permissionService) {
+    public ConfigResourceRest(final ConfigService configService, final TeamService teamService,
+                              final CategoryService categoryService, final PermissionService permissionService) {
         this.configService = configService;
         this.teamService = teamService;
-        this.userManager = userManager;
         this.categoryService = categoryService;
         this.permissionService = permissionService;
     }
@@ -150,10 +147,10 @@ public class ConfigResourceRest {
         if (jsonConfig.getApprovedUsers() != null) {
             configService.clearApprovedUsers();
             for (String approvedUserName : jsonConfig.getApprovedUsers()) {
-                UserProfile userProfile = userManager.getUserProfile(approvedUserName);
-                if (userProfile != null) {
+                ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(approvedUserName);
+                if (user != null) {
                     //configService.addApprovedUser(approvedUserName); // TODO: fix it
-                    RestUtils.getInstance().printUserInformation(approvedUserName, userProfile);
+                    RestUtils.getInstance().printUserInformation(approvedUserName, user);
                 }
             }
         }

@@ -18,7 +18,6 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import com.atlassian.sal.api.user.UserManager;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -42,13 +41,12 @@ public class ConfigServiceImplTest {
     private ActiveObjects ao;
     private CategoryService cs;
     private ConfigService configurationService;
-    private UserManager userManager;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        configurationService = new ConfigServiceImpl(ao, cs, userManager);
+        configurationService = new ConfigServiceImpl(ao, cs);
     }
 
     @Test

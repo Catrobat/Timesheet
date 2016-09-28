@@ -52,7 +52,6 @@ public class PermissionServiceImplTest {
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private PermissionServiceImpl permissionService, permissionServiceException;
     private TeamService teamService;
-    private com.atlassian.sal.api.user.UserManager userManager;
     private ApplicationUser coord, owner, eve, test, admin;
     private Timesheet sheet;
     private TimesheetEntry timeSheetEntry;
@@ -75,7 +74,6 @@ public class PermissionServiceImplTest {
 
 
         teamService = Mockito.mock(TeamService.class);
-        userManager = Mockito.mock(com.atlassian.sal.api.user.UserManager.class);
         config = Mockito.mock(Config.class);
         configService = Mockito.mock(ConfigService.class);
         groupManager = Mockito.mock(GroupManager.class);
@@ -84,7 +82,7 @@ public class PermissionServiceImplTest {
 
         assertNotNull(entityManager);
 
-        permissionService = new PermissionServiceImpl(userManager, teamService, configService);
+        permissionService = new PermissionServiceImpl(teamService, configService);
 
         //arrange
         coord = Mockito.mock(ApplicationUser.class);
@@ -123,14 +121,15 @@ public class PermissionServiceImplTest {
         Mockito.when(test.getUsername()).thenReturn("test");
         Mockito.when(admin.getUsername()).thenReturn("admin");
 
-        Mockito.when(userManager.isAdmin(owner_key)).thenReturn(false);
-        Mockito.when(userManager.isAdmin(coord_key)).thenReturn(false);
-        Mockito.when(userManager.isAdmin(eve_key)).thenReturn(false);
-        Mockito.when(userManager.isAdmin(test_key)).thenReturn(false);
-        Mockito.when(userManager.isAdmin(admin_key)).thenReturn(true);
-
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(jiraUserManager);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
+        PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManager);
+
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(owner, "jira-administrators")).thenReturn(false);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(admin, "jira-administrators")).thenReturn(true);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(eve, "jira-administrators")).thenReturn(false);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(test, "jira-administrators")).thenReturn(false);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(coord, "jira-administrators")).thenReturn(false);
 
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(owner_key)).thenReturn(owner);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(admin_key)).thenReturn(admin);
@@ -143,12 +142,6 @@ public class PermissionServiceImplTest {
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(eve.getUsername())).thenReturn(eve);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(test.getUsername())).thenReturn(test);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(coord.getUsername())).thenReturn(coord);
-
-        Mockito.when(userManager.isAdmin(owner.getKey())).thenReturn(false);
-        Mockito.when(userManager.isAdmin(eve.getKey())).thenReturn(false);
-        Mockito.when(userManager.isAdmin(coord.getKey())).thenReturn(false);
-        Mockito.when(userManager.isAdmin(test.getKey())).thenReturn(false);
-        Mockito.when(userManager.isAdmin(admin.getKey())).thenReturn(true);
 
         Set<Team> owner_teams = new HashSet<Team>();
         Set<Team> eve_teams = new HashSet<Team>();

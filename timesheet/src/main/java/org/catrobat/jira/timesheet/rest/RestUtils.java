@@ -3,7 +3,6 @@ package org.catrobat.jira.timesheet.rest;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.user.UserProfile;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -44,25 +43,23 @@ public class RestUtils {
 
     }
 
-    public void printUserInformation(String approvedUserName, UserProfile userProfile) {
+    public void printUserInformation(String approvedUserName, ApplicationUser user) {
         ApplicationUser userByName = ComponentAccessor.getUserManager().getUserByName(approvedUserName);
-        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userProfile.getUsername());
 
         System.out.println();
-        System.out.println("userProfile.getEmail()      = " + userProfile.getEmail());
-        System.out.println("userByKey.getEmailAddress() = " + userByName.getEmailAddress());
+        System.out.println("user.getEmailAddress()       = " + user.getEmailAddress());
+        System.out.println("userByName.getEmailAddress() = " + userByName.getEmailAddress());
 
-        System.out.println("userByName.getName()        = " + userByName.getName());
-        System.out.println("userByKey.getUsername()     = " + userByName.getUsername());
-        System.out.println("userProfile.getUsername()   = " + userProfile.getUsername());
-        System.out.println("approvedUserName()          = " + approvedUserName);
+        System.out.println("userByName.getName()         = " + userByName.getName());
+        System.out.println("userByName.getUsername()     = " + userByName.getUsername());
+        System.out.println("user.getUsername()           = " + user.getUsername());
+        System.out.println("approvedUserName()           = " + approvedUserName);
 
-        System.out.println("userByKey.getDisplayName()  = " + userByName.getDisplayName());
-        System.out.println("userProfile.getFullName()   = " + userProfile.getFullName());
+        System.out.println("userByName.getDisplayName()  = " + userByName.getDisplayName());
+        System.out.println("user.getDisplayName()        = " + user.getDisplayName());
 
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("userKey (CA) userKeyService = " + userKey);
-        System.out.println("userByName.getKey()         = " + userByName.getKey());
+        System.out.println("userByName.getKey()          = " + userByName.getKey());
         System.out.println("########################################################################");
     }
 }

@@ -20,7 +20,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.PermissionService;
@@ -35,13 +34,10 @@ import java.util.Set;
 
 public class PermissionServiceImpl implements PermissionService {
 
-    private final UserManager userManager;
     private final TeamService teamService;
     private final ConfigService configService;
 
-    public PermissionServiceImpl(UserManager userManager, TeamService teamService,
-            ConfigService configService) {
-        this.userManager = userManager;
+    public PermissionServiceImpl(TeamService teamService, ConfigService configService) {
         this.teamService = teamService;
         this.configService = configService;
     }
@@ -156,7 +152,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     private boolean isUserAdmin(ApplicationUser user) {
-        return userManager.isAdmin(user.getKey());
+        return ComponentAccessor.getGroupManager().isUserInGroup(user, "jira-administrators");
     }
 
     private boolean userCoordinatesTeamsOfSheet(ApplicationUser user, Timesheet sheet) {

@@ -4,7 +4,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
@@ -40,7 +39,6 @@ public class TimesheetServletTest {
     private Timesheet timeSheet;
     private ApplicationUser user;
     private TeamService teamService;
-    private UserManager userManager;
     private HttpServletResponse response;
     private HttpServletRequest request;
     private ComponentAccessor componentAccessor;
@@ -52,7 +50,6 @@ public class TimesheetServletTest {
         new MockComponentWorker().init();
 
         teamService = mock(TeamService.class);
-        userManager = mock(UserManager.class);
         loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = mock(TemplateRenderer.class);
         sheetService = mock(TimesheetService.class);
@@ -73,7 +70,6 @@ public class TimesheetServletTest {
         String admin_key = "admin_key";
         when(admin.getKey()).thenReturn(admin_key);
         when(admin.getUsername()).thenReturn("admin");
-        when(userManager.isAdmin(admin_key)).thenReturn(true);
         when(permissionService.checkIfUserExists(request)).thenReturn(admin);
         when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
         when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);

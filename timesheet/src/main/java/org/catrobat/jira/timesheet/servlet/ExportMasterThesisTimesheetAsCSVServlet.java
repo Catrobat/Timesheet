@@ -20,7 +20,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
@@ -38,15 +37,13 @@ import java.util.Date;
 public class ExportMasterThesisTimesheetAsCSVServlet extends HelperServlet {
 
     private final TimesheetService timesheetService;
-    private final UserManager userManager;
     private final ConfigService configService;
 
     public ExportMasterThesisTimesheetAsCSVServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                                    TimesheetService timesheetService, ConfigService configService,
-                                                   PermissionService permissionService, UserManager userManager) {
+                                                   PermissionService permissionService) {
         super(loginUriProvider, webSudoManager, permissionService);
         this.timesheetService = timesheetService;
-        this.userManager = userManager;
         this.configService = configService;
     }
 

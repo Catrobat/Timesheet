@@ -5,7 +5,6 @@ import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
@@ -53,14 +52,13 @@ public class ExportConfigAsCSVServletTest {
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private CategoryService cs;
-    private UserManager userManager;
 
     @Before
     public void setUp() throws Exception {
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        configService = new ConfigServiceImpl(ao, cs, userManager);
+        configService = new ConfigServiceImpl(ao, cs);
 
         loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = mock(TemplateRenderer.class);

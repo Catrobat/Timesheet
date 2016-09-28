@@ -4,7 +4,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
@@ -31,7 +30,6 @@ public class ExportAllTimesheetsAsCSVServletTest {
     private LoginUriProvider loginUriProvider;
     private TemplateRenderer templateRenderer;
     private PermissionService permissionService;
-    private UserManager userManager;
     private WebSudoManager webSudoManager;
     private ConfigService configService;
     private ComponentAccessor componentAccessor;
@@ -49,7 +47,6 @@ public class ExportAllTimesheetsAsCSVServletTest {
 
         loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = Mockito.mock(TemplateRenderer.class);
-        userManager = Mockito.mock(UserManager.class);
         webSudoManager = Mockito.mock(WebSudoManager.class);
         permissionService = Mockito.mock(PermissionService.class);
         timesheetService = Mockito.mock(TimesheetService.class);

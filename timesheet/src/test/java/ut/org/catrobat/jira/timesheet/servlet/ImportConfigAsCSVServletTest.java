@@ -6,7 +6,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
@@ -62,7 +61,6 @@ public class ImportConfigAsCSVServletTest {
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private CategoryService cs;
-    private UserManager userManager;
 
     @Before
     public void setUp() throws Exception {
@@ -70,7 +68,7 @@ public class ImportConfigAsCSVServletTest {
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        configService = new ConfigServiceImpl(ao, cs, userManager);
+        configService = new ConfigServiceImpl(ao, cs);
 
         loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = mock(TemplateRenderer.class);
@@ -86,10 +84,9 @@ public class ImportConfigAsCSVServletTest {
         categoryService = mock(CategoryService.class);
         teamService = mock(TeamService.class);
         printWriter = mock(PrintWriter.class);
-        userManager = mock(UserManager.class);
 
         importConfigCsvServlet = new ImportConfigCsvServlet(loginUriProvider, webSudoManager,
-                configService, categoryService, teamService, ao, permissionService, userManager);
+                configService, categoryService, teamService, ao, permissionService);
 
         when(user.getUsername()).thenReturn("test");
         when(user.getKey()).thenReturn(test_key);

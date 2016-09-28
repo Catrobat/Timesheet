@@ -19,7 +19,6 @@ package org.catrobat.jira.timesheet.servlet;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.helper.CsvConfigImporter;
@@ -39,19 +38,17 @@ public class ImportConfigCsvServlet extends HelperServlet {
     private final CategoryService categoryService;
     private final TeamService teamService;
     private final ActiveObjects activeObjects;
-    private final UserManager userManager;
 
     public ImportConfigCsvServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-            ConfigService configService, CategoryService categoryService,
-            TeamService teamService, ActiveObjects activeObjects,
-            PermissionService permissionService, UserManager userManager) {
+                                  ConfigService configService, CategoryService categoryService,
+                                  TeamService teamService, ActiveObjects activeObjects,
+                                  PermissionService permissionService) {
 
         super(loginUriProvider, webSudoManager, permissionService);
         this.configService = configService;
         this.categoryService = categoryService;
         this.teamService = teamService;
         this.activeObjects = activeObjects;
-        this.userManager = userManager;
     }
 
     @Override
@@ -118,7 +115,7 @@ public class ImportConfigCsvServlet extends HelperServlet {
             dropEntries();
         }
 
-        CsvConfigImporter csvImporter = new CsvConfigImporter(configService, categoryService, teamService, userManager);
+        CsvConfigImporter csvImporter = new CsvConfigImporter(configService, categoryService, teamService);
         String errorString = null;
         try {
             errorString = csvImporter.importCsv(csvString);

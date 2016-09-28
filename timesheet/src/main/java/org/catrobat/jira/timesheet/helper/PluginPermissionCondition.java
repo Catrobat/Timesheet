@@ -22,7 +22,6 @@ import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 
@@ -33,14 +32,12 @@ public class PluginPermissionCondition extends AbstractPermissionCondition {
 
     private final ConfigService configurationService;
     private final GroupManager groupManager;
-    private final UserManager userManager;
 
     public PluginPermissionCondition(PermissionManager permissionManager, ConfigService configurationService,
-                                     UserManager userManager, GroupManager groupManager) {
+                                     GroupManager groupManager) {
         super(permissionManager);
         this.configurationService = configurationService;
         this.groupManager = groupManager;
-        this.userManager = userManager;
     }
 
 

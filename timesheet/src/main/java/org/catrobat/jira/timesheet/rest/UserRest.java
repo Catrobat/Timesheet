@@ -20,7 +20,6 @@ import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
-import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.services.TeamService;
@@ -42,12 +41,10 @@ import java.util.TreeSet;
 public class UserRest extends PermissionServiceImpl {
     public static final String DISABLED_GROUP = "Disabled";
     private final ConfigService configService;
-    private final UserManager userManager;
 
-    public UserRest(final UserManager userManager, final ConfigService configService, final TeamService teamService) {
-        super(userManager, teamService, configService);
+    public UserRest(final ConfigService configService, final TeamService teamService) {
+        super(teamService, configService);
         this.configService = configService;
-        this.userManager = userManager;
     }
 
     @GET

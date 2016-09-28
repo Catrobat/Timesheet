@@ -21,7 +21,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
-import com.atlassian.sal.api.user.UserManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
@@ -47,18 +46,16 @@ public class SchedulingRest {
     private final TimesheetEntryService entryService;
     private final TimesheetService sheetService;
     private final TeamService teamService;
-    private final UserManager userManager;
 
     private ConcurrentSkipListMap<ApplicationUser, Vector<ApplicationUser>> notifyUsersMap = new ConcurrentSkipListMap<>(); // thread save
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
-            final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, UserManager userManager) {
+                          final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.entryService = entryService;
         this.sheetService = sheetService;
         this.teamService = teamService;
-        this.userManager = userManager;
     }
 
     @GET

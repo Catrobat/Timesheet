@@ -5,7 +5,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
@@ -45,7 +44,6 @@ public class AdminServletTest {
     private LoginUriProvider loginUriProviderMock;
     private TemplateRenderer templateRendererMock;
     private PermissionService permissionServiceMock;
-    private UserManager userManagerMock;
     private WebSudoManager webSudoManagerMock;
     private ConfigService configServiceMock;
     private ComponentAccessor componentAccessorMock;
@@ -58,7 +56,6 @@ public class AdminServletTest {
     private HttpServletResponse response;
     private HttpServletRequest request;
     private ApplicationUser userMock;
-    private UserManager userManager;
     private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Before
@@ -70,7 +67,6 @@ public class AdminServletTest {
 
         loginUriProviderMock = mock(LoginUriProvider.class, RETURNS_DEEP_STUBS);
         templateRendererMock = mock(TemplateRenderer.class, RETURNS_DEEP_STUBS);
-        userManagerMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         webSudoManagerMock = mock(WebSudoManager.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
@@ -79,9 +75,9 @@ public class AdminServletTest {
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService, userManager);
+        configService = new ConfigServiceImpl(ao, categoryService);
         teamService = new TeamServiceImpl(ao, configService);
-        permissionService = new PermissionServiceImpl(userManagerMock, teamService, configService);
+        permissionService = new PermissionServiceImpl(teamService, configService);
 
         adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock);
 

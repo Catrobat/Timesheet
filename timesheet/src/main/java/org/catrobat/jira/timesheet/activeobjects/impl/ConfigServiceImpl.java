@@ -19,7 +19,6 @@ package org.catrobat.jira.timesheet.activeobjects.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.user.UserManager;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
@@ -32,14 +31,12 @@ public class ConfigServiceImpl implements ConfigService {
 
     private final ActiveObjects ao;
     private final CategoryService cs;
-    private final UserManager userManager;
 
     private ConcurrentSkipListMap<ApprovedGroup, Vector<ApprovedUser>> approvedMap; // thread save
 
-    public ConfigServiceImpl(ActiveObjects ao, CategoryService cs, UserManager userManager) {
+    public ConfigServiceImpl(ActiveObjects ao, CategoryService cs) {
         this.ao = ao;
         this.cs = cs;
-        this.userManager = userManager;
         approvedMap = new ConcurrentSkipListMap<>();
     }
 

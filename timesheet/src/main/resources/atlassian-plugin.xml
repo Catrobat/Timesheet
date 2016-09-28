@@ -138,7 +138,6 @@
     <!-- import from the product container -->
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
-    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
     <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider"/>
     <component key="component-accessor" name="Component Accessor"
                class="com.atlassian.jira.component.ComponentAccessor"/>
