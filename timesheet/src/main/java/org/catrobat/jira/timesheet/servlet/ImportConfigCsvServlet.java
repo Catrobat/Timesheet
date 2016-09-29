@@ -89,7 +89,7 @@ public class ImportConfigCsvServlet extends HelperServlet {
                 "# you can insert here several teams \n" +
                 "# all of them will be inserted \n" +
                 "</textarea><br />\n" +
-                "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing table entries<br /><br />\n" +
+                "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing config settings and ALL timesheet entries<br /><br />\n" +
                 "<input type=\"submit\" />" +
                 "</form>" +
                 "</body>" +

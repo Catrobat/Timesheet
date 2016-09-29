@@ -607,7 +607,7 @@ public class TimesheetRest {
 
         for (JsonTimesheetEntry entry : entries) {
             if (entry == null) {
-                return Response.status(Response.Status.FORBIDDEN).entity("Please prove if your 'Import-Entry' fulfills all import-requirements.").build();
+                return Response.status(Response.Status.FORBIDDEN).entity("Please check whether your 'Import-Entry' fulfills all import-requirements.").build();
             } else if (entry.getDescription().isEmpty()) {
                 return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
             } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0)) {

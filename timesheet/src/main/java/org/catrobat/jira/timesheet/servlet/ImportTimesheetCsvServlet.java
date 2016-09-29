@@ -76,7 +76,7 @@ public class ImportTimesheetCsvServlet extends HelperServlet {
                 "# a valid configuration file must exist before importing timesheets\n" +
                 "# ensure that all teams, team members and categories are assigned correctly" +
                 "</textarea><br />\n" +
-                "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing table entries<br /><br />\n" +
+                "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing timesheets and entries<br /><br />\n" +
                 "<input type=\"submit\" />" +
                 "</form>" +
                 "</body>" +
