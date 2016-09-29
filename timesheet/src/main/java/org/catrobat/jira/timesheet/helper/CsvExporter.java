@@ -54,8 +54,6 @@ public abstract class CsvExporter {
         if (!config.getSupervisedUsers().isEmpty())
             for(String userName : config.getSupervisedUsers().split(","))
                 sb.append(userName).append(NEW_LINE);
-        else
-            sb.append(DEFAULT_VALUE + NEW_LINE);
 
         //Approved Users
         sb.append("Approved Users and Groups" + DELIMITER);
@@ -103,6 +101,32 @@ public abstract class CsvExporter {
         sb.append("Email Inactive Body" + DELIMITER);
         if (!config.getMailBodyInactiveState().isEmpty())
             sb.append(unescape(config.getMailBodyInactiveState())).append(NEW_LINE);
+        else
+            sb.append(DEFAULT_VALUE + NEW_LINE);
+
+        //Email Offline
+        sb.append("Email Offline Subject" + DELIMITER);
+        if (!config.getMailSubjectOfflineState().isEmpty())
+            sb.append(unescape(config.getMailSubjectOfflineState())).append(NEW_LINE);
+        else
+            sb.append(DEFAULT_VALUE + NEW_LINE);
+
+        sb.append("Email Offline Body" + DELIMITER);
+        if (!config.getMailBodyOfflineState().isEmpty())
+            sb.append(unescape(config.getMailBodyOfflineState())).append(NEW_LINE);
+        else
+            sb.append(DEFAULT_VALUE + NEW_LINE);
+
+        //Email Active
+        sb.append("Email Active Subject" + DELIMITER);
+        if (!config.getMailSubjectActiveState().isEmpty())
+            sb.append(unescape(config.getMailSubjectActiveState())).append(NEW_LINE);
+        else
+            sb.append(DEFAULT_VALUE + NEW_LINE);
+
+        sb.append("Email Active Body" + DELIMITER);
+        if (!config.getMailBodyActiveState().isEmpty())
+            sb.append(unescape(config.getMailBodyActiveState())).append(NEW_LINE);
         else
             sb.append(DEFAULT_VALUE + NEW_LINE);
 
@@ -258,8 +282,9 @@ public abstract class CsvExporter {
     }
 
     private String unescape(String escapedHtml4String) {
-        if (escapedHtml4String == null || escapedHtml4String.trim().length() == 0) {
+        return escapedHtml4String;
+        /*if (escapedHtml4String == null || escapedHtml4String.trim().length() == 0) {
             return "\"\"";
-        } else return "\"" + unescapeHtml4(escapedHtml4String).replaceAll("\"", "\"\"") + "\"";
+        } else return "\"" + unescapeHtml4(escapedHtml4String).replaceAll("\"", "\"\"") + "\"";*/
     }
 }

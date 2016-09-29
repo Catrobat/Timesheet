@@ -54,8 +54,11 @@ public class CsvConfigImporter {
         for (String line : csvString.split("\\r?\\n")) {
             lineNumber++;
 
-            // skip line if empty or comment
-            if (line.length() == 0 || line.charAt(0) == '#') {
+            if (line.length() == 0) {
+                continue;
+            }
+            // skip line if comment
+            if (line.charAt(0) == '#') {
                 errorStringBuilder.append("<li>comment on line ")
                         .append(lineNumber)
                         .append(" (line will be ignored)</li>");
@@ -65,46 +68,59 @@ public class CsvConfigImporter {
             //String[] columns = line.split(CsvExporter.DELIMITER, 24);
             String[] columns = line.split(CsvExporter.DELIMITER);
 
-            if (columns[0].equals("Supervisors") && columns.length > 0) {
+            if (columns.length < 2) {
+                errorStringBuilder.append("<li>field has no value (line ")
+                        .append(lineNumber)
+                        .append(": \"")
+                        .append(line)
+                        .append("\" will be ignored)</li>");
+            } else if (columns[0].equals("Supervisors")) {
                 for (int i = 1; i < columns.length; i++) {
                     supervisors += columns[i] + ",";
                 }
                 config.setSupervisedUsers(supervisors.substring(0, supervisors.length() - 1));
-            } else if (columns[0].equals("Approved Users and Groups") && columns.length > 0) {
+            } else if (columns[0].equals("Approved Users and Groups") && columns.length > 1) {
                 for (int i = 1; i < columns.length; i++) {
                     ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(columns[i]);
                     if (!user.getName().isEmpty()) {
                         configService.addApprovedUser(user);
                     }
                 }
-            } else if (columns[0].equals("Email From Name") && columns.length > 0) {
+            } else if (columns[0].equals("Email From Name")) {
                 config.setMailFromName(columns[1]);
-            } else if (columns[0].equals("Email From Mail-Address") && columns.length > 0) {
+            } else if (columns[0].equals("Email From Mail-Address")) {
                 config.setMailFrom(columns[1]);
-            } else if (columns[0].equals("Email Out Of Time Subject") && columns.length > 0) {
+            } else if (columns[0].equals("Email Out Of Time Subject")) {
                 config.setMailSubjectTime(columns[1]);
-            } else if (columns[0].equals("Email Out Of Time Body") && columns.length > 0) {
+            } else if (columns[0].equals("Email Out Of Time Body")) {
                 config.setMailBodyTime(columns[1]);
-            } else if (columns[0].equals("Email Inactive Subject") && columns.length > 0) {
+            } else if (columns[0].equals("Email Inactive Subject")) {
                 config.setMailSubjectInactiveState(columns[1]);
-            } else if (columns[0].equals("Email Inactive Body") && columns.length > 0) {
+            } else if (columns[0].equals("Email Inactive Body")) {
                 config.setMailBodyInactiveState(columns[1]);
-            } else if (columns[0].equals("Email Admin Changed Entry Subject") && columns.length > 0) {
+            } else if (columns[0].equals("Email Offline Subject")) {
+                config.setMailSubjectOfflineState(columns[1]);
+            } else if (columns[0].equals("Email Offline Body")) {
+                config.setMailBodyOfflineState(columns[1]);
+            } else if (columns[0].equals("Email Active Subject")) {
+                config.setMailSubjectActiveState(columns[1]);
+            } else if (columns[0].equals("Email Active Body")) {
+                config.setMailBodyActiveState(columns[1]);
+            } else if (columns[0].equals("Email Admin Changed Entry Subject")) {
                 config.setMailSubjectEntry(columns[1]);
-            } else if (columns[0].equals("Email Admin Changed Entry Body") && columns.length > 0) {
+            } else if (columns[0].equals("Email Admin Changed Entry Body")) {
                 config.setMailBodyEntry(columns[1]);
             }
-
             //Team Data
-            if (columns[0].equals("Assigned Coordinators") && columns.length > 0) {
+            else if (columns[0].equals("Assigned Coordinators")) {
                 for (int i = 1; i < columns.length; i++) {
                     assignedCoordinators.add(columns[i]);
                 }
-            } else if (columns[0].equals("Assigned Users") && columns.length > 0) {
+            } else if (columns[0].equals("Assigned Users")) {
                 for (int i = 1; i < columns.length; i++) {
                     assignedUsers.add(columns[i]);
                 }
-            } else if (columns[0].equals("Assigned Categories") && columns.length > 0) {
+            } else if (columns[0].equals("Assigned Categories")) {
                 for (int i = 1; i < columns.length; i++) {
                     assignedCategories.add(columns[i]);
                     if (!addedCategories.contains(columns[i])) {
@@ -116,7 +132,7 @@ public class CsvConfigImporter {
                                 .append(" will be ignored)</li>");
                     }
                 }
-            } else if (columns[0].equals("Team Name") && columns.length > 0) {
+            } else if (columns[0].equals("Team Name")) {
                 configService.addTeam(columns[1], assignedCoordinators, assignedUsers, assignedCategories);
 
                 //clear temp arrays after team was created
@@ -126,7 +142,9 @@ public class CsvConfigImporter {
             } else {
                 errorStringBuilder.append("<li>cannot add config data (line ")
                         .append(lineNumber)
-                        .append(" will be ignored)</li>");
+                        .append(": \"")
+                        .append(line)
+                        .append("\" will be ignored)</li>");
             }
         }
 
