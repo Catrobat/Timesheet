@@ -32,9 +32,7 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -85,6 +83,7 @@ public class ConfigResourceRestTest {
     private UserManager userManager;
     private ApplicationUser userMock;
     private JiraAuthenticationContext jiraAuthMock;
+    private GroupManager groupManagerMock;
 
     @Before
     public void setUp() throws Exception {
@@ -108,6 +107,7 @@ public class ConfigResourceRestTest {
         timesheetEntryMock = mock(TimesheetEntry.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
+        groupManagerMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
         configService = new ConfigServiceImpl(ao, categoryService);
@@ -124,6 +124,7 @@ public class ConfigResourceRestTest {
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
+        PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManagerMock);
 
         //additional mocks
         when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userMock);
@@ -310,10 +311,19 @@ public class ConfigResourceRestTest {
 
         ApprovedGroup[] approvedGroups = {approvedGroup};
 
+        ApplicationUser user1 = mock(ApplicationUser.class);
+        ApplicationUser user2 = mock(ApplicationUser.class);
+
+        Collection<ApplicationUser> usersInGroup = new ArrayList();
+        usersInGroup.add(user1);
+        usersInGroup.add(user2);
+
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getApprovedGroups()).thenReturn(approvedGroups);
         when(configServiceMock.getConfiguration().getApprovedUsers()).thenReturn(approvedUsers);
+
+        PowerMockito.when(ComponentAccessor.getGroupManager().getUsersInGroup(anyString())).thenReturn(usersInGroup);
 
         JsonConfig jsonConfig = new JsonConfig(configServiceMock);
 

@@ -35,8 +35,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 @Path("/scheduling")
 @Produces({MediaType.APPLICATION_JSON})
@@ -47,10 +49,8 @@ public class SchedulingRest {
     private final TimesheetService sheetService;
     private final TeamService teamService;
 
-    private ConcurrentSkipListMap<ApplicationUser, Vector<ApplicationUser>> notifyUsersMap = new ConcurrentSkipListMap<>(); // thread save
-
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
-                          final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService) {
+            final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.entryService = entryService;
@@ -80,29 +80,21 @@ public class SchedulingRest {
                 if (timesheet.getUserKey().equals(userKey)) {
                     if (timesheet.getIsOffline()) {  // user is offline
 
-                        Vector<ApplicationUser> notifiedUserVector = new Vector<>(getCoordinators(user));
-
                         //inform coordinators
                         for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
-                            sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactiveState(),
-                                    config.getMailBodyInactiveState()));
+                            sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectOfflineState(),
+                                    config.getMailBodyOfflineState()));
+                            System.out.println("Coordinator-email: " + coordinatorMailAddress);
                         }
-
-                        //we need configserviceimpl
 
                         //Todo: inform all user in approved group
                         ApprovedUser[] approvedUsers = configService.getConfiguration().getApprovedUsers();
-                        //inform timesheet admins
+                        //inform timesheet admins (approved users)
                         for (ApprovedUser approvedUser : approvedUsers) {
-                            System.out.println("approvedUser.getUserName() = " + approvedUser.getUserName());
+                            System.out.println("approvedUser: = " + approvedUser.getUserName());
                             sendMail(createEmail(approvedUser.getEmailAddress(), config.getMailSubjectOfflineState(),
                                     config.getMailBodyOfflineState()));
-                            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(approvedUser.getUserName());
-                            if (!notifiedUserVector.contains(applicationUser)) {
-                                notifiedUserVector.add(applicationUser);
-                            }
                         }
-                        notifyUsersMap.put(user, notifiedUserVector);
                     } else if (!timesheet.getIsActive()) { // user is inactive
                         //inform coordinators
                         TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
@@ -112,19 +104,18 @@ public class SchedulingRest {
                                 for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                                     sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactiveState(),
                                             config.getMailBodyInactiveState()));
+                                    System.out.println("Coordinator-email: " + coordinatorMailAddress);
                                 }
                             }
                         }
-                        Vector<ApplicationUser> notifiedUserVector = new Vector<>(getCoordinators(user));
-                        notifyUsersMap.put(user, notifiedUserVector);
                     } else { // user is active again
-                        for (Map.Entry<ApplicationUser, Vector<ApplicationUser>> entry : notifyUsersMap.entrySet()) {
+                        /*for (Map.Entry<ApplicationUser, Vector<ApplicationUser>> entry : notifyUsersMap.entrySet()) {
                             List<ApplicationUser> appUserList = entry.getValue();
                             for (ApplicationUser appUser : appUserList) {
                                 sendMail(createEmail(appUser.getEmailAddress(), config.getMailSubjectActiveState(),
                                         config.getMailBodyActiveState()));
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -178,7 +169,9 @@ public class SchedulingRest {
         List<Timesheet> timesheetList = sheetService.all();
         for (Timesheet timesheet : timesheetList) {
             TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
-            if (entries.length == 0) { continue; }
+            if (entries.length == 0) {
+                continue;
+            }
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null) {
                 if (latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) { // user has set himself to inactive
@@ -307,7 +300,7 @@ public class SchedulingRest {
         return null;
     }
 
-    private boolean isDateOlderThanXDays(Date date, int days){
+    private boolean isDateOlderThanXDays(Date date, int days) {
         DateTime xDaysAgo = new DateTime().minusDays(days);
         DateTime datetime = new DateTime(date);
         return (datetime.compareTo(xDaysAgo) < 0);

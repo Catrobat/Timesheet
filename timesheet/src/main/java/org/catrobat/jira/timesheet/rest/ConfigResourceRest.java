@@ -35,6 +35,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -137,20 +138,30 @@ public class ConfigResourceRest {
 
         configService.editSupervisedUsers(jsonConfig.getSupervisors());
 
+        //clear fields
+        configService.clearApprovedGroups();
+        configService.clearApprovedUsers();
+
+        // add approvedGroups
         if (jsonConfig.getApprovedGroups() != null) {
-            configService.clearApprovedGroups();
             for (String approvedGroupName : jsonConfig.getApprovedGroups()) {
                 configService.addApprovedGroup(approvedGroupName);
+                // add all users in group
+                Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
+                for(ApplicationUser user : usersInGroup){
+                    configService.addApprovedUser(user);
+                }
+
             }
         }
 
+        // add approvedUsers
         if (jsonConfig.getApprovedUsers() != null) {
-            configService.clearApprovedUsers();
-            for (String approvedUserName : jsonConfig.getApprovedUsers()) {
-                ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(approvedUserName);
+            for (String username : jsonConfig.getApprovedUsers()) {
+                ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(username);
                 if (user != null) {
-                    //configService.addApprovedUser(approvedUserName); // TODO: fix it
-                    RestUtils.getInstance().printUserInformation(approvedUserName, user);
+                    configService.addApprovedUser(user);
+                    //RestUtils.getInstance().printUserInformation(username, user);
                 }
             }
         }

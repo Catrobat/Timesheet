@@ -150,13 +150,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency> <!-- Todo: need any more? -->
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>1.5.1</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>

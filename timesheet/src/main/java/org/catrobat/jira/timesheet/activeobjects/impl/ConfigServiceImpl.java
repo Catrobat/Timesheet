@@ -17,27 +17,24 @@
 package org.catrobat.jira.timesheet.activeobjects.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
-import org.junit.Assert;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ConfigServiceImpl implements ConfigService {
 
     private final ActiveObjects ao;
     private final CategoryService cs;
 
-    private ConcurrentSkipListMap<ApprovedGroup, Vector<ApprovedUser>> approvedMap; // thread save
-
     public ConfigServiceImpl(ActiveObjects ao, CategoryService cs) {
         this.ao = ao;
         this.cs = cs;
-        approvedMap = new ConcurrentSkipListMap<>();
     }
 
     @Override
@@ -406,20 +403,11 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    //iterate through list, add new ApprovedUser, then take necessary methods from UserProfile
     private ApprovedGroup createApprovedGroup(String approvedGroupName) {
-        Vector<ApprovedUser> vector = new Vector<>();
-        Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
-        for (ApplicationUser user : usersInGroup) {
-            vector.add(addApprovedUser(user));
-        }
         ApprovedGroup approvedGroup = ao.create(ApprovedGroup.class);
         approvedGroup.setGroupName(approvedGroupName);
         approvedGroup.setConfiguration(getConfiguration());
         approvedGroup.save();
-
-        //map group to user
-        approvedMap.put(approvedGroup, vector);
 
         return approvedGroup;
     }
@@ -537,74 +525,5 @@ public class ConfigServiceImpl implements ConfigService {
         ao.delete(approvedUserArray[0]);
 
         return getConfiguration();
-    }
-
-    //first refresh list before returning
-    //attention: public setter method would be problematic because of persistence reasons
-    public ConcurrentSkipListMap<ApprovedGroup, Vector<ApprovedUser>> getApprovedMap() {
-        //delete the map ...
-        removeMap(approvedMap);
-        Assert.assertTrue("Map is not empty!", approvedMap.isEmpty());
-
-        //... and create new map
-        ApprovedGroup[] approvedGroups = getConfiguration().getApprovedGroups();
-        for (ApprovedGroup approvedGroup : approvedGroups) {
-            createApprovedGroup(approvedGroup.getGroupName());
-        }
-
-        return approvedMap;
-    }
-
-    private boolean removeVectorElement(Vector<ApprovedUser> vector, ApprovedUser element) {
-        if (vector.isEmpty() || element == null) {
-            System.out.println("Vector is either empty or element is null!");
-            return false;
-        }
-
-        for (Iterator<ApprovedUser> iter = vector.iterator(); iter.hasNext(); ) {
-            ApprovedUser approvedUser = iter.next();
-            if (approvedUser.equals(element)) {
-                removeApprovedUser(approvedUser.getUserKey());
-                iter.remove();
-                Assert.assertFalse("Element is still in vector but should be deleted!", vector.contains(approvedUser));
-
-                return true;
-            }
-        }
-        System.out.println("Element not found!");
-        return false;
-    }
-
-    private boolean removeVector(Vector<ApprovedUser> vector) {
-        if (vector.isEmpty()) {
-            System.out.println("Vector is empty!");
-            return false;
-        }
-
-        for (Iterator<ApprovedUser> iter = vector.iterator(); iter.hasNext(); ) {
-            ApprovedUser approvedUser = iter.next();
-            removeApprovedUser(approvedUser.getUserKey());
-            iter.remove();
-        }
-        Assert.assertTrue("Vector is not empty!", vector.isEmpty());
-
-        return true;
-    }
-
-    private boolean removeMap(ConcurrentSkipListMap<ApprovedGroup, Vector<ApprovedUser>> map) {
-        if (map.isEmpty()) {
-            System.out.println("Map is empty!");
-            return false;
-        }
-
-        for (Map.Entry<ApprovedGroup, Vector<ApprovedUser>> entry : map.entrySet()) {
-            ApprovedGroup group = entry.getKey();
-            Vector<ApprovedUser> vector = entry.getValue();
-            removeVector(vector);
-            removeApprovedGroup(group.getGroupName());
-        }
-        map.clear();
-        Assert.assertTrue("Map is not empty!", map.isEmpty());
-        return true;
     }
 }
