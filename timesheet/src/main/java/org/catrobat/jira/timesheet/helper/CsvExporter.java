@@ -282,9 +282,6 @@ public abstract class CsvExporter {
     }
 
     private String unescape(String escapedHtml4String) {
-        return escapedHtml4String;
-        /*if (escapedHtml4String == null || escapedHtml4String.trim().length() == 0) {
-            return "\"\"";
-        } else return "\"" + unescapeHtml4(escapedHtml4String).replaceAll("\"", "\"\"") + "\"";*/
+        return escapedHtml4String.replace(';', ' ');
     }
 }

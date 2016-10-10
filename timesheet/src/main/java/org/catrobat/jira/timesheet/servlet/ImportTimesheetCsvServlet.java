@@ -89,10 +89,10 @@ public class ImportTimesheetCsvServlet extends HelperServlet {
         super.doPost(request, response);
 
         // Dangerous servlet - should be forbidden in production use
-        if (!timesheetService.all().isEmpty()) {
+        /*if (!timesheetService.all().isEmpty()) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Importing Timesheets is not possible if timesheets exist");
             return;
-        }
+        }*/
 
         String csvString = request.getParameter("csv");
 
@@ -117,7 +117,7 @@ public class ImportTimesheetCsvServlet extends HelperServlet {
     }
 
     private void dropEntries() {
-        activeObjects.deleteWithSQL(Timesheet.class, "1=?", "1");
         activeObjects.deleteWithSQL(TimesheetEntry.class, "1=?", "1");
+        activeObjects.deleteWithSQL(Timesheet.class, "1=?", "1");
     }
 }

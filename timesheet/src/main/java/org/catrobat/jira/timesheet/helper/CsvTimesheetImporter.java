@@ -27,6 +27,8 @@ import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class CsvTimesheetImporter {
 
@@ -65,7 +67,7 @@ public class CsvTimesheetImporter {
             String[] columns = line.split(CsvExporter.DELIMITER);
 
             if ((columns[0].equals("Username") ||
-                    columns[0].equals("Date")) &&
+                    columns[0].equals("Inactive Date")) &&
                     columns.length > 0) {
                 continue;
             }
@@ -91,14 +93,21 @@ public class CsvTimesheetImporter {
                 Timesheet timesheet = timesheetService.getTimesheetImport(columns[9]);
                 SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+                Calendar cal = Calendar.getInstance();
+
+                SimpleDateFormat sdfPause = new SimpleDateFormat("HH:mm");
+                Date pause = sdfPause.parse(columns[5]);
+                cal.setTime(pause);
+
+                int pauseMinutes = cal.get(Calendar.HOUR)*60 + cal.get(Calendar.MINUTE);
+
                 timesheetEntryService.add(
                         timesheet,                                     //timesheet
                         sdf.parse(columns[2]),                         //begin date
                         sdf.parse(columns[3]),                         //end date
                         categoryService.getCategoryByName(columns[6]), //category
-                        columns[6],                                    //description
-                        Integer.parseInt(columns[5].substring(0, 2)) +
-                        Integer.parseInt(columns[5].substring(3, 5)),  //pause minutes
+                        columns[7],                                    //description
+                        pauseMinutes,                                  //pause minutes
                         teamService.getTeamByName(columns[8]),         //team
                         true,                                          //isGoogleDocImport
                         sdf.parse(columns[0]),                         //inactive date
