@@ -101,13 +101,15 @@ public class ImportTimesheetCsvServlet extends HelperServlet {
         }
 
         CsvTimesheetImporter csvTimesheetImporter = new CsvTimesheetImporter(timesheetService, timesheetEntryService, categoryService, teamService, activeObjects);
-        String errorString = null;
+        String errorString;
         try {
             errorString = csvTimesheetImporter.importCsv(csvString);
         } catch (ServiceException e) {
             e.printStackTrace();
+            errorString = e.toString();
         } catch (ParseException e) {
             e.printStackTrace();
+            errorString = e.toString();
         }
 
         response.getWriter().print("Successfully executed following string:<br />" +

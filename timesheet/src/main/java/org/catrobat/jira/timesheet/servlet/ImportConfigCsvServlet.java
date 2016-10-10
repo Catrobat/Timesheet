@@ -116,11 +116,12 @@ public class ImportConfigCsvServlet extends HelperServlet {
         }
 
         CsvConfigImporter csvImporter = new CsvConfigImporter(configService, categoryService, teamService);
-        String errorString = null;
+        String errorString;
         try {
             errorString = csvImporter.importCsv(csvString);
         } catch (ServiceException e) {
             e.printStackTrace();
+            errorString = e.toString();
         }
 
         response.getWriter().print("Successfully executed following string:<br />" +
