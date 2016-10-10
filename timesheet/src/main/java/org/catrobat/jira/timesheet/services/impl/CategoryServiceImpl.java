@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category add(String name) throws ServiceException {
         Category[] found = ao.find(Category.class, "NAME = ?", name);
-        if(found.length > 0){
+        if (found.length > 0) {
             throw new ServiceException("Category already exists");
         }
 
@@ -78,5 +78,4 @@ public class CategoryServiceImpl implements CategoryService {
         ao.delete(found);
         return true;
     }
-
 }
