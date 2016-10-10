@@ -63,11 +63,11 @@
         <li class="menu-item">
             <a href="#tabs-team" onclick="showTeamDiagram();">Team - Visualization</a>
         </li>
+        <li class="menu-item">
+                    <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
+        </li>
         <li class="menu-item" id="coord_private">
             <a href="#tabs-timesheet-settings"><strong>View Other Timesheets</strong></a>
-        </li>
-        <li class="menu-item">
-            <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
         </li>
     </ul>
 
