@@ -60,8 +60,8 @@ public class ImportConfigCsvServlet extends HelperServlet {
         if (configService.getConfiguration().getTeams().length != 0) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Configuration - Import is not possible if teams exist");
             return;
-        }
-        */
+        }*/
+
 
         PrintWriter writer = response.getWriter();
         writer.print("<html>" +

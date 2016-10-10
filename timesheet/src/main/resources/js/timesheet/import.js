@@ -98,11 +98,11 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     }
     //if no pause is specified 0 minutes is given
     if(pieces[4] == "") {
-        pieces[4] = "00:00:00";
+        pieces[4] = "00:00";
     }
     //check if any field of the import entry is empty
     for(var i = 0; i <= 7; i++) {
-        //Categorie is allowed to be empty
+        //Category is allowed to be empty
         if (i==5) {
             continue;
         }
