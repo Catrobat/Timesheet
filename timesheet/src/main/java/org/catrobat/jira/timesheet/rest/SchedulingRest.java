@@ -22,10 +22,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.*;
 import org.joda.time.DateTime;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +32,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,14 +47,16 @@ public class SchedulingRest {
     private final TimesheetEntryService entryService;
     private final TimesheetService sheetService;
     private final TeamService teamService;
+    private final CategoryService categoryService;
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
-            final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService) {
+                          final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, CategoryService categoryService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.entryService = entryService;
         this.sheetService = sheetService;
         this.teamService = teamService;
+        this.categoryService = categoryService;
     }
 
     @GET
@@ -187,6 +188,33 @@ public class SchedulingRest {
                 timesheet.setIsActive(false);
                 timesheet.setIsAutoInactive(true);
                 timesheet.save();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                Date begin = new Date();
+                try {
+                    begin = sdf.parse(timesheet.getLatestEntryDate());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Date end = new Date();
+
+                Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());
+                Team[] teamArray = new Team[teamsOfUser.size()];
+                teamArray = teamsOfUser.toArray(teamArray);
+                Team team = teamArray[0];
+
+                entryService.add(
+                        timesheet,
+                        begin,
+                        begin,
+                        categoryService.getCategoryByName("Inactive"),
+                        "Auto generated inactivity entry",
+                        0,
+                        team,
+                        false,
+                        end,
+                        "",
+                        ""
+                );
             }
             // user is still inactive since 2 months
             else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() && isDateOlderThanTwoMonths(entries[0].getBeginDate())) {

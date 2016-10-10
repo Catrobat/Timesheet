@@ -86,11 +86,11 @@ public class SchedulingRestTest {
 
         // For some tests we need a mock...
         schedulingRestMock = new SchedulingRest(configServiceMock, permissionServiceMock, timesheetEntryServiceMock,
-                timesheetServiceMock, teamServiceMock);
+                timesheetServiceMock, teamServiceMock, categoryService);
 
         // ... and for some tests we need a real instance of the class
         schedulingRest = new SchedulingRest(configService, permissionService, timesheetEntryService,
-                timesheetService, teamService);
+                timesheetService, teamService, categoryService);
 
         // ... and sometimes you would like to mix them together (see in test method)
 
@@ -114,7 +114,7 @@ public class SchedulingRestTest {
     @Test
     public void testActivityNotification_TimesheetEntryIsEmpty() throws Exception {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
-                timesheetService, teamService);
+                timesheetService, teamService, categoryService);
 
         timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, "", true, true, true); // master thesis
         timesheetService.add("key 2", 450, 0, 450, 450, 0, "bachelor thesis", "", 15, "", true, false, false); // disabled
@@ -141,7 +141,7 @@ public class SchedulingRestTest {
     @Test
     public void testActivityNotification_differentKindsOfTimesheets() throws Exception {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
-                timesheetService, teamService);
+                timesheetService, teamService, categoryService);
 
         Timesheet timesheet1 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, "", true, true, true);
 
