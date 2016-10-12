@@ -19,6 +19,8 @@ package org.catrobat.jira.timesheet.activeobjects;
 import net.java.ao.Entity;
 import net.java.ao.OneToMany;
 
+import java.util.Date;
+
 public interface Timesheet extends Entity {
 
     String getUserKey();
@@ -77,9 +79,9 @@ public interface Timesheet extends Entity {
 
     void setEcts(double ects);
 
-    String getLatestEntryDate();
+    Date getLatestEntryDate();
 
-    void setLatestEntryDate(String latestEntryDate);
+    void setLatestEntryDate(Date latestEntryDate);
 
     boolean getIsMasterThesisTimesheet();
 

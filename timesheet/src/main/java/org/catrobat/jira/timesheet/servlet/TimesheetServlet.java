@@ -100,7 +100,7 @@ public class TimesheetServlet extends HttpServlet {
 
             if (timesheet == null) {
                 timesheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
-                        "", 5, "Not Available", true, true, false);
+                        "", 5, true, true, false);
                 logger.info("New timesheet is added to user: " + user.getUsername());
             }
 

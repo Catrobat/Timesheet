@@ -22,9 +22,9 @@ import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetService;
-import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
+import java.util.Date;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -40,7 +40,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
                                    int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-                                   String lectures, String reason, double ects, String latestEntryDate,
+                                   String lectures, String reason, double ects, Date latestEntryDate,
                                    Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
@@ -78,7 +78,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                          int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-                         String lectures, String reason, double ects, String latestEntryDate,
+                         String lectures, String reason, double ects,
                          Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) {
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
@@ -90,7 +90,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setLectures(lectures);
         sheet.setReason(reason);
         sheet.setEcts(ects);
-        sheet.setLatestEntryDate(new DateTime().toString());
+        sheet.setLatestEntryDate(new Date());
         sheet.setIsActive(isActive);
         sheet.setIsEnabled(isEnabled);
         sheet.setIsMasterThesisTimesheet(isMasterThesisTimesheet);

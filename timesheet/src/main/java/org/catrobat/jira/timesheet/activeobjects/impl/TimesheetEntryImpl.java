@@ -18,7 +18,6 @@ package org.catrobat.jira.timesheet.activeobjects.impl;
 
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TimesheetEntryImpl{
@@ -54,8 +53,6 @@ public class TimesheetEntryImpl{
 
         long diff = endDate.getTime() - beginDate.getTime();
         int durationMinutes = (int) (diff / (60 * 1000)) - entry.getPauseMinutes();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy hh:mm");
 
         return durationMinutes;
     }

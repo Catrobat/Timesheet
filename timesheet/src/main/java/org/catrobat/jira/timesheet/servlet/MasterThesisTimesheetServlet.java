@@ -66,7 +66,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
 
             if (sheet == null) {
                 sheet = sheetService.add(userKey, 0, 0, 900, 0, 0, "Master Thesis",
-                        "Hint: Good Luck & Have Fun.", 30, "Not Available", true, true, true);
+                        "Hint: Good Luck & Have Fun.", 30, true, true, true);
             }
 
             Map<String, Object> paramMap = Maps.newHashMap();

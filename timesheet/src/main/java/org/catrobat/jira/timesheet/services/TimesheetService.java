@@ -23,6 +23,7 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Date;
 import java.util.List;
 
 @Transactional
@@ -42,7 +43,7 @@ public interface TimesheetService {
     @Nullable
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
                             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                            String reason, double ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
+                            String reason, double ects, Date latestEntryDate, Boolean isActive, Boolean isEnabled,
                             Boolean isMasterThesisTimesheet) throws ServiceException;
 
     /**
@@ -60,7 +61,7 @@ public interface TimesheetService {
     @NotNull
     Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                  String reason, double ects, String latestEntryDate, Boolean isActive, Boolean isEnabled,
+                  String reason, double ects, Boolean isActive, Boolean isEnabled,
                   Boolean isMasterThesisTimesheet);
 
     /**

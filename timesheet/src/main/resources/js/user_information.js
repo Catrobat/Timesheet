@@ -57,20 +57,22 @@ AJS.toInit(function () {
                 timesheetState = "inactive";
             }
 
+            var latestEntryDate = (new Date(timesheet[i]['latestEntryDate'])).toLocaleDateString("en-US");
+
             if (obj['active']) {
                 if (timesheet[i]['isEnabled']) {
                     AJS.$("#user-body").append("<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
                         "<td headers=\"basic-email\" class=\"email\">" + obj['email'] + "</td>" +
                         "<td headers=\"basic-state\" class=\"account\">" + state + "</td>" +
                         "<td headers=\"basic-timesheet-state\" class=\"timesheet\">" + timesheetState + "</td>" +
-                        "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + timesheet[i]['latestEntryDate'] + "</td>" +
+                        "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + latestEntryDate + "</td>" +
                         "<td headers=\"basic-timesheet-disable\" class=\"disable\"><input class=\"checkbox\" type=\"checkbox\" name=\"" + username + "checkBox\" id=\"" + username + "checkBox\" checked></td></tr>");
                 } else {
                     AJS.$("#user-body").append("<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
                         "<td headers=\"basic-email\" class=\"email\">" + obj['email'] + "</td>" +
                         "<td headers=\"basic-state\" class=\"account\">" + state + "</td>" +
                         "<td headers=\"basic-timesheet-state\" class=\"timesheet\">" + timesheetState + "</td>" +
-                        "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + timesheet[i]['latestEntryDate'] + "</td>" +
+                        "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + latestEntryDate + "</td>" +
                         "<td headers=\"basic-timesheet-disable\" class=\"disable\"><input class=\"checkbox\" type=\"checkbox\" name=\"" + username + "checkBox\" id=\"" + username + "checkBox\"></td></tr>");
                 }
             }

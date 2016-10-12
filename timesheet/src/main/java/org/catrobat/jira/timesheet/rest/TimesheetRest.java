@@ -43,8 +43,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -461,7 +459,7 @@ public class TimesheetRest {
 
             boolean isActive = false;
             boolean isEnabled = false;
-            String latestEntryDate = "Not Available";
+            Date latestEntryDate = new Date();
             int timesheetID = 0;
 
             for (Timesheet timesheet : timesheetList) {
@@ -549,7 +547,6 @@ public class TimesheetRest {
                 entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
                 entry.getInactiveEndDate(), entry.getTicketID(), programmingPartnerName);
 
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         boolean isActive = sheet.getIsActive();
 
         if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
@@ -561,13 +558,13 @@ public class TimesheetRest {
             sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
                     sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                     sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
-                    sheet.getReason(), sheet.getEcts(), df.format(entryService.getEntriesBySheet(sheet)[0].
-                            getBeginDate()), isActive, sheet.getIsEnabled(), isMTSheet);
+                    sheet.getReason(), sheet.getEcts(), entryService.getEntriesBySheet(sheet)[0].
+                            getBeginDate(), isActive, sheet.getIsEnabled(), isMTSheet);
         } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
             sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
                     sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                     sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
-                    sheet.getReason(), sheet.getEcts(), df.format(entry.getBeginDate()), isActive,
+                    sheet.getReason(), sheet.getEcts(), entry.getBeginDate(), isActive,
                     sheet.getIsEnabled(), isMTSheet);
         }
 
@@ -602,8 +599,6 @@ public class TimesheetRest {
 
         List<JsonTimesheetEntry> newEntries = new LinkedList<JsonTimesheetEntry>();
         List<String> errorMessages = new LinkedList<String>();
-
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         for (JsonTimesheetEntry entry : entries) {
             if (entry == null) {
@@ -640,14 +635,14 @@ public class TimesheetRest {
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                            df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), isActive,
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive,
                             sheet.getIsEnabled(), isMTSheet);
                 } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
                     sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                            df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), isActive,
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive,
                             sheet.getIsEnabled(), isMTSheet);
                 }
 
@@ -771,8 +766,6 @@ public class TimesheetRest {
         String programmingPartnerName = "";
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
         try {
             user = permissionService.checkIfUserExists(request);
             permissionService.checkPermission(request);
@@ -807,14 +800,14 @@ public class TimesheetRest {
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                        df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
+                        entryService.getEntriesBySheet(sheet)[0].getBeginDate(), sheet.getIsActive(),
                         sheet.getIsEnabled(), isMTSheet);
             } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
                 sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                        df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
+                        entryService.getEntriesBySheet(sheet)[0].getBeginDate(), sheet.getIsActive(),
                         sheet.getIsEnabled(), isMTSheet);
             }
 
@@ -831,8 +824,6 @@ public class TimesheetRest {
         ApplicationUser user;
         TimesheetEntry entry;
         Timesheet sheet;
-
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         user = permissionService.checkIfUserExists(request);
         entry = entryService.getEntryByID(entryID);
@@ -868,7 +859,7 @@ public class TimesheetRest {
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                        df.format(entryService.getEntriesBySheet(sheet)[0].getBeginDate()), sheet.getIsActive(),
+                        entryService.getEntriesBySheet(sheet)[0].getBeginDate(), sheet.getIsActive(),
                         sheet.getIsEnabled(), isMTSheet);
             }
         } else {
@@ -876,7 +867,7 @@ public class TimesheetRest {
                             getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                     sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                     sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                    "Not Available", sheet.getIsActive(), sheet.getIsEnabled(), isMTSheet);
+                    new Date(), sheet.getIsActive(), sheet.getIsEnabled(), isMTSheet);
         }
         return Response.ok().build();
     }

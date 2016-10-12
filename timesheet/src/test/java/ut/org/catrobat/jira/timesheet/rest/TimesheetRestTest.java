@@ -702,7 +702,7 @@ public class TimesheetRestTest {
         int timesheetID = 1;
         String userKey = "USER_KEY";
         Boolean isMTSheet = false;
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(1, "Mobile Computing", "", 5.0, "2016-04-09", 50, 50, 150, 50,
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(1, "Mobile Computing", "", 5.0, new Date(), 50, 50, 150, 50,
                 0, true, false, false, false, true, false);
 
         Date begin = new Date();
@@ -732,7 +732,7 @@ public class TimesheetRestTest {
 
     @Test
     public void testPostTimesheetEnableStatesOk() throws Exception {
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(1, "Mobile Computing", "", 5.0, "2016-04-09", 50, 50, 150, 50,
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(1, "Mobile Computing", "", 5.0, new Date(), 50, 50, 150, 50,
                 0, true, false, false, false, true, false);
 
         JsonTimesheet[] jsonTimesheets = {jsonTimesheet};

@@ -15,10 +15,13 @@
  */
 package org.catrobat.jira.timesheet.rest.json;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
 @SuppressWarnings("unused")
 @XmlRootElement
@@ -34,7 +37,8 @@ public final class JsonTimesheet {
     @XmlElement
     private double ects;
     @XmlElement
-    private String latestEntryDate;
+    @JsonDeserialize(using=DateAndTimeDeserialize.class)
+    private Date latestEntryDate;
     @XmlElement
     private int targetHourPractice;
     @XmlElement
@@ -59,7 +63,7 @@ public final class JsonTimesheet {
     @XmlElement
     private boolean isMTSheet;
 
-    public JsonTimesheet(int timesheetID, String lectures, String reason, double ects, String latestEntryDate, int targetHourPractice,
+    public JsonTimesheet(int timesheetID, String lectures, String reason, double ects, Date latestEntryDate, int targetHourPractice,
             int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
             boolean isAutoInactive, boolean isOffline, boolean isAutoOffline, boolean isEnabled, boolean isMTSheet) {
         this.timesheetID = timesheetID;
@@ -115,11 +119,11 @@ public final class JsonTimesheet {
         this.ects = ects;
     }
 
-    public String getLatestEntryDate() {
+    public Date getLatestEntryDate() {
         return latestEntryDate;
     }
 
-    public void setLatestEntryDate(String latestEntryDate) {
+    public void setLatestEntryDate(Date latestEntryDate) {
         this.latestEntryDate = latestEntryDate;
     }
 

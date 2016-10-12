@@ -32,8 +32,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -188,13 +186,7 @@ public class SchedulingRest {
                 timesheet.setIsActive(false);
                 timesheet.setIsAutoInactive(true);
                 timesheet.save();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                Date begin = new Date();
-                try {
-                    begin = sdf.parse(timesheet.getLatestEntryDate());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                Date begin = timesheet.getLatestEntryDate();
                 Date end = new Date();
 
                 Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());

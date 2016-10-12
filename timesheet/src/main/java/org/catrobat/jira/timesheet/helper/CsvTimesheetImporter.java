@@ -84,7 +84,6 @@ public class CsvTimesheetImporter {
                         columns[9],                     //lectures
                         columns[7],                     //admin reason
                         Double.parseDouble(columns[8]), //ects
-                        "Not Available",                //latest entry date
                         true,                           //isActice
                         true,                           //isEnabled
                         false                           //isMTSheet

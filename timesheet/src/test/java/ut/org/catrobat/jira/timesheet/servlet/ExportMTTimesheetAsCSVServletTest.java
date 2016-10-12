@@ -25,6 +25,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Date;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -82,7 +84,7 @@ public class ExportMTTimesheetAsCSVServletTest {
         when(timesheet.getTargetHours()).thenReturn(300);
         when(timesheet.getTargetHoursCompleted()).thenReturn(150);
         when(timesheet.getEcts()).thenReturn(10.0);
-        when(timesheet.getLatestEntryDate()).thenReturn(new DateTime().toString());
+        when(timesheet.getLatestEntryDate()).thenReturn(new Date());
         when(timesheet.getLectures()).thenReturn("Mobile Computing");
         when(timesheet.getIsActive()).thenReturn(true);
         when(timesheet.getIsEnabled()).thenReturn(true);

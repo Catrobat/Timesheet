@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -30,7 +31,7 @@ public class TimesheetServiceImplTest {
     final int targetHoursCompleted = 150;
     final int targetHoursRemoved = 0;
     final double ects = 10.0;
-    final String latestEntryDate = "2016-04-09";
+    final Date latestEntryDate = new Date();
     final String lectures = "Mobile Applications (705.881)";
     final String reason = "Agathe Bauer";
     private EntityManager entityManager;
@@ -48,7 +49,7 @@ public class TimesheetServiceImplTest {
     public void testAdd() throws Exception {
         //Act
         service.add(userKey, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted,
-                targetHoursRemoved, lectures, reason, ects, latestEntryDate, true, true, false);
+                targetHoursRemoved, lectures, reason, ects, true, true, false);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         //Assert
@@ -60,7 +61,7 @@ public class TimesheetServiceImplTest {
         assertEquals(targetHoursCompleted, timesheet[0].getTargetHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
         assertEquals(ects, timesheet[0].getEcts(), 0.0);
-        assertEquals(latestEntryDate, "2016-04-09");
+        assertTrue(latestEntryDate.getTime() - timesheet[0].getLatestEntryDate().getTime() < 1000);
         assertEquals(true, timesheet[0].getIsActive());
         assertEquals(true, timesheet[0].getIsEnabled());
     }
