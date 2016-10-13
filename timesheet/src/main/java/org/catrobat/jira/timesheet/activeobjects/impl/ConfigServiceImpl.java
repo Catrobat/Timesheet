@@ -116,14 +116,7 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
         for (String categoryName : categoryList) {
-            Category[] categoryArray = ao.find(Category.class, Query.select().where("upper(\"NAME\") = upper(?)", categoryName));
-            Category category;
-            if (categoryArray.length == 0) {
-                category = ao.create(Category.class);
-            } else {
-                category = categoryArray[0];
-            }
-
+            Category category = cs.getCategoryByName(categoryName);
             CategoryToTeam mapper = ao.create(CategoryToTeam.class);
             mapper.setTeam(team);
             mapper.setCategory(category);
@@ -139,14 +132,7 @@ public class ConfigServiceImpl implements ConfigService {
         Set<CategoryToTeam> addedRelations = new HashSet<CategoryToTeam>();
 
         for (String categoryName : categoryList) {
-            Category[] categoryArray = ao.find(Category.class, Query.select().where("upper(\"NAME\") = upper(?)", categoryName));
-
-            Category category;
-            if (categoryArray.length == 0) {
-                category = ao.create(Category.class);
-            } else {
-                category = categoryArray[0];
-            }
+            Category category = cs.getCategoryByName(categoryName);
             category.setName(categoryName);
             category.save();
 
@@ -354,17 +340,14 @@ public class ConfigServiceImpl implements ConfigService {
             return null;
         }
 
-        Category[] tempCategoryArray = ao.find(Category.class, "NAME = ?", oldCategoryName);
-        if (tempCategoryArray.length == 0) {
-            return null;
-        }
-        Category category = tempCategoryArray[0];
-
-        tempCategoryArray = ao.find(Category.class, "NAME = ?", newCategoryName);
-        if (tempCategoryArray.length != 0) {
+        if (cs.getCategoryByName(newCategoryName) != null) {
             return null;
         }
 
+        Category category = cs.getCategoryByName(oldCategoryName);
+        if (category == null) {
+            return null;
+        }
         category.setName(newCategoryName);
         category.save();
 

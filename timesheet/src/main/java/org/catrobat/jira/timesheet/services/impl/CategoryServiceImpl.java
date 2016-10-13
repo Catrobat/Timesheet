@@ -28,6 +28,8 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class CategoryServiceImpl implements CategoryService {
 
+    private final String INACTIVE = "Inactive";
+
     private final ActiveObjects ao;
 
     public CategoryServiceImpl(ActiveObjects ao) {
@@ -43,13 +45,26 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryByName(String name) {
+        if (name.equals(this.INACTIVE)) {
+            createInactiveIfNotExistent();
+        }
         Category[] found = ao.find(Category.class, "NAME = ?", name);
         return (found.length == 1) ? found[0] : null;
     }
 
     @Override
     public List<Category> all() {
+        createInactiveIfNotExistent();
         return newArrayList(ao.find(Category.class, Query.select().order("NAME ASC")));
+    }
+
+    private void createInactiveIfNotExistent() {
+        Category[] found = ao.find(Category.class, "NAME = ?", this.INACTIVE);
+        if (found.length == 0) {
+            Category category = ao.create(Category.class);
+            category.setName(this.INACTIVE);
+            category.save();
+        }
     }
 
     @Override
@@ -67,6 +82,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public boolean removeCategory(String name) throws ServiceException {
+        if (name.equals(this.INACTIVE)) {
+            throw new ServiceException("This is a special category that cannot be deleted");
+        }
+
         Category[] found = ao.find(Category.class, "NAME = ?", name);
 
         if (found.length > 1) {
