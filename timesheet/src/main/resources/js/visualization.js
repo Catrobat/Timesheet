@@ -75,12 +75,14 @@ function fetchTeamVisData() {
         });
 }
 
+
 function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
     var timesheetData = timesheetReply[0];
 
     timesheetData.entries = entriesReply[0];
     timesheetData.categories = [];
     timesheetData.teams = [];
+    timesheetData.categoryNames = [];
 
     categoriesReply[0].map(function (category) {
         timesheetData.categories[category.categoryID] = {
@@ -88,15 +90,36 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
         };
     });
 
+    console.log(timesheetData.categories);
+
+    categoriesReply[0].forEach(function (category) {
+        timesheetData.categoryNames[category.categoryName] = category.categorySelect;
+    });
+
+    console.log("------------------");
+
+    timesheetData.categories.forEach(function (value, index) {
+        console.log(value, index);
+    });
+    /*
+     for (var category in timesheetData.categories) {
+     if (categoriesReply.hasOwnProperty(category)) {
+     }
+     console.log("catReplays:", category);
+     }
+     */
+
     teamsReply[0].map(function (team) {
         timesheetData.teams[team.teamID] = {
             teamName: team.teamName,
-            teamCategories: team.teamCategories
+            teamCategories: team.categoryIDs
         };
     });
 
+    console.log("this is called every time!");
     return timesheetData;
 }
+
 
 function populateVisTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];

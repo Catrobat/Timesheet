@@ -37,7 +37,7 @@ AJS.toInit(function () {
         AJS.$("#user-body").empty();
         for (var i = 0; i < users.length; i++) {
 
-            //check if user has timesheet
+            //check if user has a timesheet
             if (!timesheet[i]) {
                 continue;
             }

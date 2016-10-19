@@ -295,11 +295,12 @@ public class TimesheetRestTest {
     public void testGetAllTeamsOk() throws Exception {
 
         Category[] categories = {categoryMock};
-        int[] categoryIDs = {1};
+        List categoryIDs = new ArrayList();
+        categoryIDs.add(1);
 
         List<JsonTeam> expectedTeams = new LinkedList<JsonTeam>();
         expectedTeams.add(new JsonTeam(1, "Catroid", categoryIDs));
-        expectedTeams.add(new JsonTeam(2, "IRC", new int[0]));
+        expectedTeams.add(new JsonTeam(2, "IRC", new ArrayList<Integer>()));
 
         Team team1 = Mockito.mock(Team.class);
         Mockito.when(team1.getID()).thenReturn(1);

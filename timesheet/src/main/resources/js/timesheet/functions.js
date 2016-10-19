@@ -22,10 +22,11 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
         };
     });
 
+    teamsReply[0].sort();
     teamsReply[0].map(function (team) {
         timesheetData.teams[team.teamID] = {
             teamName: team.teamName,
-            teamCategories: team.teamCategories
+            teamCategories: team.categoryIDs
         };
     });
 

@@ -34,10 +34,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Path("/config")
 @Produces({MediaType.APPLICATION_JSON})
@@ -48,7 +45,7 @@ public class ConfigResourceRest {
     private final PermissionService permissionService;
 
     public ConfigResourceRest(final ConfigService configService, final TeamService teamService,
-                              final CategoryService categoryService, final PermissionService permissionService) {
+            final CategoryService categoryService, final PermissionService permissionService) {
         this.configService = configService;
         this.teamService = teamService;
         this.categoryService = categoryService;
@@ -64,7 +61,10 @@ public class ConfigResourceRest {
 
         List<JsonCategory> categories = new LinkedList<JsonCategory>();
 
-        for (Category category : categoryService.all()) {
+        List<Category> categoryList = categoryService.all();
+        Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+
+        for (Category category : categoryList) {
             categories.add(new JsonCategory(category.getID(), category.getName()));
         }
 
@@ -80,11 +80,14 @@ public class ConfigResourceRest {
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
 
-        for (Team team : teamService.all()) {
+        List<Team> teamList = teamService.all();
+        Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
+
+        for (Team team : teamList) {
             Category[] categories = team.getCategories();
-            int[] categoryIDs = new int[categories.length];
+            List<Integer> categoryIDs = new ArrayList<>();
             for (int i = 0; i < categories.length; i++) {
-                categoryIDs[i] = categories[i].getID();
+                categoryIDs.add(categories[i].getID());
             }
             teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
         }
@@ -148,7 +151,7 @@ public class ConfigResourceRest {
                 configService.addApprovedGroup(approvedGroupName);
                 // add all users in group
                 Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
-                for(ApplicationUser user : usersInGroup){
+                for (ApplicationUser user : usersInGroup) {
                     configService.addApprovedUser(user);
                 }
 

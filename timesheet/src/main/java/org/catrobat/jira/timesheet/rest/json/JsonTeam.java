@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -38,7 +37,7 @@ public class JsonTeam {
     @XmlElement
     private String teamName;
     @XmlElement
-    private int[] teamCategories;
+    private List<Integer> categoryIDs;
     @XmlElement
     private List<String> teamCategoryNames;
     @XmlElement
@@ -50,10 +49,10 @@ public class JsonTeam {
 
     }
 
-    public JsonTeam(int teamID, String teamName, int[] teamCategories) {
+    public JsonTeam(int teamID, String teamName, List<Integer> categoryIDs) {
         this.teamID = teamID;
         this.teamName = teamName;
-        this.teamCategories = teamCategories;
+        this.categoryIDs = categoryIDs;
     }
 
     public JsonTeam(String name) {
@@ -130,7 +129,7 @@ public class JsonTeam {
         if ((this.teamName == null) ? (other.teamName != null) : !this.teamName.equals(other.teamName)) {
             return false;
         }
-        if (!Arrays.equals(this.teamCategories, other.teamCategories)) {
+        if (!categoryIDs.equals(other.categoryIDs)) {
             return false;
         }
         return true;
@@ -143,7 +142,7 @@ public class JsonTeam {
                 ", teamName='" + teamName + '\'' +
                 ", coordinatorGroups ='" + coordinatorGroups + '\'' +
                 ", developerGroups ='" + developerGroups + '\'' +
-                ", teamCategories=" + Arrays.toString(teamCategories) +
+                ", categoryIDs='" + categoryIDs + '\'' +
                 '}';
     }
 }

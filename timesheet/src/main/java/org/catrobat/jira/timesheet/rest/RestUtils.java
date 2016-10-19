@@ -3,10 +3,9 @@ package org.catrobat.jira.timesheet.rest;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class RestUtils {
 
@@ -61,5 +60,11 @@ public class RestUtils {
         System.out.println("-------------------------------------------------------------------------");
         System.out.println("userByName.getKey()          = " + userByName.getKey());
         System.out.println("########################################################################");
+    }
+
+    public static List<Team> asSortedList(Collection<Team> c) {
+        List<Team> list = new ArrayList<>(c);
+        Collections.sort(list,((o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName())));
+        return list;
     }
 }

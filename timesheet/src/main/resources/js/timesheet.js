@@ -145,6 +145,7 @@ function fetchUserTimesheetData(timesheetID) {
         });
 }
 
+
 function fetchUserVisData(timesheetID) {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
@@ -180,6 +181,7 @@ function fetchUserVisData(timesheetID) {
             console.log(error);
         });
 }
+
 
 function getDataOfTeam(teamName) {
     var teamData = AJS.$.ajax({

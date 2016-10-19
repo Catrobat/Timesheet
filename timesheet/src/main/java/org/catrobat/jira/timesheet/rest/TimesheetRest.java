@@ -58,7 +58,7 @@ public class TimesheetRest {
     private final ConfigService configService;
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
-                         final TeamService ts, PermissionService ps, final ConfigService ahcs) {
+            final TeamService ts, PermissionService ps, final ConfigService ahcs) {
         this.teamService = ts;
         this.entryService = es;
         this.sheetService = ss;
@@ -115,13 +115,15 @@ public class TimesheetRest {
         }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
-        String userName = user.getUsername();
 
-        for (Team team : teamService.getTeamsOfUser(userName)) {
+        Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
+        List<Team> sortedTeamsOfUsersList = RestUtils.asSortedList(teamsOfUser);
+
+        for (Team team : sortedTeamsOfUsersList) {
             Category[] categories = team.getCategories();
-            int[] categoryIDs = new int[categories.length];
+            List<Integer> categoryIDs = new ArrayList<>();
             for (int i = 0; i < categories.length; i++) {
-                categoryIDs[i] = categories[i].getID();
+                categoryIDs.add(categories[i].getID());
             }
             teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
         }
@@ -143,11 +145,14 @@ public class TimesheetRest {
         String userKey = sheetService.getTimesheetByID(timesheetID).getUserKey();
         ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
 
-        for (Team team : teamService.getTeamsOfUser(user.getName())) {
+        Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
+        List<Team> sortedTeamsOfUsersList = RestUtils.asSortedList(teamsOfUser);
+
+        for (Team team : sortedTeamsOfUsersList) {
             Category[] categories = team.getCategories();
-            int[] categoryIDs = new int[categories.length];
+            List<Integer> categoryIDs = new ArrayList<>();
             for (int i = 0; i < categories.length; i++) {
-                categoryIDs[i] = categories[i].getID();
+                categoryIDs.add(categories[i].getID());
             }
             teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
         }
@@ -164,8 +169,10 @@ public class TimesheetRest {
         }
 
         List<JsonCategory> categories = new LinkedList<JsonCategory>();
+        List<Category> categoryList = categoryService.all();
+        Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
 
-        for (Category category : categoryService.all()) {
+        for (Category category : categoryList) {
             categories.add(new JsonCategory(category.getID(), category.getName()));
         }
 
@@ -191,12 +198,16 @@ public class TimesheetRest {
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
 
-        for (Team team : teamService.all()) {
-            int[] teamCategoryIDs = new int[team.getCategories().length];
-            for (int i = 0; i < team.getCategories().length; i++) {
-                teamCategoryIDs[i] = team.getCategories()[i].getID();
+        List<Team> teamList = teamService.all();
+        Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
+
+        for (Team team : teamList) {
+            Category[] categories = team.getCategories();
+            List<Integer> categoryIDs = new ArrayList<>();
+            for (int i = 0; i < categories.length; i++) {
+                categoryIDs.add(categories[i].getID());
             }
-            teams.add(new JsonTeam(team.getID(), team.getTeamName(), teamCategoryIDs));
+            teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
         }
 
         return Response.ok(teams).build();

@@ -464,9 +464,8 @@ function prepareForm(entry, timesheetData) {
         width: 'resolve',
     })
 
-
     var baseUrl = AJS.params.baseURL; // we have to reassign it otherwise it would be undefined
-    var queryString = "/rest/api/2/project?recent=20 ";
+    var queryString = "/rest/api/2/project?recent=20";
     var projectKeys = [];
 
     AJS.$.ajax({
