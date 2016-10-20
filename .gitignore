@@ -1,21 +1,6 @@
 .idea/
 .clover/
-bin/
-conf/
-confluence/
-lib/
-licenses/
-logs/
-temp/
-webapps/
-work/
-LICENSE
-NOTICE
-README.html
-README.txt
-RELEASE-NOTES
-RUNNING.txt
-timesheet/.idea/
-timesheet/target/
-timesheet/timesheet.iml
-timesheet/saved database/
+.target/
+*.iml
+saved database/
+target/
