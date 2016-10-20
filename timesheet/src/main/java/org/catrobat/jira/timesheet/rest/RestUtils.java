@@ -3,7 +3,9 @@ package org.catrobat.jira.timesheet.rest;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
+import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
+import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 
 import java.util.*;
 
@@ -18,20 +20,9 @@ public class RestUtils {
     }
 
     public TreeSet<ApplicationUser> getSortedUsers(Set<ApplicationUser> allUsers) {
-
-        Comparator<ApplicationUser> userComparator = new Comparator<ApplicationUser>() {
-
-            @Override
-            public int compare(ApplicationUser o1, ApplicationUser o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        };
-
-        TreeSet<ApplicationUser> users = new TreeSet<ApplicationUser>(userComparator);
-
-        for (ApplicationUser user : allUsers) {
-            users.add(user);
-        }
+        Comparator<ApplicationUser> userComparator = (o1, o2) -> o1.getName().compareTo(o2.getName());
+        TreeSet<ApplicationUser> users = new TreeSet<>(userComparator);
+        users.addAll(allUsers);
         return users;
     }
 
@@ -39,7 +30,6 @@ public class RestUtils {
         for (User user : allUsers) {
             System.out.println(user.getName());
         }
-
     }
 
     public void printUserInformation(String approvedUserName, ApplicationUser user) {
@@ -64,7 +54,18 @@ public class RestUtils {
 
     public static List<Team> asSortedList(Collection<Team> c) {
         List<Team> list = new ArrayList<>(c);
-        Collections.sort(list,((o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName())));
+        Collections.sort(list, ((o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName())));
         return list;
+    }
+
+    public static void convertTeamsToJSON(List<JsonTeam> teams, List<Team> sortedTeamsOfUsersList) {
+        for (Team team : sortedTeamsOfUsersList) {
+            Category[] categories = team.getCategories();
+            List<Integer> categoryIDs = new ArrayList<>();
+            for (int i = 0; i < categories.length; i++) {
+                categoryIDs.add(categories[i].getID());
+            }
+            teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
+        }
     }
 }

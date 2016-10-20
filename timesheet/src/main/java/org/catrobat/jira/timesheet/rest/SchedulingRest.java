@@ -67,7 +67,7 @@ public class SchedulingRest {
         }
 
         List<Timesheet> timesheetList = sheetService.all();
-        Set<ApplicationUser> userList = ComponentAccessor.getUserManager().getAllUsers(); //Todo: use new methods
+        Set<ApplicationUser> userList = ComponentAccessor.getUserManager().getAllUsers();
         Config config = configService.getConfiguration();
 
         for (ApplicationUser user : userList) {

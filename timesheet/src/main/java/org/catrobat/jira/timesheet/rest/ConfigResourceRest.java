@@ -36,6 +36,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
+import static org.catrobat.jira.timesheet.rest.RestUtils.convertTeamsToJSON;
+
 @Path("/config")
 @Produces({MediaType.APPLICATION_JSON})
 public class ConfigResourceRest {
@@ -82,15 +84,7 @@ public class ConfigResourceRest {
 
         List<Team> teamList = teamService.all();
         Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
-
-        for (Team team : teamList) {
-            Category[] categories = team.getCategories();
-            List<Integer> categoryIDs = new ArrayList<>();
-            for (int i = 0; i < categories.length; i++) {
-                categoryIDs.add(categories[i].getID());
-            }
-            teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
-        }
+        convertTeamsToJSON(teams,teamList);
 
         return Response.ok(teams).build();
     }

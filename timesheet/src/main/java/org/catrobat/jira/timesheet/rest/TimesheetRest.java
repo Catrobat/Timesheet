@@ -45,6 +45,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
+import static org.catrobat.jira.timesheet.rest.RestUtils.asSortedList;
+import static org.catrobat.jira.timesheet.rest.RestUtils.convertTeamsToJSON;
+
 
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON})
@@ -107,7 +110,7 @@ public class TimesheetRest {
     @Path("teams")
     public Response getTeamsForUser(@Context HttpServletRequest request) throws ServiceException {
 
-        ApplicationUser user = null;
+        ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists(request);
         } catch (ServiceException e) {
@@ -117,16 +120,8 @@ public class TimesheetRest {
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
 
         Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
-        List<Team> sortedTeamsOfUsersList = RestUtils.asSortedList(teamsOfUser);
-
-        for (Team team : sortedTeamsOfUsersList) {
-            Category[] categories = team.getCategories();
-            List<Integer> categoryIDs = new ArrayList<>();
-            for (int i = 0; i < categories.length; i++) {
-                categoryIDs.add(categories[i].getID());
-            }
-            teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
-        }
+        List<Team> sortedTeamsOfUsersList = asSortedList(teamsOfUser);
+        convertTeamsToJSON(teams, sortedTeamsOfUsersList);
 
         return Response.ok(teams).build();
     }
@@ -146,16 +141,8 @@ public class TimesheetRest {
         ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
 
         Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
-        List<Team> sortedTeamsOfUsersList = RestUtils.asSortedList(teamsOfUser);
-
-        for (Team team : sortedTeamsOfUsersList) {
-            Category[] categories = team.getCategories();
-            List<Integer> categoryIDs = new ArrayList<>();
-            for (int i = 0; i < categories.length; i++) {
-                categoryIDs.add(categories[i].getID());
-            }
-            teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
-        }
+        List<Team> sortedTeamsOfUsersList = asSortedList(teamsOfUser);
+        convertTeamsToJSON(teams, sortedTeamsOfUsersList);
 
         return Response.ok(teams).build();
     }
@@ -200,15 +187,7 @@ public class TimesheetRest {
 
         List<Team> teamList = teamService.all();
         Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
-
-        for (Team team : teamList) {
-            Category[] categories = team.getCategories();
-            List<Integer> categoryIDs = new ArrayList<>();
-            for (int i = 0; i < categories.length; i++) {
-                categoryIDs.add(categories[i].getID());
-            }
-            teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
-        }
+        convertTeamsToJSON(teams, teamList);
 
         return Response.ok(teams).build();
     }

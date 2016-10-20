@@ -100,7 +100,7 @@ function populateTable(timesheetDataReply) {
     timesheetTable.empty();
 
     timesheetTable.append(Jira.Templates.Timesheet.timesheetHeader(
-        {teams: timesheetData.teams}
+        {teams: timesheetData.teams.sort(compareNames)}
     ));
 
     var actualDate = new Date();
@@ -571,9 +571,9 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
     if (selectedTeam == null || selectedTeam.teamCategories == null) {
         return;
     }
-    var categoryPerTeam = filterCategoriesPerTeam(selectedTeam, timesheetData.categories);
+    var categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categories);
 
-    categorySelect.auiSelect2({data: categoryPerTeam});
+    categorySelect.auiSelect2({data: categoriesPerTeam});
 
     var selectedCategoryID = (entry.categoryID === undefined || selectedTeamID != entry.teamID)
         ? selectedTeam.teamCategories[0]

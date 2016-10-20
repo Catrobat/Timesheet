@@ -20,22 +20,14 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.webfragment.conditions.AbstractPermissionCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.PermissionManager;
-import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 
 import java.util.Map;
 
 public class MasterThesisTimesheetPermissionCondition extends AbstractPermissionCondition {
 
-    private final ConfigService configurationService;
-    private final GroupManager groupManager;
-
-    public MasterThesisTimesheetPermissionCondition(PermissionManager permissionManager, ConfigService configurationService,
-                                                    GroupManager groupManager) {
+    public MasterThesisTimesheetPermissionCondition(PermissionManager permissionManager) {
         super(permissionManager);
-        this.configurationService = configurationService;
-        this.groupManager = groupManager;
     }
 
 

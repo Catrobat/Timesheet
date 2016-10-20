@@ -160,7 +160,7 @@ public class SchedulingRestTest {
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
         Set<ApplicationUser> userSet = new HashSet<>(Arrays.asList(user1, user2));
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(userSet); //todo: use new method
+        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(userSet);
 
         when(user1.getName()).thenReturn("MarkusHobisch");
         when(user2.getName()).thenReturn("AdrianSchnedlitz");

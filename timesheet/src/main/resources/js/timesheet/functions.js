@@ -51,13 +51,14 @@ function hideVisualizationTabs() {
     document.getElementById("tabs-team").style.display = "none";
 }
 
-function filterCategoriesPerTeam(selectedTeam, categories) {
+function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
     var categoriesPerTeam = [];
     selectedTeam.teamCategories.map(function (categoryID) {
         categoriesPerTeam.push(
             {id: categoryID, text: categories[categoryID].categoryName}
         );
     });
+    categoriesPerTeam.sort(compareNames);
     return categoriesPerTeam;
 }
 
@@ -315,4 +316,12 @@ function isDateMoreThanTwoMonthsAhead(inactiveDate) {
         return true;
     }
     return false;
+}
+
+function compareNames(a,b) {
+    if (a.text < b.text)
+        return -1;
+    if (a.text > b.text)
+        return 1;
+    return 0;
 }
