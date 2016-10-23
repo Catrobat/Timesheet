@@ -1,5 +1,8 @@
 "use strict";
 
+//global field
+var timesheetEntry;
+
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
 
@@ -104,13 +107,16 @@ function populateTable(timesheetDataReply) {
     ));
 
     var actualDate = new Date();
+    var minutes = (actualDate.getMinutes() < 10 ? '0' : '') + actualDate.getMinutes();
+    var hours = (actualDate.getHours() < 10 ? '0' : '') + actualDate.getHours();
 
     var emptyEntry = {
         entryID: "new-id",
         date: toDateString(actualDate),
-        begin: actualDate.getHours() + ":" + actualDate.getMinutes(),
-        end: (actualDate.getHours() + 1) + ":" + actualDate.getMinutes(),
+        begin: hours + ":" + minutes,
+        end: (parseInt(hours) + 1) + ":" + minutes,
         inactiveEndDate: "",
+        deactivateEndDate: "",
         pause: "00:00",
         description: "",
         duration: "",
@@ -184,10 +190,10 @@ function editEntryCallback(entry, timesheetData, form) {
 }
 
 /**
- * Handles saving an entry
+ * Handles saving an timesheetEntry
  * @param {Object} timesheetData
  * @param {Object} saveOptions
- *           callback   : Function(entry, timesheetData, form)
+ *           callback   : Function(timesheetEntry, timesheetData, form)
  *           ajaxUrl    : String
  *           httpMethod : String
  * @param {jQuery} form
@@ -195,8 +201,6 @@ function editEntryCallback(entry, timesheetData, form) {
  */
 function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
                           existingIsGoogleDocImportValue) {
-    form.saveButton.prop('disabled', true);
-
     var date = form.dateField.val();
     var validDateFormat = new Date(date);
 
@@ -222,34 +226,36 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     var endDate = new Date(date + " " + toTimeString(endTime));
     var pauseMin = pauseTime.getHours() * 60 + pauseTime.getMinutes();
 
-    var inactiveDate = form.inactiveEndDateField.val();
-    var validInactiveDateFormat = new Date(inactiveDate);
+    var inactiveEndDate = form.inactiveEndDateField.val();
+    var validInactiveDateFormat = new Date(inactiveEndDate);
 
-    if (isDateMoreThanTwoMonthsAhead(inactiveDate)) {
-        AJS.$('input.inactive').val("");
-        AJS.messages.error({
-            title: 'The inactive end date is too far away.',
-            body: '<p>Your inactive end date is too far away in the future. Please take a shorter period of time!</p>'
-        });
-        return;
-    }
+    var deactivateEndDate = form.deactivateEndDateField.val();
+    var validDeactivateDateFormat = new Date(deactivateEndDate);
 
-    var inactiveEndDate;
-    if ((inactiveDate == "") || (!isValidDate(validInactiveDateFormat))) {
+    if ((inactiveEndDate == "") || (!isValidDate(validInactiveDateFormat))) {
         inactiveEndDate = beginDate;
     }
     else {
-        inactiveDate = inactiveDate.replace(/-/g, "/");
-        inactiveEndDate = new Date(inactiveDate + " " + toTimeString(beginTime));
+        inactiveEndDate = inactiveEndDate.replace(/-/g, "/");
+        inactiveEndDate = new Date(inactiveEndDate + " " + toTimeString(beginTime));
     }
 
-    //change entry to 0min duration for inactive entry
-    if (getselectedCategoryName(form.categorySelect.val(), timesheetData) === "Inactive") {
+    if ((deactivateEndDate == "") || (!isValidDate(validDeactivateDateFormat))) {
+        deactivateEndDate = beginDate;
+    }
+    else {
+        deactivateEndDate = deactivateEndDate.replace(/-/g, "/");
+        deactivateEndDate = new Date(deactivateEndDate + " " + toTimeString(beginTime));
+    }
+
+    //change timesheetEntry to 0min duration for inactive timesheetEntry
+    //TODO: duration, begin and enddate should be set to default values and should be hidden
+    if (getNameFromCategoryIndex(form.categorySelect.val(), timesheetData) === "Inactive") {
         endDate = beginDate;
     }
 
     if (inactiveEndDate.getDay() == beginDate.getDay() &&
-        form.categorySelect.val() == getIndexOfCategoryOption("inactive", timesheetData)) {
+        form.categorySelect.val() == getIndexFromCategoryName("inactive", timesheetData)) {
 
         require('aui/flag')({
             type: 'info',
@@ -258,30 +264,32 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
         });
     }
 
-    var entry = {
+    timesheetEntry = {
         beginDate: beginDate,
         endDate: endDate,
         inactiveEndDate: inactiveEndDate,
-        description: form.descriptionField.val(),
+        deactivateEndDate: deactivateEndDate,
+        description: AJS.$("input.description").val(),
         pauseMinutes: pauseMin,
-        teamID: form.teamSelect.val(),
-        categoryID: form.categorySelect.val(),
+        teamID: AJS.$("select.team").val(),
+        categoryID: AJS.$("span.category").val(),
         isGoogleDocImport: existingIsGoogleDocImportValue,
-        partner: form.partnerSelect.val(),
-        ticketID: form.ticketSelect.val()
+        partner: AJS.$("span.partner").val(),
+        ticketID: AJS.$("input.ticket").val()
     };
 
     if (existingEntryID !== "new-id") {
-        entry.entryID = existingEntryID;
+        timesheetEntry.entryID = existingEntryID;
     }
 
     form.loadingSpinner.show();
+    form.saveButton.prop('disabled', true);
 
     AJS.$.ajax({
         type: saveOptions.httpMethod,
         url: saveOptions.ajaxUrl,
         contentType: "application/json",
-        data: JSON.stringify(entry) //causes error in FIREFOX
+        data: JSON.stringify(timesheetEntry) //causes error in FIREFOX
     })
         .then(function (entryData) {
             var augmentedEntry = augmentEntry(timesheetData, entryData);
@@ -344,6 +352,7 @@ function prepareForm(entry, timesheetData) {
         saveButton: row.find('button.save'),
         dateField: row.find('input.date'),
         inactiveEndDateField: row.find('input.inactive'),
+        deactivateEndDateField: row.find('input.deactivate'),
         beginTimeField: row.find('input.time.start'),
         endTimeField: row.find('input.time.end'),
         pauseTimeField: row.find('input.time.pause'),
@@ -366,10 +375,16 @@ function prepareForm(entry, timesheetData) {
             {overrideBrowserDefault: true, languageCode: 'en'}
         );
 
-    form.inactiveEndDateField.change(function () {
-        form.descriptionField.val("Inactive, because "); // you can also write AJS.$("input.description").val("hello boy");
+    form.deactivateEndDateField
+        .datePicker(
+            {overrideBrowserDefault: true, languageCode: 'en'}
+        );
 
-        var index = getIndexOfCategoryOption("inactive", timesheetData);
+    form.inactiveEndDateField.change(function () {
+        // you can also write AJS.$("input.description").val("hello boy");
+        AJS.$("input.description").attr("placeholder", "Reason for your inactivity");
+
+        var index = getIndexFromCategoryName("inactive", timesheetData);
         form.categorySelect.auiSelect2("val", index);
 
         //hide and delete input
@@ -384,21 +399,26 @@ function prepareForm(entry, timesheetData) {
          form.durationField.val("");*/
 
         AJS.$(".select2-choices").hide(); // hides the select2 boxes
-        form.pauseTimeField.val('00:00');
-        form.pauseTimeField.hide();
+        //form.pauseTimeField.val('00:00');
+        //form.pauseTimeField.hide();
     });
 
-    form.partnerSelect.change(function () {
-        var index = getIndexOfCategoryOption("Pair programming", timesheetData);
+    form.deactivateEndDateField.change(function () {
+        AJS.$("input.description").attr("placeholder", "Reason(s) for your deactivation");
+
+        var index = getIndexFromCategoryName("developing", timesheetData);
+        var index = getKeyByValue("developing");
         form.categorySelect.auiSelect2("val", index);
-    });
 
-    form.descriptionField.change(function () {
-        validation(form.descriptionField);
+        AJS.$(".select2-choices").hide(); // hides the select2 boxes
     });
 
     form.categorySelect.change(function () {
-        if (form.categorySelect.val() == getIndexOfCategoryOption("inactive", timesheetData)) {
+        var indexOfInactive = getIndexFromCategoryName("inactive", timesheetData);
+        var indexOfDeactivated = getIndexFromCategoryName("deactivated", timesheetData);
+        var categoryValue = form.categorySelect.val();
+
+        if (categoryValue == indexOfInactive || categoryValue == indexOfDeactivated) {
             /*form.beginTimeField.hide();
              form.endTimeField.hide();
              form.pauseTimeField.hide();
@@ -412,19 +432,32 @@ function prepareForm(entry, timesheetData) {
             form.ticketSelect.select2("val", "");
             form.partnerSelect.select2("val", "");
 
-            form.pauseTimeField.val('00:00');
-            form.pauseTimeField.hide();
+            // form.pauseTimeField.val('00:00');
+            // form.pauseTimeField.hide();
         }
         else {
+            AJS.$("input.description").attr("placeholder", "a short task description");
+
             /* form.beginTimeField.show();
              form.endTimeField.show();
              form.pauseTimeField.show();
              form.durationField.show();*/
 
             AJS.$(".select2-choices").show(); // shows the select2 boxes
-            form.inactiveEndDateField.val(""); // clear input
+            form.inactiveEndDateField.val(""); // clear inactive field input
+            form.deactivateEndDateField.val(""); // clear deactivated field input
             form.pauseTimeField.show();
+            form.durationField.show();
         }
+    });
+
+    form.partnerSelect.change(function () {
+        var index = getIndexFromCategoryName("Pair programming", timesheetData);
+        form.categorySelect.auiSelect2("val", index);
+    });
+
+    form.descriptionField.change(function () {
+        validation(form.descriptionField);
     });
 
     row.find('input.time.start, input.time.end')
@@ -527,11 +560,12 @@ function prepareForm(entry, timesheetData) {
 }
 
 //get index of option(=name) in category
-function getIndexOfCategoryOption(categoryName, timesheetData) {
+//@deprecated [use instead getKeyByValue(value)]
+function getIndexFromCategoryName(categoryName, timesheetData) {
     categoryName = categoryName.toLowerCase();
     var index = 1;
     while (true) {
-        if(!timesheetData.hasOwnProperty("<categoryName>")){
+        if (!timesheetData.hasOwnProperty("<categoryName>")) {
             break;
         }
         var name = timesheetData.categories[index].categoryName.toLowerCase();
@@ -713,6 +747,7 @@ function augmentEntry(timesheetData, entry) {
         categoryID: entry.categoryID,
         isGoogleDocImport: entry.isGoogleDocImport,
         inactiveEndDate: toDateString(new Date(entry.inactiveEndDate)),
+        deactivateEndDate: toDateString(new Date(entry.deactivateEndDate)),
         ticketID: entry.ticketID,
         partner: entry.partner
     };
@@ -739,6 +774,7 @@ function censoredAugmentEntry(timesheetData, entry) {
         categoryID: entry.categoryID,
         isGoogleDocImport: entry.isGoogleDocImport,
         inactiveEndDate: "",
+        deactivateEndDate: toDateString(new Date(entry.deactivateEndDate)),
         ticketID: entry.ticketID,
         partner: entry.partner
     };

@@ -48,6 +48,8 @@ public class TimesheetEntryServiceImplTest {
     private PermissionService permissionService;
     private ActiveObjects ao;
 
+    private static final Date TODAY = new Date();
+
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
@@ -69,10 +71,10 @@ public class TimesheetEntryServiceImplTest {
         boolean isGoogleDocImport = false;
         String jiraTicketID = "CAT-1530";
         String pairProgrammingUserName = "TestUser";
-        Date inactiveEndDate = new Date();
+        
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         TimesheetEntry[] entries = ao.find(TimesheetEntry.class);
 
@@ -101,10 +103,10 @@ public class TimesheetEntryServiceImplTest {
         boolean isGoogleDocImport = false;
         String jiraTicketID = "CAT-1530";
         String pairProgrammingUserName = "TestUser";
-        Date inactiveEndDate = new Date();
+        
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         TimesheetEntry[] entries = service.getEntriesBySheet(sheet);
 
@@ -133,17 +135,17 @@ public class TimesheetEntryServiceImplTest {
         boolean isGoogleDocImport = false;
         String jiraTicketID = "CAT-1530";
         String pairProgrammingUserName = "TestUser";
-        Date inactiveEndDate = new Date();
+        
 
         //Act
         TimesheetEntry newEntry = service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport,
-                inactiveEndDate, jiraTicketID, pairProgrammingUserName);
+                TODAY, TODAY, jiraTicketID, pairProgrammingUserName);
 
         String newDesc = "Changed Entry Content";
         int newPause = 30;
 
         TimesheetEntry changedEntry = service.edit(newEntry.getID(), sheet, begin, end, category,
-                newDesc, newPause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+                newDesc, newPause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName);
 
         //Assert
@@ -165,10 +167,10 @@ public class TimesheetEntryServiceImplTest {
         boolean isGoogleDocImport = false;
         String jiraTicketID = "CAT-1530";
         String pairProgrammingUserName = "TestUser";
-        Date inactiveEndDate = new Date();
+        
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         TimesheetEntry[] entriesBeforeDelete = ao.find(TimesheetEntry.class);
 
@@ -192,10 +194,10 @@ public class TimesheetEntryServiceImplTest {
         boolean isGoogleDocImport = false;
         String jiraTicketID = "CAT-1530";
         String pairProgrammingUserName = "TestUser";
-        Date inactiveEndDate = new Date();
+        
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         Assert.assertNotNull(service.getEntriesBySheet(sheet));
 
@@ -233,10 +235,9 @@ public class TimesheetEntryServiceImplTest {
         boolean isGoogleDocImport = false;
         String jiraTicketID = "CAT-1530";
         String pairProgrammingUserName = "TestUser";
-        Date inactiveEndDate = new Date();
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
         TimesheetEntry receivedEntry = service.getEntryByID(sheet.getID());

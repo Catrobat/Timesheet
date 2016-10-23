@@ -32,16 +32,20 @@ public final class JsonTimesheetEntry {
     private int entryID;
 
     @XmlElement
-    @JsonDeserialize(using=DateAndTimeDeserialize.class)
+    @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date beginDate;
 
     @XmlElement
-    @JsonDeserialize(using=DateAndTimeDeserialize.class)
+    @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date endDate;
 
     @XmlElement
-    @JsonDeserialize(using=DateAndTimeDeserialize.class)
+    @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date inactiveEndDate;
+
+    @XmlElement
+    @JsonDeserialize(using = DateAndTimeDeserialize.class)
+    private Date deactivateEndDate;
 
     @XmlElement
     private int pauseMinutes;
@@ -67,13 +71,14 @@ public final class JsonTimesheetEntry {
     public JsonTimesheetEntry() {
     }
 
-    public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, Date inactiveEndDate, int pauseMinutes,
-                              String description, int teamID, int categoryID, String ticketID, String partner,
-                              boolean isGoogleDocImport) {
+    public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, Date inactiveEndDate, Date deactivateEndDate, int pauseMinutes,
+            String description, int teamID, int categoryID, String ticketID, String partner,
+            boolean isGoogleDocImport) {
         this.entryID = entryID;
         this.beginDate = beginDate;
         this.endDate = endDate;
         this.inactiveEndDate = inactiveEndDate;
+        this.deactivateEndDate = deactivateEndDate;
         this.pauseMinutes = pauseMinutes;
         this.description = description;
         this.teamID = teamID;
@@ -147,6 +152,10 @@ public final class JsonTimesheetEntry {
         this.inactiveEndDate = inactiveEndDate;
     }
 
+    public Date getDeactivateEndDate() { return deactivateEndDate; }
+
+    public void setDeactivateEndDate(Date deactivateEndDate) { this.deactivateEndDate = deactivateEndDate; }
+
     public String getTicketID() {
         return ticketID;
     }
@@ -186,6 +195,7 @@ public final class JsonTimesheetEntry {
         if (!beginDate.equals(that.beginDate)) return false;
         if (!endDate.equals(that.endDate)) return false;
         if (!inactiveEndDate.equals(that.inactiveEndDate)) return false;
+        if (!deactivateEndDate.equals(that.deactivateEndDate)) return false;
         if (!partner.equals(that.partner)) return false;
         if (!ticketID.equals(that.ticketID)) return false;
 
@@ -204,6 +214,7 @@ public final class JsonTimesheetEntry {
         result = 31 * result + ticketID.hashCode();
         result = 31 * result + partner.hashCode();
         result = 31 * result + inactiveEndDate.hashCode();
+        result = 31 * result + deactivateEndDate.hashCode();
 
         return result;
     }

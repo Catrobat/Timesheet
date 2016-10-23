@@ -65,6 +65,10 @@ public interface TimesheetEntry extends Entity {
 
     void setInactiveEndDate(Date date);
 
+    Date getDeactivateEndDate();
+
+    void setDeactivateEndDate(Date date);
+
     String getPairProgrammingUserName();
 
     void setPairProgrammingUserName(String userName);

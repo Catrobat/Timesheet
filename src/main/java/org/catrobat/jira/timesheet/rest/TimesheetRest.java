@@ -217,7 +217,7 @@ public class TimesheetRest {
                         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
                         for (TimesheetEntry entry : entries) {
                             jsonTimesheetEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
-                                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getPauseMinutes(),
+                                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getPauseMinutes(),
                                     entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
                                     entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
                         }
@@ -253,7 +253,7 @@ public class TimesheetRest {
                 if (timesheetEntry.getTeam().getTeamName().equals(teamName)) {
                     jsonTimesheetEntries.add(new JsonTimesheetEntry(timesheetEntry.getID(),
                             timesheetEntry.getBeginDate(), timesheetEntry.getEndDate(),
-                            timesheetEntry.getInactiveEndDate(), timesheetEntry.getPauseMinutes(),
+                            timesheetEntry.getInactiveEndDate(), timesheetEntry.getDeactivateEndDate(), timesheetEntry.getPauseMinutes(),
                             timesheetEntry.getDescription(), timesheetEntry.getTeam().getID(),
                             timesheetEntry.getCategory().getID(), timesheetEntry.getJiraTicketID(),
                             timesheetEntry.getPairProgrammingUserName(), timesheetEntry.getIsGoogleDocImport()));
@@ -415,7 +415,7 @@ public class TimesheetRest {
 
         for (TimesheetEntry entry : entries) {
             jsonEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
-                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getPauseMinutes(),
+                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getPauseMinutes(),
                     entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
                     entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
         }
@@ -479,15 +479,24 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException {
 
-        if (entry.getDescription().isEmpty()) {
-            return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
-        } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0)) {
-            String message = "The 'Inactive Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
+        Date twoMonthsAhead = new DateTime().plusMonths(2).toDate();
+
+        if (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0) {
+            String message = "The 'Inactive End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
                     " but your inactive end date is " + entry.getInactiveEndDate();
+            return Response.status(Response.Status.FORBIDDEN).entity(message).build();
+        } else if (entry.getInactiveEndDate().compareTo(twoMonthsAhead) > 0) {
+            String message = "The 'Inactive End Date' is more than 2 months ahead. This is too far away.";
             return Response.status(Response.Status.FORBIDDEN).entity(message).build();
         } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
                 (!categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive"))) {
             return Response.status(Response.Status.FORBIDDEN).entity("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.").build();
+        } else if (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) < 0) {
+            String message = "The 'Deactivated End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
+                    " but your inactive end date is " + entry.getDeactivateEndDate();
+            return Response.status(Response.Status.FORBIDDEN).entity(message).build();
+        } else if (entry.getDescription().isEmpty()) {
+            return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
         }
 
         Timesheet sheet;
@@ -535,7 +544,7 @@ public class TimesheetRest {
 
         TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
                 entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
-                entry.getInactiveEndDate(), entry.getTicketID(), programmingPartnerName);
+                entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), programmingPartnerName);
 
         boolean isActive = sheet.getIsActive();
 
@@ -568,7 +577,7 @@ public class TimesheetRest {
     public Response postTimesheetEntries(@Context HttpServletRequest request,
             final JsonTimesheetEntry[] entries,
             @PathParam("timesheetID") int timesheetID,
-            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, com.atlassian.jira.exception.PermissionException {
+            @PathParam("isMTSheet") Boolean isMTSheet) throws ServiceException, InvalidCredentialException, PermissionException {
         Timesheet sheet;
         ApplicationUser user;
 
@@ -617,7 +626,7 @@ public class TimesheetRest {
 
                 TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
                         entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
-                        entry.getInactiveEndDate(), entry.getTicketID(), programmingPartnerName);
+                        entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), programmingPartnerName);
 
                 //update latest timesheet entry date if latest entry date is < new latest entry in the table
                 if (sheet.getEntries().length == 1) {

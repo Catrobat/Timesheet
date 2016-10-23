@@ -28,7 +28,7 @@ import java.util.Date;
 @Transactional
 public interface TimesheetEntryService {
     TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
-                       Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID, String userName);
+            Team team, boolean isGoogleDocImport, Date inactiveEndDate, Date deactivateEndDate, String jiraTicketID, String userName);
 
     TimesheetEntry edit(int entryID, Timesheet sheet, Date begin, Date end, Category category, String description,
                         int pause, Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,

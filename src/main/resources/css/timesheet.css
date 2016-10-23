@@ -30,13 +30,18 @@
     display: table-cell;
 }
 
-#timesheet-table .time-picker,
-#timesheet-table .range,
+#timesheet-table .inactive,
+#timesheet-table .deactivate,
+#timesheet-table .start,
+#timesheet-table .end,
 #timesheet-table .pause,
 #timesheet-table .duration {
     text-align: center;
 }
 
+#timesheet-table .start,
+#timesheet-table .end,
+#timesheet-table .pause,
 #timesheet-table .time {
     width: 50px;
 }
@@ -49,16 +54,11 @@
     color: inherit;
 }
 
-#timesheet-table .date {
+#timesheet-table .date,
+#timesheet-table .inactive,
+#timesheet-table .deactivate,
+#timesheet-table .ticket {
     width: 87px;
-}
-
-#timesheet-table .inactive {
-    width: 87px;
-}
-
-#timesheet-table .range {
-    width: 115px;
 }
 
 #timesheet-table .pause,
@@ -68,25 +68,15 @@
 
 #timesheet-table .team,
 #timesheet-table .category,
-#timesheet-table .partner {
-    min-width: 100px;
-}
-
+#timesheet-table .partner,
 #timesheet-table .ticket {
     min-width: 100px;
-}
-
-#timesheet-table .team aui-select2-container,
-#timesheet-table .category aui-select2-container,
-#timesheet-table .partner aui-select2-container {
-    width: 130px;
-}
-#timesheet-table .ticket aui-select2-container {
     width: 130px;
 }
 
 #timesheet-table .description {
-    width: 150px;
+    min-width: 100px;
+    width: 200px;
 }
 
 #timesheet-table button {

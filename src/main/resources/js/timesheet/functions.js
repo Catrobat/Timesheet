@@ -3,39 +3,6 @@
 var selectedUser;
 var isMTSheetSelected;
 
-function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply) {
-    var timesheetData = timesheetReply[0];
-    timesheetData.entries = entriesReply[0];
-    timesheetData.categories = [];
-    timesheetData.teams = [];
-    timesheetData['users'] = [];
-
-    //fill user names
-    for (var i = 0; i < usersReply[0].length; i++) {
-        if (usersReply[0][i]['active'])
-            timesheetData['users'].push(usersReply[0][i]['userName']);
-    }
-
-    categoriesReply[0].map(function (category) {
-        timesheetData.categories[category.categoryID] = {
-            categoryName: category.categoryName
-        };
-    });
-
-    teamsReply[0].sort();
-    teamsReply[0].map(function (team) {
-        timesheetData.teams[team.teamID] = {
-            teamName: team.teamName,
-            teamCategories: team.categoryIDs
-        };
-    });
-
-    initTimesheetInformationValues(timesheetData);
-    updateTimesheetInformationValues(timesheetData);
-
-    return timesheetData;
-}
-
 function isSupervisedUser(userName, config) {
     var supervisedUsers = config.supervisors.split(',');
     for (var i = 0; i < supervisedUsers.length; i++) {
@@ -62,7 +29,7 @@ function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
     return categoriesPerTeam;
 }
 
-function getselectedCategoryName(categoryID, timesheetData) {
+function getNameFromCategoryIndex(categoryID, timesheetData) {
     if (timesheetData && timesheetData.categories[categoryID]) {
         return timesheetData.categories[categoryID].categoryName;
     }
@@ -318,10 +285,44 @@ function isDateMoreThanTwoMonthsAhead(inactiveDate) {
     return false;
 }
 
-function compareNames(a,b) {
+function compareNames(a, b) {
     if (a.text < b.text)
         return -1;
     if (a.text > b.text)
         return 1;
     return 0;
 }
+
+function compareTime(time1, time2) {
+    var a = new Date(time1);
+    var b = new Date(time2);
+
+    if (a > b) { // a is later
+        return 1;
+    }
+    else if (b > a) { // b is later
+        return -1;
+    }
+    return 0; // equal
+}
+
+function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+}
+
+// function printDomainAttributes() {
+//     var baseUrl = AJS.params.baseURL;
+//     var hostname = AJS.$('<a>').prop('href', document.URL).prop('hostname');
+//
+//     console.log("Base address: " + baseUrl);
+//     console.log("hostname: " + hostname);
+//     console.log("location.hostname: " + location.hostname);
+//     console.log("document.domain: " + document.domain);
+//     console.log("document.URL : " + document.URL);
+//     console.log("document.location.href : " + document.location.href);
+//     console.log("document.location.origin : " + document.location.origin);
+//     console.log("document.location.hostname : " + document.location.hostname);
+//     console.log("document.location.host : " + document.location.host);
+//     console.log("document.location.pathname : " + document.location.pathname);
+//     console.log("window.location.hostname : " + window.location.hostname);
+// }

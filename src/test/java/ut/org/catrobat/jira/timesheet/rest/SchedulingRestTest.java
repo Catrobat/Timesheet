@@ -61,6 +61,7 @@ public class SchedulingRestTest {
     private TimesheetEntryServiceImpl timesheetEntryService;
     private TimesheetServiceImpl timesheetService;
     private SchedulingRest schedulingRest;
+
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
@@ -173,7 +174,7 @@ public class SchedulingRestTest {
         when(permissionServiceMock.checkPermission(httpRequest)).thenReturn(null);
 
         timesheetEntryService.add(timesheet1, yesterday, today, categoryDrone, "testing a lot of things",
-                30, droneTeam, false, today, "123456", "MarkusHobisch"); // this should work
+                30, droneTeam, false, today, today, "123456", "MarkusHobisch"); // this should work
 
         // info: mock private method
         SchedulingRest spy = PowerMockito.spy(schedulingRest);
@@ -188,7 +189,7 @@ public class SchedulingRestTest {
         Timesheet timesheet2 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, false, true, true); // inactive
 
         timesheetEntryService.add(timesheet2, yesterday, today, categoryDrone, "testing a lot of things",
-                30, droneTeam, false, today, "123456", "MarkusHobisch"); // this should work
+                30, droneTeam, false, today, today, "123456", "MarkusHobisch"); // this should work
 
         // execute your test
         spy.activityNotification(httpRequest);

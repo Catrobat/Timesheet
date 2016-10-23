@@ -110,6 +110,7 @@ public class CsvTimesheetImporter {
                         teamService.getTeamByName(columns[8]),         //team
                         true,                                          //isGoogleDocImport
                         sdf.parse(columns[0]),                         //inactive date
+                        new Date(),                                            //deactivate date
                         "",                                            //JIRA ticket ID
                         ""                                             //pair programming partner
                 );

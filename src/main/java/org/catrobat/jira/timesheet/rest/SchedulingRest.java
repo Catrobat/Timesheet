@@ -204,6 +204,7 @@ public class SchedulingRest {
                         team,
                         false,
                         end,
+                        end,
                         "",
                         ""
                 );

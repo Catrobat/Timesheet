@@ -393,8 +393,10 @@ public class TimesheetRestTest {
         when(configServiceMock.getConfiguration()).thenReturn(config);
         when(configServiceMock.getGroupsForRole(team1.getTeamName(), TeamToGroup.Role.DEVELOPER)).thenReturn(developerList);
 
-        TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, new Date(), new Date(), categoryMock,
-                "Test Entry", 0, team1, false, new Date(), "CAT-1530", "Partner");
+        Date today = new Date();
+
+        TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
+                "Test Entry", 0, team1, false, today, today, "CAT-1530", "Partner");
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
         when(timesheetServiceMock.getTimesheetByUser(userKey, false)).thenReturn(timesheetMock);
@@ -489,9 +491,10 @@ public class TimesheetRestTest {
 
         List<String> developerList = new LinkedList<String>();
         developerList.add(userName);
+        Date today = new Date();
 
-        TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, new Date(), new Date(), categoryMock,
-                "Test Entry", 0, team1, false, new Date(), "CAT-1530", "Partner");
+        TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
+                "Test Entry", 0, team1, false, today, today, "CAT-1530", "Partner");
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
         Config config = mock(Config.class);
@@ -669,8 +672,8 @@ public class TimesheetRestTest {
         int timesheetID = 1;
         Boolean isMTSheet = false;
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
-                new Date(), new Date(), new Date(),
-                0, "Description", 1, 1,
+                new Date(), new Date(), new Date(), new Date()
+                , 0, "Description", 1, 1,
                 "CAT-1530", "Partner", false);
 
         when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
@@ -686,8 +689,8 @@ public class TimesheetRestTest {
         int timesheetID = 1;
         Boolean isMTSheet = false;
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
-                new Date(), new Date(), new Date(),
-                0, "Description", 1, 1,
+                new Date(), new Date(), new Date(), new Date()
+                , 0, "Description", 1, 1,
                 "CAT-1530", "Partner", false);
 
         JsonTimesheetEntry[] jsonTimesheetEntries = {jsonTimesheetEntry};
@@ -713,11 +716,11 @@ public class TimesheetRestTest {
         boolean isGoogleDocImport = false;
         String jiraTicketID = "CAT-1530";
         String pairProgrammingUserName = "TestUser";
-        Date inactiveEndDate = new Date();
+        Date today = new Date();
 
         //Act
         TimesheetEntry newEntry = timesheetEntryServiceMock.add(timesheetMock, begin, end, categoryMock, desc, pause, teamMock, isGoogleDocImport,
-                inactiveEndDate, jiraTicketID, pairProgrammingUserName);
+                today, today, jiraTicketID, pairProgrammingUserName);
 
         when(permissionService.checkIfUserExists(requestMock)).thenReturn(userMock);
 
@@ -752,12 +755,13 @@ public class TimesheetRestTest {
         Boolean isMTSheet = false;
         String userKey = "USER_KEY";
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
-                new Date(), new Date(), new Date(),
-                0, "Description", 1, 1,
+                new Date(), new Date(), new Date(), new Date()
+                , 0, "Description", 1, 1,
                 "CAT-1530", "Partner", false);
 
-        TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, new Date(), new Date(), categoryMock,
-                "Test Entry", 0, teamMock, false, new Date(), "CAT-1530", "Partner");
+        Date today = new Date();
+        TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
+                "Test Entry", 0, teamMock, false, today, today, "CAT-1530", "Partner");
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
 
