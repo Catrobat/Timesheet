@@ -255,7 +255,7 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     }
 
     if (inactiveEndDate.getDay() == beginDate.getDay() &&
-        form.categorySelect.val() == getIndexFromCategoryName("inactive", timesheetData)) {
+        form.categorySelect.val() == getIDFromCategoryName("inactive", timesheetData)) {
 
         require('aui/flag')({
             type: 'info',
@@ -381,10 +381,10 @@ function prepareForm(entry, timesheetData) {
         );
 
     form.inactiveEndDateField.change(function () {
-        // you can also write AJS.$("input.description").val("hello boy");
+        // Info: you can also write AJS.$("input.description").val("hello boy");
         AJS.$("input.description").attr("placeholder", "Reason for your inactivity");
 
-        var index = getIndexFromCategoryName("inactive", timesheetData);
+        var index = getIDFromCategoryName("inactive", timesheetData);
         form.categorySelect.auiSelect2("val", index);
 
         //hide and delete input
@@ -392,48 +392,79 @@ function prepareForm(entry, timesheetData) {
          form.endTimeField.hide();
          form.pauseTimeField.hide();
          form.durationField.hide();
+         */
 
-         form.beginTimeField.val("");
-         form.endTimeField.val("");
-         form.pauseTimeField.val("");
-         form.durationField.val("");*/
+        form.deactivateEndDateField.val("");
+        form.beginTimeField.val('00:00');
+        form.endTimeField.val('00:00');
+        form.pauseTimeField.val('00:00');
+        form.durationField.val('00:00');
+        form.ticketSelect.select2("val", "");
+        form.partnerSelect.select2("val", "");
 
-        AJS.$(".select2-choices").hide(); // hides the select2 boxes
+        AJS.$(".select2-choices").hide();
+        form.teamSelect.hide();
+
+        //AJS.$(".select2-choices").hide(); // hides the select2 boxes
         //form.pauseTimeField.val('00:00');
         //form.pauseTimeField.hide();
+
+
     });
 
     form.deactivateEndDateField.change(function () {
         AJS.$("input.description").attr("placeholder", "Reason(s) for your deactivation");
 
-        var index = getIndexFromCategoryName("developing", timesheetData);
-        var index = getKeyByValue("developing");
+        /* timesheetData.categoryNames.forEach(function (index, value) {
+         console.log(index + " : " + value);
+         })*/
+        ;
+
+        var index = getIDFromCategoryName("deactivated", timesheetData);
         form.categorySelect.auiSelect2("val", index);
 
-        AJS.$(".select2-choices").hide(); // hides the select2 boxes
+        // AJS.$(".select2-choices").hide(); // hides the select2 boxes
+
+        form.inactiveEndDateField.val("");
+        form.beginTimeField.val('00:00');
+        form.endTimeField.val('00:00');
+        form.pauseTimeField.val('00:00');
+        form.durationField.val('00:00');
+        form.ticketSelect.select2("val", "");
+        form.partnerSelect.select2("val", "");
+
+        AJS.$(".select2-choices").hide();
+
     });
 
     form.categorySelect.change(function () {
-        var indexOfInactive = getIndexFromCategoryName("inactive", timesheetData);
-        var indexOfDeactivated = getIndexFromCategoryName("deactivated", timesheetData);
+        var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
+        var indexOfDeactivated = getIDFromCategoryName("deactivated", timesheetData);
         var categoryValue = form.categorySelect.val();
 
         if (categoryValue == indexOfInactive || categoryValue == indexOfDeactivated) {
+            AJS.$("input.description").attr("placeholder", "add a reason for your inactivity");
             /*form.beginTimeField.hide();
              form.endTimeField.hide();
              form.pauseTimeField.hide();
              form.durationField.hide();*/
 
-            /*  form.beginTimeField.val("");
-             form.endTimeField.val("");
-             form.pauseTimeField.val("");
-             form.durationField.val("");*/
-
+            form.beginTimeField.val('00:00');
+            form.endTimeField.val('00:00');
+            form.pauseTimeField.val('00:00');
+            form.durationField.val('00:00');
             form.ticketSelect.select2("val", "");
             form.partnerSelect.select2("val", "");
 
-            // form.pauseTimeField.val('00:00');
-            // form.pauseTimeField.hide();
+            AJS.$(".select2-choices").hide();
+            AJS.$(".team").hide();
+
+            if (categoryValue == indexOfInactive) {
+                form.deactivateEndDateField.val("");
+            }
+            else {
+                form.inactiveEndDateField.val("");
+            }
         }
         else {
             AJS.$("input.description").attr("placeholder", "a short task description");
@@ -443,16 +474,18 @@ function prepareForm(entry, timesheetData) {
              form.pauseTimeField.show();
              form.durationField.show();*/
 
-            AJS.$(".select2-choices").show(); // shows the select2 boxes
             form.inactiveEndDateField.val(""); // clear inactive field input
             form.deactivateEndDateField.val(""); // clear deactivated field input
+
+            AJS.$(".select2-choices").show(); // shows the select2 boxes
             form.pauseTimeField.show();
             form.durationField.show();
+            form.teamSelect.show();
         }
     });
 
     form.partnerSelect.change(function () {
-        var index = getIndexFromCategoryName("Pair programming", timesheetData);
+        var index = getIDFromCategoryName("Pair programming", timesheetData);
         form.categorySelect.auiSelect2("val", index);
     });
 
@@ -559,25 +592,20 @@ function prepareForm(entry, timesheetData) {
     return form;
 }
 
-//get index of option(=name) in category
-//@deprecated [use instead getKeyByValue(value)]
-function getIndexFromCategoryName(categoryName, timesheetData) {
-    categoryName = categoryName.toLowerCase();
-    var index = 1;
-    while (true) {
-        if (!timesheetData.hasOwnProperty("<categoryName>")) {
-            break;
-        }
-        var name = timesheetData.categories[index].categoryName.toLowerCase();
-        if (name == categoryName) {
-            break;
-        }
-        if (name == null) {
-            break;
-        }
-        index++;
+function getIDFromCategoryName(categoryName) {
+    var orig_array = timesheetData_.categoryNames;
+    var dup_array = [];
+    for (var key in orig_array) {
+        dup_array[key.toLowerCase()] = orig_array[key];
     }
-    return index;
+
+    /* Info: iterate through key, value pair
+     for (var k in dup_array){
+     if (dup_array.hasOwnProperty(k)) {
+     console.log("Key is " + k + ", value is" + dup_array[k]);
+     }
+     }*/
+    return dup_array[categoryName.toLowerCase()];
 }
 
 // input validation
@@ -605,7 +633,7 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
     if (selectedTeam == null || selectedTeam.teamCategories == null) {
         return;
     }
-    var categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categories);
+    var categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categoryIDs);
 
     categorySelect.auiSelect2({data: categoriesPerTeam});
 
@@ -736,7 +764,7 @@ function augmentEntry(timesheetData, entry) {
         end: toTimeString(new Date(entry.endDate)),
         pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
         duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
-        category: timesheetData.categories[entry.categoryID].categoryName,
+        category: timesheetData.categoryIDs[entry.categoryID].categoryName,
         team: timesheetData.teams[entry.teamID].teamName,
         entryID: entry.entryID,
         beginDate: entry.beginDate,
@@ -763,7 +791,7 @@ function censoredAugmentEntry(timesheetData, entry) {
         end: toTimeString(new Date(entry.endDate)),
         pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
         duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
-        category: timesheetData.categories[entry.categoryID].categoryName,
+        category: timesheetData.categoryIDs[entry.categoryID].categoryName,
         team: timesheetData.teams[entry.teamID].teamName,
         entryID: entry.entryID,
         beginDate: entry.beginDate,

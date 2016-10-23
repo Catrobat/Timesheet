@@ -15,7 +15,7 @@ function fetchVisData() {
 
     var categoriesFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'categories',
+        url: restBaseUrl + 'categoryIDs',
         contentType: "application/json"
     });
 
@@ -39,12 +39,7 @@ function fetchVisData() {
 }
 
 function fetchTeamVisData() {
-    var timesheetFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
-        contentType: "application/json"
-    });
-
+    //Block 1 bis 3 sinnlos, da bereits gefetched
     var entriesFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheets/' + timesheetID + '/entries',
@@ -53,7 +48,7 @@ function fetchTeamVisData() {
 
     var categoriesFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'categories',
+        url: restBaseUrl + 'categoryIDs',
         contentType: "application/json"
     });
 
@@ -63,9 +58,16 @@ function fetchTeamVisData() {
         contentType: "application/json"
     });
 
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
-        .done(assembleTimesheetVisData)
-        .done(computeTeamDiagramData)
+    //Block 4 relevant, aber mapping ist seltsam allEntries -> timesheetData[0]
+    var allTeamMemberEntriesFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
+        contentType: "application/json"
+    });
+
+    AJS.$.when(allTeamMemberEntriesFetched, categoriesFetched, teamsFetched, entriesFetched)
+        .done(assembleTimesheetVisData) //TODO: macht keinen Sinn: Überprüfung notwendig!
+        .done(computeTeamDiagramData) // TODO: Überprüfung notwendig! allEntries -> timesheetData[0] wrong mapping!!
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching data.',
@@ -80,34 +82,24 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
     var timesheetData = timesheetReply[0];
 
     timesheetData.entries = entriesReply[0];
-    timesheetData.categories = [];
+    timesheetData.categoryIDs = [];
     timesheetData.teams = [];
     timesheetData.categoryNames = [];
 
     categoriesReply[0].map(function (category) {
-        timesheetData.categories[category.categoryID] = {
+        timesheetData.categoryIDs[category.categoryID] = {
             categoryName: category.categoryName
         };
     });
 
-    console.log(timesheetData.categories);
-
     categoriesReply[0].forEach(function (category) {
-        timesheetData.categoryNames[category.categoryName] = category.categorySelect;
+        timesheetData.categoryNames[category.categoryName] = category.categoryID;
     });
 
-    console.log("------------------");
 
-    timesheetData.categories.forEach(function (value, index) {
-        console.log(value, index);
-    });
-    /*
-     for (var category in timesheetData.categories) {
-     if (categoriesReply.hasOwnProperty(category)) {
-     }
-     console.log("catReplays:", category);
-     }
-     */
+    /*  timesheetData.categoryIDs.forEach(function (value, index) {
+     console.log(value, index);
+     });*/
 
     teamsReply[0].map(function (team) {
         timesheetData.teams[team.teamID] = {
@@ -116,7 +108,6 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
         };
     });
 
-    console.log("this is called every time!");
     return timesheetData;
 }
 
@@ -129,13 +120,16 @@ function populateVisTable(timesheetDataReply) {
     appendEntriesToVisTable(timesheetData);
 }
 
+// ToDO: 2. Parameter: unused ?!?
+// eine funktion soll mehr als nur eine weitere Funktion beinhalten, kann gelöscht werden
 function computeCategoryDiagramData(timesheetDataReply) {
     assignCategoryDiagramData(timesheetDataReply[0], false);
 }
 
+// ToDO:
 function computeTeamDiagramData(timesheetDataReply) {
-    assignTeamVisData(timesheetDataReply[0], true);
-    assignTeamData(timesheetDataReply[0]);
+    assignTeamVisData(timesheetDataReply[0], true); // 1.Parameter: timesheetData
+    assignTeamData(timesheetDataReply[0]); // aber hier 1. Parameter: entries - what the hell ?!?!
 }
 
 function calculateDuration(begin, end, pause) {
@@ -143,9 +137,9 @@ function calculateDuration(begin, end, pause) {
     return new Date(end - begin - (pauseDate.getHours() * 60 + pauseDate.getMinutes()) * 60 * 1000);
 }
 
-function containsElement(array, ele) {
+function containsElement(array, element) {
     for (var p in array)
-        if (array[p] === ele)
+        if (array[p] === element)
             return true;
     return false;
 }

@@ -38,12 +38,12 @@
     <span class="td pause">{$entry.pause}</span>
     <span class="td duration">{$entry.duration}</span>
     {if length(keys($teams)) > 1}
-      <span class="td">{$entry.team}</span>
+      <span class="td team">{$entry.team}</span>
     {/if}
-    <span class="td">{$entry.category}</span>
-    <span class="td">{$entry.partner}</span>
-    <span class="td">{$entry.ticketID}</span>
-    <span class="td">{$entry.description}</span>
+    <span class="td category">{$entry.category}</span>
+    <span class="td partner">{$entry.partner}</span>
+    <span class="td ticket">{$entry.ticketID}</span>
+    <span class="td desc">{$entry.description}</span>
     <span class="td">
       <button class="aui-button aui-button-subtle edit">
         {call aui.icons.icon}

@@ -3,6 +3,12 @@
 var restBaseUrl;
 var hostname = location.hostname;
 var baseUrl;
+var timesheetData_;
+var categoryData_;
+var teamData_;
+var entryData_;
+var userData_;
+var teamEntryData_;
 
 AJS.toInit(function () {
     if (hostname.includes("catrob.at")) {
@@ -30,7 +36,7 @@ AJS.toInit(function () {
     AJS.$("#timesheet-table").hide();
     AJS.$("#table-header").hide();
     checkConstrains();
-    
+
     if (!isCoordinator) {
         AJS.$("#coord_private").hide();
     } else {
@@ -57,25 +63,19 @@ AJS.toInit(function () {
 
     if (isAdmin) {
         //hideVisualizationTabs();
-        fetchUsers();
-        fetchData();
-        fetchVisData();
-        fetchTeamVisData();
         AJS.$("#timesheet-hours-save-button").hide();
         AJS.$("#timesheet-hours-update-button").show();
     } else {
-        //init coordinator/administrator/approved user Seetings
         initUserSaveButton();
-        //fetch timesheet table data
-        fetchUsers();
-        fetchData();
-        //fetch visualization data
-        fetchVisData();
-        fetchTeamVisData();
         AJS.$("#timesheet-hours-save-button").show();
         AJS.$("#timesheet-hours-update-button").hide();
     }
 
+    fetchUsers();
+    //fetchData();
+    //fetchVisData();
+    fetchData123();
+    fetchTeamVisData();
     initHiddenDialog();
 });
 
@@ -103,6 +103,55 @@ function checkConstrains() {
     }).responseText;
 }
 
+function fetchData123() {
+    var timesheetFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheets/' + timesheetID,
+        contentType: "application/json"
+    });
+
+    var entriesFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheets/' + timesheetID + '/entries',
+        contentType: "application/json"
+    });
+
+    var categoriesFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'categoryIDs',
+        contentType: "application/json"
+    });
+
+    var teamsFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'teams',
+        contentType: "application/json"
+    });
+    var usersFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'user/getUsers',
+        contentType: "application/json"
+    });
+    var teamEntries = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
+        contentType: "application/json"
+    });
+    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, teamEntries)
+        .done(assembleTimesheetData)
+        .done(populateTable, prepareImportDialog)
+        .done(assembleTimesheetVisData, populateVisTable, computeCategoryDiagramData)
+
+        .fail(function (error) {
+            AJS.messages.error({
+                title: 'There was an error while fetching timesheet data.',
+                body: '<p>Reason: ' + error.responseText + '</p>'
+            });
+            console.log(error);
+        });
+
+}
+
 function fetchUserTimesheetData(timesheetID) {
 
     var timesheetFetched = AJS.$.ajax({
@@ -119,7 +168,7 @@ function fetchUserTimesheetData(timesheetID) {
 
     var categoriesFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'categories',
+        url: restBaseUrl + 'categoryIDs',
         contentType: "application/json"
     });
 
@@ -161,7 +210,7 @@ function fetchUserVisData(timesheetID) {
 
     var categoriesFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'categories',
+        url: restBaseUrl + 'categoryIDs',
         contentType: "application/json"
     });
 
@@ -332,7 +381,7 @@ function fetchData() {
 
     var categoriesFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'categories',
+        url: restBaseUrl + 'categoryIDs',
         contentType: "application/json"
     });
 
@@ -358,37 +407,43 @@ function fetchData() {
         });
 }
 
-function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply) {
-    var timesheetData = timesheetReply[0];
-    timesheetData.entries = entriesReply[0];
-    timesheetData.categories = [];
-    timesheetData.teams = [];
-    timesheetData['users'] = [];
+function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply, teamEntriesReply) {
+    timesheetData_ = timesheetReply[0];
+    categoryData_ = categoriesReply[0];
+    teamData_ = teamsReply[0];
+    entryData_ = entriesReply[0];
+    userData_ = usersReply[0];
+    teamEntryData_ = teamEntriesReply[0];
+
+    timesheetData_.entries = entriesReply[0];
+    timesheetData_.categoryIDs = [];
+    timesheetData_.teams = [];
+    timesheetData_['users'] = [];
 
     //fill user names
     for (var i = 0; i < usersReply[0].length; i++) {
         if (usersReply[0][i]['active'])
-            timesheetData['users'].push(usersReply[0][i]['userName']);
+            timesheetData_['users'].push(usersReply[0][i]['userName']);
     }
 
     categoriesReply[0].map(function (category) {
-        timesheetData.categories[category.categoryID] = {
+        timesheetData_.categoryIDs[category.categoryID] = {
             categoryName: category.categoryName
         };
     });
 
     teamsReply[0].sort();
     teamsReply[0].map(function (team) {
-        timesheetData.teams[team.teamID] = {
+        timesheetData_.teams[team.teamID] = {
             teamName: team.teamName,
             teamCategories: team.categoryIDs
         };
     });
 
-    initTimesheetInformationValues(timesheetData);
-    updateTimesheetInformationValues(timesheetData);
+    initTimesheetInformationValues(timesheetData_);
+    updateTimesheetInformationValues(timesheetData_);
 
-    return timesheetData;
+    return timesheetData_;
 }
 
 //neue funktionen .....

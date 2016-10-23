@@ -74,7 +74,7 @@ public class ImportTimesheetCsvServlet extends HelperServlet {
                 "<textarea name=\"csv\" rows=\"20\" cols=\"175\" wrap=\"off\">" +
                 "# lines beginning with '#' are comments and will be ignored\n" +
                 "# a valid configuration file must exist before importing timesheets\n" +
-                "# ensure that all teams, team members and categories are assigned correctly" +
+                "# ensure that all teams, team members and categoryIDs are assigned correctly" +
                 "</textarea><br />\n" +
                 "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing timesheets and entries<br /><br />\n" +
                 "<input type=\"submit\" />" +

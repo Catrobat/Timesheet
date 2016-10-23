@@ -45,7 +45,7 @@ function assignCategoryDiagramData(timesheetData) {
             var dataY = totalHours + totalMinutes / 60;
             dataPoints.push(dataX);
             dataPoints.push(dataY);
-            dataPoints.push(timesheetData.categories[availableEntries[i].categoryID].categoryName);
+            dataPoints.push(timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName);
         } else {
             pos = i;
             i = i + 1;

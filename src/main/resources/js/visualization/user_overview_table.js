@@ -46,9 +46,9 @@ function appendEntriesToVisTable(timesheetData) {
             }
 
             //calculate theory time in minutes
-            if ((timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory") ||
-                (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory (MT)") ||
-                (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Research"))
+            if ((timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory") ||
+                (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory (MT)") ||
+                (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Research"))
                 theoryHours = theoryHours + calculatedTime;
 
             //date within the last six months

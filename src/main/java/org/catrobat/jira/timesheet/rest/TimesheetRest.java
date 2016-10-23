@@ -148,7 +148,7 @@ public class TimesheetRest {
     }
 
     @GET
-    @Path("categories")
+    @Path("categoryIDs")
     public Response getCategories(@Context HttpServletRequest request) throws ServiceException {
 
         if (checkPermission(request)) {

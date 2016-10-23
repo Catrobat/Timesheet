@@ -171,19 +171,19 @@ AJS.toInit(function () {
                     userNameList.push(allUsers[0][i]['userName']);
                 }
 
-                //list of all available categories
+                //list of all available categoryIDs
                 var categoryList = [];
                 for (var i = 0; i < allCategories[0].length; i++) {
                     categoryList.push(allCategories[0][i]['categoryName']);
                 }
 
                 //build category list
-                AJS.$("#categories").empty();
+                AJS.$("#categoryIDs").empty();
                 for (var i = 0; i < categoryList.length; i++) {
-                    AJS.$("#categories").append("<h3>" + categoryList[i] +
+                    AJS.$("#categoryIDs").append("<h3>" + categoryList[i] +
                         "<button class=\"aui-button aui-button-subtle\" value=\"C-" + categoryList[i] + "\">" +
                         "<span class=\"aui-icon aui-icon-small aui-iconfont-edit\">Editing</span> Edit Category Name </button></h3><fieldset>");
-                    AJS.$("#categories").append("</fieldset>");
+                    AJS.$("#categoryIDs").append("</fieldset>");
                 }
 
                 //Timesheet - supervisor picker
@@ -206,7 +206,7 @@ AJS.toInit(function () {
                 });
                 //Timesheet - team category picker
                 AJS.$(".category").auiSelect2({
-                    placeholder: "Select categories",
+                    placeholder: "Select categoryIDs",
                     tags: categoryList.sort(),
                     tokenSeparators: [",", " "]
                 });

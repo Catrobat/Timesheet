@@ -30,8 +30,8 @@ function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
 }
 
 function getNameFromCategoryIndex(categoryID, timesheetData) {
-    if (timesheetData && timesheetData.categories[categoryID]) {
-        return timesheetData.categories[categoryID].categoryName;
+    if (timesheetData && timesheetData.categoryIDs[categoryID]) {
+        return timesheetData.categoryIDs[categoryID].categoryName;
     }
     return null;
 }
@@ -39,7 +39,7 @@ function getNameFromCategoryIndex(categoryID, timesheetData) {
 function getCategoryID(categoryName, teamCategories, timesheetData) {
     for (var i = 0; i < teamCategories.length; i++) {
         var teamID = teamCategories[i];
-        if (categoryName == timesheetData.categories[teamID].categoryName) {
+        if (categoryName == timesheetData.categoryIDs[teamID].categoryName) {
             return teamID;
         }
     }
@@ -144,7 +144,7 @@ function calculateTheoryTime(timesheetData) {
         var pause = availableEntries[i].pauseMinutes;
         var calculatedTime = hours * 60 + minutes - pause;
 
-        if (timesheetData.categories[availableEntries[i].categoryID].categoryName === "Theory")
+        if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory")
             totalMinutes = totalMinutes + calculatedTime;
 
         if (totalMinutes >= 60) {
@@ -304,10 +304,6 @@ function compareTime(time1, time2) {
         return -1;
     }
     return 0; // equal
-}
-
-function getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
 }
 
 // function printDomainAttributes() {
