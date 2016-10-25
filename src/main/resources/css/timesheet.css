@@ -30,13 +30,11 @@
     display: table-cell;
 }
 
-#timesheet-table .inactive,
-#timesheet-table .deactivate,
 #timesheet-table .start,
 #timesheet-table .end,
 #timesheet-table .pause,
 #timesheet-table .duration {
-    text-align: center;
+    text-align: left;
 }
 
 #timesheet-table .start,
@@ -56,11 +54,12 @@
 
 #timesheet-table .date,
 #timesheet-table .inactive,
-#timesheet-table .deactivate,
-#timesheet-table .ticket {
+#timesheet-table .deactivate {
     width: 87px;
 }
 
+#timesheet-table .start,
+#timesheet-table .end,
 #timesheet-table .pause,
 #timesheet-table .duration {
     width: 55px;
@@ -69,14 +68,20 @@
 #timesheet-table .team,
 #timesheet-table .category,
 #timesheet-table .partner,
-#timesheet-table .ticket {
+#timesheet-table .ticket
+{
     min-width: 100px;
     width: 130px;
 }
 
+.select2-container {
+    min-width: 80px;
+    width: 150px;
+}
+
 #timesheet-table .description {
-    min-width: 100px;
-    width: 270px;
+    min-width: 150px;
+    width: 210px;
 }
 
 #timesheet-table button {
