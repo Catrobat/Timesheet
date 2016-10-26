@@ -351,16 +351,16 @@ function prepareForm(entry, timesheetData) {
         loadingSpinner: row.find('span.aui-icon-wait').hide(),
         saveButton: row.find('button.save'),
         dateField: row.find('input.date'),
-        inactiveEndDateField: row.find('input.inactive'),
-        deactivateEndDateField: row.find('input.deactivate'),
+        inactiveEndDateField: row.find('input.inactive_'),
+        deactivateEndDateField: row.find('input.deactivate_'),
         beginTimeField: row.find('input.time.start'),
         endTimeField: row.find('input.time.end'),
         pauseTimeField: row.find('input.time.pause'),
         durationField: row.find('input.duration'),
-        descriptionField: row.find('input.description'),
-        ticketSelect: row.find('input.ticket'),
-        categorySelect: row.find('span.category'),
-        partnerSelect: row.find('span.partner'),
+        descriptionField: row.find('input.description_'),
+        ticketSelect: row.find('input.ticket_'),
+        categorySelect: row.find('span.category_'),
+        partnerSelect: row.find('span.partner_'),
         teamSelect: row.find('select.team')
     };
 
@@ -382,58 +382,16 @@ function prepareForm(entry, timesheetData) {
 
     form.inactiveEndDateField.change(function () {
         // Info: you can also write AJS.$("input.description").val("hello boy");
-        AJS.$("input.description").attr("placeholder", "Reason for your inactivity");
-
         var index = getIDFromCategoryName("inactive", timesheetData);
         form.categorySelect.auiSelect2("val", index);
-
-        //hide and delete input
-        /* form.beginTimeField.hide();
-         form.endTimeField.hide();
-         form.pauseTimeField.hide();
-         form.durationField.hide();
-         */
-
-        form.deactivateEndDateField.val("");
-        form.beginTimeField.val('00:00');
-        form.endTimeField.val('00:00');
-        form.pauseTimeField.val('00:00');
-        form.durationField.val('00:00');
-        form.ticketSelect.select2("val", "");
-        form.partnerSelect.select2("val", "");
-
-        AJS.$(".select2-choices").hide();
-        form.teamSelect.hide();
-
-        //AJS.$(".select2-choices").hide(); // hides the select2 boxes
-        //form.pauseTimeField.val('00:00');
-        //form.pauseTimeField.hide();
-
-
+        form.categorySelect.trigger("change");
     });
 
     form.deactivateEndDateField.change(function () {
         AJS.$("input.description").attr("placeholder", "Reason(s) for your deactivation");
-
-        /* timesheetData.categoryNames.forEach(function (index, value) {
-         console.log(index + " : " + value);
-         });*/
-
         var index = getIDFromCategoryName("deactivated", timesheetData);
         form.categorySelect.auiSelect2("val", index);
-
-        // AJS.$(".select2-choices").hide(); // hides the select2 boxes
-
-        form.inactiveEndDateField.val("");
-        form.beginTimeField.val('00:00');
-        form.endTimeField.val('00:00');
-        form.pauseTimeField.val('00:00');
-        form.durationField.val('00:00');
-        form.ticketSelect.select2("val", "");
-        form.partnerSelect.select2("val", "");
-
-        AJS.$(".select2-choices").hide();
-
+        form.categorySelect.trigger("change");
     });
 
     form.categorySelect.change(function () {
@@ -442,12 +400,6 @@ function prepareForm(entry, timesheetData) {
         var categoryValue = form.categorySelect.val();
 
         if (categoryValue == indexOfInactive || categoryValue == indexOfDeactivated) {
-            AJS.$("input.description").attr("placeholder", "add a reason for your inactivity");
-            /*form.beginTimeField.hide();
-             form.endTimeField.hide();
-             form.pauseTimeField.hide();
-             form.durationField.hide();*/
-
             form.beginTimeField.val('00:00');
             form.endTimeField.val('00:00');
             form.pauseTimeField.val('00:00');
@@ -455,31 +407,50 @@ function prepareForm(entry, timesheetData) {
             form.ticketSelect.select2("val", "");
             form.partnerSelect.select2("val", "");
 
-            AJS.$(".select2-choices").hide();
-            AJS.$(".team").hide();
+            AJS.$(".ticket").fadeOut(2000);
+            AJS.$(".partner").fadeOut(2000);
+            AJS.$(".team").fadeOut(2000);
+            AJS.$(".duration").fadeOut(2000);
+            AJS.$(".pause").fadeOut(2000);
+            AJS.$(".end").fadeOut(2000);
+            AJS.$(".start").fadeOut(2000);
 
             if (categoryValue == indexOfInactive) {
+                AJS.$("input.description_").attr("placeholder", "Reason for your inactivity");
                 form.deactivateEndDateField.val("");
+                AJS.$(".inactive").fadeIn(2000);
+                AJS.$(".deactivate").fadeOut(2000);
             }
             else {
+                AJS.$("input.description_").attr("placeholder", "Reason(s) for your deactivation");
                 form.inactiveEndDateField.val("");
+                AJS.$(".deactivate").fadeIn(2000);
+                AJS.$(".inactive").fadeOut(2000);
             }
         }
         else {
-            AJS.$("input.description").attr("placeholder", "a short task description");
-
-            /* form.beginTimeField.show();
-             form.endTimeField.show();
-             form.pauseTimeField.show();
-             form.durationField.show();*/
+            AJS.$("input.description_").attr("placeholder", "a short task description");
 
             form.inactiveEndDateField.val(""); // clear inactive field input
             form.deactivateEndDateField.val(""); // clear deactivated field input
 
-            AJS.$(".select2-choices").show(); // shows the select2 boxes
             form.pauseTimeField.show();
             form.durationField.show();
-            form.teamSelect.show();
+
+            AJS.$(".start").fadeIn(2000);
+            AJS.$(".end").fadeIn(2000);
+            AJS.$(".pause").fadeIn(2000);
+            AJS.$(".duration").fadeIn(2000);
+            AJS.$(".team").fadeIn(2000);
+            AJS.$(".ticket").fadeIn(2000);
+            AJS.$(".partner").fadeIn(2000);
+
+            setTimeout(
+                function () {
+                    AJS.$(".inactive").hide();
+                    AJS.$(".deactivate").hide();
+                }, 100);
+
         }
     });
 

@@ -24,7 +24,7 @@ AJS.toInit(function () {
     if (isFirefox) {
         AJS.messages.error({
             title: 'Sorry, Firefox is not supported at the moment!',
-            body: 'Firefox has an critical bug so would you be so kind and take an different browser.'
+            body: 'Firefox has an critical bug so would you be so kind and take an different browser. We suggest Chrome as perfect search engine.'
         });
         return;
     }
