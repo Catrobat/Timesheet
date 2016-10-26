@@ -137,8 +137,6 @@ function fetchData123() {
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, teamEntries)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
-        .done(assembleTimesheetVisData, populateVisTable, computeCategoryDiagramData)
-        .done(computeTeamDiagramData)
 
         .fail(function (error) {
             AJS.messages.error({
@@ -147,7 +145,17 @@ function fetchData123() {
             });
             console.log(error);
         });
+    AJS.$.when(teamEntries, categoriesFetched, teamsFetched, entriesFetched)
+        .done(assembleTimesheetVisData)
+        .done(populateVisTable, computeCategoryDiagramData, computeTeamDiagramData)
 
+        .fail(function (error) {
+            AJS.messages.error({
+                title: 'There was an error while fetching timesheet data.',
+                body: '<p>Reason: ' + error.responseText + '</p>'
+            });
+            console.log(error);
+        });
 }
 
 function fetchUserTimesheetData(timesheetID) {
