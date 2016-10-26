@@ -269,13 +269,13 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
         endDate: endDate,
         inactiveEndDate: inactiveEndDate,
         deactivateEndDate: deactivateEndDate,
-        description: AJS.$("input.description").val(),
+        description: AJS.$("input.description_").val(),
         pauseMinutes: pauseMin,
         teamID: AJS.$("select.team").val(),
-        categoryID: AJS.$("span.category").val(),
+        categoryID: AJS.$("span.category_").val(),
         isGoogleDocImport: existingIsGoogleDocImportValue,
-        partner: AJS.$("span.partner").val(),
-        ticketID: AJS.$("input.ticket").val()
+        partner: AJS.$("span.partner_").val(),
+        ticketID: AJS.$("input.ticket_").val()
     };
 
     if (existingEntryID !== "new-id") {
