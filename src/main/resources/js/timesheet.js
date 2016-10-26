@@ -137,6 +137,7 @@ function fetchData123() {
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, teamEntries)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
+        .done(assembleTimesheetVisData)
 
         .fail(function (error) {
             AJS.messages.error({
