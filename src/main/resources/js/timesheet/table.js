@@ -103,7 +103,7 @@ function populateTable(timesheetDataReply) {
     timesheetTable.empty();
 
     timesheetTable.append(Jira.Templates.Timesheet.timesheetHeader(
-        {teams: timesheetData.teams.sort(compareNames)}
+        {teams: timesheetData.teams}
     ));
 
     var actualDate = new Date();
@@ -764,7 +764,7 @@ function augmentEntry(timesheetData, entry) {
         pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
         duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
         category: timesheetData.categoryIDs[entry.categoryID].categoryName,
-        //team: timesheetData.teams[entry.teamID].teamName,
+        team: timesheetData.teams[entry.teamID].teamName,
         entryID: entry.entryID,
         beginDate: entry.beginDate,
         endDate: entry.endDate,
