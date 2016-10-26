@@ -20,7 +20,13 @@ function hideVisualizationTabs() {
 
 function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
     var categoriesPerTeam = [];
-    selectedTeam.teamCategories.map(function (categoryID) {
+    selectedTeam.teamCategories.filter(function (categoryID) {
+        if (!isMTSheetSelected && categories[categoryID].categoryName === "Theory") {
+            return false;
+        } else {
+            return true;
+        }
+    }).map(function (categoryID) {
         categoriesPerTeam.push(
             {id: categoryID, text: categories[categoryID].categoryName}
         );
@@ -132,6 +138,9 @@ function calculateTime(timesheetData) {
 }
 
 function calculateTheoryTime(timesheetData) {
+    if (!isMTSheetSelected)
+        return 0;
+
     var totalHours = 0;
     var totalMinutes = 0;
     var availableEntries = timesheetData.entries;
