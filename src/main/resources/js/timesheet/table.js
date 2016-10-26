@@ -33,7 +33,7 @@ function populateTable(timesheetDataReply) {
 
             require(['aui/banner'], function (banner) {
                 banner({
-                    body: 'Your Timesheet is marked as <strong>offline</strong>.',
+                    body: 'Your Timesheet is marked as <strong>offline</strong>.'
                 });
             });
         }
@@ -47,7 +47,7 @@ function populateTable(timesheetDataReply) {
 
             require(['aui/banner'], function (banner) {
                 banner({
-                    body: 'Your Timesheet is marked as <strong>inactive</strong>.',
+                    body: 'Your Timesheet is marked as <strong>inactive</strong>.'
                 });
             });
         }
@@ -61,7 +61,7 @@ function populateTable(timesheetDataReply) {
 
             require(['aui/banner'], function (banner) {
                 banner({
-                    body: 'Your Timesheet is marked as <strong>inactive</strong>.',
+                    body: 'Your Timesheet is marked as <strong>inactive</strong>.'
                 });
             });
         }
@@ -417,8 +417,7 @@ function prepareForm(entry, timesheetData) {
 
         /* timesheetData.categoryNames.forEach(function (index, value) {
          console.log(index + " : " + value);
-         })*/
-        ;
+         });*/
 
         var index = getIDFromCategoryName("deactivated", timesheetData);
         form.categorySelect.auiSelect2("val", index);
@@ -527,8 +526,8 @@ function prepareForm(entry, timesheetData) {
 
     form.partnerSelect.auiSelect2({
         tags: timesheetData.users.sort(),
-        width: 'resolve',
-    })
+        width: 'resolve'
+    });
 
     var baseUrl = AJS.params.baseURL; // we have to reassign it otherwise it would be undefined
     var queryString = "/rest/api/2/project?recent=20";
@@ -583,7 +582,7 @@ function prepareForm(entry, timesheetData) {
     form.ticketSelect.auiSelect2({
         tags: tickets,
         width: 'resolve'
-    })
+    });
 
     if (countDefinedElementsInArray(teams) < 2) {
         row.find(".team").hide();
@@ -765,7 +764,7 @@ function augmentEntry(timesheetData, entry) {
         pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
         duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
         category: timesheetData.categoryIDs[entry.categoryID].categoryName,
-        team: timesheetData.teams[entry.teamID].teamName,
+        //team: timesheetData.teams[entry.teamID].teamName,
         entryID: entry.entryID,
         beginDate: entry.beginDate,
         endDate: entry.endDate,
@@ -781,33 +780,6 @@ function augmentEntry(timesheetData, entry) {
     };
 }
 
-function censoredAugmentEntry(timesheetData, entry) {
-
-    var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
-
-    return {
-        date: toDateString(new Date(entry.beginDate)),
-        begin: toTimeString(new Date(entry.beginDate)),
-        end: toTimeString(new Date(entry.endDate)),
-        pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
-        duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
-        category: timesheetData.categoryIDs[entry.categoryID].categoryName,
-        team: timesheetData.teams[entry.teamID].teamName,
-        entryID: entry.entryID,
-        beginDate: entry.beginDate,
-        endDate: entry.endDate,
-        description: entry.description,
-        pauseMinutes: entry.pauseMinutes,
-        teamID: entry.teamID,
-        categoryID: entry.categoryID,
-        isGoogleDocImport: entry.isGoogleDocImport,
-        inactiveEndDate: "",
-        deactivateEndDate: toDateString(new Date(entry.deactivateEndDate)),
-        ticketID: entry.ticketID,
-        partner: entry.partner
-    };
-}
-
 /**
  * Creates the viewrow
  * @param {Object} timesheetData
@@ -815,13 +787,7 @@ function censoredAugmentEntry(timesheetData, entry) {
  */
 function prepareViewRow(timesheetData, entry) {
 
-    //todo: dont augment entry twice.
     var augmentedEntry = augmentEntry(timesheetData, entry);
-
-    //show inactive date only if it's different to the entry date
-    if (!toDateString(new Date(entry.beginDate)).localeCompare(toDateString(new Date(entry.inactiveEndDate)))) {
-        augmentedEntry = censoredAugmentEntry(timesheetData, entry);
-    }
 
     var viewRow = AJS.$(Jira.Templates.Timesheet.timesheetEntry(
         {entry: augmentedEntry, teams: timesheetData.teams}));

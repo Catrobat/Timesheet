@@ -72,10 +72,7 @@ AJS.toInit(function () {
     }
 
     fetchUsers();
-    //fetchData();
-    //fetchVisData();
     fetchData123();
-    fetchTeamVisData();
     initHiddenDialog();
 });
 
@@ -141,6 +138,7 @@ function fetchData123() {
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
         .done(assembleTimesheetVisData, populateVisTable, computeCategoryDiagramData)
+        .done(computeTeamDiagramData)
 
         .fail(function (error) {
             AJS.messages.error({
@@ -360,47 +358,6 @@ function fetchUsers() {
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching user data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-            console.log(error);
-        });
-}
-
-function fetchData() {
-    var timesheetFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheets/' + timesheetID,
-        contentType: "application/json"
-    });
-
-    var entriesFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheets/' + timesheetID + '/entries',
-        contentType: "application/json"
-    });
-
-    var categoriesFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'categoryIDs',
-        contentType: "application/json"
-    });
-
-    var teamsFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'teams',
-        contentType: "application/json"
-    });
-    var usersFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'user/getUsers',
-        contentType: "application/json"
-    });
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched)
-        .done(assembleTimesheetData)
-        .done(populateTable, prepareImportDialog)
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while fetching timesheet data.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);

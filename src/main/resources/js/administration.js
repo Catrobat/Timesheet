@@ -123,7 +123,7 @@ AJS.toInit(function () {
                         data: function (term, page) {
                             return {query: term};
                         },
-                        results: function (data, page) {
+                        /*results: function (data, page) {
                             var select2data = [];
                             for (var i = 0; i < data.groups.groups.length; i++) {
                                 select2data.push({
@@ -138,16 +138,16 @@ AJS.toInit(function () {
                                 });
                             }
                             return {results: select2data};
-                        }
+                        }*/
                     },
-                    initSelection: function (elements, callback) {
+                    /*initSelection: function (elements, callback) {
                         var data = [];
                         var array = elements.val().split(",");
                         for (var i = 0; i < array.length; i++) {
                             data.push({id: array[i], text: array[i].replace(/^users-/i, "").replace(/^groups-/i, "")});
                         }
                         callback(data);
-                    }
+                    }*/
                 });
 
                 var approved = [];

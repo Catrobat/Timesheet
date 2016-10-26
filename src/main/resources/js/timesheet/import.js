@@ -137,6 +137,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         isGoogleDocImport: true,
         ticketID: "None",
         partner: "",
-        inactiveEndDate: new Date(pieces[0] + " " + pieces[1])
+        inactiveEndDate: new Date(pieces[0] + " " + pieces[1]),
+        deactivateEndDate: new Date()
     };
 }

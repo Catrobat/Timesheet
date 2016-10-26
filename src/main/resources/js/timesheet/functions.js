@@ -253,12 +253,7 @@ function countDefinedElementsInArray(array) {
  */
 function isValidDate(date) {
     if (Object.prototype.toString.call(date) === "[object Date]") {
-        if (isNaN(date.getTime())) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return !isNaN(date.getTime());
     }
     else {
         return false;
@@ -276,34 +271,12 @@ function getMinutesFromTimeString(timeString) {
     }
 }
 
-function isDateMoreThanTwoMonthsAhead(inactiveDate) {
-    var date = new Date(inactiveDate);
-    var today = new Date();
-    if ((new Date(today.getFullYear(), today.getMonth(), today.getDate() + 61)) < date) {
-        return true;
-    }
-    return false;
-}
-
 function compareNames(a, b) {
     if (a.text < b.text)
         return -1;
     if (a.text > b.text)
         return 1;
     return 0;
-}
-
-function compareTime(time1, time2) {
-    var a = new Date(time1);
-    var b = new Date(time2);
-
-    if (a > b) { // a is later
-        return 1;
-    }
-    else if (b > a) { // b is later
-        return -1;
-    }
-    return 0; // equal
 }
 
 // function printDomainAttributes() {
