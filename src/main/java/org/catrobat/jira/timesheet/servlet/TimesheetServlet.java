@@ -16,15 +16,12 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
@@ -43,7 +40,7 @@ public class TimesheetServlet extends HttpServlet {
     private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
     private final PermissionService permissionService;
-    private final Logger logger;
+    private ApplicationUser user;
 
 
     public TimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
@@ -52,27 +49,26 @@ public class TimesheetServlet extends HttpServlet {
         this.templateRenderer = templateRenderer;
         this.sheetService = sheetService;
         this.permissionService = permissionService;
+    }
 
-        logger = Logger.getLogger(TimesheetServlet.class);
-        logger.setLevel(Level.INFO);
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            user = permissionService.checkIfUserExists(request);
+            if (!permissionService.checkIfUserIsGroupMember("Timesheet") &&
+                    !permissionService.checkIfUserIsGroupMember("jira-administrators")) {
+                response.sendError(HttpServletResponse.SC_CONFLICT, "User is no Timesheet-Group member, or Administrator.");
+            }
+        } catch (PermissionException e) {
+            redirectToLogin(request, response);
+        }
+        super.service(request, response);
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (sheetService == null) {
-            logger.warn("sheetService is null!");
-            return;
-        }
-
         try {
-            if (!permissionService.checkIfUserIsGroupMember("Timesheet") &&
-                    !permissionService.checkIfUserIsGroupMember("jira-administrators")) {
-                throw new ServletException("User is no Timesheet-Group member, or Administrator.");
-            }
-
-            ApplicationUser user = permissionService.checkIfUserExists(request);
-            String userKey = ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(user.getUsername());
+            String userKey = user.getKey();
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet;
 
@@ -91,6 +87,7 @@ public class TimesheetServlet extends HttpServlet {
             }
 
             //check if user is Team-Coordinator
+            //TODO: is administrator the correct group, or should it be timesheet
             if (permissionService.checkIfUserIsGroupMember("Administrators") ||
                     permissionService.checkIfUserIsGroupMember("administrators") ||
                     permissionService.checkIfUserIsTeamCoordinator(request)) {
@@ -102,22 +99,16 @@ public class TimesheetServlet extends HttpServlet {
             if (timesheet == null) {
                 timesheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
                         "", 5, true, true, false);
-                logger.info("New timesheet is added to user: " + user.getUsername());
             }
 
             paramMap.put("timesheetid", timesheet.getID());
             paramMap.put("ismasterthesistimesheet", false);
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
-        } catch (ServletException e) {
-            redirectToLogin(request, response);
-            e.printStackTrace();
         } catch (PermissionException e) {
             redirectToLogin(request, response);
-            e.printStackTrace();
-        } catch(ServiceException e){
+        } catch (ServiceException e) {
             redirectToLogin(request, response);
-            e.printStackTrace();
         }
     }
 

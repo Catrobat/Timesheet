@@ -71,7 +71,7 @@
             <h2>Timesheet Administrator</h2>
             <fieldset>
                 <div class="field-group">
-                    <label for="plugin-administration">Allowed Groups/Members</label>
+                    <label for="Timesheet Read Only">Allowed Groups/Members</label>
                     <input class="text" type="text" id="plugin-administration" name="plugin-administration"
                            title="plugin-administration">
 

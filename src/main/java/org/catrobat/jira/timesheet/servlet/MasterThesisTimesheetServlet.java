@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
@@ -41,6 +40,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
     private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
     private final PermissionService permissionService;
+    private ApplicationUser user;
 
     public MasterThesisTimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
             final TimesheetService sheetService, final PermissionService permissionService) {
@@ -51,15 +51,22 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
     }
 
     @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            user = permissionService.checkIfUserExists(request);
+            if (!permissionService.checkIfUserIsGroupMember("Master-Students")) {
+                response.sendError(HttpServletResponse.SC_CONFLICT, "User is no Master-Students-Group member.");
+            }
+        } catch (PermissionException e) {
+            redirectToLogin(request, response);
+        }
+        super.service(request, response);
+    }
+
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            if (!permissionService.checkIfUserIsGroupMember("Master-Students")) {
-                throw new ServletException("User is no Master-Students-Group member.");
-            }
-
-            ApplicationUser user = permissionService.checkIfUserExists(request);
-            String userKey = ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(user.getUsername());
+            String userKey = user.getKey();
             Timesheet sheet = null;
             if (sheetService.userHasTimesheet(userKey, true)) {
                 sheet = sheetService.getTimesheetByUser(userKey, true);
