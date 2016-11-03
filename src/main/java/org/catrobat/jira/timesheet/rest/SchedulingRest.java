@@ -48,7 +48,7 @@ public class SchedulingRest {
     private final CategoryService categoryService;
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
-                          final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, CategoryService categoryService) {
+            final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService, CategoryService categoryService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.entryService = entryService;
@@ -60,10 +60,9 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/activity/notification")
     public Response activityNotification(@Context HttpServletRequest request) {
-
         Response unauthorized = permissionService.checkPermission(request);
         if (unauthorized != null) {
-            return Response.serverError().entity("You are not authorized to trigger jobs.").build();
+            return unauthorized;
         }
 
         List<Timesheet> timesheetList = sheetService.all();
@@ -158,10 +157,9 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/activity/verification")
     public Response activityVerification(@Context HttpServletRequest request) {
-
         Response unauthorized = permissionService.checkPermission(request);
         if (unauthorized != null) {
-            return Response.serverError().entity("You are not authorized to trigger jobs.").build();
+            return unauthorized;
         }
 
         Date today = new Date();
@@ -258,10 +256,9 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/out/of/time/notification")
     public Response outOfTimeNotification(@Context HttpServletRequest request) {
-
         Response unauthorized = permissionService.checkPermission(request);
         if (unauthorized != null) {
-            return Response.serverError().entity("You are not authorized to trigger jobs.").build();
+            return unauthorized;
         }
 
         List<Timesheet> timesheetList = sheetService.all();

@@ -11,7 +11,6 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -67,8 +66,8 @@ public class ExportAllTimesheetsAsCSVServletTest {
         when(user.getKey()).thenReturn(test_key);
         when(permissionService.checkIfUserExists(request)).thenReturn(user);
 
-        when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(false);
+        when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
         when(timesheet.getTargetHoursPractice()).thenReturn(50);
         when(timesheet.getTargetHoursTheory()).thenReturn(100);

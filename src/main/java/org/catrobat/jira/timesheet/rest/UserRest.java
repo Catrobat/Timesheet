@@ -52,6 +52,8 @@ public class UserRest extends PermissionServiceImpl {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@Context HttpServletRequest request) {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+
+        //TODO: why bypass approved users???
         if (!isApproved(loggedInUser)) {
             Response unauthorized = checkPermission(request);
             if (unauthorized != null) {

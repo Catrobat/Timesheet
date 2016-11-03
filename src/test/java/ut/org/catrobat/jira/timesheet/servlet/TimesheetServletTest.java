@@ -72,13 +72,13 @@ public class TimesheetServletTest {
         when(admin.getUsername()).thenReturn("admin");
         when(permissionService.checkIfUserExists(request)).thenReturn(admin);
         when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
-        when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
         when(timeSheet.getID()).thenReturn(1);
         when(timeSheet.getUserKey()).thenReturn(admin_key);
         when(timeSheet.getIsActive()).thenReturn(true);
         when(timeSheet.getIsEnabled()).thenReturn(false);
         when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
-        when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(true);
+        when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(true);
     }
 
     @Test(expected = NullPointerException.class)

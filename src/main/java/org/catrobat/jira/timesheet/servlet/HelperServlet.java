@@ -16,6 +16,7 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.services.PermissionService;
@@ -51,12 +52,18 @@ public abstract class HelperServlet extends HttpServlet {
         checkPermission(request, response);
     }
 
-    private void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
-                !permissionService.checkIfUserIsGroupMember(request, "jira-administrators") &&
-                !permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
-            redirectToLogin(request, response);
-            return;
+    private void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            //TODO: why is here also a checkPermission method ???
+            if (!permissionService.checkIfUserIsGroupMember("Timesheet") &&
+                    !permissionService.checkIfUserIsGroupMember("jira-administrators") &&
+                    !permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
+                redirectToLogin(request, response);
+                return;
+            }
+        } catch (PermissionException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         if (!webSudoManager.canExecuteRequest(request)) {
             webSudoManager.enforceWebSudoProtection(request, response);

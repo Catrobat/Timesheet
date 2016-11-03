@@ -18,7 +18,6 @@ package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
-import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
@@ -42,32 +41,21 @@ public class PermissionServiceImpl implements PermissionService {
         this.configService = configService;
     }
 
-    public ApplicationUser checkIfUserExists(HttpServletRequest request) throws ServiceException {
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-
-        if (loggedInUser == null) {
-            throw new ServiceException("LoggedInUser does not exist.");
+    public ApplicationUser checkIfUserExists(HttpServletRequest request) throws PermissionException {
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        if (user == null) {
+            throw new PermissionException("User does not exist.");
         }
-
-        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByKey(loggedInUser.getKey());
-
-        if (userProfile == null) {
-            throw new ServiceException("User does not exist.");
-        }
-        return userProfile;
+        return user;
     }
 
-    public boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName) {
+    public boolean checkIfUserIsGroupMember(String groupName) throws PermissionException {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-
         if (loggedInUser == null) {
-            System.out.println("loggedInUser is null!");
-            return false;
+            throw new PermissionException("User does not exist.");
         }
 
-        String userName = loggedInUser.getUsername();
-        String userKey = ComponentAccessor.
-                getUserKeyService().getKeyForUsername(userName);
+        String userKey = loggedInUser.getKey();
         Collection<String> userGroups = ComponentAccessor.getGroupManager().getGroupNamesForUser(
                 ComponentAccessor.getUserManager().getUserByKey(userKey));
 
@@ -80,40 +68,16 @@ public class PermissionServiceImpl implements PermissionService {
         return teamService.getCoordinatorTeamsOfUser(username).isEmpty() ? false : true;
     }
 
-    public ApplicationUser checkIfUsernameExists(String userName) throws ServiceException {
-        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(userName);
-
-        if (userProfile == null) {
-            throw new ServiceException("User does not exist.");
-        }
-        return userProfile;
-    }
-
-    public boolean checkIfUserExists(String userName) {
-        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(userName);
-
-        return userProfile != null;
-    }
-
     public Response checkPermission(HttpServletRequest request) {
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        ApplicationUser userProfile = ComponentAccessor.getUserManager().getUserByName(loggedInUser.getName());
-
-        if (userProfile == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid profile.").build();
+        //TODO: we check for the admin groups, but where we check the timesheet group ?? Necessary??
+        try {
+            if (!(checkIfUserIsGroupMember("jira-administrators") || checkIfUserIsGroupMember("Jira-Test-Administrators"))) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
+                        "'jira-administrators', or 'Timesheet' group.").build();
+            }
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
-
-        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userProfile.getUsername());
-
-        if (userKey == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' does not have a valid " +
-                    "'UserKey'.").build();
-        } else if (!(checkIfUserIsGroupMember(request, "jira-administrators") ||
-                checkIfUserIsGroupMember(request, "Jira-Test-Administrators"))) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
-                    "'jira-administrators', or 'Timesheet' group.").build();
-        }
-
         return null;
     }
 
@@ -145,7 +109,6 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         String sheetKey = sheet.getUserKey();
-        //String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername());
         String userKey = user.getKey();
 
         return sheetKey.equals(userKey);
@@ -238,7 +201,6 @@ public class PermissionServiceImpl implements PermissionService {
     public Collection<String> getGroupNames(HttpServletRequest request) {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         if (loggedInUser == null) {
-            System.out.println("loggedInUser is null!");
             return null;
         }
 

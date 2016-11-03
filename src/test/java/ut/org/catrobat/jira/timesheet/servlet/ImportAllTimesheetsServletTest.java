@@ -89,8 +89,8 @@ public class ImportAllTimesheetsServletTest {
 
         when(permissionService.checkIfUserExists(request)).thenReturn(user);
 
-        when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(false);
+        when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
         when(response.getOutputStream()).thenReturn(outputStream);
         when(response.getWriter()).thenReturn(printWriter);

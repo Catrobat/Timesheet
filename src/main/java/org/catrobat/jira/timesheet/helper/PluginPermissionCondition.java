@@ -17,9 +17,9 @@
 package org.catrobat.jira.timesheet.helper;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.plugin.webfragment.conditions.AbstractPermissionCondition;
+import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
-import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Config;
@@ -28,12 +28,12 @@ import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import java.util.Collection;
 import java.util.Map;
 
-public class PluginPermissionCondition extends AbstractPermissionCondition {
+public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
 
     private final ConfigService configurationService;
     private final GroupManager groupManager;
 
-    public PluginPermissionCondition(PermissionManager permissionManager, ConfigService configurationService,
+    public PluginPermissionCondition(GlobalPermissionManager permissionManager, ConfigService configurationService,
                                      GroupManager groupManager) {
         super(permissionManager);
         this.configurationService = configurationService;

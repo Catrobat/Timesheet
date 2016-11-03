@@ -17,19 +17,18 @@
 package org.catrobat.jira.timesheet.helper;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.plugin.webfragment.conditions.AbstractPermissionCondition;
+import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
-import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 
 import java.util.Map;
 
-public class MasterThesisTimesheetPermissionCondition extends AbstractPermissionCondition {
+public class MasterThesisTimesheetPermissionCondition extends JiraGlobalPermissionCondition {
 
-    public MasterThesisTimesheetPermissionCondition(PermissionManager permissionManager) {
+    public MasterThesisTimesheetPermissionCondition(GlobalPermissionManager permissionManager) {
         super(permissionManager);
     }
-
 
     @Override
     public void init(Map params) {

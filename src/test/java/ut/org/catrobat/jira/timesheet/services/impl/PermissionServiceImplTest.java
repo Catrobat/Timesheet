@@ -5,7 +5,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
-import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import net.java.ao.EntityManager;
@@ -222,10 +221,10 @@ public class PermissionServiceImplTest {
         Assert.assertFalse(responseProfile == admin);
     }
 
-    @Test(expected = ServiceException.class)
-    public void testIfUserExistsExceptionHandling() throws ServiceException {
+    @Test(expected = PermissionException.class)
+    public void testIfUserExistsExceptionHandling() throws PermissionException {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
-        Assert.assertEquals(permissionService.checkIfUserExists(request), ServiceException.class);
+        Assert.assertEquals(permissionService.checkIfUserExists(request), PermissionException.class);
     }
 
     @Test
@@ -311,7 +310,7 @@ public class PermissionServiceImplTest {
         //Mockito.verify(permissionServiceException).userCanDeleteTimesheetEntry(admin, timeSheetEntry);
     }
 
-    @Test(expected = ServiceException.class)
+    @Test(expected = PermissionException.class)
     public void userDoesNotExistException() throws Exception {
 
         Mockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(eve);

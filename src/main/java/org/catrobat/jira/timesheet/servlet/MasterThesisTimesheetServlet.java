@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
@@ -52,7 +53,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            if (!permissionService.checkIfUserIsGroupMember(request, "Master-Students")) {
+            if (!permissionService.checkIfUserIsGroupMember("Master-Students")) {
                 throw new ServletException("User is no Master-Students-Group member.");
             }
 
@@ -71,13 +72,13 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
 
             Map<String, Object> paramMap = Maps.newHashMap();
             paramMap.put("timesheetid", sheet.getID());
-            if (permissionService.checkIfUserIsGroupMember(request, "jira-administrators") ||
-                    permissionService.checkIfUserIsGroupMember(request, "Jira-Test-Administrators")) {
+            if (permissionService.checkIfUserIsGroupMember("jira-administrators") ||
+                    permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
                 paramMap.put("isadmin", true);
             } else {
                 paramMap.put("isadmin", false);
             }
-            if (permissionService.checkIfUserIsGroupMember(request, "Coordinators")) {
+            if (permissionService.checkIfUserIsGroupMember("Coordinators")) {
                 paramMap.put("iscoordinator", true);
             } else {
                 paramMap.put("iscoordinator", false);
@@ -86,13 +87,16 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
             paramMap.put("ismasterthesistimesheet", true);
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
-        } catch (ServletException e) {
+        } catch (PermissionException e) {
             redirectToLogin(request, response);
+            e.printStackTrace();
         } catch (ServiceException e) {
+            redirectToLogin(request, response);
             e.printStackTrace();
         }
     }
 
+    //TODO: check if redirect is everywhere
     private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.sendRedirect(loginUriProvider.getLoginUri(getUri(request)).toASCIIString());
     }

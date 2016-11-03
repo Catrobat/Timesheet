@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
@@ -64,8 +65,8 @@ public class TimesheetServlet extends HttpServlet {
         }
 
         try {
-            if (!permissionService.checkIfUserIsGroupMember(request, "Timesheet") &&
-                    !permissionService.checkIfUserIsGroupMember(request, "jira-administrators")) {
+            if (!permissionService.checkIfUserIsGroupMember("Timesheet") &&
+                    !permissionService.checkIfUserIsGroupMember("jira-administrators")) {
                 throw new ServletException("User is no Timesheet-Group member, or Administrator.");
             }
 
@@ -76,8 +77,8 @@ public class TimesheetServlet extends HttpServlet {
             Timesheet timesheet;
 
             //info: testuser added
-            if (permissionService.checkIfUserIsGroupMember(request, "Administrators") ||
-                    permissionService.checkIfUserIsGroupMember(request, "administrators")) {
+            if (permissionService.checkIfUserIsGroupMember("Administrators") ||
+                    permissionService.checkIfUserIsGroupMember("administrators")) {
                 paramMap.put("isadmin", true);
                 timesheet = sheetService.getTimesheetByUser(userKey, false);
             } else {
@@ -90,8 +91,8 @@ public class TimesheetServlet extends HttpServlet {
             }
 
             //check if user is Team-Coordinator
-            if (permissionService.checkIfUserIsGroupMember(request, "Administrators") ||
-                    permissionService.checkIfUserIsGroupMember(request, "administrators") ||
+            if (permissionService.checkIfUserIsGroupMember("Administrators") ||
+                    permissionService.checkIfUserIsGroupMember("administrators") ||
                     permissionService.checkIfUserIsTeamCoordinator(request)) {
                 paramMap.put("iscoordinator", true);
             } else {
@@ -110,7 +111,12 @@ public class TimesheetServlet extends HttpServlet {
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
         } catch (ServletException e) {
             redirectToLogin(request, response);
-        } catch (ServiceException e) {
+            e.printStackTrace();
+        } catch (PermissionException e) {
+            redirectToLogin(request, response);
+            e.printStackTrace();
+        } catch(ServiceException e){
+            redirectToLogin(request, response);
             e.printStackTrace();
         }
     }

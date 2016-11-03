@@ -84,8 +84,8 @@ public class AdminServletTest {
         when(userMock.getUsername()).thenReturn("test");
         when(userMock.getKey()).thenReturn(test_key);
 
-        when(permissionServiceMock.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        when(permissionServiceMock.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        when(permissionServiceMock.checkIfUserIsGroupMember("jira-administrators")).thenReturn(false);
+        when(permissionServiceMock.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(userMock);

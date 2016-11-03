@@ -19,7 +19,6 @@ package org.catrobat.jira.timesheet.services;
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.exception.PermissionException;
-import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
@@ -32,21 +31,17 @@ import java.util.Collection;
 @Transactional
 public interface PermissionService {
 
-    ApplicationUser checkIfUserExists(HttpServletRequest request) throws ServiceException;
+    ApplicationUser checkIfUserExists(HttpServletRequest request) throws PermissionException;
 
-    boolean checkIfUserIsGroupMember(HttpServletRequest request, String groupName);
+    boolean checkIfUserIsGroupMember(String groupName) throws PermissionException;
 
     boolean checkIfUserIsTeamCoordinator(HttpServletRequest request);
-
-    ApplicationUser checkIfUsernameExists(String userName) throws ServiceException;
-
-    boolean checkIfUserExists(String userName);
 
     Response checkPermission(HttpServletRequest request);
 
     boolean userCanViewTimesheet(ApplicationUser user, Timesheet sheet);
 
-    void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, JsonTimesheetEntry entry) throws ServiceException, PermissionException;
+    void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, JsonTimesheetEntry entry) throws PermissionException;
 
     void userCanDeleteTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException;
 

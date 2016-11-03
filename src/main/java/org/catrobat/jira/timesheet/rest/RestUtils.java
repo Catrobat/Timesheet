@@ -58,7 +58,8 @@ public class RestUtils {
         return list;
     }
 
-    public static void convertTeamsToJSON(List<JsonTeam> teams, List<Team> sortedTeamsOfUsersList) {
+    public static List<JsonTeam> convertTeamsToJSON(List<Team> sortedTeamsOfUsersList) {
+        List<JsonTeam> teams = new LinkedList<>();
         for (Team team : sortedTeamsOfUsersList) {
             Category[] categories = team.getCategories();
             List<Integer> categoryIDs = new ArrayList<>();
@@ -67,5 +68,6 @@ public class RestUtils {
             }
             teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
         }
+        return teams;
     }
 }

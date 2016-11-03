@@ -12,7 +12,6 @@ import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportMasterThesisTimesheetAsCSVServlet;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,8 +75,8 @@ public class ExportMTTimesheetAsCSVServletTest {
 
         when(permissionService.checkIfUserExists(request)).thenReturn(user);
 
-        when(permissionService.checkIfUserIsGroupMember(request, "jira-administrators")).thenReturn(false);
-        when(permissionService.checkIfUserIsGroupMember(request, "Timesheet")).thenReturn(true);
+        when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(false);
+        when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
         when(timesheet.getTargetHoursPractice()).thenReturn(50);
         when(timesheet.getTargetHoursTheory()).thenReturn(100);

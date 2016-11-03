@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Category;
@@ -56,9 +57,11 @@ public class ConfigResourceRest {
 
     @GET
     @Path("/getCategories")
-    public Response getCategories(@Context HttpServletRequest request) throws ServiceException {
-        if (permissionService.checkIfUserExists(request) == null) {
-            Response.serverError().entity("Access denied.");
+    public Response getCategories(@Context HttpServletRequest request) {
+        try {
+            permissionService.checkIfUserExists(request);
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
         List<JsonCategory> categories = new LinkedList<JsonCategory>();
@@ -75,16 +78,18 @@ public class ConfigResourceRest {
 
     @GET
     @Path("/getTeams")
-    public Response getTeams(@Context HttpServletRequest request) throws ServiceException {
-        if (permissionService.checkIfUserExists(request) == null) {
-            Response.serverError().entity("Access denied.");
+    public Response getTeams(@Context HttpServletRequest request) {
+        try {
+            permissionService.checkIfUserExists(request);
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
 
         List<Team> teamList = teamService.all();
         Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
-        convertTeamsToJSON(teams,teamList);
+        convertTeamsToJSON(teamList);
 
         return Response.ok(teams).build();
     }
@@ -110,7 +115,6 @@ public class ConfigResourceRest {
     @Path("/getConfig")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getConfig(@Context HttpServletRequest request) {
-
         Response unauthorized = permissionService.checkPermission(request);
         if (unauthorized != null) {
             return unauthorized;
@@ -177,13 +181,8 @@ public class ConfigResourceRest {
     @Path("/addTeamPermission")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addTeamPermission(final String teamName, @Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
-
-        if (unauthorized != null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
-        } else if (teamName.isEmpty()) {
-            return Response.status(Response.Status.FORBIDDEN).entity("Team name must not be empty.").build();
-        }
+        Response unauthorized = checkParam(request);
+        if (unauthorized != null) return unauthorized;
 
         Team[] teams = configService.getConfiguration().getTeams();
         for (Team team : teams) {
@@ -201,6 +200,19 @@ public class ConfigResourceRest {
         return Response.serverError().build();
     }
 
+    private Response checkParam(@Context HttpServletRequest request, String... strings) {
+        Response unauthorized = permissionService.checkPermission(request);
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+        for (String param : strings) {
+            if (param.isEmpty()) {
+                return Response.status(Response.Status.FORBIDDEN).entity("Name must not be empty.").build();
+            }
+        }
+        return null;
+    }
+
     @PUT
     @Path("/editTeamName")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -208,7 +220,7 @@ public class ConfigResourceRest {
         Response unauthorized = permissionService.checkPermission(request);
 
         if (unauthorized != null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
+            return unauthorized;
         } else if (teams == null || teams.length != 2) {
             return Response.serverError().build();
         } else if (teams[1].trim().isEmpty()) {
@@ -230,13 +242,8 @@ public class ConfigResourceRest {
     @Path("/removeTeamPermission")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeTeamPermission(final String teamName, @Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
-
-        if (unauthorized != null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
-        } else if (teamName.isEmpty()) {
-            return Response.status(Response.Status.FORBIDDEN).entity("Team name must not be empty.").build();
-        }
+        Response unauthorized = checkParam(request);
+        if (unauthorized != null) return unauthorized;
 
         boolean successful = configService.removeTeam(teamName) != null;
 
@@ -251,13 +258,8 @@ public class ConfigResourceRest {
     @Path("/addCategory")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addCategory(final String categoryName, @Context HttpServletRequest request) throws ServiceException {
-        Response unauthorized = permissionService.checkPermission(request);
-
-        if (unauthorized != null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
-        } else if (categoryName.isEmpty()) {
-            return Response.status(Response.Status.FORBIDDEN).entity("Category name must not be empty.").build();
-        }
+        Response unauthorized = checkParam(request);
+        if (unauthorized != null) return unauthorized;
 
         try {
             categoryService.add(categoryName);
@@ -274,7 +276,7 @@ public class ConfigResourceRest {
         Response unauthorized = permissionService.checkPermission(request);
 
         if (unauthorized != null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
+            return unauthorized;
         } else if (categories == null || categories.length != 2) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Not enough arguments.").build();
         } else if (categories[1].trim().isEmpty()) {
@@ -305,7 +307,7 @@ public class ConfigResourceRest {
     public Response removeCategory(final String modifyCategory, @Context HttpServletRequest request) throws ServiceException {
         Response unauthorized = permissionService.checkPermission(request);
         if (unauthorized != null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
+            return unauthorized;
         }
 
         boolean successful = categoryService.removeCategory(modifyCategory);

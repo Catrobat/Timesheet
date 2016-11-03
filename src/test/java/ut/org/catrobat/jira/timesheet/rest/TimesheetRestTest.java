@@ -204,7 +204,7 @@ public class TimesheetRestTest {
     public void testGetTeamsForTimesheetUserDoesNotExist() throws Exception {
         //preparations
         int timesheetID = 1;
-        when(userManagerJiraMock.getUserByKey(any())).thenReturn(null);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
 
         //execution & verifying
         response = timesheetRest.getTeamsForTimesheet(requestMock, timesheetID);
@@ -266,9 +266,7 @@ public class TimesheetRestTest {
 
     @Test
     public void testGetTeamsUserDoesNotExist() throws Exception {
-        when(userMock.getKey()).thenReturn(null);
-        when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
-        when(userManagerJiraMock.getUserByKey(any())).thenReturn(null);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
         //execution & verifying
         response = timesheetRest.getTeamsForUser(requestMock);
 
@@ -285,7 +283,7 @@ public class TimesheetRestTest {
     @Test
     public void testGetCategoriesUserDoesNotExist() throws Exception {
         //preparations
-        when(userManagerJiraMock.getUserByKey(any())).thenReturn(null);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
         //execution & verifying
         response = timesheetRest.getCategories(requestMock);
         assertEquals(response.getEntity(), "User does not exist.");
@@ -339,7 +337,7 @@ public class TimesheetRestTest {
     @Test
     public void testGetAllTeamsUserDoesNotExist() throws Exception {
         //preparations
-        when(userManagerJiraMock.getUserByKey(any())).thenReturn(null);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
 
         //execution & verifying
         response = timesheetRest.getAllTeams(requestMock);
@@ -466,7 +464,7 @@ public class TimesheetRestTest {
     @Test
     public void testGetTimesheetEntriesOfAllTeamMembersUserDoesNotExist() throws Exception {
         //preparations
-        when(userManagerJiraMock.getUserByKey(any())).thenReturn(null);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
         //execution & verifying
         response = timesheetRest.getTimesheetEntriesOfAllTeamMembers(requestMock, 1);
         assertEquals(response.getEntity(), "User does not exist.");
@@ -519,7 +517,7 @@ public class TimesheetRestTest {
     public void testGetAllTimesheetEntriesForTeamUserDoesNotExist() throws Exception {
         //preparations
         String teamName = "Catroid";
-        when(userManagerJiraMock.getUserByKey(any())).thenReturn(null);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
         //execution & verifying
         response = timesheetRest.getAllTimesheetEntriesForTeam(requestMock, teamName);
         assertEquals(response.getEntity(), "User does not exist.");
@@ -583,7 +581,7 @@ public class TimesheetRestTest {
 
         //execution & verifying
         response = timesheetRest.getOwnerOfTimesheet(requestMock, timesheetID);
-        assertEquals(response.getEntity(), "User does not exist.");
+        assertEquals(response.getEntity(), "Timesheet Access denied.");
     }
 
     //TODO: correct this test
@@ -727,7 +725,7 @@ public class TimesheetRestTest {
         when(timesheetMock.getUserKey()).thenReturn(userKey);
 
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
-        when(permissionServiceMock.checkIfUserIsGroupMember(requestMock, "jira-administrators")).thenReturn(true);
+        when(permissionServiceMock.checkIfUserIsGroupMember("jira-administrators")).thenReturn(true);
 
 
         response = timesheetRest.postTimesheetHours(requestMock, jsonTimesheet, timesheetID, isMTSheet);
@@ -773,7 +771,7 @@ public class TimesheetRestTest {
 
         when(teamMock.getCategories()).thenReturn(categories);
         when(permissionServiceMock.checkIfUserExists(requestMock)).thenReturn(userMock);
-        when(permissionServiceMock.checkIfUserIsGroupMember(requestMock, "jira-administrators")).thenReturn(true);
+        when(permissionServiceMock.checkIfUserIsGroupMember("jira-administrators")).thenReturn(true);
         when(groupManagerJiraMock.getGroupNamesForUser(
                 ComponentAccessor.getUserManager().getUserByKey(userKey))).thenReturn(userGroups);
         when(timesheetEntryServiceMock.getEntryByID(entryID)).thenReturn(timesheetEntryMock);

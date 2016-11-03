@@ -21,20 +21,20 @@ import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.helper.CsvConfigExporter;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.joda.time.DateTime;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Date;
 
 public class ExportConfigAsCSVServlet extends HelperServlet {
 
     private final ConfigService configService;
 
     public ExportConfigAsCSVServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                    ConfigService configService, PermissionService permissionService) {
+            ConfigService configService, PermissionService permissionService) {
         super(loginUriProvider, webSudoManager, permissionService);
         this.configService = configService;
     }
@@ -43,12 +43,11 @@ public class ExportConfigAsCSVServlet extends HelperServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        Date actualDate =  new Date();
+        DateTime today = new DateTime();
+        String dateString = today.getYear() + "-" + today.getMonthOfYear() + "-" + today.getDayOfMonth();
+        System.out.println(today.toString());
         String filename = "attachment; filename=\"" +
-               actualDate.toString().substring(0,10) +
-                "-" +
-                actualDate.toString().substring(25, 29) +
-                "_Timesheet_Config.csv\"";
+                dateString + "_Timesheet_Config.csv\"";
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);
