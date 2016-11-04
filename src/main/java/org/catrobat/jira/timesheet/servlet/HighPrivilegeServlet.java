@@ -21,6 +21,8 @@ import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
+import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
+import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 
 import javax.servlet.ServletException;
@@ -32,17 +34,19 @@ import java.io.IOException;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class HighPrivilegeServlet extends HttpServlet {
+
     protected static final String JIRA_LOGIN_JSP = "/jira/login.jsp";
     protected final LoginUriProvider loginUriProvider;
     protected final WebSudoManager webSudoManager;
     protected final PermissionService permissionService;
-    protected ApplicationUser user;
+    private final ConfigService configService;
 
     public HighPrivilegeServlet(final LoginUriProvider loginUriProvider, final WebSudoManager webSudoManager,
-            final PermissionService permissionService) {
+            final PermissionService permissionService, ConfigService configService) {
         this.loginUriProvider = checkNotNull(loginUriProvider, "loginProvider");
         this.webSudoManager = checkNotNull(webSudoManager, "webSudoManager");
         this.permissionService = checkNotNull(permissionService, "permissionService");
+        this.configService = checkNotNull(configService, "configService");
     }
 
     @Override
@@ -58,23 +62,35 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
     }
 
     protected void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html;charset=utf-8");
+
+        ApprovedUser[] approvedUsers = configService.getConfiguration().getApprovedUsers();
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+
         try {
-            if (!permissionService.checkIfUserIsGroupMember("Timesheet") &&
-                    !permissionService.checkIfUserIsGroupMember("jira-administrators") &&
-                    !permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
-                response.sendRedirect(JIRA_LOGIN_JSP);
+            if (approvedUsers.length > 0) {
+                for (ApprovedUser approvedUser : approvedUsers) {
+                    if (approvedUser.getUserKey().equals(user.getKey())) {
+                        System.out.println("User: " + approvedUser.getUserName() + " is approved to access!");
+                        if (!webSudoManager.canExecuteRequest(request)) {
+                            webSudoManager.enforceWebSudoProtection(request, response);
+                        }
+                        return;
+                    }
+                }
+            } else if (permissionService.checkIfUserIsGroupMember("Timesheet") ||
+                    permissionService.checkIfUserIsGroupMember("jira-administrators") ||
+                    permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
+                if (!webSudoManager.canExecuteRequest(request)) {
+                    webSudoManager.enforceWebSudoProtection(request, response);
+                }
                 return;
             }
         } catch (PermissionException e) {
             response.sendRedirect(JIRA_LOGIN_JSP);
             e.printStackTrace();
         }
-        if (!webSudoManager.canExecuteRequest(request)) {
-            webSudoManager.enforceWebSudoProtection(request, response);
-            return;
-        }
-
-        response.setContentType("text/html;charset=utf-8");
+        response.sendRedirect(JIRA_LOGIN_JSP);
     }
 
     private void enforceLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException {

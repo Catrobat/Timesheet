@@ -48,7 +48,7 @@ public class ImportTimesheetCsvServlet extends HighPrivilegeServlet {
             ConfigService configService, TimesheetService timesheetService,
             TimesheetEntryService timesheetEntryService,
             ActiveObjects activeObjects, PermissionService permissionService, CategoryService categoryService, TeamService teamService) {
-        super(loginUriProvider, webSudoManager, permissionService);
+        super(loginUriProvider, webSudoManager, permissionService, configService);
         this.configService = configService;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;

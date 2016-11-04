@@ -44,7 +44,7 @@ public class UserInformationServletTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
 
-        userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, webSudoManager, permissionService);
+        userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, webSudoManager, permissionService, configService);
 
         when(user.getUsername()).thenReturn("test");
         when(user.getKey()).thenReturn(test_key);

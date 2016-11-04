@@ -40,7 +40,7 @@ public class ExportAllTimesheetsAsCSVServlet extends HighPrivilegeServlet {
     public ExportAllTimesheetsAsCSVServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                            TimesheetService timesheetService, ConfigService configService,
                                            PermissionService permissionService) {
-        super(loginUriProvider, webSudoManager, permissionService);
+        super(loginUriProvider, webSudoManager, permissionService, configService);
         this.timesheetService = timesheetService;
         this.configService = configService;
     }

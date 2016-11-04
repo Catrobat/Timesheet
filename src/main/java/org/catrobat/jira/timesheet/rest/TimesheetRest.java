@@ -39,7 +39,6 @@ import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -49,6 +48,7 @@ import java.util.*;
 import static org.catrobat.jira.timesheet.rest.RestUtils.asSortedList;
 import static org.catrobat.jira.timesheet.rest.RestUtils.convertTeamsToJSON;
 
+//TODO: check if permissions are to loosely, in case adapted it, maybe checkIfUserExists() is not enough
 
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON})
@@ -69,11 +69,6 @@ public class TimesheetRest {
         this.categoryService = cs;
         this.permissionService = ps;
         this.configService = ahcs;
-    }
-
-    public void service(HttpServletRequest request, HttpServletResponse response) {
-        //permissionService.checkIfUserExists(request);
-        System.out.println("Service() aufgerufen - TimesheetRest");
     }
 
     private void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws InvalidCredentialException {

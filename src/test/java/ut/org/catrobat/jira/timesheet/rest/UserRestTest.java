@@ -13,6 +13,7 @@ import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
+import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,6 +52,7 @@ public class UserRestTest {
     private EntityManager entityManager;
     private TestActiveObjects ao;
     private JiraAuthenticationContext jiraAuthMock;
+    private PermissionService permissionServiceMock;
 
     @Before
     public void setUp() throws Exception {
@@ -64,8 +66,9 @@ public class UserRestTest {
         httpRequestMock = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
+        permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
 
-        userRest = new UserRest(configServiceMock, teamServiceMock);
+        userRest = new UserRest(configServiceMock, permissionServiceMock);
         spyUserRest = spy(userRest);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
@@ -77,9 +80,9 @@ public class UserRestTest {
 
     @Test
     public void testGetUsersUnauthorized() {
-        doReturn(false).when(spyUserRest).isApproved(userMock);
+        doReturn(false).when(permissionServiceMock).isApproved(userMock);
         Response unauthorized = Response.status(Response.Status.UNAUTHORIZED).build();
-        doReturn(unauthorized).when(spyUserRest).checkPermission(httpRequestMock);
+        doReturn(unauthorized).when(permissionServiceMock).checkPermission(httpRequestMock);
 
         Response result = spyUserRest.getUsers(httpRequestMock);
         Assert.assertEquals(unauthorized, result);
@@ -87,7 +90,7 @@ public class UserRestTest {
 
     @Test
     public void testGetUsersOnlyUsersInList() {
-        doReturn(true).when(spyUserRest).isApproved(userMock);
+        doReturn(true).when(permissionServiceMock).isApproved(userMock);
 
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
@@ -119,7 +122,7 @@ public class UserRestTest {
 
     @Test
     public void testGetUsersUnusualCases() {
-        doReturn(true).when(spyUserRest).isApproved(userMock);
+        doReturn(true).when(permissionServiceMock).isApproved(userMock);
 
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);

@@ -22,8 +22,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
-import org.catrobat.jira.timesheet.services.TeamService;
-import org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl;
+import org.catrobat.jira.timesheet.services.PermissionService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -38,13 +37,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Path("/user")
-public class UserRest extends PermissionServiceImpl {
+public class UserRest {
     public static final String DISABLED_GROUP = "Disabled";
     private final ConfigService configService;
+    private final PermissionService permissionService;
 
-    public UserRest(final ConfigService configService, final TeamService teamService) {
-        super(teamService, configService);
+    public UserRest(final ConfigService configService, PermissionService permissionService) {
         this.configService = configService;
+        this.permissionService = permissionService;
     }
 
     @GET
@@ -53,9 +53,8 @@ public class UserRest extends PermissionServiceImpl {
     public Response getUsers(@Context HttpServletRequest request) {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        //TODO: why bypass approved users???
-        if (!isApproved(loggedInUser)) {
-            Response unauthorized = checkPermission(request);
+        if (!permissionService.isApproved(loggedInUser)) {
+            Response unauthorized = permissionService.checkPermission(request);
             if (unauthorized != null) {
                 return unauthorized;
             }

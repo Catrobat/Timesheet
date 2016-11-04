@@ -44,7 +44,7 @@ public class ImportConfigCsvServlet extends HighPrivilegeServlet {
                                   TeamService teamService, ActiveObjects activeObjects,
                                   PermissionService permissionService) {
 
-        super(loginUriProvider, webSudoManager, permissionService);
+        super(loginUriProvider, webSudoManager, permissionService, configService);
         this.configService = configService;
         this.categoryService = categoryService;
         this.teamService = teamService;
@@ -61,7 +61,6 @@ public class ImportConfigCsvServlet extends HighPrivilegeServlet {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Configuration - Import is not possible if teams exist");
             return;
         }*/
-
 
         PrintWriter writer = response.getWriter();
         writer.print("<html>" +

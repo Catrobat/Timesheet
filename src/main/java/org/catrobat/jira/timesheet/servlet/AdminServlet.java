@@ -19,6 +19,7 @@ package org.catrobat.jira.timesheet.servlet;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 
 import javax.servlet.ServletException;
@@ -30,8 +31,8 @@ public class AdminServlet extends HighPrivilegeServlet {
     private final TemplateRenderer renderer;
 
     public AdminServlet(LoginUriProvider loginUriProvider, TemplateRenderer renderer,
-            WebSudoManager webSudoManager, PermissionService permissionService) {
-        super(loginUriProvider, webSudoManager, permissionService);
+            WebSudoManager webSudoManager, PermissionService permissionService, ConfigService configService) {
+        super(loginUriProvider, webSudoManager, permissionService,configService);
         this.renderer = renderer;
     }
 

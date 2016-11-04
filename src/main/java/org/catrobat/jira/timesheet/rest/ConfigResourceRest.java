@@ -17,7 +17,6 @@
 package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Category;
@@ -30,7 +29,6 @@ import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -42,7 +40,7 @@ import static org.catrobat.jira.timesheet.rest.RestUtils.convertTeamsToJSON;
 
 @Path("/config")
 @Produces({MediaType.APPLICATION_JSON})
-public class ConfigResourceRest extends HttpServlet{ // TODO: extends from Servlet und Permision vereineintlichen
+public class ConfigResourceRest {
     private final ConfigService configService;
     private final TeamService teamService;
     private final CategoryService categoryService;
@@ -59,14 +57,12 @@ public class ConfigResourceRest extends HttpServlet{ // TODO: extends from Servl
     @GET
     @Path("/getCategories")
     public Response getCategories(@Context HttpServletRequest request) {
-        try {
-            permissionService.checkIfUserExists(request);
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        Response unauthorized = permissionService.checkPermission(request);
+        if (unauthorized != null) {
+            return unauthorized;
         }
 
         List<JsonCategory> categories = new LinkedList<JsonCategory>();
-
         List<Category> categoryList = categoryService.all();
         Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
 
@@ -80,10 +76,9 @@ public class ConfigResourceRest extends HttpServlet{ // TODO: extends from Servl
     @GET
     @Path("/getTeams")
     public Response getTeams(@Context HttpServletRequest request) {
-        try {
-            permissionService.checkIfUserExists(request);
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        Response unauthorized = permissionService.checkPermission(request);
+        if (unauthorized != null) {
+            return unauthorized;
         }
 
         List<JsonTeam> teams = new LinkedList<JsonTeam>();
@@ -219,7 +214,6 @@ public class ConfigResourceRest extends HttpServlet{ // TODO: extends from Servl
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editTeamPermission(final String[] teams, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkPermission(request);
-
         if (unauthorized != null) {
             return unauthorized;
         } else if (teams == null || teams.length != 2) {
@@ -275,7 +269,6 @@ public class ConfigResourceRest extends HttpServlet{ // TODO: extends from Servl
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editCategoryName(final String[] categories, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkPermission(request);
-
         if (unauthorized != null) {
             return unauthorized;
         } else if (categories == null || categories.length != 2) {

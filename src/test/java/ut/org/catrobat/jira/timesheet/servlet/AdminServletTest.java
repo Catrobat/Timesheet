@@ -79,7 +79,7 @@ public class AdminServletTest {
         teamService = new TeamServiceImpl(ao, configService);
         permissionService = new PermissionServiceImpl(teamService, configService);
 
-        adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock);
+        adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock, configService);
 
         when(userMock.getUsername()).thenReturn("test");
         when(userMock.getKey()).thenReturn(test_key);

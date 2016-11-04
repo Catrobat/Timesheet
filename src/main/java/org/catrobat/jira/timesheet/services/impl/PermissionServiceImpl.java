@@ -69,9 +69,10 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public Response checkPermission(HttpServletRequest request) {
-        //TODO: we check for the admin groups, but where we check the timesheet group ?? Necessary??
         try {
-            if (!(checkIfUserIsGroupMember("jira-administrators") || checkIfUserIsGroupMember("Jira-Test-Administrators"))) {
+            checkIfUserExists(request);
+            if (!(checkIfUserIsGroupMember("jira-administrators") || checkIfUserIsGroupMember("Jira-Test-Administrators")
+                    || checkIfUserIsGroupMember("Timesheet"))) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                         "'jira-administrators', or 'Timesheet' group.").build();
             }

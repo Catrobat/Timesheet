@@ -35,7 +35,7 @@ public class ExportConfigAsCSVServlet extends HighPrivilegeServlet {
 
     public ExportConfigAsCSVServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
             ConfigService configService, PermissionService permissionService) {
-        super(loginUriProvider, webSudoManager, permissionService);
+        super(loginUriProvider, webSudoManager, permissionService, configService);
         this.configService = configService;
     }
 
