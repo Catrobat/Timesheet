@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class ImportConfigCsvServlet extends HelperServlet {
+public class ImportConfigCsvServlet extends HighPrivilegeServlet {
 
     private final ConfigService configService;
     private final CategoryService categoryService;

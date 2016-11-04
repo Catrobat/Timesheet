@@ -30,6 +30,7 @@ import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -41,7 +42,7 @@ import static org.catrobat.jira.timesheet.rest.RestUtils.convertTeamsToJSON;
 
 @Path("/config")
 @Produces({MediaType.APPLICATION_JSON})
-public class ConfigResourceRest {
+public class ConfigResourceRest extends HttpServlet{ // TODO: extends from Servlet und Permision vereineintlichen
     private final ConfigService configService;
     private final TeamService teamService;
     private final CategoryService categoryService;

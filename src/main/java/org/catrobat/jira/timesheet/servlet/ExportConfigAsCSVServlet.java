@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class ExportConfigAsCSVServlet extends HelperServlet {
+public class ExportConfigAsCSVServlet extends HighPrivilegeServlet {
 
     private final ConfigService configService;
 

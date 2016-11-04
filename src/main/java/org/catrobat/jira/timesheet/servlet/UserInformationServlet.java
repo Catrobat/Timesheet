@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class UserInformationServlet extends HelperServlet {
+public class UserInformationServlet extends HighPrivilegeServlet {
 
     private final TemplateRenderer renderer;
 

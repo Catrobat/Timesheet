@@ -16,7 +16,9 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.services.PermissionService;
@@ -26,43 +28,45 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class HelperServlet extends HttpServlet {
-    private final LoginUriProvider loginUriProvider;
-    private final WebSudoManager webSudoManager;
-    private final PermissionService permissionService;
+public abstract class HighPrivilegeServlet extends HttpServlet {
+    protected static final String JIRA_LOGIN_JSP = "/jira/login.jsp";
+    protected final LoginUriProvider loginUriProvider;
+    protected final WebSudoManager webSudoManager;
+    protected final PermissionService permissionService;
+    protected ApplicationUser user;
 
-    public HelperServlet(final LoginUriProvider loginUriProvider, final WebSudoManager webSudoManager,
-                         final PermissionService permissionService) {
+    public HighPrivilegeServlet(final LoginUriProvider loginUriProvider, final WebSudoManager webSudoManager,
+            final PermissionService permissionService) {
         this.loginUriProvider = checkNotNull(loginUriProvider, "loginProvider");
         this.webSudoManager = checkNotNull(webSudoManager, "webSudoManager");
-        this.permissionService = checkNotNull(permissionService);
+        this.permissionService = checkNotNull(permissionService, "permissionService");
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         checkPermission(request, response);
+        enforceLoggedIn(request, response);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         checkPermission(request, response);
+        enforceLoggedIn(request, response);
     }
 
-    private void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            //TODO: why is here also a checkPermission method ???
             if (!permissionService.checkIfUserIsGroupMember("Timesheet") &&
                     !permissionService.checkIfUserIsGroupMember("jira-administrators") &&
                     !permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
-                redirectToLogin(request, response);
+                response.sendRedirect(JIRA_LOGIN_JSP);
                 return;
             }
         } catch (PermissionException e) {
-            System.out.println(e.getMessage());
+            response.sendRedirect(JIRA_LOGIN_JSP);
             e.printStackTrace();
         }
         if (!webSudoManager.canExecuteRequest(request)) {
@@ -73,16 +77,10 @@ public abstract class HelperServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
     }
 
-    private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect(loginUriProvider.getLoginUri(getUri(request)).toASCIIString());
-    }
-
-    private URI getUri(HttpServletRequest request) {
-        StringBuffer builder = request.getRequestURL();
-        if (request.getQueryString() != null) {
-            builder.append("?");
-            builder.append(request.getQueryString());
+    private void enforceLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser() == null)  // (3)
+        {
+            res.sendRedirect(req.getContextPath() + "/plugins/servlet/login");
         }
-        return URI.create(builder.toString());
     }
 }

@@ -14,7 +14,6 @@ import org.catrobat.jira.timesheet.servlet.MasterThesisTimesheetServlet;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -77,7 +76,7 @@ public class MTTimesheetServletTest {
         when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(true);
     }
 
-    @Test(expected = ServletException.class)
+    @Test(expected = NullPointerException.class)
     public void testDoGetNullPointerException() throws Exception {
         when(permissionService.checkIfUserExists(request)).thenReturn(admin);
         when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(null);

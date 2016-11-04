@@ -18,6 +18,7 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
@@ -33,7 +34,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 
-public class ImportTimesheetCsvServlet extends HelperServlet {
+public class ImportTimesheetCsvServlet extends HighPrivilegeServlet {
 
     private final ConfigService configService;
     private final TimesheetService timesheetService;
@@ -41,11 +42,12 @@ public class ImportTimesheetCsvServlet extends HelperServlet {
     private final CategoryService categoryService;
     private final TeamService teamService;
     private final ActiveObjects activeObjects;
+    private ApplicationUser user;
 
     public ImportTimesheetCsvServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                     ConfigService configService, TimesheetService timesheetService,
-                                     TimesheetEntryService timesheetEntryService,
-                                     ActiveObjects activeObjects, PermissionService permissionService, CategoryService categoryService, TeamService teamService) {
+            ConfigService configService, TimesheetService timesheetService,
+            TimesheetEntryService timesheetEntryService,
+            ActiveObjects activeObjects, PermissionService permissionService, CategoryService categoryService, TeamService teamService) {
         super(loginUriProvider, webSudoManager, permissionService);
         this.configService = configService;
         this.timesheetService = timesheetService;

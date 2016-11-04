@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
 
-public class ExportTimesheetAsCSVServlet extends HelperServlet {
+public class ExportTimesheetAsCSVServlet extends HighPrivilegeServlet {
 
     private final TimesheetService timesheetService;
     private final ConfigService configService;

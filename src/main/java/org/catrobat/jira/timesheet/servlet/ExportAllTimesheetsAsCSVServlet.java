@@ -32,7 +32,7 @@ import java.io.PrintStream;
 import java.util.Date;
 import java.util.List;
 
-public class ExportAllTimesheetsAsCSVServlet extends HelperServlet {
+public class ExportAllTimesheetsAsCSVServlet extends HighPrivilegeServlet {
 
     private final TimesheetService timesheetService;
     private final ConfigService configService;
