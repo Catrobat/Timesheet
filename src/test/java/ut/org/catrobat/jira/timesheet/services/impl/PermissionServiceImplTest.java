@@ -31,7 +31,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,10 +59,8 @@ public class PermissionServiceImplTest {
     private TimesheetEntryService entryService;
     private SimpleDateFormat sdf;
     private ConfigService configService;
-    private ComponentAccessor componentAccessor;
     private GroupManager groupManager;
     private EntityManager entityManager;
-    private Collection<String> userGroupNames;
     private UserManager jiraUserManager;
     private JiraAuthenticationContext jiraAuthenticationContext;
 
@@ -96,9 +93,7 @@ public class PermissionServiceImplTest {
         team = Mockito.mock(Team.class);
         request = Mockito.mock(HttpServletRequest.class);
         permissionServiceException = Mockito.mock(PermissionServiceImpl.class);
-        componentAccessor = Mockito.mock(ComponentAccessor.class);
         config = Mockito.mock(Config.class);
-        userGroupNames = Mockito.mock(Collection.class);
 
         String coord_key = "coord_key";
         String owner_key = "owner_key";

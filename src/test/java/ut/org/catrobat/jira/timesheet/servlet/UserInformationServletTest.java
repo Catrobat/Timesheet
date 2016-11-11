@@ -1,7 +1,6 @@
 package ut.org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
@@ -36,7 +35,6 @@ public class UserInformationServletTest {
     private PermissionService permissionService;
     private WebSudoManager webSudoManager;
     private ConfigService configService;
-    private ComponentAccessor componentAccessor;
     private HttpServletResponse response;
     private HttpServletRequest request;
     private ApplicationUser user;
@@ -45,7 +43,6 @@ public class UserInformationServletTest {
 
     @Before
     public void setUp() throws Exception {
-        //new MockComponentWorker().init();
 
         loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = mock(TemplateRenderer.class);
@@ -71,7 +68,6 @@ public class UserInformationServletTest {
         when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
-        //PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);
     }
 
     @Test

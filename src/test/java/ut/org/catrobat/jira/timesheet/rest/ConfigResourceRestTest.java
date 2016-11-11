@@ -45,42 +45,27 @@ import static org.mockito.Mockito.*;
 public class ConfigResourceRestTest {
 
     private UserManager userManagerJiraMock;
-    private GroupManager groupManagerJiraMock;
 
     private CategoryService categoryService;
     private ConfigService configService;
-    private TimesheetService timesheetService;
-    private TimesheetEntryService timesheetEntryService;
     private TeamService teamService;
-    private PermissionService permissionService;
 
-    private TimesheetService timesheetServiceMock;
     private TeamService teamServiceMock;
     private CategoryService categoryServiceMock;
-    private TimesheetEntryService timesheetEntryServiceMock;
     private PermissionService permissionServiceMock;
     private ConfigService configServiceMock;
 
     private UserUtil userUtilMock;
-    private Timesheet timesheetMock;
     private Category categoryMock;
-    private Team teamMock;
-    private TimesheetEntry timesheetEntryMock;
 
     private ConfigResourceRest configResourceRest;
     private ConfigResourceRest configResourceRestMock;
-    private TimesheetRest spyTimesheetRest;
 
     private javax.ws.rs.core.Response response;
     private HttpServletRequest request;
 
-    private MailQueue mailQueueMock;
-
-    private SimpleDateFormat sdf;
-
     private TestActiveObjects ao;
     private EntityManager entityManager;
-    private UserManager userManager;
     private ApplicationUser userMock;
     private JiraAuthenticationContext jiraAuthMock;
     private GroupManager groupManagerMock;
@@ -91,20 +76,13 @@ public class ConfigResourceRestTest {
         ao = new TestActiveObjects(entityManager);
 
         userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
-        groupManagerJiraMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
         userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         categoryServiceMock = mock(CategoryService.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
-        timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
-        timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
         teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         request = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
-        mailQueueMock = mock(MailQueue.class, RETURNS_DEEP_STUBS);
-        timesheetMock = mock(Timesheet.class, RETURNS_DEEP_STUBS);
         categoryMock = mock(Category.class, RETURNS_DEEP_STUBS);
-        teamMock = mock(Team.class, RETURNS_DEEP_STUBS);
-        timesheetEntryMock = mock(TimesheetEntry.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
         groupManagerMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
@@ -112,9 +90,6 @@ public class ConfigResourceRestTest {
         categoryService = new CategoryServiceImpl(ao);
         configService = new ConfigServiceImpl(ao, categoryService);
         teamService = new TeamServiceImpl(ao, configService);
-        permissionService = new PermissionServiceImpl(teamService, configService);
-        timesheetEntryService = new TimesheetEntryServiceImpl(ao);
-        timesheetService = new TimesheetServiceImpl(ao);
         configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock);
 
         configResourceRestMock = new ConfigResourceRest(configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock);

@@ -5,7 +5,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
@@ -34,11 +33,9 @@ public class ExportMTTimesheetAsCSVServletTest {
     String test_key = "test_key";
     private ExportMasterThesisTimesheetAsCSVServlet exportMasterThesisTimesheetAsCSVServlet;
     private LoginUriProvider loginUriProvider;
-    private TemplateRenderer templateRenderer;
     private PermissionService permissionService;
     private WebSudoManager webSudoManager;
     private ConfigService configService;
-    private ComponentAccessor componentAccessor;
     private TimesheetService timesheetService;
     private Timesheet timesheet;
     private HttpServletResponse response;
@@ -54,10 +51,8 @@ public class ExportMTTimesheetAsCSVServletTest {
         PowerMockito.mockStatic(ComponentAccessor.class);
 
         loginUriProvider = mock(LoginUriProvider.class);
-        templateRenderer = mock(TemplateRenderer.class);
         webSudoManager = mock(WebSudoManager.class);
         permissionService = mock(PermissionService.class);
-        //componentAccessor = mock(ComponentAccessor.class);
         timesheetService = mock(TimesheetService.class);
         user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);

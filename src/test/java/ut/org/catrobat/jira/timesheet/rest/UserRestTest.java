@@ -43,7 +43,6 @@ public class UserRestTest {
 
     private UserManager userManagerJiraMock;
     private ConfigService configServiceMock;
-    private TeamService teamServiceMock;
     private UserRest spyUserRest;
     private HttpServletRequest httpRequestMock;
     private UserRest userRest;
@@ -62,7 +61,6 @@ public class UserRestTest {
         userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
-        teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         httpRequestMock = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);

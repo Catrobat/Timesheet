@@ -7,7 +7,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -46,11 +45,9 @@ public class ImportAllTimesheetsServletTest {
     private EntityManager entityManager;
     private ActiveObjects ao;
     private LoginUriProvider loginUriProvider;
-    private TemplateRenderer templateRenderer;
     private PermissionService permissionService;
     private WebSudoManager webSudoManager;
     private ConfigService configService;
-    private ComponentAccessor componentAccessor;
     private TimesheetService timesheetService;
     private Config config;
     private CategoryService categoryService;
@@ -66,7 +63,6 @@ public class ImportAllTimesheetsServletTest {
 
     @Before
     public void setUp() throws Exception {
-        ;
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
@@ -74,7 +70,6 @@ public class ImportAllTimesheetsServletTest {
         configService = new ConfigServiceImpl(ao, cs);
 
         loginUriProvider = mock(LoginUriProvider.class);
-        templateRenderer = mock(TemplateRenderer.class);
         webSudoManager = mock(WebSudoManager.class);
         permissionService = mock(PermissionService.class);
         PowerMockito.mockStatic(ComponentAccessor.class);

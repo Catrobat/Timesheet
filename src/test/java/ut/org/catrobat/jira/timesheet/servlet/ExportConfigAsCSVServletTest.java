@@ -7,17 +7,14 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
-import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportConfigAsCSVServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,13 +44,9 @@ public class ExportConfigAsCSVServletTest {
     private EntityManager entityManager;
     private ActiveObjects ao;
     private LoginUriProvider loginUriProvider;
-    private TemplateRenderer templateRenderer;
     private PermissionService permissionService;
     private WebSudoManager webSudoManager;
     private ConfigService configService;
-    private ComponentAccessor componentAccessor;
-    private TimesheetService timesheetService;
-    private Config config;
     private ApplicationUser applicationUser;
     private HttpServletResponse response;
     private HttpServletRequest request;
@@ -72,16 +65,13 @@ public class ExportConfigAsCSVServletTest {
         configService = new ConfigServiceImpl(ao, cs);
 
         loginUriProvider = mock(LoginUriProvider.class);
-        templateRenderer = mock(TemplateRenderer.class);
         webSudoManager = mock(WebSudoManager.class);
         permissionService = mock(PermissionService.class);
 
-        timesheetService = mock(TimesheetService.class);
         user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         outputStream = mock(ServletOutputStream.class);
-        config = mock(Config.class);
         applicationUser = mock(ApplicationUser.class);
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
 

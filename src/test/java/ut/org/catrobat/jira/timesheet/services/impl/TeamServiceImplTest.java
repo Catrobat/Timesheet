@@ -2,7 +2,6 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.service.ServiceException;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
@@ -39,13 +38,11 @@ public class TeamServiceImplTest {
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private EntityManager entityManager;
     private TeamService service;
-    private GroupManager gm;
     private ConfigService cs;
     private ActiveObjects ao;
 
     @Before
     public void setUp() throws Exception {
-        gm = Mockito.mock(GroupManager.class);
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
         service = new TeamServiceImpl(ao, cs);

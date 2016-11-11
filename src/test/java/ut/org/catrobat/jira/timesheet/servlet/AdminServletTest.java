@@ -14,10 +14,7 @@ import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
 import org.catrobat.jira.timesheet.servlet.AdminServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,10 +42,6 @@ public class AdminServletTest {
     private TemplateRenderer templateRendererMock;
     private PermissionService permissionServiceMock;
     private WebSudoManager webSudoManagerMock;
-    private ConfigService configServiceMock;
-    private ComponentAccessor componentAccessorMock;
-    private TeamService teamService;
-    private PermissionService permissionService;
     private ConfigService configService;
     private CategoryService categoryService;
     private TestActiveObjects ao;
@@ -76,8 +69,6 @@ public class AdminServletTest {
 
         categoryService = new CategoryServiceImpl(ao);
         configService = new ConfigServiceImpl(ao, categoryService);
-        teamService = new TeamServiceImpl(ao, configService);
-        permissionService = new PermissionServiceImpl(teamService, configService);
 
         adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock, configService);
 

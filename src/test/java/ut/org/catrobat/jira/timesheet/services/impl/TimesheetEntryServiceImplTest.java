@@ -26,7 +26,6 @@ import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
-import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
 import org.junit.Assert;
@@ -45,7 +44,6 @@ public class TimesheetEntryServiceImplTest {
 
     private EntityManager entityManager;
     private TimesheetEntryService service;
-    private PermissionService permissionService;
     private ActiveObjects ao;
 
     private static final Date TODAY = new Date();

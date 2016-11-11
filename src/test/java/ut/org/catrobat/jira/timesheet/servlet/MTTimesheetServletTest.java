@@ -1,14 +1,11 @@
 package ut.org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.MasterThesisTimesheetServlet;
 import org.junit.Before;
@@ -29,32 +26,23 @@ public class MTTimesheetServletTest {
     private PermissionService permissionService;
 
     private Timesheet timeSheet;
-    private ApplicationUser user;
-    private TeamService teamService;
 
     private HttpServletResponse response;
     private HttpServletRequest request;
 
-    private ComponentAccessor componentAccessor;
-
-    private Team team;
     private ApplicationUser admin;
 
     @Before
     public void setUp() throws Exception {
         new MockComponentWorker().init();
 
-        teamService = mock(TeamService.class);
         loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = mock(TemplateRenderer.class);
         sheetService = mock(TimesheetService.class);
         permissionService = mock(PermissionService.class);
-        componentAccessor = mock(ComponentAccessor.class);
 
-        user = mock(ApplicationUser.class);
         timeSheet = mock(Timesheet.class);
         sheetService = mock(TimesheetService.class);
-        team = mock(Team.class);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
