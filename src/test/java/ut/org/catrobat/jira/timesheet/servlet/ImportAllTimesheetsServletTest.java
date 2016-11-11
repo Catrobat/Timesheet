@@ -3,6 +3,7 @@ package ut.org.catrobat.jira.timesheet.servlet;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -10,6 +11,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
@@ -19,6 +21,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.ServletOutputStream;
@@ -29,8 +35,10 @@ import java.io.PrintWriter;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(ActiveObjectsJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
+@PrepareForTest({ComponentAccessor.class})
 public class ImportAllTimesheetsServletTest {
 
     String test_key = "test_key";
@@ -54,6 +62,7 @@ public class ImportAllTimesheetsServletTest {
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private CategoryService cs;
+    private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Before
     public void setUp() throws Exception {
@@ -68,7 +77,7 @@ public class ImportAllTimesheetsServletTest {
         templateRenderer = mock(TemplateRenderer.class);
         webSudoManager = mock(WebSudoManager.class);
         permissionService = mock(PermissionService.class);
-        componentAccessor = mock(ComponentAccessor.class);
+        PowerMockito.mockStatic(ComponentAccessor.class);
         timesheetService = mock(TimesheetService.class);
         user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
@@ -79,6 +88,8 @@ public class ImportAllTimesheetsServletTest {
         teamService = mock(TeamService.class);
         timesheetEntryService = mock(TimesheetEntryService.class);
         printWriter = mock(PrintWriter.class);
+        configService = mock(ConfigService.class);
+        jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
 
         importTimesheetCsvServlet = new ImportTimesheetCsvServlet(loginUriProvider, webSudoManager,
                 configService, timesheetService, timesheetEntryService, ao, permissionService,
@@ -94,6 +105,11 @@ public class ImportAllTimesheetsServletTest {
 
         when(response.getOutputStream()).thenReturn(outputStream);
         when(response.getWriter()).thenReturn(printWriter);
+        when(configService.getConfiguration()).thenReturn(config);
+        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
+
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
+        PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);
     }
 
     @Test

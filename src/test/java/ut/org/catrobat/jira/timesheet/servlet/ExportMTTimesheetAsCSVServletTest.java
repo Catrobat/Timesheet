@@ -6,9 +6,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportMasterThesisTimesheetAsCSVServlet;
@@ -48,6 +46,7 @@ public class ExportMTTimesheetAsCSVServletTest {
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private JiraAuthenticationContext jiraAuthenticationContext;
+    private Config config;
 
     @Before
     public void setUp() throws Exception {
@@ -58,7 +57,7 @@ public class ExportMTTimesheetAsCSVServletTest {
         templateRenderer = mock(TemplateRenderer.class);
         webSudoManager = mock(WebSudoManager.class);
         permissionService = mock(PermissionService.class);
-        componentAccessor = mock(ComponentAccessor.class);
+        //componentAccessor = mock(ComponentAccessor.class);
         timesheetService = mock(TimesheetService.class);
         user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
@@ -66,6 +65,8 @@ public class ExportMTTimesheetAsCSVServletTest {
         timesheet = mock(Timesheet.class);
         outputStream = mock(ServletOutputStream.class);
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
+        configService = Mockito.mock(ConfigService.class);
+        config = Mockito.mock(Config.class);
 
         exportMasterThesisTimesheetAsCSVServlet = new ExportMasterThesisTimesheetAsCSVServlet(loginUriProvider, webSudoManager, timesheetService,
                 configService, permissionService);
@@ -94,6 +95,8 @@ public class ExportMTTimesheetAsCSVServletTest {
         when(timesheet.getIsMasterThesisTimesheet()).thenReturn(true);
         when(timesheetService.getTimesheetByUser(user.getKey(), true)).thenReturn(timesheet);
         when(response.getOutputStream()).thenReturn(outputStream);
+        when(configService.getConfiguration()).thenReturn(config);
+        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);

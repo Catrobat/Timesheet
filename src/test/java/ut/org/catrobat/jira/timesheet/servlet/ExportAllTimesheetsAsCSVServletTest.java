@@ -2,10 +2,17 @@ package ut.org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import net.java.ao.EntityManager;
+import net.java.ao.test.jdbc.Data;
+import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
+import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.PermissionService;
@@ -13,8 +20,12 @@ import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +35,8 @@ import java.util.Date;
 
 import static org.mockito.Mockito.*;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ComponentAccessor.class)
 public class ExportAllTimesheetsAsCSVServletTest {
 
     String test_key = "test_key";
@@ -40,11 +53,19 @@ public class ExportAllTimesheetsAsCSVServletTest {
     private HttpServletRequest request;
     private ApplicationUser user;
     private ServletOutputStream outputStream;
+    private JiraAuthenticationContext jiraAuthenticationContext;
+    private Config config;
+
+    private UserKeyService userKeyService;
+
+    private String userKey = "UserKey";
 
     @Before
     public void setUp() throws Exception {
 
         new MockComponentWorker().init();
+
+        PowerMockito.mockStatic(ComponentAccessor.class);
 
         loginUriProvider = mock(LoginUriProvider.class);
         templateRenderer = Mockito.mock(TemplateRenderer.class);
@@ -56,6 +77,10 @@ public class ExportAllTimesheetsAsCSVServletTest {
         response = Mockito.mock(HttpServletResponse.class);
         timesheet = Mockito.mock(Timesheet.class);
         outputStream = Mockito.mock(ServletOutputStream.class);
+        configService = Mockito.mock(ConfigService.class);
+        config = Mockito.mock(Config.class);
+        jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
+        userKeyService = Mockito.mock(UserKeyService.class);
 
         exportAllTimesheetsAsCSVServlet = new ExportAllTimesheetsAsCSVServlet(loginUriProvider, webSudoManager, timesheetService,
                 configService, permissionService);
@@ -84,12 +109,19 @@ public class ExportAllTimesheetsAsCSVServletTest {
         when(timesheet.getIsEnabled()).thenReturn(true);
         when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(response.getOutputStream()).thenReturn(outputStream);
+        when(configService.getConfiguration()).thenReturn(config);
+        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
+
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
+        PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);
+        PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyService);
+        PowerMockito.when(userKeyService.getKeyForUsername(user.getUsername())).thenReturn(userKey);
 
     }
 
     @Test
     public void testDoGet() throws Exception {
-        Mockito.when(timesheetService.getTimesheetByUser(componentAccessor.getUserKeyService().
+        Mockito.when(timesheetService.getTimesheetByUser(ComponentAccessor.getUserKeyService().
                 getKeyForUsername(user.getUsername()), false)).thenReturn(timesheet);
 
         exportAllTimesheetsAsCSVServlet.doGet(request, response);

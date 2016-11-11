@@ -6,9 +6,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportTimesheetAsCSVServlet;
@@ -47,6 +45,7 @@ public class ExportTimesheetAsCSVServletTest {
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private JiraAuthenticationContext jiraAuthenticationContext;
+    private Config config;
 
     @Before
     public void setUp() throws Exception {
@@ -65,6 +64,8 @@ public class ExportTimesheetAsCSVServletTest {
         timesheet = mock(Timesheet.class);
         outputStream = mock(ServletOutputStream.class);
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
+        configService = mock(ConfigService.class);
+        config = mock(Config.class);
 
         exportTimesheetAsCSVServlet = new ExportTimesheetAsCSVServlet(loginUriProvider, webSudoManager, timesheetService,
                 configService, permissionService);
@@ -93,6 +94,8 @@ public class ExportTimesheetAsCSVServletTest {
         when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(timesheetService.getTimesheetByUser(user.getKey(), false)).thenReturn(timesheet);
         when(response.getOutputStream()).thenReturn(outputStream);
+        when(configService.getConfiguration()).thenReturn(config);
+        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);

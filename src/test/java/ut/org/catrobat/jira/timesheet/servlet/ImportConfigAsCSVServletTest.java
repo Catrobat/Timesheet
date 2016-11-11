@@ -4,6 +4,7 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -11,6 +12,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
@@ -21,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
@@ -61,10 +64,13 @@ public class ImportConfigAsCSVServletTest {
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private CategoryService cs;
+    private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Before
     public void setUp() throws Exception {
         new MockComponentWorker().init();
+
+        PowerMockito.mockStatic(ComponentAccessor.class);
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
@@ -84,6 +90,8 @@ public class ImportConfigAsCSVServletTest {
         categoryService = mock(CategoryService.class);
         teamService = mock(TeamService.class);
         printWriter = mock(PrintWriter.class);
+        configService = mock(ConfigService.class);
+        jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
 
         importConfigCsvServlet = new ImportConfigCsvServlet(loginUriProvider, webSudoManager,
                 configService, categoryService, teamService, ao, permissionService);
@@ -98,6 +106,12 @@ public class ImportConfigAsCSVServletTest {
 
         when(response.getOutputStream()).thenReturn(outputStream);
         when(response.getWriter()).thenReturn(printWriter);
+
+        when(configService.getConfiguration()).thenReturn(config);
+        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
+
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
+        PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);
     }
 
     @Test

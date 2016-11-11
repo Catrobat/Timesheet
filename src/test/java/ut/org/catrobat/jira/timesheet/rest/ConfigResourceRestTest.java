@@ -115,7 +115,7 @@ public class ConfigResourceRestTest {
         permissionService = new PermissionServiceImpl(teamService, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
-        configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionService);
+        configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock);
 
         configResourceRestMock = new ConfigResourceRest(configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock);
 
@@ -128,6 +128,7 @@ public class ConfigResourceRestTest {
 
         //additional mocks
         when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userMock);
+        when(permissionServiceMock.checkPermission(request)).thenReturn(null);
     }
 
     @Test
@@ -162,6 +163,7 @@ public class ConfigResourceRestTest {
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
         response = configResourceRest.getTeams(request);
+        System.out.println(response.getEntity());
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertNotNull(responseTeamList);
     }

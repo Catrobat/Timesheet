@@ -3,6 +3,7 @@ package ut.org.catrobat.jira.timesheet.servlet;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -21,6 +22,10 @@ import org.catrobat.jira.timesheet.servlet.ExportConfigAsCSVServlet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.ServletOutputStream;
@@ -30,8 +35,11 @@ import javax.servlet.http.HttpServletResponse;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(ActiveObjectsJUnitRunner.class)
+
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
+@PrepareForTest(ComponentAccessor.class)
 public class ExportConfigAsCSVServletTest {
 
     String test_key = "test_key";
@@ -52,9 +60,12 @@ public class ExportConfigAsCSVServletTest {
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private CategoryService cs;
+    private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Before
     public void setUp() throws Exception {
+
+        PowerMockito.mockStatic(ComponentAccessor.class);
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
@@ -64,7 +75,7 @@ public class ExportConfigAsCSVServletTest {
         templateRenderer = mock(TemplateRenderer.class);
         webSudoManager = mock(WebSudoManager.class);
         permissionService = mock(PermissionService.class);
-        componentAccessor = mock(ComponentAccessor.class);
+
         timesheetService = mock(TimesheetService.class);
         user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
@@ -72,6 +83,7 @@ public class ExportConfigAsCSVServletTest {
         outputStream = mock(ServletOutputStream.class);
         config = mock(Config.class);
         applicationUser = mock(ApplicationUser.class);
+        jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
 
         exportConfigAsCSVServlet = new ExportConfigAsCSVServlet(loginUriProvider, webSudoManager,
                 configService, permissionService);
@@ -86,6 +98,9 @@ public class ExportConfigAsCSVServletTest {
 
         when(response.getOutputStream()).thenReturn(outputStream);
         when(applicationUser.getKey()).thenReturn(test_key);
+
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
+        PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);
     }
 
     @Test
