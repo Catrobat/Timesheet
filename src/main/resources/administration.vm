@@ -279,9 +279,6 @@
         <form id="category-general" class="aui">
             <div id="categories"></div>
 
-            <div class="field-group">
-                <input type="submit" value="Save" class="aui-button aui-button-primary">
-            </div>
         </form>
     </div>
     <div class="tabs-pane" id="tabs-teams">
