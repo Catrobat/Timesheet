@@ -29,10 +29,22 @@ import static com.google.common.collect.Lists.newArrayList;
 public class CategoryServiceImpl implements CategoryService {
 
     private final ActiveObjects ao;
+    private boolean isInitialised = false;
 
     public CategoryServiceImpl(ActiveObjects ao) {
         this.ao = ao;
-        createSpecialIfNotExistent();
+    }
+
+    private void init() {
+        for (String special : SpecialCategories.LIST) {
+            Category[] found = ao.find(Category.class, "NAME = ?", special);
+            if (found.length == 0) {
+                Category category = ao.create(Category.class);
+                category.setName(special);
+                category.save();
+            }
+        }
+        isInitialised = true;
     }
 
     @Override
@@ -45,7 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category getCategoryByName(String name) {
         if (SpecialCategories.LIST.contains(name)) {
-            createSpecialIfNotExistent();
+            initIfNotAlready();
         }
         Category[] found = ao.find(Category.class, "NAME = ?", name);
         return (found.length == 1) ? found[0] : null;
@@ -53,18 +65,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> all() {
-        createSpecialIfNotExistent();
+        initIfNotAlready();
         return newArrayList(ao.find(Category.class, Query.select().order("NAME ASC")));
     }
 
-    private void createSpecialIfNotExistent() {
-        for (String special : SpecialCategories.LIST) {
-            Category[] found = ao.find(Category.class, "NAME = ?", special);
-            if (found.length == 0) {
-                Category category = ao.create(Category.class);
-                category.setName(special);
-                category.save();
-            }
+    private void initIfNotAlready() {
+        if (!isInitialised) {
+            init();
         }
     }
 
