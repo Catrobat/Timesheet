@@ -19,16 +19,25 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import net.java.ao.EntityManager;
+import net.java.ao.Query;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.services.CategoryService;
+import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +55,7 @@ public class ConfigServiceImplTest {
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
+        cs = new CategoryServiceImpl(ao);
         configurationService = new ConfigServiceImpl(ao, cs);
     }
 
@@ -64,5 +74,17 @@ public class ConfigServiceImplTest {
         assertEquals(0, configuration.getApprovedUsers().length);
         assertEquals(0, configuration.getApprovedGroups().length);
         assertEquals(0, configuration.getTeams().length);
+    }
+
+    @Test
+    public void testAddedTeamHasSpecialCategories() {
+        Team testteam = configurationService.addTeam("Test", null, null, null);
+        CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", testteam.getID()));
+
+        List<CategoryToTeam> categoryToTeamList = Arrays.asList(categoryToTeamArray);
+
+        for (String specialCategory : SpecialCategories.LIST) {
+            Assert.assertFalse(categoryToTeamList.contains(specialCategory));
+        }
     }
 }

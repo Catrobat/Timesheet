@@ -21,6 +21,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
+import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -105,6 +106,7 @@ public class ConfigServiceImpl implements ConfigService {
         fillTeam(team, TeamToGroup.Role.DEVELOPER, developerGroups);
 
         fillCategory(team, teamCategoryNames);
+        fillCategory(team, SpecialCategories.LIST);
         team.save();
 
         return team;

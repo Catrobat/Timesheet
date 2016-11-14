@@ -7,14 +7,12 @@ import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
-import com.atlassian.mail.queue.MailQueue;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.rest.ConfigResourceRest;
-import org.catrobat.jira.timesheet.rest.TimesheetRest;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
@@ -31,7 +29,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -306,5 +303,14 @@ public class ConfigResourceRestTest {
 
         response = configResourceRestMock.setConfig(jsonConfig, request);
         assertNull(response.getEntity());
+    }
+
+    @Test
+    public void testCannotRenameCategoryNameAlreadyExists() throws Exception {
+        configResourceRest.addCategory("Test", request);
+        configResourceRest.addCategory("Hallo", request);
+        String[] renamePair = new String[] {"Test","Hallo"};
+        response = configResourceRest.editCategoryName(renamePair, request);
+        assertEquals(409, response.getStatus());
     }
 }
