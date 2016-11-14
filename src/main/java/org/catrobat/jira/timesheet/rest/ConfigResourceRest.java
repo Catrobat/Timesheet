@@ -28,6 +28,7 @@ import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
+import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -284,6 +285,10 @@ public class ConfigResourceRest {
 
         if (categoryService.getCategoryByName(categories[1]) != null) {
             return Response.status(Response.Status.CONFLICT).entity("Category name already exists.").build();
+        }
+
+        if (SpecialCategories.LIST.contains(categories[0])) {
+            return Response.status(Response.Status.CONFLICT).entity("Special categories cannot be renamed.").build();
         }
 
         boolean successful = configService.editCategoryName(categories[0], categories[1]) != null;

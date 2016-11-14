@@ -180,10 +180,15 @@ AJS.toInit(function () {
                 //build category list
                 AJS.$("#categories").empty();
                 for (var i = 0; i < categoryList.length; i++) {
-                    AJS.$("#categories").append("<h3>" + categoryList[i] +
-                        "<button class=\"aui-button aui-button-subtle\" value=\"C-" + categoryList[i] + "\">" +
-                        "<span class=\"aui-icon aui-icon-small aui-iconfont-edit\">Editing</span> Edit Category Name </button></h3><fieldset>");
-                    AJS.$("#categories").append("</fieldset>");
+                    if (categoryList[i] === "Inactive" || categoryList[i] === "Deactivated") {
+                        AJS.$("#categories").append("<h3>" + categoryList[i] + "</h3><fieldset>");
+                        AJS.$("#categories").append("</fieldset>");
+                    } else {
+                        AJS.$("#categories").append("<h3>" + categoryList[i] +
+                            "<button class=\"aui-button aui-button-subtle\" value=\"C-" + categoryList[i] + "\">" +
+                            "<span class=\"aui-icon aui-icon-small aui-iconfont-edit\">Editing</span> Edit Category Name </button></h3><fieldset>");
+                        AJS.$("#categories").append("</fieldset>");
+                    }
                 }
 
                 //Timesheet - supervisor picker
