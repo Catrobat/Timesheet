@@ -18,6 +18,12 @@ package org.catrobat.jira.timesheet.rest.json;
 
 import javax.xml.bind.annotation.XmlElement;
 
+/* Info: @deprecated
+ * for further projects / classes use the very powerful GSON library from Google. Have a look here:
+ * https://github.com/google/gson/blob/master/UserGuide.md
+ * It is easier to use and you haven't create a class for each object you would like to serialise.
+ * BTW: it is already included in this project, so feel free to use it up to now.
+*/
 public class JsonCategory {
     @XmlElement
     private int categoryID;

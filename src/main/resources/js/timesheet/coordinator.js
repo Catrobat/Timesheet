@@ -9,7 +9,7 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
 
     AJS.$("#coordinatorTimesheetSelect").append("<field-group>");
     AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><label for=\"permission\">Timesheet Of</label><input class=\"text selectTimesheetOfUserField\" type=\"text\" id=\"user-select2-field\"></div>");
-    AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Show\" class=\"aui-button aui-button-primary\"></field-group>");
+    AJS.$("#coordinatorTimesheetSelect").append("<div class=\"field-group\"><input type=\"saveEntryClicked\" value=\"Show\" class=\"aui-button aui-button-primary\"></field-group>");
     AJS.$("#coordinatorTimesheetSelect").append("</field-group>");
 
     AJS.$("#coordinatorTimesheetSelect").append("<field-group>");

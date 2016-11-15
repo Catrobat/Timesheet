@@ -73,6 +73,12 @@
     <web-resource key="administration-resources" name="Admin Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-banner</dependency>
+        <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
+        <dependency>com.atlassian.auiplugin:message</dependency>
 
         <resource type="download" name="administration.js" location="/js/administration.js"/>
         <resource type="download" name="administration.css" location="/css/administration.css"/>

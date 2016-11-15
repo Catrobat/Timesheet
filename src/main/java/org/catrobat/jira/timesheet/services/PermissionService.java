@@ -39,6 +39,8 @@ public interface PermissionService {
 
     Response checkPermission(HttpServletRequest request);
 
+    Response checkRootPermission(HttpServletRequest request);
+
     boolean userCanViewTimesheet(ApplicationUser user, Timesheet sheet);
 
     void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, JsonTimesheetEntry entry) throws PermissionException;

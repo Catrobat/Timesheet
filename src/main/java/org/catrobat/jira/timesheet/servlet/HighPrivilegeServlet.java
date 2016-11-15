@@ -78,8 +78,7 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
                         return;
                     }
                 }
-            } else if (permissionService.checkIfUserIsGroupMember("Timesheet") ||
-                    permissionService.checkIfUserIsGroupMember("jira-administrators") ||
+            } else if (permissionService.checkIfUserIsGroupMember("jira-administrators") ||
                     permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
                 if (!webSudoManager.canExecuteRequest(request)) {
                     webSudoManager.enforceWebSudoProtection(request, response);

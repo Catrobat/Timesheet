@@ -39,7 +39,7 @@ function getNameFromCategoryIndex(categoryID, timesheetData) {
     if (timesheetData && timesheetData.categoryIDs[categoryID]) {
         return timesheetData.categoryIDs[categoryID].categoryName;
     }
-    return null;
+    return "";
 }
 
 function getCategoryID(categoryName, teamCategories, timesheetData) {
@@ -287,6 +287,27 @@ function compareNames(a, b) {
         return 1;
     return 0;
 }
+
+function isDateMoreThanTwoMonthsAhead(inactiveDate) {
+    var date = new Date(inactiveDate);
+    var today = new Date();
+    if ((new Date(today.getFullYear(), today.getMonth(), today.getDate() + 61)) < date) {
+        return true;
+    }
+    return false;
+}
+
+function compareTime(time1, time2) {
+    var a = new Date(time1);
+    var b = new Date(time2);
+    if (a > b) { // a is later
+        return 1;
+    } else if (b > a) { // b is later
+        return -1;
+    }
+    return 0; // equal
+}
+
 
 // function printDomainAttributes() {
 //     var baseUrl = AJS.params.baseURL;

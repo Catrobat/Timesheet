@@ -199,10 +199,13 @@ function editEntryCallback(entry, timesheetData, form) {
  * @param {jQuery} form
  * @returns {undefined}
  */
-function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
-                          existingIsGoogleDocImportValue) {
+function submit(timesheetData, saveOptions, form, existingEntryID,
+                existingIsGoogleDocImportValue) {
+    form.saveButton.prop('disabled', true);
+
     var date = form.dateField.val();
     var validDateFormat = new Date(date);
+    var categoryIndex = form.categorySelect.val();
 
     if ((date == "") || (!isValidDate(validDateFormat))) {
         date = new Date().toJSON().slice(0, 10);
@@ -248,21 +251,41 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
         deactivateEndDate = new Date(deactivateEndDate + " " + toTimeString(beginTime));
     }
 
-    //change timesheetEntry to 0min duration for inactive timesheetEntry
-    //TODO: duration, begin and enddate should be set to default values and should be hidden
-    if (getNameFromCategoryIndex(form.categorySelect.val(), timesheetData) === "Inactive") {
+    if (getNameFromCategoryIndex(categoryIndex, timesheetData) === "Inactive") {
         endDate = beginDate;
     }
 
     if (inactiveEndDate.getDay() == beginDate.getDay() &&
-        form.categorySelect.val() == getIDFromCategoryName("inactive", timesheetData)) {
+        categoryIndex == getIDFromCategoryName("inactive", timesheetData)) {
 
         require('aui/flag')({
             type: 'info',
             title: 'Attention: No inactive end date ',
-            body: "Your inactivity is only valid until " + endDate
+            body: 'Your inactivity is only valid until ' + endDate
         });
     }
+
+    var categoryName = getNameFromCategoryIndex(categoryIndex, timesheetData).toLowerCase();
+    if ((categoryName.includes("(pp)") || categoryName.includes("pair")) && !form.partner.val()) {
+
+        require('aui/flag')({
+            type: 'error',
+            title: 'Pair Programming Partner is missing',
+            body: 'Please select an partner'
+        });
+    }
+
+    // if (!form.description.val()){
+    //     console.log("go here");
+    //     require('aui/flag')({
+    //         type: 'info',
+    //         title: 'Description message is missing',
+    //         body: 'You need to write a short summary about what you have done so far.'
+    //     });
+    //     form.description.css({"border-color": "red",
+    //         "border-width":"1px",
+    //         "border-style":"solid"});
+    // }
 
     timesheetEntry = {
         beginDate: beginDate,
@@ -283,7 +306,6 @@ function saveEntryClicked(timesheetData, saveOptions, form, existingEntryID,
     }
 
     form.loadingSpinner.show();
-    form.saveButton.prop('disabled', true);
 
     AJS.$.ajax({
         type: saveOptions.httpMethod,
@@ -326,7 +348,7 @@ function renderFormRow(timesheetData, entry, saveOptions) {
     var form = prepareForm(entry, timesheetData);
 
     form.saveButton.click(function () {
-        saveEntryClicked(timesheetData, saveOptions, form, entry.entryID,
+        submit(timesheetData, saveOptions, form, entry.entryID,
             entry.isGoogleDocImport);
     });
 
@@ -397,9 +419,15 @@ function prepareForm(entry, timesheetData) {
     form.categorySelect.change(function () {
         var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
         var indexOfDeactivated = getIDFromCategoryName("deactivated", timesheetData);
-        var categoryValue = form.categorySelect.val();
+        var indexOfPP = -1;
+        var categoryIndex = form.categorySelect.val();
 
-        if (categoryValue == indexOfInactive || categoryValue == indexOfDeactivated) {
+        var categoryName = getNameFromCategoryIndex(categoryIndex, timesheetData).toLowerCase();
+        if (categoryName.includes("(pp)") || categoryName.includes("pair")) {
+            categoryIndex = indexOfPP;
+        }
+
+        if (categoryIndex == indexOfInactive || categoryIndex == indexOfDeactivated) {
             form.beginTimeField.val('00:00');
             form.endTimeField.val('00:00');
             form.pauseTimeField.val('00:00');
@@ -415,13 +443,17 @@ function prepareForm(entry, timesheetData) {
             AJS.$(".end").fadeOut(2000);
             AJS.$(".start").fadeOut(2000);
 
-            if (categoryValue == indexOfInactive) {
+            if (categoryIndex == indexOfInactive) {
+                var date = form.inactiveEndDateField.val();
+                checkIfDateIsInRange(date, form);
                 AJS.$("input.description_").attr("placeholder", "Reason for your inactivity");
                 form.deactivateEndDateField.val("");
                 AJS.$(".inactive").fadeIn(2000);
                 AJS.$(".deactivate").fadeOut(2000);
             }
             else {
+                var date = form.deactivateEndDateField.val();
+                checkIfDateIsInRange(date, form);
                 AJS.$("input.description_").attr("placeholder", "Reason(s) for your deactivation");
                 form.inactiveEndDateField.val("");
                 AJS.$(".deactivate").fadeIn(2000);
@@ -445,12 +477,14 @@ function prepareForm(entry, timesheetData) {
             AJS.$(".ticket").fadeIn(2000);
             AJS.$(".partner").fadeIn(2000);
 
-            setTimeout(
-                function () {
-                    AJS.$(".inactive").hide();
-                    AJS.$(".deactivate").hide();
-                }, 100);
+            if (categoryIndex === indexOfPP) {
+                AJS.$(".partner").show();
+            }
+            else {
+                AJS.$(".partner").hide();
+            }
 
+            hideElementsOnStartup();
         }
     });
 
@@ -560,6 +594,29 @@ function prepareForm(entry, timesheetData) {
     }
 
     return form;
+}
+
+function checkIfDateIsInRange(date, form) {
+    var today = new Date();
+    if (isDateMoreThanTwoMonthsAhead(date)) {
+        require('aui/flag')({
+            type: 'error',
+            title: 'Wrong date range',
+            body: 'The date is more than 2 months in advance. This is not allowed.'
+        });
+        form.inactiveEndDateField.val("");
+        form.deactivateEndDateField.val("");
+    }
+
+    if (compareTime(date, today) == -1) {
+        require('aui/flag')({
+            type: 'error',
+            title: 'Invalid date',
+            body: 'The date is behind the current date.'
+        });
+        form.inactiveEndDateField.val("");
+        form.deactivateEndDateField.val("");
+    }
 }
 
 function getIDFromCategoryName(categoryName) {
@@ -767,3 +824,20 @@ function prepareViewRow(timesheetData, entry) {
 
     return viewRow;
 }
+
+// this is a hack - hideElementsOnStartup
+var hideElementsOnStartup = (function () {
+    var executed = false;
+    return function () {
+        if (!executed) {
+            executed = true;
+
+            setTimeout(
+                function () {
+                    AJS.$(".inactive").hide();
+                    AJS.$(".deactivate").hide();
+                    AJS.$(".partner").hide();
+                }, 100);
+        }
+    };
+})();

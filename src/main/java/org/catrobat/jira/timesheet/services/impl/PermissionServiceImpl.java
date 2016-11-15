@@ -82,6 +82,28 @@ public class PermissionServiceImpl implements PermissionService {
         return null;
     }
 
+    public Response checkRootPermission(HttpServletRequest request){
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        if(user == null){
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist!").build();
+        }
+        ApprovedUser[] approvedUsers = configService.getConfiguration().getApprovedUsers();
+
+        try {
+            checkIfUserExists(request);
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        for (ApprovedUser approvedUser : approvedUsers) {
+            if(approvedUser.getUserKey().equals(user.getKey())){
+                return null;
+            }
+        }
+
+        return Response.status(Response.Status.UNAUTHORIZED).entity("Sorry, you are not a timesheet admin!").build();
+    }
+
     public boolean isApproved(ApplicationUser user) {
         Config config = configService.getConfiguration();
 

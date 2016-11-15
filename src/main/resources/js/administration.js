@@ -17,6 +17,7 @@
 "use strict";
 
 var restBaseUrl;
+var inactiveUsers = [];
 
 AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
@@ -29,6 +30,8 @@ AJS.toInit(function () {
         var aTag = AJS.$("a[name='" + aid + "']");
         AJS.$('html,body').animate({scrollTop: aTag.offset().top}, 'slow');
     }
+
+    initDialog();
 
     function fetchData() {
 
@@ -665,4 +668,90 @@ AJS.toInit(function () {
             return '';
         }
     }
+
+    AJS.$(document).keydown(function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (e.ctrlKey && e.altKey && e.shiftKey) {
+            if (keyCode == 84) { // keycode == 't'
+                loadData();
+            }
+        }
+        //console.log(event.keyCode);
+    });
+
+    function loadData() {
+        var inactiveUsersFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'inactiveUsers',
+            contentType: "application/json"
+        });
+
+        AJS.$.when(inactiveUsersFetched)
+            .done(function (inactiveList){
+                inactiveUsers = inactiveList;
+                AJS.dialog2("#hidden-dialog").show();
+            })
+            .fail(function (error) {
+                AJS.messages.error({
+                    title: 'There was an error while fetching user data.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
+                AJS.$(".loadingDiv").hide();
+            });
+    }
+
+    function initDialog() {
+
+        AJS.$("#dialog-submit-button").click(function (e) {
+            e.preventDefault();
+            AJS.dialog2("#hidden-dialog").hide();
+        });
+
+        // Show event - this is triggered when the dialog is shown
+        AJS.dialog2("#hidden-dialog").on("show", function () {
+            AJS.$(".aui").focus();
+            AJS.log("hidden-dialog was shown");
+            AJS.$(".aui-dialog2-footer-hint").html("Created on " + new Date().toDateString());
+
+            var content = "";
+            inactiveUsers.forEach(function (user) {
+                content += user + "<br/>";
+            });
+
+            AJS.$(".aui-dialog2-content").html(content);
+        });
+
+        AJS.$("#search-field").keyup(function (e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+            var searchText = AJS.$("#search-field").val().toLowerCase();
+            var content = "";
+            for (var i = 0; i < inactiveUsers.length; i++) {
+                if (inactiveUsers[i].toLowerCase().includes(searchText)) {
+                    content += inactiveUsers[i] + "<br/>";
+                }
+            }
+            AJS.$(".aui-dialog2-content").html(content);
+        });
+
+//     // Hide event - this is triggered when the dialog is hidden
+//     AJS.dialog2("#hidden-dialog").on("hide", function () {
+//         AJS.log("hidden-dialog was hidden");
+//     });
+//
+// // Global show event - this is triggered when any dialog is show
+//     AJS.dialog2.on("show", function () {
+//         AJS.log("a dialog was shown");
+//     });
+//
+// // Global hide event - this is triggered when any dialog is hidden
+//     AJS.dialog2.on("hide", function () {
+//         AJS.log("a dialog was hidden");
+//     });
+    }
 });
+
