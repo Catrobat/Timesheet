@@ -3,6 +3,7 @@ package org.catrobat.jira.timesheet.rest;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
+import com.mysema.commons.lang.Assert;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
@@ -32,8 +33,9 @@ public class RestUtils {
         }
     }
 
-    public void printUserInformation(String approvedUserName, ApplicationUser user) {
-        ApplicationUser userByName = ComponentAccessor.getUserManager().getUserByName(approvedUserName);
+    public void printUserInformation(String username, ApplicationUser user) {
+        ApplicationUser userByName = ComponentAccessor.getUserManager().getUserByName(username);
+        Assert.isTrue(userByName.equals(user),"Users not equal!");
 
         System.out.println();
         System.out.println("user.getEmailAddress()       = " + user.getEmailAddress());
@@ -42,7 +44,7 @@ public class RestUtils {
         System.out.println("userByName.getName()         = " + userByName.getName());
         System.out.println("userByName.getUsername()     = " + userByName.getUsername());
         System.out.println("user.getUsername()           = " + user.getUsername());
-        System.out.println("approvedUserName()           = " + approvedUserName);
+        System.out.println("username()           = " + username);
 
         System.out.println("userByName.getDisplayName()  = " + userByName.getDisplayName());
         System.out.println("user.getDisplayName()        = " + user.getDisplayName());

@@ -7,7 +7,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
@@ -102,7 +102,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(response.getOutputStream()).thenReturn(outputStream);
         when(configService.getConfiguration()).thenReturn(config);
-        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
+        when(config.getTimesheetAdminUsers()).thenReturn(new TimesheetAdmin[0]);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);

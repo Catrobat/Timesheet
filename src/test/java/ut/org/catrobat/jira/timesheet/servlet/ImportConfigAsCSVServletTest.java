@@ -11,7 +11,7 @@ import com.atlassian.sal.api.websudo.WebSudoManager;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
@@ -101,7 +101,7 @@ public class ImportConfigAsCSVServletTest {
         when(response.getWriter()).thenReturn(printWriter);
 
         when(configService.getConfiguration()).thenReturn(config);
-        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
+        when(config.getTimesheetAdminUsers()).thenReturn(new TimesheetAdmin[0]);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);

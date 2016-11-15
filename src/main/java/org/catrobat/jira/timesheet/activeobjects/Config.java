@@ -98,10 +98,10 @@ public interface Config extends Entity {
     void setSupervisedUsers(String supervisedUsers);
 
     @OneToMany(reverse = "getConfiguration")
-    ApprovedGroup[] getApprovedGroups();
+    TSAdminGroup[] getTimesheetAdminGroups();
 
     @OneToMany(reverse = "getConfiguration")
-    ApprovedUser[] getApprovedUsers();
+    TimesheetAdmin[] getTimesheetAdminUsers();
 
     @OneToMany(reverse = "getConfiguration")
     Team[] getTeams();

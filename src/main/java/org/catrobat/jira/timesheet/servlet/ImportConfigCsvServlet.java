@@ -70,7 +70,7 @@ public class ImportConfigCsvServlet extends HighPrivilegeServlet {
                 "<form action=\"config\" method=\"post\"><br />" +
                 "<textarea name=\"csv\" rows=\"20\" cols=\"175\" wrap=\"off\">" +
                 "# lines beginning with '#' are comments and will be ignored\n" +
-                "# Approved Users and Groups; add usernames e.g.: MaxMustermann\n" +
+                "# Timesheet Admins and Groups; add usernames e.g.: MaxMustermann\n" +
                 "# Email From Name; your@email.address;\n" +
                 "# Email From Mail-Address;NaN; \n" +
                 "# Email Out Of Time Subject;NaN; \n" +
@@ -131,8 +131,8 @@ public class ImportConfigCsvServlet extends HighPrivilegeServlet {
 
     private void dropEntries() {
         activeObjects.deleteWithSQL(TimesheetEntry.class, "1=?", "1");
-        activeObjects.deleteWithSQL(ApprovedGroup.class, "1=?", "1");
-        activeObjects.deleteWithSQL(ApprovedUser.class, "1=?", "1");
+        activeObjects.deleteWithSQL(TSAdminGroup.class, "1=?", "1");
+        activeObjects.deleteWithSQL(TimesheetAdmin.class, "1=?", "1");
         activeObjects.deleteWithSQL(CategoryToTeam.class, "1=?", "1");
         activeObjects.deleteWithSQL(Category.class, "1=?", "1");
         activeObjects.deleteWithSQL(TeamToGroup.class, "1=?", "1");

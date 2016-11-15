@@ -20,8 +20,6 @@ import org.catrobat.jira.timesheet.activeobjects.*;
 
 import java.util.List;
 
-import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
-
 public abstract class CsvExporter {
 
     public static final String DELIMITER = ";";
@@ -55,13 +53,13 @@ public abstract class CsvExporter {
             for(String userName : config.getSupervisedUsers().split(","))
                 sb.append(userName).append(NEW_LINE);
 
-        //Approved Users
-        sb.append("Approved Users and Groups" + DELIMITER);
-        for (ApprovedUser approvedUser : config.getApprovedUsers()) {
-            sb.append(approvedUser.getUserName()).append(DELIMITER);
+        //Timesheet Admins
+        sb.append("Timesheet Admins and Groups" + DELIMITER);
+        for (TimesheetAdmin timesheetAdmin : config.getTimesheetAdminUsers()) {
+            sb.append(timesheetAdmin.getUserName()).append(DELIMITER);
         }
-        for (ApprovedGroup approvedGroup : config.getApprovedGroups()) {
-            sb.append(approvedGroup.getGroupName()).append(DELIMITER);
+        for (TSAdminGroup timesheetAdminGroup : config.getTimesheetAdminGroups()) {
+            sb.append(timesheetAdminGroup.getGroupName()).append(DELIMITER);
         }
         sb.append(NEW_LINE);
 

@@ -6,7 +6,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
@@ -65,7 +65,7 @@ public class UserInformationServletTest {
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
         when(configService.getConfiguration()).thenReturn(config);
-        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
+        when(config.getTimesheetAdminUsers()).thenReturn(new TimesheetAdmin[0]);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
     }

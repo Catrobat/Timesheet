@@ -71,8 +71,8 @@ public class ConfigServiceImplTest {
 
         Config configuration = configurationService.getConfiguration();
         assertTrue(configuration.getID() != 0);
-        assertEquals(0, configuration.getApprovedUsers().length);
-        assertEquals(0, configuration.getApprovedGroups().length);
+        assertEquals(0, configuration.getTimesheetAdminUsers().length);
+        assertEquals(0, configuration.getTimesheetAdminGroups().length);
         assertEquals(0, configuration.getTeams().length);
     }
 

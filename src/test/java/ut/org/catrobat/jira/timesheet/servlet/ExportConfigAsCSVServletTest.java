@@ -10,7 +10,7 @@ import com.atlassian.sal.api.websudo.WebSudoManager;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.services.CategoryService;
@@ -95,13 +95,13 @@ public class ExportConfigAsCSVServletTest {
 
     @Test
     public void testDoGet() throws Exception {
-        assertEquals(0, ao.find(ApprovedUser.class).length);
-        assertNotNull(configService.addApprovedUser(applicationUser));
+        assertEquals(0, ao.find(TimesheetAdmin.class).length);
+        assertNotNull(configService.addTimesheetAdmin(applicationUser));
         ao.flushAll();
-        assertEquals(1, ao.find(ApprovedUser.class).length);
+        assertEquals(1, ao.find(TimesheetAdmin.class).length);
 
-        ApprovedUser[] approvedUsers = ao.find(ApprovedUser.class);
-        assertTrue(approvedUsers.length > 0);
+        TimesheetAdmin[] timesheetAdmins = ao.find(TimesheetAdmin.class);
+        assertTrue(timesheetAdmins.length > 0);
 
         assertNotNull(configService.editMail("mailFromName", "mailFrom", "[Subject] Time",
                 "[Subject] Inactive", "[Subject] Offline", "[Subject] Active", "[Subject] Entry", "bla", "blabla",

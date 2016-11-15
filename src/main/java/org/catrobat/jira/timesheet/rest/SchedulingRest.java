@@ -86,11 +86,11 @@ public class SchedulingRest {
                         }
 
                         //Todo: inform all user in approved group
-                        ApprovedUser[] approvedUsers = configService.getConfiguration().getApprovedUsers();
+                        TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
                         //inform timesheet admins (approved users)
-                        for (ApprovedUser approvedUser : approvedUsers) {
-                            System.out.println("approvedUser: = " + approvedUser.getUserName());
-                            sendMail(createEmail(approvedUser.getEmailAddress(), config.getMailSubjectOfflineState(),
+                        for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
+                            System.out.println("timesheetAdmin: = " + timesheetAdmin.getUserName());
+                            sendMail(createEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectOfflineState(),
                                     config.getMailBodyOfflineState()));
                         }
                     } else if (!timesheet.getIsActive()) { // user is inactive

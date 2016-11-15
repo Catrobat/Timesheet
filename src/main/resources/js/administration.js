@@ -154,15 +154,15 @@ AJS.toInit(function () {
                 });
 
                 var approved = [];
-                if (config.approvedGroups) {
-                    for (var i = 0; i < config.approvedGroups.length; i++) {
-                        approved.push({id: "groups-" + config.approvedGroups[i], text: config.approvedGroups[i]});
+                if (config.timesheetAdminGroups) {
+                    for (var i = 0; i < config.timesheetAdminGroups.length; i++) {
+                        approved.push({id: "groups-" + config.timesheetAdminGroups[i], text: config.timesheetAdminGroups[i]});
                     }
                 }
 
-                if (config.approvedUsers) {
-                    for (var i = 0; i < config.approvedUsers.length; i++) {
-                        approved.push({id: "users-" + config.approvedUsers[i], text: config.approvedUsers[i]});
+                if (config.timesheetAdmins) {
+                    for (var i = 0; i < config.timesheetAdmins.length; i++) {
+                        approved.push({id: "users-" + config.timesheetAdmins[i], text: config.timesheetAdmins[i]});
                     }
                 }
 
@@ -253,18 +253,18 @@ AJS.toInit(function () {
         config.supervisors = AJS.$("#plugin-permission").val();
 
         var usersAndGroups = AJS.$("#plugin-administration").auiSelect2("val");
-        var approvedUsers = [];
-        var approvedGroups = [];
+        var timesheetAdmins = [];
+        var timesheetAdminGroups = [];
         for (var i = 0; i < usersAndGroups.length; i++) {
             if (usersAndGroups[i].match("^users-")) {
-                approvedUsers.push(usersAndGroups[i].split("users-")[1]);
+                timesheetAdmins.push(usersAndGroups[i].split("users-")[1]);
             } else if (usersAndGroups[i].match("^groups-")) {
-                approvedGroups.push(usersAndGroups[i].split("groups-")[1]);
+                timesheetAdminGroups.push(usersAndGroups[i].split("groups-")[1]);
             }
         }
 
-        config.approvedUsers = approvedUsers;
-        config.approvedGroups = approvedGroups;
+        config.timesheetAdmins = timesheetAdmins;
+        config.timesheetAdminGroups = timesheetAdminGroups;
 
         config.teams = [];
         for (var i = 0; i < teams.length; i++) {

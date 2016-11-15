@@ -362,7 +362,7 @@ function fetchUsers() {
     });
     AJS.$.when(config, jsonUser, userList)
         .done(initCoordinatorTimesheetSelect)
-        .done(initApprovedUserTimesheetSelect)
+        .done(initTimesheetAdminTimesheetSelect)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching user data.',

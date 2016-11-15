@@ -247,16 +247,16 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public void clearApprovedGroups() {
-        for (ApprovedGroup approvedGroup : ao.find(ApprovedGroup.class)) {
-            ao.delete(approvedGroup);
+    public void clearTimesheetAdminGroups() {
+        for (TSAdminGroup timesheetAdminGroup : ao.find(TSAdminGroup.class)) {
+            ao.delete(timesheetAdminGroup);
         }
     }
 
     @Override
-    public void clearApprovedUsers() {
-        for (ApprovedUser approvedUser : ao.find(ApprovedUser.class)) {
-            ao.delete(approvedUser);
+    public void clearTimesheetAdmins() {
+        for (TimesheetAdmin timesheetAdmin : ao.find(TimesheetAdmin.class)) {
+            ao.delete(timesheetAdmin);
         }
     }
 
@@ -373,28 +373,28 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public ApprovedGroup addApprovedGroup(String approvedGroupName) {
-        if (approvedGroupName == null || approvedGroupName.trim().length() == 0) {
+    public TSAdminGroup addTimesheetAdminGroup(String groupName) {
+        if (groupName == null || groupName.trim().length() == 0) {
             return null;
         }
-        approvedGroupName = approvedGroupName.trim();
+        groupName = groupName.trim();
 
-        ApprovedGroup[] approvedGroupArray = ao.find(ApprovedGroup.class, Query.select()
-                .where("upper(\"GROUP_NAME\") = upper(?)", approvedGroupName));
-        if (approvedGroupArray.length == 0) {
-            return createApprovedGroup(approvedGroupName);
+        TSAdminGroup[] timesheetAdminGroupArray = ao.find(TSAdminGroup.class, Query.select()
+                .where("upper(\"GROUP_NAME\") = upper(?)", groupName));
+        if (timesheetAdminGroupArray.length == 0) {
+            return createTimesheetAdminGroup(groupName);
         } else {
-            return createApprovedGroup(approvedGroupName);
+            return createTimesheetAdminGroup(groupName);
         }
     }
 
-    private ApprovedGroup createApprovedGroup(String approvedGroupName) {
-        ApprovedGroup approvedGroup = ao.create(ApprovedGroup.class);
-        approvedGroup.setGroupName(approvedGroupName);
-        approvedGroup.setConfiguration(getConfiguration());
-        approvedGroup.save();
+    private TSAdminGroup createTimesheetAdminGroup(String timesheetAdminGroupName) {
+        TSAdminGroup timesheetAdminGroup = ao.create(TSAdminGroup.class);
+        timesheetAdminGroup.setGroupName(timesheetAdminGroupName);
+        timesheetAdminGroup.setConfiguration(getConfiguration());
+        timesheetAdminGroup.save();
 
-        return approvedGroup;
+        return timesheetAdminGroup;
     }
 
     @Override
@@ -430,84 +430,84 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public ApprovedUser addApprovedUser(ApplicationUser user) {
+    public TimesheetAdmin addTimesheetAdmin(ApplicationUser user) {
         String userKey = user.getKey();
         if (userKey == null || userKey.trim().length() == 0) {
             return null;
         }
         userKey = userKey.trim();
 
-        ApprovedUser[] approvedUserArray = ao.find(ApprovedUser.class, Query.select()
+        TimesheetAdmin[] timesheetAdminArray = ao.find(TimesheetAdmin.class, Query.select()
                 .where("upper(\"USER_KEY\") = upper(?)", userKey));
-        if (approvedUserArray.length == 0) {
-            return createApprovedUser(user);
+        if (timesheetAdminArray.length == 0) {
+            return createTimesheetAdmin(user);
         } else {
-            return approvedUserArray[0];
+            return timesheetAdminArray[0];
         }
     }
 
-    private ApprovedUser createApprovedUser(ApplicationUser user) {
+    private TimesheetAdmin createTimesheetAdmin(ApplicationUser user) {
         String userKey = user.getKey();
 
-        ApprovedUser approvedUser = ao.create(ApprovedUser.class);
-        approvedUser.setUserKey(userKey);
-        approvedUser.setUserName(user.getUsername());
-        approvedUser.setEmailAddress(user.getEmailAddress());
-        approvedUser.setFullName(user.getDisplayName());
-        approvedUser.setConfiguration(getConfiguration());
-        approvedUser.save();
+        TimesheetAdmin timesheetAdmin = ao.create(TimesheetAdmin.class);
+        timesheetAdmin.setUserKey(userKey);
+        timesheetAdmin.setUserName(user.getUsername());
+        timesheetAdmin.setEmailAddress(user.getEmailAddress());
+        timesheetAdmin.setFullName(user.getDisplayName());
+        timesheetAdmin.setConfiguration(getConfiguration());
+        timesheetAdmin.save();
 
-        return approvedUser;
+        return timesheetAdmin;
     }
 
     @Override
-    public boolean isGroupApproved(String groupName) {
+    public boolean isTimesheetAdminGroup(String groupName) {
         if (groupName != null) {
             groupName = groupName.trim();
         }
 
-        return (ao.find(ApprovedGroup.class).length == 0 && ao.find(ApprovedUser.class).length == 0) ||
-                ao.find(ApprovedGroup.class, Query.select()
+        return (ao.find(TSAdminGroup.class).length == 0 && ao.find(TimesheetAdmin.class).length == 0) ||
+                ao.find(TSAdminGroup.class, Query.select()
                         .where("upper(\"GROUP_NAME\") = upper(?)", groupName)).length != 0;
     }
 
     @Override
-    public boolean isUserApproved(String userKey) {
+    public boolean isTimesheetAdmin(String userKey) {
         if (userKey != null) {
             userKey = userKey.trim();
         }
 
-        return ao.find(ApprovedUser.class, Query.select().where("upper(\"USER_KEY\") = upper(?)", userKey)).length != 0;
+        return ao.find(TimesheetAdmin.class, Query.select().where("upper(\"USER_KEY\") = upper(?)", userKey)).length != 0;
     }
 
     @Override
-    public Config removeApprovedGroup(String approvedGroupName) {
-        if (approvedGroupName != null) {
-            approvedGroupName = approvedGroupName.trim();
+    public Config removeTimesheetAdminGroup(String groupName) {
+        if (groupName != null) {
+            groupName = groupName.trim();
         }
 
-        ApprovedGroup[] approvedGroupArray = ao.find(ApprovedGroup.class, Query.select()
-                .where("upper(\"GROUP_NAME\") = upper(?)", approvedGroupName));
-        if (approvedGroupArray.length == 0) {
+        TSAdminGroup[] timesheetAdminGroupArray = ao.find(TSAdminGroup.class, Query.select()
+                .where("upper(\"GROUP_NAME\") = upper(?)", groupName));
+        if (timesheetAdminGroupArray.length == 0) {
             return null;
         }
-        ao.delete(approvedGroupArray[0]);
+        ao.delete(timesheetAdminGroupArray[0]);
 
         return getConfiguration();
     }
 
     @Override
-    public Config removeApprovedUser(String approvedUserKey) {
-        if (approvedUserKey != null) {
-            approvedUserKey = approvedUserKey.trim();
+    public Config removeTimesheetAdmin(String TimesheetAdminKey) {
+        if (TimesheetAdminKey != null) {
+            TimesheetAdminKey = TimesheetAdminKey.trim();
         }
 
-        ApprovedUser[] approvedUserArray = ao.find(ApprovedUser.class, Query.select()
-                .where("upper(\"USER_KEY\") = upper(?)", approvedUserKey));
-        if (approvedUserArray.length == 0) {
+        TimesheetAdmin[] timesheetAdminArray = ao.find(TimesheetAdmin.class, Query.select()
+                .where("upper(\"USER_KEY\") = upper(?)", TimesheetAdminKey));
+        if (timesheetAdminArray.length == 0) {
             return null;
         }
-        ao.delete(approvedUserArray[0]);
+        ao.delete(timesheetAdminArray[0]);
 
         return getConfiguration();
     }

@@ -106,8 +106,6 @@ public class TimesheetServlet extends HttpServlet {
             paramMap.put("ismasterthesistimesheet", false);
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
-        } catch (PermissionException e) {
-            redirectToLogin(request, response);
         } catch (ServiceException e) {
             redirectToLogin(request, response);
         }

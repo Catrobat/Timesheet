@@ -79,11 +79,11 @@ public class CsvConfigImporter {
                     supervisors += columns[i] + ",";
                 }
                 config.setSupervisedUsers(supervisors.substring(0, supervisors.length() - 1));
-            } else if (columns[0].equals("Approved Users and Groups") && columns.length > 1) {
+            } else if (columns[0].equals("Timesheet Admins and Groups") && columns.length > 1) {
                 for (int i = 1; i < columns.length; i++) {
                     ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(columns[i]);
                     if (!user.getName().isEmpty()) {
-                        configService.addApprovedUser(user);
+                        configService.addTimesheetAdmin(user);
                     }
                 }
             } else if (columns[0].equals("Email From Name")) {

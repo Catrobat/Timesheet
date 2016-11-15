@@ -46,21 +46,21 @@ public interface ConfigService {
 
     List<String> getCategoryNamesForTeam(String teamName);
 
+    boolean isTimesheetAdminGroup(String groupName);
+
+    boolean isTimesheetAdmin(String userKey);
+
+    TSAdminGroup addTimesheetAdminGroup(String timesheetAdminGroupName);
+
+    TimesheetAdmin addTimesheetAdmin(ApplicationUser user);
+
+    void clearTimesheetAdminGroups();
+
+    void clearTimesheetAdmins();
+
+    Config removeTimesheetAdmin(String TimesheetAdminKey);
+
+    Config removeTimesheetAdminGroup(String TimesheetAdminGroupName);
+
     int[] getCategoryIDsForTeam(String teamName);
-
-    boolean isGroupApproved(String groupName);
-
-    boolean isUserApproved(String userKey);
-
-    ApprovedGroup addApprovedGroup(String approvedGroupName);
-
-    Config removeApprovedGroup(String approvedGroupName);
-
-    ApprovedUser addApprovedUser(ApplicationUser user);
-
-    Config removeApprovedUser(String approvedUserKey);
-
-    void clearApprovedGroups();
-
-    void clearApprovedUsers();
 }

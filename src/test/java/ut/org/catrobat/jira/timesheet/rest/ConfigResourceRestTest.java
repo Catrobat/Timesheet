@@ -229,25 +229,25 @@ public class ConfigResourceRestTest {
 
         Team[] teams = {team1, team2};
 
-        ApprovedUser approvedUser1 = Mockito.mock(ApprovedUser.class);
-        when(approvedUser1.getUserKey()).thenReturn("USER_KEY1");
-        when(approvedUser1.getUserName()).thenReturn("User1");
+        TimesheetAdmin timesheetAdmin1 = Mockito.mock(TimesheetAdmin.class);
+        when(timesheetAdmin1.getUserKey()).thenReturn("USER_KEY1");
+        when(timesheetAdmin1.getUserName()).thenReturn("User1");
 
-        ApprovedUser approvedUser2 = Mockito.mock(ApprovedUser.class);
-        when(approvedUser2.getUserKey()).thenReturn("USER_KEY2");
-        when(approvedUser2.getUserName()).thenReturn("User2");
+        TimesheetAdmin timesheetAdmin2 = Mockito.mock(TimesheetAdmin.class);
+        when(timesheetAdmin2.getUserKey()).thenReturn("USER_KEY2");
+        when(timesheetAdmin2.getUserName()).thenReturn("User2");
 
-        ApprovedUser[] approvedUsers = {approvedUser1, approvedUser2};
+        TimesheetAdmin[] timesheetAdmins = {timesheetAdmin1, timesheetAdmin2};
 
-        ApprovedGroup approvedGroup = Mockito.mock(ApprovedGroup.class);
-        when(approvedGroup.getGroupName()).thenReturn("ApprovedGroup");
+        TSAdminGroup timesheetAdminGroup = Mockito.mock(TSAdminGroup.class);
+        when(timesheetAdminGroup.getGroupName()).thenReturn("TSAdminGroup");
 
-        ApprovedGroup[] approvedGroups = {approvedGroup};
+        TSAdminGroup[] timesheetAdminGroups = {timesheetAdminGroup};
 
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
-        when(configServiceMock.getConfiguration().getApprovedGroups()).thenReturn(approvedGroups);
-        when(configServiceMock.getConfiguration().getApprovedUsers()).thenReturn(approvedUsers);
+        when(configServiceMock.getConfiguration().getTimesheetAdminGroups()).thenReturn(timesheetAdminGroups);
+        when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
 
         response = configResourceRestMock.getConfig(request);
         assertNotNull(response.getEntity());
@@ -270,20 +270,20 @@ public class ConfigResourceRestTest {
 
         Team[] teams = {team1, team2};
 
-        ApprovedUser approvedUser1 = Mockito.mock(ApprovedUser.class);
-        when(approvedUser1.getUserKey()).thenReturn("USER_KEY1");
-        when(approvedUser1.getUserName()).thenReturn("User1");
+        TimesheetAdmin timesheetAdmin1 = Mockito.mock(TimesheetAdmin.class);
+        when(timesheetAdmin1.getUserKey()).thenReturn("USER_KEY1");
+        when(timesheetAdmin1.getUserName()).thenReturn("User1");
 
-        ApprovedUser approvedUser2 = Mockito.mock(ApprovedUser.class);
-        when(approvedUser2.getUserKey()).thenReturn("USER_KEY2");
-        when(approvedUser2.getUserName()).thenReturn("User2");
+        TimesheetAdmin timesheetAdmin2 = Mockito.mock(TimesheetAdmin.class);
+        when(timesheetAdmin2.getUserKey()).thenReturn("USER_KEY2");
+        when(timesheetAdmin2.getUserName()).thenReturn("User2");
 
-        ApprovedUser[] approvedUsers = {approvedUser1, approvedUser2};
+        TimesheetAdmin[] timesheetAdmins = {timesheetAdmin1, timesheetAdmin2};
 
-        ApprovedGroup approvedGroup = Mockito.mock(ApprovedGroup.class);
-        when(approvedGroup.getGroupName()).thenReturn("ApprovedGroup");
+        TSAdminGroup timesheetAdminGroup = Mockito.mock(TSAdminGroup.class);
+        when(timesheetAdminGroup.getGroupName()).thenReturn("TSAdminGroup");
 
-        ApprovedGroup[] approvedGroups = {approvedGroup};
+        TSAdminGroup[] timesheetAdminGroups = {timesheetAdminGroup};
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
@@ -294,8 +294,8 @@ public class ConfigResourceRestTest {
 
         when(permissionServiceMock.checkPermission(request)).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
-        when(configServiceMock.getConfiguration().getApprovedGroups()).thenReturn(approvedGroups);
-        when(configServiceMock.getConfiguration().getApprovedUsers()).thenReturn(approvedUsers);
+        when(configServiceMock.getConfiguration().getTimesheetAdminGroups()).thenReturn(timesheetAdminGroups);
+        when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
 
         PowerMockito.when(ComponentAccessor.getGroupManager().getUsersInGroup(anyString())).thenReturn(usersInGroup);
 

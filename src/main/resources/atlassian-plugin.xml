@@ -198,8 +198,8 @@
         <!-- administration -->
         <entity>org.catrobat.jira.timesheet.activeobjects.Config</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.Group</entity>
-        <entity>org.catrobat.jira.timesheet.activeobjects.ApprovedUser</entity>
-        <entity>org.catrobat.jira.timesheet.activeobjects.ApprovedGroup</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.TSAdminGroup</entity>
     </ao>
 
     <!-- rest-resources -->

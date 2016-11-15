@@ -14,7 +14,6 @@ import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.rest.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +77,7 @@ public class UserRestTest {
 
     @Test
     public void testGetUsersUnauthorized() {
-        doReturn(false).when(permissionServiceMock).isApproved(userMock);
+        doReturn(false).when(permissionServiceMock).isTimesheetAdmin(userMock);
         Response unauthorized = Response.status(Response.Status.UNAUTHORIZED).build();
         doReturn(unauthorized).when(permissionServiceMock).checkPermission(httpRequestMock);
 
@@ -88,7 +87,7 @@ public class UserRestTest {
 
     @Test
     public void testGetUsersOnlyUsersInList() {
-        doReturn(true).when(permissionServiceMock).isApproved(userMock);
+        doReturn(true).when(permissionServiceMock).isTimesheetAdmin(userMock);
 
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
@@ -120,7 +119,7 @@ public class UserRestTest {
 
     @Test
     public void testGetUsersUnusualCases() {
-        doReturn(true).when(permissionServiceMock).isApproved(userMock);
+        doReturn(true).when(permissionServiceMock).isTimesheetAdmin(userMock);
 
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);

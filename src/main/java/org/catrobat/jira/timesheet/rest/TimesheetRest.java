@@ -189,6 +189,12 @@ public class TimesheetRest {
             return unauthorized;
         }*/
 
+        try {
+            permissionService.checkIfUserExists(request);
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
         Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
@@ -234,6 +240,11 @@ public class TimesheetRest {
         if (unauthorized != null) {
             return unauthorized;
         }*/
+        try {
+            permissionService.checkIfUserExists(request);
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
         for (String developerTeamMemberName : configService.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER)) {
@@ -735,8 +746,6 @@ public class TimesheetRest {
             }
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
         if (sheet == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'Timesheet' not found.").build();
@@ -832,8 +841,6 @@ public class TimesheetRest {
                     String userEmail = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress();
                     buildEmailAdministratorChangedEntry(user.getEmailAddress(), userEmail, entry, jsonEntry);
                 }
-            } catch (PermissionException e) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -912,8 +919,6 @@ public class TimesheetRest {
                     permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
                 buildEmailAdministratorDeletedEntry(user.getEmailAddress(), ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress(), entry);
             }
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }

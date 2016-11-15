@@ -49,23 +49,14 @@ public class PermissionServiceImpl implements PermissionService {
         return user;
     }
 
-    public boolean checkIfUserIsGroupMember(String groupName) throws PermissionException {
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        if (loggedInUser == null) {
-            throw new PermissionException("User does not exist.");
-        }
-
-        String userKey = loggedInUser.getKey();
-        Collection<String> userGroups = ComponentAccessor.getGroupManager().getGroupNamesForUser(
-                ComponentAccessor.getUserManager().getUserByKey(userKey));
-
-        return userGroups.contains(groupName);
+    public boolean checkIfUserIsGroupMember(String groupName) {
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        return ComponentAccessor.getGroupManager().isUserInGroup(user, groupName);
     }
 
     public boolean checkIfUserIsTeamCoordinator(HttpServletRequest request) {
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        String username = loggedInUser.getUsername();
-        return teamService.getCoordinatorTeamsOfUser(username).isEmpty() ? false : true;
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        return teamService.getCoordinatorTeamsOfUser(user.getUsername()).isEmpty();
     }
 
     public Response checkPermission(HttpServletRequest request) {
@@ -82,12 +73,12 @@ public class PermissionServiceImpl implements PermissionService {
         return null;
     }
 
-    public Response checkRootPermission(HttpServletRequest request){
+    public Response checkRootPermission(HttpServletRequest request) {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        if(user == null){
+        if (user == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist!").build();
         }
-        ApprovedUser[] approvedUsers = configService.getConfiguration().getApprovedUsers();
+        TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
 
         try {
             checkIfUserExists(request);
@@ -95,8 +86,8 @@ public class PermissionServiceImpl implements PermissionService {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        for (ApprovedUser approvedUser : approvedUsers) {
-            if(approvedUser.getUserKey().equals(user.getKey())){
+        for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
+            if (timesheetAdmin.getUserKey().equals(user.getKey())) {
                 return null;
             }
         }
@@ -104,21 +95,21 @@ public class PermissionServiceImpl implements PermissionService {
         return Response.status(Response.Status.UNAUTHORIZED).entity("Sorry, you are not a timesheet admin!").build();
     }
 
-    public boolean isApproved(ApplicationUser user) {
+    public boolean isTimesheetAdmin(ApplicationUser user) {
         Config config = configService.getConfiguration();
 
-        if (config.getApprovedUsers().length == 0 && config.getApprovedGroups().length == 0) {
+        if (config.getTimesheetAdminUsers().length == 0 && config.getTimesheetAdminGroups().length == 0) {
             return false;
         }
 
-        if (configService.isUserApproved(ComponentAccessor.
-                getUserKeyService().getKeyForUsername(user.getUsername()))) {
+        String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername());
+        if (configService.isTimesheetAdmin(userKey)) {
             return true;
         }
 
         Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(user.getUsername());
         for (String groupName : groupNameCollection) {
-            if (configService.isGroupApproved(groupName)) {
+            if (configService.isTimesheetAdminGroup(groupName)) {
                 return true;
             }
         }
@@ -137,8 +128,10 @@ public class PermissionServiceImpl implements PermissionService {
         return sheetKey.equals(userKey);
     }
 
-    private boolean isUserAdmin(ApplicationUser user) {
-        return ComponentAccessor.getGroupManager().isUserInGroup(user, "jira-administrators");
+    private boolean isJiraAdministrator(ApplicationUser user) {
+        boolean isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, "jira-administrators");
+        boolean isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, "Jira-Test-Administrators");
+        return (isJiraAdmin || isJiraTestAdmin);
     }
 
     private boolean userCoordinatesTeamsOfSheet(ApplicationUser user, Timesheet sheet) {
@@ -160,9 +153,9 @@ public class PermissionServiceImpl implements PermissionService {
     public boolean userCanViewTimesheet(ApplicationUser user, Timesheet sheet) {
         return user != null && sheet != null &&
                 (userOwnsSheet(user, sheet)
-                        || isUserAdmin(user)
+                        || isJiraAdministrator(user)
                         || userCoordinatesTeamsOfSheet(user, sheet)
-                        || isApproved(user));
+                        || isTimesheetAdmin(user));
     }
 
     @Override
@@ -178,8 +171,8 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not edit an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!isUserAdmin(user)) {
-            throw new PermissionException("You are not Admin.");
+        } else if (!isJiraAdministrator(user)) {
+            throw new PermissionException("Access forbidden: Sorry, but you are not a timesheet admin or a jira administrator!");
         }
     }
 
@@ -196,8 +189,8 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not delete an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!isUserAdmin(user)) {
-            throw new PermissionException("You are not Admin.");
+        } else if (!isJiraAdministrator(user)) {
+            throw new PermissionException("Access forbidden: Sorry, but you are not a timesheet admin or a jira administrator!");
         }
     }
 
