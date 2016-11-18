@@ -155,6 +155,10 @@
     <component-import key="ApplicationLinkService">
         <interface>com.atlassian.applinks.api.ApplicationLinkService</interface>
     </component-import>
+    <component-import key="pluginScheduler">
+        <description>SAL Scheduler</description>
+        <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+    </component-import>
     <component key="tx-processor" name="Transactional Annotation Processor"
                class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
         <decription>Processes @Transactional annotations.</decription>
@@ -178,6 +182,14 @@
     <component key="configuration" name="Config Service"
                class="org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl"/>
     <!-- end of administration-components -->
+
+    <!-- scheduling-components -->
+    <component key="timesheet-scheduler" name="Timesheet Scheduler" public="true"
+               class="org.catrobat.jira.timesheet.scheduling.TimesheetScheduler">
+        <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+    </component>
+    <!-- end of scheduling-components -->
+
 
     <ao key="ao-module">
         <description>The module configuring the Active Objects service used by this plugin</description>
