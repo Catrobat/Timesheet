@@ -81,7 +81,7 @@ public class ExportConfigAsCSVServletTest {
         when(user.getUsername()).thenReturn("test");
         when(user.getKey()).thenReturn(test_key);
 
-        when(permissionService.checkIfUserExists(request)).thenReturn(user);
+        when(permissionService.checkIfUserExists()).thenReturn(user);
 
         when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(false);
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
@@ -107,7 +107,7 @@ public class ExportConfigAsCSVServletTest {
                 "[Subject] Inactive", "[Subject] Offline", "[Subject] Active", "[Subject] Entry", "bla", "blabla",
                 "blub", "blub blub", "noch mehr bla"));
 
-        assertNotNull(configService.editSupervisedUsers("TestUser"));
+        assertNotNull(configService.editReadOnlyUsers("TestUser"));
 
         exportConfigAsCSVServlet.doGet(request, response);
     }

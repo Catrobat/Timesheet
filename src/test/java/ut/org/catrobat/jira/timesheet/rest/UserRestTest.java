@@ -79,7 +79,7 @@ public class UserRestTest {
     public void testGetUsersUnauthorized() {
         doReturn(false).when(permissionServiceMock).isTimesheetAdmin(userMock);
         Response unauthorized = Response.status(Response.Status.UNAUTHORIZED).build();
-        doReturn(unauthorized).when(permissionServiceMock).checkPermission(httpRequestMock);
+        doReturn(unauthorized).when(permissionServiceMock).checkGlobalPermission();
 
         Response result = spyUserRest.getUsers(httpRequestMock);
         Assert.assertEquals(unauthorized, result);

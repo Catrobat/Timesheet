@@ -68,7 +68,7 @@ public class ExportTimesheetAsCSVServletTest {
         when(user.getUsername()).thenReturn("test");
         when(user.getKey()).thenReturn(test_key);
 
-        when(permissionService.checkIfUserExists(request)).thenReturn(user);
+        when(permissionService.checkIfUserExists()).thenReturn(user);
 
         when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(false);
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);

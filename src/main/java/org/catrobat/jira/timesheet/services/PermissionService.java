@@ -31,15 +31,15 @@ import java.util.Collection;
 @Transactional
 public interface PermissionService {
 
-    ApplicationUser checkIfUserExists(HttpServletRequest request) throws PermissionException;
+    ApplicationUser checkIfUserExists() throws PermissionException;
 
     boolean checkIfUserIsGroupMember(String groupName);
 
     boolean checkIfUserIsTeamCoordinator(HttpServletRequest request);
 
-    Response checkPermission(HttpServletRequest request);
+    Response checkGlobalPermission();
 
-    Response checkRootPermission(HttpServletRequest request);
+    Response checkRootPermission();
 
     boolean userCanViewTimesheet(ApplicationUser user, Timesheet sheet);
 
@@ -48,6 +48,8 @@ public interface PermissionService {
     void userCanDeleteTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException;
 
     boolean isTimesheetAdmin(ApplicationUser user);
+
+    boolean isJiraAdministrator(ApplicationUser user);
 
     Collection<Group> printALLUserGroups();
 

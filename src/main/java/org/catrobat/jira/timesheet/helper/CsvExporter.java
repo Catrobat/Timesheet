@@ -48,9 +48,9 @@ public abstract class CsvExporter {
         StringBuilder sb = new StringBuilder();
 
         //Supervisors
-        sb.append("Supervisors" + DELIMITER);
-        if (!config.getSupervisedUsers().isEmpty())
-            for(String userName : config.getSupervisedUsers().split(","))
+        sb.append("ReadOnlyUsers" + DELIMITER);
+        if (!config.getReadOnlyUsers().isEmpty())
+            for(String userName : config.getReadOnlyUsers().split(","))
                 sb.append(userName).append(NEW_LINE);
 
         //Timesheet Admins

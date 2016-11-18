@@ -59,7 +59,7 @@ public class TimesheetServletTest {
         String admin_key = "admin_key";
         when(admin.getKey()).thenReturn(admin_key);
         when(admin.getUsername()).thenReturn("admin");
-        when(permissionService.checkIfUserExists(request)).thenReturn(admin);
+        when(permissionService.checkIfUserExists()).thenReturn(admin);
         when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
         when(timeSheet.getID()).thenReturn(1);
@@ -72,7 +72,7 @@ public class TimesheetServletTest {
 
     @Test(expected = NullPointerException.class)
     public void testDoGetNullPointerException() throws Exception {
-        when(permissionService.checkIfUserExists(request)).thenReturn(admin);
+        when(permissionService.checkIfUserExists()).thenReturn(admin);
         when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(null);
 
         timesheetServlet.doGet(request, response);

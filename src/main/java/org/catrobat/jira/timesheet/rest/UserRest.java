@@ -54,7 +54,7 @@ public class UserRest {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         if (!permissionService.isTimesheetAdmin(loggedInUser)) {
-            Response unauthorized = permissionService.checkPermission(request);
+            Response unauthorized = permissionService.checkGlobalPermission();
             if (unauthorized != null) {
                 return unauthorized;
             }

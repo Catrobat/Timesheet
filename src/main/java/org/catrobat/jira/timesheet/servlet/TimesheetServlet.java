@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
@@ -40,7 +41,6 @@ public class TimesheetServlet extends HttpServlet {
     private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
     private final PermissionService permissionService;
-    private ApplicationUser user;
 
 
     public TimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
@@ -54,14 +54,9 @@ public class TimesheetServlet extends HttpServlet {
     //TODO: should the Timesheet need this high privilege rights?
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            user = permissionService.checkIfUserExists(request);
-            if (!permissionService.checkIfUserIsGroupMember("Timesheet") &&
-                    !permissionService.checkIfUserIsGroupMember("jira-administrators")) {
-                response.sendError(HttpServletResponse.SC_CONFLICT, "User is no Timesheet-Group member, or Administrator.");
-            }
-        } catch (PermissionException e) {
-            redirectToLogin(request, response);
+        Response unauthorized = permissionService.checkGlobalPermission();
+        if (unauthorized != null) {
+            response.sendError(HttpServletResponse.SC_CONFLICT, unauthorized.getEntity().toString());
         }
         super.service(request, response);
     }
@@ -69,6 +64,7 @@ public class TimesheetServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            ApplicationUser user = permissionService.checkIfUserExists();
             String userKey = user.getKey();
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet;
@@ -107,6 +103,8 @@ public class TimesheetServlet extends HttpServlet {
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
         } catch (ServiceException e) {
+            redirectToLogin(request, response);
+        } catch (PermissionException e) {
             redirectToLogin(request, response);
         }
     }

@@ -4,7 +4,7 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
     var config = jsonConfig[0];
     var userName = jsonUser[0]['userName'];
     var isTeamCoordinator = false;
-    var isSupervisedUser_ = isSupervisedUser(userName, config);
+    var isSupervisedUser = isReadOnlyUser(userName, config);
     var listOfUsers = [];
 
     AJS.$("#coordinatorTimesheetSelect").append("<field-group>");
@@ -38,12 +38,12 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
         maximumSelectionSize: 1
     });
 
-    if (isTeamCoordinator && !isSupervisedUser_) {
+    if (isTeamCoordinator && !isSupervisedUser) {
         initSelectTimesheetButton();
         AJS.$("#coordinatorTimesheetSelect").show();
         AJS.$("#approvedUserTimesheetSelect").hide();
         AJS.$("#visualizationTeamSelect").show();
-    } else if(isSupervisedUser_ && !isTeamCoordinator) {
+    } else if(isSupervisedUser && !isTeamCoordinator) {
         AJS.$("#coordinatorTimesheetSelect").hide();
         AJS.$("#approvedUserTimesheetSelect").show();
         AJS.$("#visualizationTeamSelect").show();

@@ -3,10 +3,10 @@
 var selectedUser;
 var isMTSheetSelected;
 
-function isSupervisedUser(userName, config) {
-    var supervisedUsers = config.supervisors.split(',');
-    for (var i = 0; i < supervisedUsers.length; i++) {
-        if (supervisedUsers[i].localeCompare(userName) == 0) {
+function isReadOnlyUser(userName, config) {
+    var readOnlyUsers = config.readOnlyUsers.split(',');
+    for (var i = 0; i < readOnlyUsers.length; i++) {
+        if (readOnlyUsers[i].localeCompare(userName) == 0) {
             return true;
         }
     }

@@ -3,7 +3,7 @@
 function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
     var config = jsonConfig[0];
     var userName = jsonUser[0]['userName'];
-    var isSupervisedUser_ = isSupervisedUser(userName, config);
+    var isSupervisedUser = isReadOnlyUser(userName, config);
     var listOfUsers = [];
 
     //Select Username of Timesheet
@@ -13,7 +13,7 @@ function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
     AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Display\" class=\"aui-button aui-button-primary\"></field-group>");
     AJS.$("#approvedUserTimesheetSelect").append("</field-group>");
 
-    if (isAdmin || isSupervisedUser_) {
+    if (isAdmin || isSupervisedUser) {
         for (var j = 0; j < userList[0].length; j++) {
             listOfUsers.push(userList[0][j]['userName']);
         }
@@ -50,7 +50,7 @@ function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
     if(isAdmin) {
         initAdministratorButton();
     }
-    if (isSupervisedUser_ || isAdmin) {
+    if (isSupervisedUser || isAdmin) {
         initSelectTimesheetButton();
         AJS.$("#approvedUserTimesheetSelect").show();
         AJS.$("#coordinatorTimesheetSelect").hide();

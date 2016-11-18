@@ -17,7 +17,8 @@ import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.services.impl.*;
+import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,8 +100,8 @@ public class ConfigResourceRestTest {
         PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManagerMock);
 
         //additional mocks
-        when(permissionServiceMock.checkIfUserExists(request)).thenReturn(userMock);
-        when(permissionServiceMock.checkPermission(request)).thenReturn(null);
+        when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
+        when(permissionServiceMock.checkGlobalPermission()).thenReturn(null);
     }
 
     @Test
@@ -169,18 +170,16 @@ public class ConfigResourceRestTest {
         teams.add(team2);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
-        ApplicationUser user2 = mock(ApplicationUser.class);
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);
 
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
-
-        when(permissionServiceMock.checkPermission(request)).thenReturn(response);
+        when(permissionServiceMock.checkGlobalPermission()).thenReturn(response);
         when(categoryServiceMock.removeCategory(anyString())).thenReturn(true);
 
-        response = configResourceRestMock.removeCategory(anyString(), request);
+        response = configResourceRestMock.removeCategory("Meeting", request);
         assertNull(response.getEntity());
     }
 
@@ -206,7 +205,7 @@ public class ConfigResourceRestTest {
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
 
-        when(permissionServiceMock.checkPermission(request)).thenReturn(response);
+        when(permissionServiceMock.checkGlobalPermission()).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
 
         response = configResourceRestMock.getTeamList(request);
@@ -244,7 +243,7 @@ public class ConfigResourceRestTest {
 
         TSAdminGroup[] timesheetAdminGroups = {timesheetAdminGroup};
 
-        when(permissionServiceMock.checkPermission(request)).thenReturn(response);
+        when(permissionServiceMock.checkGlobalPermission()).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getTimesheetAdminGroups()).thenReturn(timesheetAdminGroups);
         when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
@@ -292,7 +291,7 @@ public class ConfigResourceRestTest {
         usersInGroup.add(user1);
         usersInGroup.add(user2);
 
-        when(permissionServiceMock.checkPermission(request)).thenReturn(response);
+        when(permissionServiceMock.checkGlobalPermission()).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getTimesheetAdminGroups()).thenReturn(timesheetAdminGroups);
         when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);

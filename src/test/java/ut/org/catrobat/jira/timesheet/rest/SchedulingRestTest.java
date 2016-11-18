@@ -109,7 +109,7 @@ public class SchedulingRestTest {
     @Test
     public void testActivityNotification_unauthorized() throws Exception {
         //preparations
-        when(permissionServiceMock.checkPermission(httpRequest)).thenReturn(mock(Response.class));
+        when(permissionServiceMock.checkGlobalPermission()).thenReturn(mock(Response.class));
 
         //execution & verifying
         schedulingRestMock.activityNotification(httpRequest);
@@ -138,7 +138,7 @@ public class SchedulingRestTest {
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
 
-        when(permissionServiceMock.checkPermission(httpRequest)).thenReturn(null);
+        when(permissionServiceMock.checkGlobalPermission()).thenReturn(null);
 
         schedulingRest.activityNotification(httpRequest);
     }
@@ -175,7 +175,7 @@ public class SchedulingRestTest {
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
 
-        when(permissionServiceMock.checkPermission(httpRequest)).thenReturn(null);
+        when(permissionServiceMock.checkGlobalPermission()).thenReturn(null);
 
         timesheetEntryService.add(timesheet1, yesterday, today, categoryDrone, "testing a lot of things",
                 30, droneTeam, false, today, today, "123456", "MarkusHobisch"); // this should work

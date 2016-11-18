@@ -47,7 +47,7 @@ public class CsvConfigImporter {
         List<String> assignedUsers = new LinkedList<String>();
         List<String> assignedCategories = new LinkedList<String>();
         List<String> addedCategories = new LinkedList<String>();
-        String supervisors = "";
+        String readOnlyUsers = "";
         //create new Config
         Config config = configService.getConfiguration();
 
@@ -76,9 +76,9 @@ public class CsvConfigImporter {
                         .append("\" will be ignored)</li>");
             } else if (columns[0].equals("Supervisors")) {
                 for (int i = 1; i < columns.length; i++) {
-                    supervisors += columns[i] + ",";
+                    readOnlyUsers += columns[i] + ",";
                 }
-                config.setSupervisedUsers(supervisors.substring(0, supervisors.length() - 1));
+                config.setReadOnlyUsers(readOnlyUsers.substring(0, readOnlyUsers.length() - 1));
             } else if (columns[0].equals("Timesheet Admins and Groups") && columns.length > 1) {
                 for (int i = 1; i < columns.length; i++) {
                     ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(columns[i]);

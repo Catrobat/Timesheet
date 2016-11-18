@@ -62,7 +62,7 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/activity/notification")
     public Response activityNotification(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
@@ -92,7 +92,7 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/activity/verification")
     public Response activityVerification(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
@@ -112,7 +112,7 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/out/of/time/notification")
     public Response outOfTimeNotification(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }

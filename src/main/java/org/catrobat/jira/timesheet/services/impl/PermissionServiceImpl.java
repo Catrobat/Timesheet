@@ -41,7 +41,7 @@ public class PermissionServiceImpl implements PermissionService {
         this.configService = configService;
     }
 
-    public ApplicationUser checkIfUserExists(HttpServletRequest request) throws PermissionException {
+    public ApplicationUser checkIfUserExists() throws PermissionException {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         if (user == null) {
             throw new PermissionException("User does not exist.");
@@ -59,11 +59,12 @@ public class PermissionServiceImpl implements PermissionService {
         return teamService.getCoordinatorTeamsOfUser(user.getUsername()).isEmpty();
     }
 
-    public Response checkPermission(HttpServletRequest request) {
+    public Response checkGlobalPermission() {
         try {
-            checkIfUserExists(request);
-            if (!(checkIfUserIsGroupMember("jira-administrators") || checkIfUserIsGroupMember("Jira-Test-Administrators")
-                    || checkIfUserIsGroupMember("Timesheet"))) {
+            checkIfUserExists();
+            if (!(checkIfUserIsGroupMember("jira-administrators") ||
+                    checkIfUserIsGroupMember("Jira-Test-Administrators") ||
+                    checkIfUserIsGroupMember("Timesheet"))) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                         "'jira-administrators', or 'Timesheet' group.").build();
             }
@@ -73,15 +74,12 @@ public class PermissionServiceImpl implements PermissionService {
         return null;
     }
 
-    public Response checkRootPermission(HttpServletRequest request) {
-        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        if (user == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist!").build();
-        }
+    public Response checkRootPermission() {
         TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
+        ApplicationUser user;
 
         try {
-            checkIfUserExists(request);
+            user = checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -117,6 +115,12 @@ public class PermissionServiceImpl implements PermissionService {
         return false;
     }
 
+    public boolean isJiraAdministrator(ApplicationUser user) {
+        boolean isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, "jira-administrators");
+        boolean isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, "Jira-Test-Administrators");
+        return (isJiraAdmin || isJiraTestAdmin);
+    }
+
     private boolean userOwnsSheet(ApplicationUser user, Timesheet sheet) {
         if (sheet == null || user == null) {
             return false;
@@ -126,12 +130,6 @@ public class PermissionServiceImpl implements PermissionService {
         String userKey = user.getKey();
 
         return sheetKey.equals(userKey);
-    }
-
-    private boolean isJiraAdministrator(ApplicationUser user) {
-        boolean isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, "jira-administrators");
-        boolean isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, "Jira-Test-Administrators");
-        return (isJiraAdmin || isJiraTestAdmin);
     }
 
     private boolean userCoordinatesTeamsOfSheet(ApplicationUser user, Timesheet sheet) {

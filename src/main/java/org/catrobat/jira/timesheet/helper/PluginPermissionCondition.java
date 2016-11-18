@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.helper;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.GlobalPermissionManager;
@@ -24,6 +23,7 @@ import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.services.PermissionService;
 
 import java.util.Collection;
 import java.util.Map;
@@ -32,12 +32,14 @@ public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
 
     private final ConfigService configurationService;
     private final GroupManager groupManager;
+    private final PermissionService permissionService;
 
     public PluginPermissionCondition(GlobalPermissionManager permissionManager, ConfigService configurationService,
-                                     GroupManager groupManager) {
+            GroupManager groupManager, PermissionService permissionService) {
         super(permissionManager);
         this.configurationService = configurationService;
         this.groupManager = groupManager;
+        this.permissionService = permissionService;
     }
 
 
@@ -51,10 +53,8 @@ public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
         return hasPermission(applicationUser);
     }
 
-    public boolean hasPermission(ApplicationUser applicationUser) {
-        if (applicationUser == null
-                || !(ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators")
-                || ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Jira-Test-Administrators"))) {
+    public boolean hasPermission(ApplicationUser user) {
+        if (user == null || !permissionService.isJiraAdministrator(user)) {
             return false;
         }
 
@@ -63,11 +63,11 @@ public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
             return true;
         }
 
-        if (configurationService.isTimesheetAdmin(applicationUser.getKey())) {
+        if (configurationService.isTimesheetAdmin(user.getKey())) {
             return true;
         }
 
-        Collection<String> groupNameCollection = groupManager.getGroupNamesForUser(applicationUser);
+        Collection<String> groupNameCollection = groupManager.getGroupNamesForUser(user);
         for (String groupName : groupNameCollection) {
             if (configurationService.isTimesheetAdminGroup(groupName))
                 return true;

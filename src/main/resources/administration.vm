@@ -61,7 +61,8 @@
 
                     <div class="description">
                         <ul>
-                            <li>If a single member is given this member may read all available Timesheets.
+                            <li>All users and groups are only allowed to access all timesheets but don't have
+                                write permissions.
                             </li>
                         </ul>
                     </div>

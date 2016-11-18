@@ -20,8 +20,8 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.services.PermissionService;
 
 import javax.servlet.ServletException;
@@ -66,7 +66,7 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
         TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        if (timesheetAdmins.length > 0) {
+        if (user != null && timesheetAdmins.length > 0) {
             for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
                 if (timesheetAdmin.getUserKey().equals(user.getKey())) {
                     System.out.println("User: " + timesheetAdmin.getUserName() + " is approved to access!");
@@ -76,8 +76,7 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
                     return;
                 }
             }
-        } else if (permissionService.checkIfUserIsGroupMember("jira-administrators") ||
-                permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
+        } else if (permissionService.isJiraAdministrator(user)) {
             if (!webSudoManager.canExecuteRequest(request)) {
                 webSudoManager.enforceWebSudoProtection(request, response);
             }

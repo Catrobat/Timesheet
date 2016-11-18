@@ -46,7 +46,7 @@ public final class JsonConfig {
     @XmlElement
     private List<String> timesheetAdmins;
     @XmlElement
-    private String supervisors;
+    private String readOnlyUsers;
     @XmlElement
     private String mailFromName;
     @XmlElement
@@ -99,7 +99,7 @@ public final class JsonConfig {
             timesheetAdminGroups.add(timesheetAdminGroup.getGroupName());
         }
 
-        this.supervisors = toCopy.getSupervisedUsers();
+        this.readOnlyUsers = toCopy.getReadOnlyUsers();
 
         this.mailFromName = toCopy.getMailFromName();
         this.mailFrom = toCopy.getMailFrom();
@@ -141,12 +141,12 @@ public final class JsonConfig {
         this.timesheetAdmins = timesheetAdmins;
     }
 
-    public String getSupervisors() {
-        return supervisors;
+    public String getReadOnlyUsers() {
+        return readOnlyUsers;
     }
 
-    public void setSupervisors(String supervisors) {
-        this.supervisors = supervisors;
+    public void setReadOnlyUsers(String readOnlyUsers) {
+        this.readOnlyUsers = readOnlyUsers;
     }
 
     public String getMailFromName() {

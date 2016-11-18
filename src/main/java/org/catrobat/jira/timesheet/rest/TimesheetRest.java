@@ -87,7 +87,7 @@ public class TimesheetRest {
     public Response checkConstrains(@Context HttpServletRequest request) {
         ApplicationUser user;
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.ok(false).build();
         }
@@ -113,7 +113,7 @@ public class TimesheetRest {
     public Response getTeamsForUser(@Context HttpServletRequest request) {
         ApplicationUser user;
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -132,7 +132,7 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID) throws ServiceException {
         ApplicationUser user;
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -147,7 +147,7 @@ public class TimesheetRest {
     @Path("categoryIDs")
     public Response getCategories(@Context HttpServletRequest request) {
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -167,7 +167,7 @@ public class TimesheetRest {
     @Path("teamInformation")
     public Response getAllTeams(@Context HttpServletRequest request) {
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -190,7 +190,7 @@ public class TimesheetRest {
         }*/
 
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -241,7 +241,7 @@ public class TimesheetRest {
             return unauthorized;
         }*/
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -277,7 +277,7 @@ public class TimesheetRest {
             @PathParam("userName") String userName,
             @PathParam("getMTSheet") Boolean getMTSheet) {
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -305,7 +305,7 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID) {
         ApplicationUser user;
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -338,7 +338,7 @@ public class TimesheetRest {
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
 
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -377,7 +377,7 @@ public class TimesheetRest {
         Timesheet sheet;
         ApplicationUser user;
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -416,7 +416,7 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID) {
 
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -441,7 +441,7 @@ public class TimesheetRest {
     @Path("timesheets/getTimesheets")
     public Response getTimesheets(@Context HttpServletRequest request) {
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -498,7 +498,7 @@ public class TimesheetRest {
             @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
 
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -530,7 +530,7 @@ public class TimesheetRest {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
             sheet = sheetService.getTimesheetByID(timesheetID);
             category = categoryService.getCategoryByID(entry.getCategoryID());
             team = teamService.getTeamByID(entry.getTeamID());
@@ -613,7 +613,7 @@ public class TimesheetRest {
 
         ApplicationUser user;
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -710,7 +710,7 @@ public class TimesheetRest {
         Timesheet sheet;
         ApplicationUser user;
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -730,7 +730,7 @@ public class TimesheetRest {
         }
 
         try {
-            if (permissionService.checkIfUserIsGroupMember("jira-administrators")) {
+            if (permissionService.isJiraAdministrator(user)) {
                 sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
@@ -763,7 +763,7 @@ public class TimesheetRest {
 
         Timesheet sheet;
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -805,12 +805,12 @@ public class TimesheetRest {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         try {
-            Response unauthorized = permissionService.checkPermission(request);
+            Response unauthorized = permissionService.checkGlobalPermission();
             if (unauthorized != null) {
                 return unauthorized;
             }
 
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
             entry = entryService.getEntryByID(entryID);
             category = categoryService.getCategoryByID(jsonEntry.getCategoryID());
             team = teamService.getTeamByID(jsonEntry.getTeamID());
@@ -837,7 +837,7 @@ public class TimesheetRest {
 
             //inform user about Administrator changes
             try {
-                if (permissionService.checkIfUserIsGroupMember("jira-administrators")) {
+                if (permissionService.isJiraAdministrator(user)) {
                     String userEmail = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress();
                     buildEmailAdministratorChangedEntry(user.getEmailAddress(), userEmail, entry, jsonEntry);
                 }
@@ -883,7 +883,7 @@ public class TimesheetRest {
         Timesheet sheet;
 
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -915,8 +915,7 @@ public class TimesheetRest {
         }
 
         try {
-            if (permissionService.checkIfUserIsGroupMember("jira-administrators") ||
-                    permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
+            if (permissionService.isJiraAdministrator(user)) {
                 buildEmailAdministratorDeletedEntry(user.getEmailAddress(), ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress(), entry);
             }
         } catch (ServiceException e) {
@@ -1067,7 +1066,7 @@ public class TimesheetRest {
     @Path("issueTickets")
     public Response getIssueTickets(@Context HttpServletRequest request) throws ServiceException {
         try {
-            permissionService.checkIfUserExists(request);
+            permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -1117,7 +1116,7 @@ public class TimesheetRest {
     @GET
     @Path("inactiveUsers")
     public Response getInactiveUsers(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkRootPermission(request);
+        Response unauthorized = permissionService.checkRootPermission();
         if (unauthorized != null) {
             return unauthorized;
         }

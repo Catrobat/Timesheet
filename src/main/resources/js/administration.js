@@ -94,8 +94,8 @@ AJS.toInit(function () {
                     AJS.$("#mail-body-active").val(config.mailBodyActive);
                 if (config.mailBodyEntry)
                     AJS.$("#mail-body-entry-change").val(config.mailBodyEntry);
-                if (config.supervisors)
-                    AJS.$("#plugin-permission").val(config.supervisors);
+                if (config.readOnlyUsers)
+                    AJS.$("#plugin-permission").val(config.readOnlyUsers);
 
                 //build team list
                 teams = [];
@@ -198,7 +198,7 @@ AJS.toInit(function () {
 
                 //Timesheet - supervisor picker
                 AJS.$("#plugin-permission").auiSelect2({
-                    placeholder: "Select supervisors",
+                    placeholder: "Select read only users",
                     tags: userNameList.sort(),
                     tokenSeparators: [",", " "]
                 });
@@ -252,7 +252,7 @@ AJS.toInit(function () {
         config.mailBodyActive = AJS.$("#mail-body-active").val();
         config.mailBodyEntry = AJS.$("#mail-body-entry-change").val();
 
-        config.supervisors = AJS.$("#plugin-permission").val();
+        config.readOnlyUsers = AJS.$("#plugin-permission").val();
 
         var usersAndGroups = AJS.$("#plugin-administration").auiSelect2("val");
         var timesheetAdmins = [];

@@ -53,7 +53,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            user = permissionService.checkIfUserExists(request);
+            user = permissionService.checkIfUserExists();
             if (!permissionService.checkIfUserIsGroupMember("Master-Students")) {
                 response.sendError(HttpServletResponse.SC_CONFLICT, "User is no Master-Students-Group member.");
             }
@@ -79,8 +79,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
 
             Map<String, Object> paramMap = Maps.newHashMap();
             paramMap.put("timesheetid", sheet.getID());
-            if (permissionService.checkIfUserIsGroupMember("jira-administrators") ||
-                    permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
+            if (permissionService.isJiraAdministrator(user)) {
                 paramMap.put("isadmin", true);
             } else {
                 paramMap.put("isadmin", false);

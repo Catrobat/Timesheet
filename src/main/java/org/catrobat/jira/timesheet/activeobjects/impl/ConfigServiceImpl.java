@@ -64,9 +64,9 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Config editSupervisedUsers(String supervisedUsers) {
+    public Config editReadOnlyUsers(String readOnlyUsers) {
         Config config = getConfiguration();
-        config.setSupervisedUsers(supervisedUsers);
+        config.setReadOnlyUsers(readOnlyUsers);
 
         config.save();
 

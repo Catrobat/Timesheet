@@ -92,10 +92,10 @@ public interface Config extends Entity {
     void setMailBodyEntry(String body);
 
     @StringLength(StringLength.UNLIMITED)
-    String getSupervisedUsers();
+    String getReadOnlyUsers();
 
     @StringLength(StringLength.UNLIMITED)
-    void setSupervisedUsers(String supervisedUsers);
+    void setReadOnlyUsers(String readOnlyUsers);
 
     @OneToMany(reverse = "getConfiguration")
     TSAdminGroup[] getTimesheetAdminGroups();

@@ -40,7 +40,7 @@ public interface ConfigService {
             String mailSubjectInactive, String mailSubjectOffline, String mailSubjectActive, String mailSubjectEntry,
             String mailBodyTime, String mailBodyInactive, String mailBodyOffline, String mailBodyActive, String mailBodyEntry);
 
-    Config editSupervisedUsers(String supervisedUsers);
+    Config editReadOnlyUsers(String readOnlyUsers);
 
     List<String> getGroupsForRole(String teamName, TeamToGroup.Role role);
 

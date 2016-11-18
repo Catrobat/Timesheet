@@ -16,18 +16,21 @@
 
 package org.catrobat.jira.timesheet.helper;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
+import org.catrobat.jira.timesheet.services.PermissionService;
 
+import javax.ws.rs.core.Response;
 import java.util.Map;
 
 public class TimesheetPermissionCondition extends JiraGlobalPermissionCondition {
 
-    public TimesheetPermissionCondition(GlobalPermissionManager permissionManager) {
+    private final PermissionService permissionService;
+    public TimesheetPermissionCondition(GlobalPermissionManager permissionManager, PermissionService permissionService) {
         super(permissionManager);
+        this.permissionService = permissionService;
     }
 
     @Override
@@ -37,18 +40,14 @@ public class TimesheetPermissionCondition extends JiraGlobalPermissionCondition 
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return hasPermission(applicationUser);
+        return hasPermission();
     }
 
-    public boolean hasPermission(ApplicationUser applicationUser) {
-        if (applicationUser == null) {
+    public boolean hasPermission() {
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
             return false;
-        } else if (ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "jira-administrators") ||
-                ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Jira-Test-Administrators") ||
-                ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Timesheet")) {
-            return true;
         }
-
-        return false;
+        return true;
     }
 }

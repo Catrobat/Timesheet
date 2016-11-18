@@ -203,23 +203,23 @@ public class PermissionServiceImplTest {
     @Test
     public void testIfUserExistsOk() throws Exception {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(owner);
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(owner);
-        ApplicationUser responseProfile = permissionService.checkIfUserExists(request);
+        Mockito.when(permissionService.checkIfUserExists()).thenReturn(owner);
+        ApplicationUser responseProfile = permissionService.checkIfUserExists();
         assertTrue(responseProfile.equals(owner));
     }
 
     @Test
     public void testIfUserExistsWrongUserProfile() throws Exception {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(admin);
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(eve);
-        ApplicationUser responseProfile = permissionService.checkIfUserExists(request);
+        Mockito.when(permissionService.checkIfUserExists()).thenReturn(eve);
+        ApplicationUser responseProfile = permissionService.checkIfUserExists();
         Assert.assertFalse(responseProfile == admin);
     }
 
     @Test(expected = PermissionException.class)
     public void testIfUserExistsExceptionHandling() throws PermissionException {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
-        Assert.assertEquals(permissionService.checkIfUserExists(request), PermissionException.class);
+        Assert.assertEquals(permissionService.checkIfUserExists(), PermissionException.class);
     }
 
     @Test
@@ -309,8 +309,8 @@ public class PermissionServiceImplTest {
     public void userDoesNotExistException() throws Exception {
 
         Mockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(eve);
-        Mockito.when(permissionService.checkIfUserExists(request)).thenReturn(null);
-        permissionService.checkIfUserExists(request);
+        Mockito.when(permissionService.checkIfUserExists()).thenReturn(null);
+        permissionService.checkIfUserExists();
     }
 
     @Test(expected = PermissionException.class)

@@ -58,7 +58,7 @@ public class ConfigResourceRest {
     @GET
     @Path("/getCategories")
     public Response getCategories(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
@@ -77,7 +77,7 @@ public class ConfigResourceRest {
     @GET
     @Path("/getTeams")
     public Response getTeams(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
@@ -95,7 +95,7 @@ public class ConfigResourceRest {
     @Path("/getTeamList")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTeamList(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
@@ -112,7 +112,7 @@ public class ConfigResourceRest {
     @Path("/getConfig")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getConfig(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
@@ -125,7 +125,7 @@ public class ConfigResourceRest {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setConfig(final JsonConfig jsonConfig, @Context HttpServletRequest request) {
 
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
@@ -135,7 +135,7 @@ public class ConfigResourceRest {
                 jsonConfig.getMailSubjectOffline(), jsonConfig.getMailSubjectActive(), jsonConfig.getMailSubjectEntry(), jsonConfig.getMailBodyTime(),
                 jsonConfig.getMailBodyInactive(), jsonConfig.getMailBodyOffline(), jsonConfig.getMailBodyActive(), jsonConfig.getMailBodyEntry());
 
-        configService.editSupervisedUsers(jsonConfig.getSupervisors());
+        configService.editReadOnlyUsers(jsonConfig.getReadOnlyUsers());
 
         //clear fields
         configService.clearTimesheetAdminGroups();
@@ -199,7 +199,7 @@ public class ConfigResourceRest {
     }
 
     private Response checkParam(@Context HttpServletRequest request, String... strings) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
@@ -215,7 +215,7 @@ public class ConfigResourceRest {
     @Path("/editTeamName")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editTeamPermission(final String[] teams, @Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         } else if (teams == null || teams.length != 2) {
@@ -270,7 +270,7 @@ public class ConfigResourceRest {
     @Path("/editCategoryName")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editCategoryName(final String[] categories, @Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkPermission(request);
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         } else if (categories == null || categories.length != 2) {
@@ -304,13 +304,13 @@ public class ConfigResourceRest {
     @PUT
     @Path("/removeCategory")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeCategory(final String modifyCategory, @Context HttpServletRequest request) throws ServiceException {
-        Response unauthorized = permissionService.checkPermission(request);
+    public Response removeCategory(final String removeCategory, @Context HttpServletRequest request) throws ServiceException {
+        Response unauthorized = permissionService.checkGlobalPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
 
-        boolean successful = categoryService.removeCategory(modifyCategory);
+        boolean successful = categoryService.removeCategory(removeCategory);
 
         if (successful) {
             return Response.noContent().build();
