@@ -124,6 +124,7 @@ public class ConfigResourceRest {
     @Path("/saveConfig")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setConfig(final JsonConfig jsonConfig, @Context HttpServletRequest request) {
+
         Response unauthorized = permissionService.checkPermission(request);
         if (unauthorized != null) {
             return unauthorized;
@@ -137,28 +138,28 @@ public class ConfigResourceRest {
         configService.editSupervisedUsers(jsonConfig.getSupervisors());
 
         //clear fields
-        configService.clearApprovedGroups();
-        configService.clearApprovedUsers();
+        configService.clearTimesheetAdminGroups();
+        configService.clearTimesheetAdmins();
 
-        // add approvedGroups
-        if (jsonConfig.getApprovedGroups() != null) {
-            for (String approvedGroupName : jsonConfig.getApprovedGroups()) {
-                configService.addApprovedGroup(approvedGroupName);
+        // add TimesheetAdmin group
+        if (jsonConfig.getTimesheetAdminGroups() != null) {
+            for (String approvedGroupName : jsonConfig.getTimesheetAdminGroups()) {
+                configService.addTimesheetAdminGroup(approvedGroupName);
                 // add all users in group
                 Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
                 for (ApplicationUser user : usersInGroup) {
-                    configService.addApprovedUser(user);
+                    configService.addTimesheetAdmin(user);
                 }
 
             }
         }
 
-        // add approvedUsers
-        if (jsonConfig.getApprovedUsers() != null) {
-            for (String username : jsonConfig.getApprovedUsers()) {
+        // add TimesheetAdmins
+        if (jsonConfig.getTimesheetAdmins() != null) {
+            for (String username : jsonConfig.getTimesheetAdmins()) {
                 ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(username);
                 if (user != null) {
-                    configService.addApprovedUser(user);
+                    configService.addTimesheetAdmin(user);
                     //RestUtils.getInstance().printUserInformation(username, user);
                 }
             }

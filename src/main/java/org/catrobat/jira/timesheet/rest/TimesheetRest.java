@@ -32,6 +32,7 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.query.Query;
+import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
@@ -182,6 +183,12 @@ public class TimesheetRest {
     @Path("timesheet/{timesheetID}/teamEntries")
     public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
+        //TODO: maybe coordinator private access is enouph - we will see
+       /* Response unauthorized = permissionService.checkRootPermission(request);
+        if (unauthorized != null) {
+            return unauthorized;
+        }*/
+
         try {
             permissionService.checkIfUserExists(request);
         } catch (PermissionException e) {
@@ -228,6 +235,11 @@ public class TimesheetRest {
     @Path("timesheet/{teamName}/entries")
     public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
             @PathParam("teamName") String teamName) {
+        //TODO: maybe coordinator private access is enouph - we will see
+       /* Response unauthorized = permissionService.checkRootPermission(request);
+        if (unauthorized != null) {
+            return unauthorized;
+        }*/
         try {
             permissionService.checkIfUserExists(request);
         } catch (PermissionException e) {
@@ -424,6 +436,7 @@ public class TimesheetRest {
         return Response.ok(jsonEntries).build();
     }
 
+    // URL: http://localhost:2990/jira/rest/timesheet/latest/timesheets/getTimesheets
     @GET
     @Path("timesheets/getTimesheets")
     public Response getTimesheets(@Context HttpServletRequest request) {
@@ -733,8 +746,6 @@ public class TimesheetRest {
             }
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
         if (sheet == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'Timesheet' not found.").build();
@@ -830,8 +841,6 @@ public class TimesheetRest {
                     String userEmail = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress();
                     buildEmailAdministratorChangedEntry(user.getEmailAddress(), userEmail, entry, jsonEntry);
                 }
-            } catch (PermissionException e) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -910,8 +919,6 @@ public class TimesheetRest {
                     permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
                 buildEmailAdministratorDeletedEntry(user.getEmailAddress(), ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress(), entry);
             }
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
@@ -1105,6 +1112,40 @@ public class TimesheetRest {
         }
 
         return Response.ok(jo.toString()).build();
+    }
+
+    @GET
+    @Path("inactiveUsers")
+    public Response getInactiveUsers(@Context HttpServletRequest request) {
+        Response unauthorized = permissionService.checkRootPermission(request);
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        List<Timesheet> timesheetList = sheetService.all();
+        ArrayList<String> users = new ArrayList<>();
+        Comparator<Timesheet> timesheetComparator = (o1, o2) -> o2.getLatestEntryDate().compareTo(o1.getLatestEntryDate());
+        ArrayList<Timesheet> timesheets = new ArrayList<>();
+
+        for (Timesheet timesheet : timesheetList) {
+            if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
+                continue;
+            }
+            if (!timesheet.getIsActive()) {
+                timesheets.add(timesheet);
+            }
+        }
+
+        Collections.sort(timesheets, timesheetComparator);
+        for (Timesheet timesheet : timesheets) {
+            String userKey = timesheet.getUserKey();
+            ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
+            String entry = user.getDisplayName() + "  (" + timesheet.getLatestEntryDate().toString() + ")";
+            users.add(entry);
+        }
+
+        String jsonList = new Gson().toJson(users);
+        return Response.ok(jsonList).build();
     }
 }
 

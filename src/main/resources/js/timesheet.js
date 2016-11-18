@@ -73,7 +73,6 @@ AJS.toInit(function () {
 
     fetchUsers();
     fetchData123();
-    initHiddenDialog();
 });
 
 function checkConstrains() {
@@ -363,7 +362,7 @@ function fetchUsers() {
     });
     AJS.$.when(config, jsonUser, userList)
         .done(initCoordinatorTimesheetSelect)
-        .done(initApprovedUserTimesheetSelect)
+        .done(initTimesheetAdminTimesheetSelect)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching user data.',
@@ -410,74 +409,4 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     updateTimesheetInformationValues(timesheetData_);
 
     return timesheetData_;
-}
-
-//neue funktionen .....
-AJS.$(document).keydown(function (e) {
-    var keyCode = e.keyCode || e.which;
-    if (e.ctrlKey && e.altKey && e.shiftKey) {
-        if (keyCode == 84) { // keycode == 't'
-            AJS.dialog2("#hidden-dialog").show();
-        } else {
-            console.log("CTRL + ALT + SHIFT pressed");
-        }
-    }
-    //console.log(event.keyCode);
-});
-
-function initHiddenDialog() {
-
-    //global val
-    var inactiveUsers = new Array();
-    inactiveUsers.push("Markus Hobisch");
-
-// Hides the dialog
-    AJS.$("#dialog-submit-button").click(function (e) {
-        e.preventDefault();
-        AJS.dialog2("#hidden-dialog").hide();
-    });
-
-// Show event - this is triggered when the dialog is shown
-    AJS.dialog2("#hidden-dialog").on("show", function () {
-        AJS.$(".aui").focus();
-        AJS.log("hidden-dialog was shown");
-        AJS.$(".aui-dialog2-footer-hint").html("Created on " + new Date().toDateString());
-
-        var content = "";
-        for (var i = 0; i < inactiveUsers.length; i++) {
-            content += inactiveUsers[i] + "<br/>";
-        }
-        AJS.$(".aui-dialog2-content").html(content);
-    });
-
-    AJS.$("#search-field").keyup(function (e) {
-        var keyCode = e.keyCode || e.which;
-        if (keyCode === 13) {
-            e.preventDefault();
-            return false;
-        }
-        var searchText = AJS.$("#search-field").val().toLowerCase();
-        var content = "";
-        for (var i = 0; i < inactiveUsers.length; i++) {
-            if (inactiveUsers[i].toLowerCase().includes(searchText)) {
-                content += inactiveUsers[i] + "<br/>";
-            }
-        }
-        AJS.$(".aui-dialog2-content").html(content);
-    });
-
-//     // Hide event - this is triggered when the dialog is hidden
-//     AJS.dialog2("#hidden-dialog").on("hide", function () {
-//         AJS.log("hidden-dialog was hidden");
-//     });
-//
-// // Global show event - this is triggered when any dialog is show
-//     AJS.dialog2.on("show", function () {
-//         AJS.log("a dialog was shown");
-//     });
-//
-// // Global hide event - this is triggered when any dialog is hidden
-//     AJS.dialog2.on("hide", function () {
-//         AJS.log("a dialog was hidden");
-//     });
 }

@@ -90,7 +90,7 @@ public class ExportTimesheetAsCSVServletTest {
         when(timesheetService.getTimesheetByUser(user.getKey(), false)).thenReturn(timesheet);
         when(response.getOutputStream()).thenReturn(outputStream);
         when(configService.getConfiguration()).thenReturn(config);
-        when(config.getApprovedUsers()).thenReturn(new ApprovedUser[0]);
+        when(config.getTimesheetAdminUsers()).thenReturn(new TimesheetAdmin[0]);
 
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);

@@ -30,14 +30,21 @@ import java.util.TreeMap;
 @SuppressWarnings("unused")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+
+/* Info: @deprecated
+ * for further projects / classes use the very powerful GSON library from Google. Have a look here:
+ * https://github.com/google/gson/blob/master/UserGuide.md
+ * It is easier to use and you haven't create a class for each object you would like to serialise.
+ * BTW: it is already included in this project, so feel free to use it up to now.
+*/
 public final class JsonConfig {
 
     @XmlElement
     private List<JsonTeam> teams;
     @XmlElement
-    private List<String> approvedGroups;
+    private List<String> timesheetAdminGroups;
     @XmlElement
-    private List<String> approvedUsers;
+    private List<String> timesheetAdmins;
     @XmlElement
     private String supervisors;
     @XmlElement
@@ -72,24 +79,24 @@ public final class JsonConfig {
     public JsonConfig(ConfigService configService) {
         Config toCopy = configService.getConfiguration();
 
-        Map<String, JsonTeam> teamMap = new TreeMap<String, JsonTeam>();
+        Map<String, JsonTeam> teamMap = new TreeMap<>();
         for (Team team : toCopy.getTeams()) {
             teamMap.put(team.getTeamName(), new JsonTeam(team, configService));
         }
 
-        this.teams = new ArrayList<JsonTeam>();
+        this.teams = new ArrayList<>();
         this.teams.addAll(teamMap.values());
 
-        this.approvedUsers = new ArrayList<String>();
-        for (ApprovedUser approvedUser : toCopy.getApprovedUsers()) {
-            if (approvedUser.getUserKey() != null) {
-                approvedUsers.add(approvedUser.getUserName());
+        this.timesheetAdmins = new ArrayList<>();
+        for (TimesheetAdmin timesheetAdmin : toCopy.getTimesheetAdminUsers()) {
+            if (timesheetAdmin.getUserKey() != null) {
+                timesheetAdmins.add(timesheetAdmin.getUserName());
             }
         }
 
-        this.approvedGroups = new ArrayList<String>();
-        for (ApprovedGroup approvedGroup : toCopy.getApprovedGroups()) {
-            approvedGroups.add(approvedGroup.getGroupName());
+        this.timesheetAdminGroups = new ArrayList<>();
+        for (TSAdminGroup timesheetAdminGroup : toCopy.getTimesheetAdminGroups()) {
+            timesheetAdminGroups.add(timesheetAdminGroup.getGroupName());
         }
 
         this.supervisors = toCopy.getSupervisedUsers();
@@ -118,20 +125,20 @@ public final class JsonConfig {
         this.teams = teams;
     }
 
-    public List<String> getApprovedGroups() {
-        return approvedGroups;
+    public List<String> getTimesheetAdminGroups() {
+        return timesheetAdminGroups;
     }
 
-    public void setApprovedGroups(List<String> approvedGroups) {
-        this.approvedGroups = approvedGroups;
+    public void setTimesheetAdminGroups(List<String> timesheetAdminGroups) {
+        this.timesheetAdminGroups = timesheetAdminGroups;
     }
 
-    public List<String> getApprovedUsers() {
-        return approvedUsers;
+    public List<String> getTimesheetAdmins() {
+        return timesheetAdmins;
     }
 
-    public void setApprovedUsers(List<String> approvedUsers) {
-        this.approvedUsers = approvedUsers;
+    public void setTimesheetAdmins(List<String> timesheetAdmins) {
+        this.timesheetAdmins = timesheetAdmins;
     }
 
     public String getSupervisors() {

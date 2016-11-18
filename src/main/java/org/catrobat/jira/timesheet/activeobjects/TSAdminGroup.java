@@ -20,7 +20,7 @@ import net.java.ao.Entity;
 import net.java.ao.Preload;
 
 @Preload
-public interface ApprovedGroup extends Entity {
+public interface TSAdminGroup extends Entity {
 
     Config getConfiguration();
 
@@ -30,6 +30,6 @@ public interface ApprovedGroup extends Entity {
 
     void setGroupName(String groupName);
 
-    //@OneToMany(reverse = "getApprovedGroup")
-    //ApprovedUser[] getApprovedUsers();
+    //@OneToMany(reverse = "getTimesheetAdminGroup")
+    //TimesheetAdmin[] getTimesheetAdminUsers();
 }

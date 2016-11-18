@@ -53,7 +53,7 @@ public class UserRest {
     public Response getUsers(@Context HttpServletRequest request) {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        if (!permissionService.isApproved(loggedInUser)) {
+        if (!permissionService.isTimesheetAdmin(loggedInUser)) {
             Response unauthorized = permissionService.checkPermission(request);
             if (unauthorized != null) {
                 return unauthorized;

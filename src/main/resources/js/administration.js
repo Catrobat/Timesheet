@@ -17,6 +17,7 @@
 "use strict";
 
 var restBaseUrl;
+var inactiveUsers = [];
 
 AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
@@ -29,6 +30,8 @@ AJS.toInit(function () {
         var aTag = AJS.$("a[name='" + aid + "']");
         AJS.$('html,body').animate({scrollTop: aTag.offset().top}, 'slow');
     }
+
+    initDialog();
 
     function fetchData() {
 
@@ -151,15 +154,15 @@ AJS.toInit(function () {
                 });
 
                 var approved = [];
-                if (config.approvedGroups) {
-                    for (var i = 0; i < config.approvedGroups.length; i++) {
-                        approved.push({id: "groups-" + config.approvedGroups[i], text: config.approvedGroups[i]});
+                if (config.timesheetAdminGroups) {
+                    for (var i = 0; i < config.timesheetAdminGroups.length; i++) {
+                        approved.push({id: "groups-" + config.timesheetAdminGroups[i], text: config.timesheetAdminGroups[i]});
                     }
                 }
 
-                if (config.approvedUsers) {
-                    for (var i = 0; i < config.approvedUsers.length; i++) {
-                        approved.push({id: "users-" + config.approvedUsers[i], text: config.approvedUsers[i]});
+                if (config.timesheetAdmins) {
+                    for (var i = 0; i < config.timesheetAdmins.length; i++) {
+                        approved.push({id: "users-" + config.timesheetAdmins[i], text: config.timesheetAdmins[i]});
                     }
                 }
 
@@ -252,18 +255,18 @@ AJS.toInit(function () {
         config.supervisors = AJS.$("#plugin-permission").val();
 
         var usersAndGroups = AJS.$("#plugin-administration").auiSelect2("val");
-        var approvedUsers = [];
-        var approvedGroups = [];
+        var timesheetAdmins = [];
+        var timesheetAdminGroups = [];
         for (var i = 0; i < usersAndGroups.length; i++) {
             if (usersAndGroups[i].match("^users-")) {
-                approvedUsers.push(usersAndGroups[i].split("users-")[1]);
+                timesheetAdmins.push(usersAndGroups[i].split("users-")[1]);
             } else if (usersAndGroups[i].match("^groups-")) {
-                approvedGroups.push(usersAndGroups[i].split("groups-")[1]);
+                timesheetAdminGroups.push(usersAndGroups[i].split("groups-")[1]);
             }
         }
 
-        config.approvedUsers = approvedUsers;
-        config.approvedGroups = approvedGroups;
+        config.timesheetAdmins = timesheetAdmins;
+        config.timesheetAdminGroups = timesheetAdminGroups;
 
         config.teams = [];
         for (var i = 0; i < teams.length; i++) {
@@ -667,4 +670,90 @@ AJS.toInit(function () {
             return '';
         }
     }
+
+    AJS.$(document).keydown(function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (e.ctrlKey && e.altKey && e.shiftKey) {
+            if (keyCode == 84) { // keycode == 't'
+                loadData();
+            }
+        }
+        //console.log(event.keyCode);
+    });
+
+    function loadData() {
+        var inactiveUsersFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'inactiveUsers',
+            contentType: "application/json"
+        });
+
+        AJS.$.when(inactiveUsersFetched)
+            .done(function (inactiveList){
+                inactiveUsers = inactiveList;
+                AJS.dialog2("#hidden-dialog").show();
+            })
+            .fail(function (error) {
+                AJS.messages.error({
+                    title: 'There was an error while fetching user data.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
+                AJS.$(".loadingDiv").hide();
+            });
+    }
+
+    function initDialog() {
+
+        AJS.$("#dialog-submit-button").click(function (e) {
+            e.preventDefault();
+            AJS.dialog2("#hidden-dialog").hide();
+        });
+
+        // Show event - this is triggered when the dialog is shown
+        AJS.dialog2("#hidden-dialog").on("show", function () {
+            AJS.$(".aui").focus();
+            AJS.log("hidden-dialog was shown");
+            AJS.$(".aui-dialog2-footer-hint").html("Created on " + new Date().toDateString());
+
+            var content = "";
+            inactiveUsers.forEach(function (user) {
+                content += user + "<br/>";
+            });
+
+            AJS.$(".aui-dialog2-content").html(content);
+        });
+
+        AJS.$("#search-field").keyup(function (e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+            var searchText = AJS.$("#search-field").val().toLowerCase();
+            var content = "";
+            for (var i = 0; i < inactiveUsers.length; i++) {
+                if (inactiveUsers[i].toLowerCase().includes(searchText)) {
+                    content += inactiveUsers[i] + "<br/>";
+                }
+            }
+            AJS.$(".aui-dialog2-content").html(content);
+        });
+
+//     // Hide event - this is triggered when the dialog is hidden
+//     AJS.dialog2("#hidden-dialog").on("hide", function () {
+//         AJS.log("hidden-dialog was hidden");
+//     });
+//
+// // Global show event - this is triggered when any dialog is show
+//     AJS.dialog2.on("show", function () {
+//         AJS.log("a dialog was shown");
+//     });
+//
+// // Global hide event - this is triggered when any dialog is hidden
+//     AJS.dialog2.on("hide", function () {
+//         AJS.log("a dialog was hidden");
+//     });
+    }
 });
+

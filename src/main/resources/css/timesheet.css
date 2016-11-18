@@ -55,7 +55,8 @@
 #timesheet-table .date,
 #timesheet-table .inactive,
 #timesheet-table .deactivate {
-    width: 87px;
+    min-width: 87px;
+    width: 100px;
 }
 
 #timesheet-table .start,
@@ -81,7 +82,7 @@
 
 #timesheet-table .description {
     min-width: 150px;
-    width: 210px;
+    width: 1300px;
 }
 
 #timesheet-table button {

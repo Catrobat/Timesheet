@@ -73,6 +73,12 @@
     <web-resource key="administration-resources" name="Admin Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-banner</dependency>
+        <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
+        <dependency>com.atlassian.auiplugin:message</dependency>
 
         <resource type="download" name="administration.js" location="/js/administration.js"/>
         <resource type="download" name="administration.css" location="/css/administration.css"/>
@@ -204,8 +210,8 @@
         <!-- administration -->
         <entity>org.catrobat.jira.timesheet.activeobjects.Config</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.Group</entity>
-        <entity>org.catrobat.jira.timesheet.activeobjects.ApprovedUser</entity>
-        <entity>org.catrobat.jira.timesheet.activeobjects.ApprovedGroup</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.TSAdminGroup</entity>
     </ao>
 
     <!-- rest-resources -->

@@ -47,11 +47,11 @@ public class ActivityNotificationJob implements PluginJob {
                 }
 
                 //Todo: inform all user in approved group
-                ApprovedUser[] approvedUsers = config.getApprovedUsers();
+                TimesheetAdmin[] timesheetAdmins = config.getTimesheetAdminUsers();
                 //inform timesheet admins (approved users)
-                for (ApprovedUser approvedUser : approvedUsers) {
-                    System.out.println("approvedUser: = " + approvedUser.getUserName());
-                    sendMail(createEmail(approvedUser.getEmailAddress(), config.getMailSubjectOfflineState(),
+                for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
+                    System.out.println("timesheetAdmin: = " + timesheetAdmin.getUserName());
+                    sendMail(createEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectOfflineState(),
                             config.getMailBodyOfflineState()));
                 }
             } else if (!timesheet.getIsActive()) { // user is inactive

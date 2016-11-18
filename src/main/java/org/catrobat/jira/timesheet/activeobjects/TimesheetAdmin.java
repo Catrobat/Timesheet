@@ -20,7 +20,7 @@ import net.java.ao.Entity;
 import net.java.ao.Preload;
 
 @Preload
-public interface ApprovedUser extends Entity {
+public interface TimesheetAdmin extends Entity {
 
     Config getConfiguration();
 

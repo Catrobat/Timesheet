@@ -43,8 +43,8 @@ import static org.junit.Assert.*;
 public class PermissionServiceImplTest {
 
     private static Team catroid, html5, drone;
-    private static ApprovedUser approvedUser;
-    private static ApprovedGroup approvedGroup;
+    private static TimesheetAdmin timesheetAdmin;
+    private static TSAdminGroup timesheetAdminGroup;
     private static Config config;
     @Rule
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -176,18 +176,18 @@ public class PermissionServiceImplTest {
     /*
     @Test
     public void testEveCantViewTimesheet() throws Exception {
-        configService.addApprovedUser("test1", "test1_key");
-        configService.addApprovedGroup("testGroup1");
+        configService.addTimesheetAdmin("test1", "test1_key");
+        configService.addTimesheetAdminGroup("testGroup1");
 
-        ApprovedUser[] approvedUsers = {approvedUser};
-        ApprovedGroup[] approvedGroups = {approvedGroup};
+        TimesheetAdmin[] approvedUsers = {timesheetAdmin};
+        TSAdminGroup[] approvedGroups = {timesheetAdminGroup};
 
         userGroupNames.add("abc");
         userGroupNames.add("def");
 
         Mockito.when(configService.getConfiguration()).thenReturn(config);
-        Mockito.when(config.getApprovedUsers()).thenReturn(approvedUsers);
-        Mockito.when(config.getApprovedGroups()).thenReturn(approvedGroups);
+        Mockito.when(config.getTimesheetAdminUsers()).thenReturn(approvedUsers);
+        Mockito.when(config.getTimesheetAdminGroups()).thenReturn(approvedGroups);
 
         Mockito.when(componentAccessor.getGroupManager().getGroupNamesForUser(eve.getUsername())).thenReturn(userGroupNames);
 
@@ -374,16 +374,16 @@ public class PermissionServiceImplTest {
             drone.setTeamName("drone");
             drone.save();
 
-            em.migrate(ApprovedUser.class);
-            approvedUser = em.create(ApprovedUser.class);
-            approvedUser.setConfiguration(config);
-            approvedUser.setUserKey("APPROVED_KEY");
-            approvedUser.setUserName("ApprovedUser");
+            em.migrate(TimesheetAdmin.class);
+            timesheetAdmin = em.create(TimesheetAdmin.class);
+            timesheetAdmin.setConfiguration(config);
+            timesheetAdmin.setUserKey("APPROVED_KEY");
+            timesheetAdmin.setUserName("TimesheetAdmin");
 
-            em.migrate(ApprovedGroup.class);
-            approvedGroup = em.create(ApprovedGroup.class);
-            approvedGroup.setConfiguration(config);
-            approvedGroup.setGroupName("ApprovedGroup");
+            em.migrate(TSAdminGroup.class);
+            timesheetAdminGroup = em.create(TSAdminGroup.class);
+            timesheetAdminGroup.setConfiguration(config);
+            timesheetAdminGroup.setGroupName("TSAdminGroup");
         }
     }
 }

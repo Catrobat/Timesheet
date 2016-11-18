@@ -17,11 +17,10 @@
 package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import org.catrobat.jira.timesheet.activeobjects.ApprovedUser;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 
@@ -64,31 +63,25 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
     protected void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
 
-        ApprovedUser[] approvedUsers = configService.getConfiguration().getApprovedUsers();
+        TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        try {
-            if (approvedUsers.length > 0) {
-                for (ApprovedUser approvedUser : approvedUsers) {
-                    if (approvedUser.getUserKey().equals(user.getKey())) {
-                        System.out.println("User: " + approvedUser.getUserName() + " is approved to access!");
-                        if (!webSudoManager.canExecuteRequest(request)) {
-                            webSudoManager.enforceWebSudoProtection(request, response);
-                        }
-                        return;
+        if (timesheetAdmins.length > 0) {
+            for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
+                if (timesheetAdmin.getUserKey().equals(user.getKey())) {
+                    System.out.println("User: " + timesheetAdmin.getUserName() + " is approved to access!");
+                    if (!webSudoManager.canExecuteRequest(request)) {
+                        webSudoManager.enforceWebSudoProtection(request, response);
                     }
+                    return;
                 }
-            } else if (permissionService.checkIfUserIsGroupMember("Timesheet") ||
-                    permissionService.checkIfUserIsGroupMember("jira-administrators") ||
-                    permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
-                if (!webSudoManager.canExecuteRequest(request)) {
-                    webSudoManager.enforceWebSudoProtection(request, response);
-                }
-                return;
             }
-        } catch (PermissionException e) {
-            response.sendRedirect(JIRA_LOGIN_JSP);
-            e.printStackTrace();
+        } else if (permissionService.checkIfUserIsGroupMember("jira-administrators") ||
+                permissionService.checkIfUserIsGroupMember("Jira-Test-Administrators")) {
+            if (!webSudoManager.canExecuteRequest(request)) {
+                webSudoManager.enforceWebSudoProtection(request, response);
+            }
+            return;
         }
         response.sendRedirect(JIRA_LOGIN_JSP);
     }

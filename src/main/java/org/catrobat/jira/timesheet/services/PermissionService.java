@@ -33,11 +33,13 @@ public interface PermissionService {
 
     ApplicationUser checkIfUserExists(HttpServletRequest request) throws PermissionException;
 
-    boolean checkIfUserIsGroupMember(String groupName) throws PermissionException;
+    boolean checkIfUserIsGroupMember(String groupName);
 
     boolean checkIfUserIsTeamCoordinator(HttpServletRequest request);
 
     Response checkPermission(HttpServletRequest request);
+
+    Response checkRootPermission(HttpServletRequest request);
 
     boolean userCanViewTimesheet(ApplicationUser user, Timesheet sheet);
 
@@ -45,7 +47,7 @@ public interface PermissionService {
 
     void userCanDeleteTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException;
 
-    boolean isApproved(ApplicationUser user);
+    boolean isTimesheetAdmin(ApplicationUser user);
 
     Collection<Group> printALLUserGroups();
 

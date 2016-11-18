@@ -59,17 +59,17 @@ public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
         }
 
         Config config = configurationService.getConfiguration();
-        if (config.getApprovedGroups().length == 0 && config.getApprovedUsers().length == 0) {
+        if (config.getTimesheetAdminGroups().length == 0 && config.getTimesheetAdminUsers().length == 0) {
             return true;
         }
 
-        if (configurationService.isUserApproved(applicationUser.getKey())) {
+        if (configurationService.isTimesheetAdmin(applicationUser.getKey())) {
             return true;
         }
 
         Collection<String> groupNameCollection = groupManager.getGroupNamesForUser(applicationUser);
         for (String groupName : groupNameCollection) {
-            if (configurationService.isGroupApproved(groupName))
+            if (configurationService.isTimesheetAdminGroup(groupName))
                 return true;
         }
 
