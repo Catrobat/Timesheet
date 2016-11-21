@@ -72,7 +72,7 @@ AJS.toInit(function () {
     }
 
     fetchUsers();
-    fetchData123();
+    fetchData();
 });
 
 function checkConstrains() {
@@ -99,7 +99,7 @@ function checkConstrains() {
     }).responseText;
 }
 
-function fetchData123() {
+function fetchData() {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheets/' + timesheetID,

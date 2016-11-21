@@ -51,7 +51,6 @@ public class TimesheetServlet extends HttpServlet {
         this.permissionService = permissionService;
     }
 
-    //TODO: should the Timesheet need this high privilege rights?
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Response unauthorized = permissionService.checkGlobalPermission();

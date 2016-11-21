@@ -261,7 +261,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         require('aui/flag')({
             type: 'info',
             title: 'Attention: No inactive end date ',
-            body: 'Your inactivity is only valid until ' + endDate
+            body: 'Your inactivity is only valid until ' + endDate,
         });
     }
 
@@ -271,21 +271,34 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         require('aui/flag')({
             type: 'error',
             title: 'Pair Programming Partner is missing',
-            body: 'Please select an partner'
+            body: 'Please select an partner',
+            close: 'auto'
         });
     }
 
-    // if (!form.description.val()){
-    //     console.log("go here");
-    //     require('aui/flag')({
-    //         type: 'info',
-    //         title: 'Description message is missing',
-    //         body: 'You need to write a short summary about what you have done so far.'
-    //     });
-    //     form.description.css({"border-color": "red",
-    //         "border-width":"1px",
-    //         "border-style":"solid"});
-    // }
+    if (!form.descriptionField.val()) {
+        console.log("go here");
+        require('aui/flag')({
+            type: 'warning',
+            title: 'Description message is missing',
+            body: 'You need to write a short summary about what you have done so far.',
+            close: 'auto'
+        });
+
+        form.descriptionField.css({
+            "border-color": "red",
+            "border-width": "1px",
+            "border-style": "solid"
+        });
+
+    }
+    else {
+
+        form.descriptionField.css({
+            "border-color": "#DCDCDC"
+        });
+
+    }
 
     timesheetEntry = {
         beginDate: beginDate,
@@ -483,8 +496,6 @@ function prepareForm(entry, timesheetData) {
             else {
                 AJS.$(".partner").hide();
             }
-
-            hideElementsOnStartup();
         }
     });
 
@@ -554,7 +565,7 @@ function prepareForm(entry, timesheetData) {
         async: false
     });
 
-    var tickets = new Array();
+    var tickets = [];
     AJS.$.each(projectKeys, function (index, value) {
         if (value === undefined) {
             value = null; // null is a accepted value, but undefined is going worse
@@ -668,7 +679,19 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
         ? selectedTeam.teamCategories[0]
         : entry.categoryID;
 
-    categorySelect.val(selectedCategoryID).trigger("change");
+    var suitableIndex = getSuitableCatIndex(categoriesPerTeam);
+    categorySelect.val(suitableIndex).trigger("change");
+}
+
+function getSuitableCatIndex(categoriesPerTeam) {
+    for (var k in categoriesPerTeam){
+        if (categoriesPerTeam.hasOwnProperty(k)) {
+            var name = categoriesPerTeam[k].text.toLowerCase();
+            if (name !== "inactive" && name !== "deactivated") {
+                return categoriesPerTeam[k].id;
+            }
+        }
+    }
 }
 
 function updateTimeField(form) {
@@ -824,20 +847,3 @@ function prepareViewRow(timesheetData, entry) {
 
     return viewRow;
 }
-
-// this is a hack - hideElementsOnStartup
-var hideElementsOnStartup = (function () {
-    var executed = false;
-    return function () {
-        if (!executed) {
-            executed = true;
-
-            setTimeout(
-                function () {
-                    AJS.$(".inactive").hide();
-                    AJS.$(".deactivate").hide();
-                    AJS.$(".partner").hide();
-                }, 100);
-        }
-    };
-})();

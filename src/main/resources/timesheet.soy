@@ -10,13 +10,13 @@
           <span class="th team">Team</span>
     {/if}
     <span class="th category">Category</span>
-    <span class="th inactive">Inactive Until</span>
-    <span class="th deactivate">Deactivated Until</span>
+    <span class="th inactive" style="display:none">Inactive Until</span>
+    <span class="th deactivate" style="display:none">Deactivated Until</span>
     <span class="th start">Start</span>
     <span class="th end">End</span>
     <span class="th pause">Pause</span>
     <span class="th duration">Duration</span>
-    <span class="th partner">Partner (PP)</span>
+    <span class="th partner" style="display:none">Partner (PP)</span>
     <span class="th ticket">Jira Ticket ID</span>
     <span class="th description">Task Description</span>
     <span class="th"></span>
@@ -35,13 +35,15 @@
           <span class="td team">{$entry.team}</span>
     {/if}
     <span class="td category">{$entry.category}</span>
-    <span class="td inactive">{$entry.inactiveEndDate}</span>
-    <span class="td deactivate">{$entry.deactivateEndDate}</span>
+
+    <span class="td inactive" style="display:none">{$entry.inactiveEndDate}</span>
+    <span class="td deactivate" style="display:none">{$entry.deactivateEndDate}</span>
+
     <span class="td start">{$entry.begin}</span>
     <span class="td end">{$entry.end}</span>
     <span class="td pause">{$entry.pause}</span>
     <span class="td duration">{$entry.duration}</span>
-    <span class="td partner">{$entry.partner}</span>
+    <span class="td partner" style="display:none">{$entry.partner}</span>
     <span class="td ticket">{$entry.ticketID}</span>
     <span class="td desc">{$entry.description}</span>
     <span class="td save">
@@ -82,10 +84,10 @@
     <span class="td category">
           <span class="category_"></span>
     </span>
-    <span class="td inactive">
+    <span class="td inactive" style="display:none">
           <input class="inactive_ aui-date-picker text" type="date" value="{$entry.inactiveEndDate}">
     </span>
-    <span class="td deactivate">
+    <span class="td deactivate" style="display:none">
           <input class="deactivate_ aui-date-picker text" type="date" value="{$entry.deactivateEndDate}">
     </span>
     <span class="td time-picker start">
@@ -100,7 +102,7 @@
     <span class="td duration">
       <input class="duration text" type="text" disabled="disabled" value="{$entry.duration}" />
     </span>
-    <span class="td partner">
+    <span class="td partner" style="display:none">
           <span class="partner_"></span>
     </span>
     <span class="td ticket">

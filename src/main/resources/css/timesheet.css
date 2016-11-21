@@ -69,8 +69,7 @@
 #timesheet-table .team,
 #timesheet-table .category,
 #timesheet-table .partner,
-#timesheet-table .ticket
-{
+#timesheet-table .ticket {
     min-width: 100px;
     width: 130px;
 }

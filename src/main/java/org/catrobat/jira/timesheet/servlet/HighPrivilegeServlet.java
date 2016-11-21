@@ -50,14 +50,14 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        checkPermission(request, response);
         enforceLoggedIn(request, response);
+        checkPermission(request, response);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        checkPermission(request, response);
         enforceLoggedIn(request, response);
+        checkPermission(request, response);
     }
 
     protected void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -66,23 +66,25 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
         TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        if (user != null && timesheetAdmins.length > 0) {
+        if (timesheetAdmins.length > 0) {
             for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
                 if (timesheetAdmin.getUserKey().equals(user.getKey())) {
                     System.out.println("User: " + timesheetAdmin.getUserName() + " is approved to access!");
-                    if (!webSudoManager.canExecuteRequest(request)) {
-                        webSudoManager.enforceWebSudoProtection(request, response);
-                    }
+                    enforceWebSudoProtection(request, response);
                     return;
                 }
             }
         } else if (permissionService.isJiraAdministrator(user)) {
-            if (!webSudoManager.canExecuteRequest(request)) {
-                webSudoManager.enforceWebSudoProtection(request, response);
-            }
+            enforceWebSudoProtection(request, response);
             return;
         }
         response.sendRedirect(JIRA_LOGIN_JSP);
+    }
+
+    private void enforceWebSudoProtection(HttpServletRequest request, HttpServletResponse response) {
+        if (!webSudoManager.canExecuteRequest(request)) {
+            webSudoManager.enforceWebSudoProtection(request, response);
+        }
     }
 
     private void enforceLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException {
