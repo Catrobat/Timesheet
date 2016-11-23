@@ -209,6 +209,7 @@ function renderFormRow(timesheetData, entry, saveOptions) {
     form.saveButton.click(function () {
         submit(timesheetData, saveOptions, form, entry.entryID,
             entry.isGoogleDocImport);
+        //AJS.$(".entry-form").show();
     });
 
     return form.row;
@@ -454,6 +455,7 @@ function prepareForm(entry, timesheetData) {
 
     if (countDefinedElementsInArray(teams) < 2) {
         row.find(".team").hide();
+        AJS.$(".team").hide();
     }
 
     return form;
@@ -584,6 +586,7 @@ function renderViewRow(timesheetData, entry) {
 
     viewRow.find("button.edit").click(function () {
         //augmentedEntry.isGoogleDocImport = false;
+        console.log("edit button gedrückt");
         editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewRow);
     });
 
@@ -602,6 +605,8 @@ function editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewR
         viewRow.after(formRow);
     }
 
+    //AJS.$("#entry-table").hide();
+    //AJS.$(".entry-form").hide();
     viewRow.hide();
     formRow.show();
 }
@@ -817,13 +822,13 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         endDate: endDate,
         inactiveEndDate: inactiveEndDate,
         deactivateEndDate: deactivateEndDate,
-        description: AJS.$("input.description_").val(),
+        description: form.descriptionField.val(),
         pauseMinutes: pauseMin,
-        teamID: AJS.$("select.team").val(),
-        categoryID: AJS.$("span.category_").val(),
+        teamID: form.teamSelect.val(),
+        categoryID: form.categorySelect.val(),
         isGoogleDocImport: existingIsGoogleDocImportValue,
-        partner: AJS.$("span.partner_").val(),
-        ticketID: AJS.$("input.ticket_").val()
+        partner: form.partnerSelect.val(),
+        ticketID: form.ticketSelect.val()
     };
 
     if (existingEntryID !== "new-id") {

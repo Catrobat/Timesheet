@@ -29,7 +29,7 @@
  * @param teams
  */
 {template .timesheetEntry}
-   <div class="tr entry-view" data-id="{$entry.entryID}">
+   <div class="tr entry-view" data-id="{$entry.entryID}" id="entry-table">
     <span class="td date">{$entry.date}</span>
     {if length(keys($teams)) > 1}
           <span class="td team">{$entry.team}</span>
@@ -70,7 +70,7 @@
  * @param teams
  */
 {template .timesheetEntryForm}
-  <form class="entry-form aui tr" data-id="{$entry.entryID}">
+  <form class="entry-form aui tr" data-id="{$entry.entryID}" id="entry-table">
     <span class="td date">
       <input class="date aui-date-picker text" type="date" value="{$entry.date}">
     </span>
