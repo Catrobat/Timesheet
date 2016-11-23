@@ -13,15 +13,11 @@ import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.rest.SchedulingRest;
 import org.catrobat.jira.timesheet.scheduling.TimesheetScheduler;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -63,6 +59,7 @@ public class SchedulingRestTest {
     private TimesheetServiceImpl timesheetService;
     private SchedulingRest schedulingRest;
     private TimesheetScheduler timesheetScheduler;
+    private SchedulingService schedulingService;
 
     @Before
     public void setUp() throws Exception {
@@ -80,6 +77,7 @@ public class SchedulingRestTest {
         httpRequest = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         response = mock(Response.class, RETURNS_DEEP_STUBS);
         timesheetScheduler = mock(TimesheetScheduler.class, RETURNS_DEEP_STUBS);
+        schedulingService = mock(SchedulingService.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
         configService = new ConfigServiceImpl(ao, categoryService);
@@ -91,11 +89,11 @@ public class SchedulingRestTest {
 
         // For some tests we need a mock...
         schedulingRestMock = new SchedulingRest(configServiceMock, permissionServiceMock, timesheetEntryServiceMock,
-                timesheetServiceMock, teamServiceMock, categoryService, timesheetScheduler);
+                timesheetServiceMock, teamServiceMock, categoryService, timesheetScheduler, schedulingService);
 
         // ... and for some tests we need a real instance of the class
         schedulingRest = new SchedulingRest(configService, permissionService, timesheetEntryService,
-                timesheetService, teamService, categoryService, timesheetScheduler);
+                timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
 
         // ... and sometimes you would like to mix them together (see in test method)
 
@@ -119,7 +117,7 @@ public class SchedulingRestTest {
     @Test
     public void testActivityNotification_TimesheetEntryIsEmpty() throws Exception {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
-                timesheetService, teamService, categoryService, timesheetScheduler);
+                timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
 
         timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, true, true, true); // master thesis
         timesheetService.add("key 2", 450, 0, 450, 450, 0, "bachelor thesis", "", 15, true, false, false); // disabled
@@ -146,7 +144,7 @@ public class SchedulingRestTest {
     @Test
     public void testActivityNotification_differentKindsOfTimesheets() throws Exception {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
-                timesheetService, teamService, categoryService, timesheetScheduler);
+                timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
 
         Timesheet timesheet1 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, true, true, true);
 

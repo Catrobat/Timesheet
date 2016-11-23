@@ -20,6 +20,7 @@ package org.catrobat.jira.timesheet.rest;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.rest.json.JsonScheduling;
 import org.catrobat.jira.timesheet.scheduling.ActivityNotificationJob;
 import org.catrobat.jira.timesheet.scheduling.ActivityVerificationJob;
 import org.catrobat.jira.timesheet.scheduling.OutOfTimeJob;
@@ -28,9 +29,7 @@ import org.catrobat.jira.timesheet.services.*;
 import org.joda.time.DateTime;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -46,10 +45,11 @@ public class SchedulingRest {
     private final TeamService teamService;
     private final CategoryService categoryService;
     private final TimesheetScheduler timesheetScheduler;
+    private final SchedulingService schedulingService;
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
             final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService,
-            CategoryService categoryService, TimesheetScheduler timesheetScheduler) {
+            CategoryService categoryService, TimesheetScheduler timesheetScheduler, SchedulingService schedulingService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.entryService = entryService;
@@ -57,6 +57,7 @@ public class SchedulingRest {
         this.teamService = teamService;
         this.categoryService = categoryService;
         this.timesheetScheduler = timesheetScheduler;
+        this.schedulingService = schedulingService;
     }
 
     @GET
@@ -123,6 +124,36 @@ public class SchedulingRest {
 
         OutOfTimeJob outOfTimeJob = new OutOfTimeJob();
         outOfTimeJob.execute(params);
+
+        return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/getScheduling")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getScheduling(@Context HttpServletRequest request) {
+        Response unauthorized = permissionService.checkGlobalPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        Scheduling scheduling = schedulingService.getScheduling();
+        JsonScheduling jsonScheduling = new JsonScheduling(scheduling.getInactiveTime());
+
+        return Response.ok(jsonScheduling).build();
+    }
+
+    @PUT
+    @Path("/saveScheduling")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response setScheduling(final JsonScheduling jsonScheduling, @Context HttpServletRequest request) {
+        Response unauthorized = permissionService.checkGlobalPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        schedulingService.setScheduling(jsonScheduling.getInactiveTime());
+        //timesheetScheduler.reschedule(); // since parameters will be updated on the fly, no rescheduling needed
 
         return Response.noContent().build();
     }

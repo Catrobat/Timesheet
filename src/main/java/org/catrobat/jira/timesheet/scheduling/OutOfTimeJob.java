@@ -8,6 +8,7 @@ import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.services.SchedulingService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import java.util.Date;
@@ -22,6 +23,7 @@ public class OutOfTimeJob implements PluginJob {
 
         TimesheetService sheetService = (TimesheetService)map.get("sheetService");
         ConfigService configService = (ConfigService)map.get("configService");
+        SchedulingService schedulingService = (SchedulingService)map.get("schedulingService");
 
         List<Timesheet> timesheetList = sheetService.all();
         Config config = configService.getConfiguration();

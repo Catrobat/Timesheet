@@ -321,6 +321,21 @@
         <p></p>
         <h2>Task Scheduling</h2>
         <form id="modify-scheduling" class="aui">
+            <h3>Inactive Settings</h3>
+            <fieldset>
+                <div class="field-group">
+                    <label for="mail-subject-entry-change">Inactive Time</label>
+                    <input class="text" type="text" id="scheduling-inactive-time" name="mail-subject-entry-change"
+                           title="mail-subject-entry-change" placeholder="e.g.: [Inactive Time in days] ...">
+                    <div class="description">
+                        After which time will a Timesheet be marked as Inactive? (In Days)
+                    </div>
+                </div>
+                <div class="field-group">
+                    <input type="submit" value="Save" class="aui-button aui-button-primary">
+                </div>
+            </fieldset>
+            <h3>Manual Trigger</h3>
             <fieldset>
                 <div class="field-group">
                     <label for="activity-verification-job">Trigger - Activity Verification Job Manually</label>

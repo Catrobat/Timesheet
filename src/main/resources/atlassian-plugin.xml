@@ -182,6 +182,8 @@
                class="org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl"/>
     <component key="permission-service" name="Permission Service"
                class="org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl"/>
+    <component key="scheduling-service" name="Scheduling Service"
+               class="org.catrobat.jira.timesheet.services.impl.SchedulingServiceImpl"/>
     <!-- end of timesheet-components -->
 
     <!-- administration-components -->
@@ -212,6 +214,7 @@
         <entity>org.catrobat.jira.timesheet.activeobjects.Group</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.TSAdminGroup</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.Scheduling</entity>
     </ao>
 
     <!-- rest-resources -->

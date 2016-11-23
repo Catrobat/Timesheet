@@ -1,12 +1,12 @@
 package org.catrobat.jira.timesheet.scheduling;
 
+import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.services.CategoryService;
-import org.catrobat.jira.timesheet.services.TeamService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.activeobjects.Scheduling;
+import org.catrobat.jira.timesheet.services.*;
+import org.joda.time.DateTime;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,14 +24,16 @@ public class TimesheetScheduler implements LifecycleAware {
     private final TeamService teamService;
     private final CategoryService categoryService;
     private final ConfigService configService;
+    private final SchedulingService schedulingService;
 
-    public TimesheetScheduler(PluginScheduler pluginScheduler, TimesheetService sheetService, TimesheetEntryService entryService, TeamService teamService, CategoryService categoryService, ConfigService configService) {
+    public TimesheetScheduler(PluginScheduler pluginScheduler, TimesheetService sheetService, TimesheetEntryService entryService, TeamService teamService, CategoryService categoryService, ConfigService configService, SchedulingService schedulingService, ActiveObjects ao) {
         this.pluginScheduler = pluginScheduler;
         this.sheetService = sheetService;
         this.entryService = entryService;
         this.teamService = teamService;
         this.categoryService = categoryService;
         this.configService = configService;
+        this.schedulingService = schedulingService;
     }
 
     public void reschedule() {
@@ -41,6 +43,7 @@ public class TimesheetScheduler implements LifecycleAware {
         params.put("teamService", teamService);
         params.put("categoryService", categoryService);
         params.put("configService", configService);
+        params.put("schedulingService", schedulingService);
 
         pluginScheduler.scheduleJob(
                 ACTIVITY_VERIFICATION_JOB,
@@ -66,12 +69,13 @@ public class TimesheetScheduler implements LifecycleAware {
     }
 
     private Date jobStartDate() {
-        return new Date(); //TODO: make it during night
+        DateTime start = new DateTime().withTimeAtStartOfDay().plusDays(1);
+        return start.toDate(); //TODO: make it during night
     }
 
     private long jobInterval() {
-        return 1000*60*60*24; // Everyday
-        //return 1000*120; // Testing
+        //return 1000*60*60*24; // Everyday
+        return 1000*120; // Testing
     }
 
     @Override
