@@ -187,7 +187,11 @@ function addNewEntryCallback(entry, timesheetData, form) {
  * @param {jQuery} form
  */
 function editEntryCallback(entry, timesheetData, form) {
-    var newViewRow = prepareViewRow(timesheetData, entry); //todo check if entry is augmented
+    var augmentedEntry = augmentEntry(timesheetData, entry);
+    if (augmentedEntry == null)
+        return;
+
+    var newViewRow = prepareViewRow(timesheetData, augmentedEntry);
     var oldViewRow = form.row.prev();
 
     newViewRow.find("button.edit").click(function () {
@@ -591,6 +595,8 @@ function changePauseTimeField() {
 function renderViewRow(timesheetData, entry) {
 
     var augmentedEntry = augmentEntry(timesheetData, entry);
+    if (augmentedEntry == null)
+        return;
 
     var editEntryOptions = {
         httpMethod: "put",
@@ -674,6 +680,10 @@ function getFormRow(viewRow) {
  */
 function augmentEntry(timesheetData, entry) {
 
+    if (timesheetData.teams[entry.teamID] == null) {
+        return null;
+    }
+
     var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
 
     return {
@@ -706,10 +716,8 @@ function augmentEntry(timesheetData, entry) {
  */
 function prepareViewRow(timesheetData, entry) {
 
-    var augmentedEntry = augmentEntry(timesheetData, entry);
-
     var viewRow = AJS.$(Jira.Templates.Timesheet.timesheetEntry(
-        {entry: augmentedEntry, teams: timesheetData.teams}));
+        {entry: entry, teams: timesheetData.teams}));
 
     viewRow.find('span.aui-icon-wait').hide();
 
