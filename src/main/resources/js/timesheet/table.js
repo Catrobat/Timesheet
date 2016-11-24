@@ -162,6 +162,22 @@ function addNewEntryCallback(entry, timesheetData, form) {
     form.beginTimeField.timepicker('setTime', endTime);
     form.endTimeField.timepicker('setTime', new Date(2 * endTime - beginTime));
     form.pauseTimeField.val("00:00").trigger('change');
+
+    form.categorySelect.trigger("change"); // this is needed for the sparkling effect
+
+    var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
+    var indexOfDeactivated = getIDFromCategoryName("deactivated", timesheetData);
+    var categoryIndex = form.categorySelect.val();
+
+    if (indexOfInactive == categoryIndex || indexOfDeactivated == categoryIndex) {
+        AJS.$(".ticket").hide();
+        AJS.$(".partner").hide();
+        AJS.$(".team").hide();
+        AJS.$(".duration").hide();
+        AJS.$(".pause").hide();
+        AJS.$(".end").hide();
+        AJS.$(".start").hide();
+    }
 }
 
 /**
@@ -270,7 +286,7 @@ function prepareForm(entry, timesheetData) {
     });
 
     form.deactivateEndDateField.change(function () {
-        AJS.$("input.description").attr("placeholder", "Reason(s) for your deactivation");
+        AJS.$("input.description_").attr("placeholder", "Reason(s) for your deactivation");
         var index = getIDFromCategoryName("deactivated", timesheetData);
         form.categorySelect.auiSelect2("val", index);
         form.categorySelect.trigger("change");
@@ -586,7 +602,6 @@ function renderViewRow(timesheetData, entry) {
 
     viewRow.find("button.edit").click(function () {
         //augmentedEntry.isGoogleDocImport = false;
-        console.log("edit button gedrückt");
         editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewRow);
     });
 
@@ -766,7 +781,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     if (categoryIndex == getIDFromCategoryName("inactive", timesheetData) && form.inactiveEndDateField.val() == "") {
 
         require('aui/flag')({
-            type: 'info',
+            type: 'error',
             title: 'Attention: No inactive end date ',
             body: 'You may have forgotten to set the end date.',
             close: 'auto'

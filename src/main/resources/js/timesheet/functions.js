@@ -308,6 +308,18 @@ function compareTime(time1, time2) {
     return 0; // equal
 }
 
+function IsInactiveCategorySelected(timesheetData, form) {
+    var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
+    var categoryIndex = form.categorySelect.val();
+    return indexOfInactive == categoryIndex;
+}
+
+function IsDeactivatedCategorySelected(timesheetData, form) {
+    var indexOfDeactivated = getIDFromCategoryName("deactivated", timesheetData);
+    var categoryIndex = form.categorySelect.val();
+    return indexOfDeactivated == categoryIndex;
+}
+
 
 // function printDomainAttributes() {
 //     var baseUrl = AJS.params.baseURL;
