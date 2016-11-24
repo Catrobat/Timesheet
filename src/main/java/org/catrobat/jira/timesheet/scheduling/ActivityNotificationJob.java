@@ -6,6 +6,7 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.services.SchedulingService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
@@ -19,6 +20,7 @@ public class ActivityNotificationJob implements PluginJob {
     private TimesheetEntryService entryService;
     private TeamService teamService;
     private ConfigService configService;
+    private SchedulingService schedulingService;
 
     @Override
     public void execute(Map<String, Object> map) {
@@ -28,6 +30,7 @@ public class ActivityNotificationJob implements PluginJob {
         entryService = (TimesheetEntryService)map.get("entryService");
         teamService = (TeamService)map.get("teamService");
         configService = (ConfigService)map.get("configService");
+        schedulingService = (SchedulingService)map.get("schedulingService");
 
         List<Timesheet> timesheetList = sheetService.all();
         Config config = configService.getConfiguration();
@@ -58,7 +61,7 @@ public class ActivityNotificationJob implements PluginJob {
                 //inform coordinators
                 TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null) {
-                    if (isDateOlderThanTwoWeeks(latestInactiveEntry.getInactiveEndDate())) {
+                    if (schedulingService.isOlderThanInactiveTime(latestInactiveEntry.getInactiveEndDate())) {
                         //inform coordinators that he should be active since two weeks
                         for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                             sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectInactiveState(),
@@ -90,12 +93,6 @@ public class ActivityNotificationJob implements PluginJob {
     private void sendMail(Email email) {
         SingleMailQueueItem item = new SingleMailQueueItem(email);
         ComponentAccessor.getMailQueue().addItem(item);
-    }
-
-    private boolean isDateOlderThanTwoWeeks(Date date) {
-        DateTime twoWeeksAgo = new DateTime().minusWeeks(2);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(twoWeeksAgo) < 0);
     }
 
     private List<String> getCoordinatorsMailAddress(ApplicationUser user) {

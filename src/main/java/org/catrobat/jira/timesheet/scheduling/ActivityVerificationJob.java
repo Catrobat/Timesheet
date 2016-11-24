@@ -4,10 +4,7 @@ import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
-import org.catrobat.jira.timesheet.services.CategoryService;
-import org.catrobat.jira.timesheet.services.TeamService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.*;
 import org.joda.time.DateTime;
 
 import java.util.Date;
@@ -21,6 +18,7 @@ public class ActivityVerificationJob implements PluginJob {
     private TimesheetEntryService entryService;
     private TeamService teamService;
     private CategoryService categoryService;
+    private SchedulingService schedulingService;
 
     @Override
     public void execute(Map<String, Object> map) {
@@ -31,7 +29,8 @@ public class ActivityVerificationJob implements PluginJob {
         sheetService = (TimesheetService)map.get("sheetService");
         entryService = (TimesheetEntryService)map.get("entryService");
         teamService = (TeamService)map.get("teamService");
-        categoryService = (CategoryService) map.get("categoryService");
+        categoryService = (CategoryService)map.get("categoryService");
+        schedulingService = (SchedulingService)map.get("schedulingService");
 
         List<Timesheet> timesheetList = sheetService.all();
         for (Timesheet timesheet : timesheetList) {
@@ -50,7 +49,7 @@ public class ActivityVerificationJob implements PluginJob {
                 }
             }
             // user is active, but latest entry is older than 2 weeks
-            if (timesheet.getIsActive() && isDateOlderThanTwoWeeks(entries[0].getBeginDate())) {
+            if (timesheet.getIsActive() && schedulingService.isOlderThanInactiveTime(entries[0].getBeginDate())) {
                 timesheet.setIsActive(false);
                 timesheet.setIsAutoInactive(true);
                 timesheet.save();
@@ -86,7 +85,7 @@ public class ActivityVerificationJob implements PluginJob {
 
             }
             //user is back again
-            else if (!isDateOlderThanTwoWeeks(entries[0].getBeginDate())) {
+            else if (!schedulingService.isOlderThanInactiveTime(entries[0].getBeginDate())) {
                 timesheet.setIsActive(true);
                 timesheet.setIsOffline(false);
                 timesheet.setIsAutoInactive(false);
@@ -120,12 +119,6 @@ public class ActivityVerificationJob implements PluginJob {
             }
         }
         return null;
-    }
-
-    private boolean isDateOlderThanTwoWeeks(Date date) {
-        DateTime twoWeeksAgo = new DateTime().minusWeeks(2);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(twoWeeksAgo) < 0);
     }
 
     private boolean isDateOlderThanTwoMonths(Date date) {

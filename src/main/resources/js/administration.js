@@ -47,6 +47,14 @@ AJS.toInit(function () {
             contentType: "application/json"
         });
 
+        var schedulingFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'scheduling/getScheduling',
+            contentType: "application/json"
+        });
+        AJS.$.when(schedulingFetched)
+            .done(function (scheduling) {AJS.$("#scheduling-inactive-time").val(scheduling.inactiveTime)});
+
         AJS.$.when(allUsersFetched, categoriesFetched)
             .done(populateForm)
             .fail(function (error) {
@@ -627,10 +635,41 @@ AJS.toInit(function () {
             triggerJobManually("trigger/activity/verification", "Activity-Verification");
         } else if (AJS.$(document.activeElement).val() === 'Activity Notification') {
             triggerJobManually("trigger/activity/notification", "Activity-Notification");
-        } else {
+        } else if (AJS.$(document.activeElement).val() === 'Out Of Time') {
             triggerJobManually("trigger/out/of/time/notification", "Out-Of-Time-Notification");
+        } else if (AJS.$(document.activeElement).val() === 'Save') {
+            updateScheduling();
         }
     });
+
+    function updateScheduling() {
+        var scheduling = {};
+
+        scheduling.inactiveTime = AJS.$("#scheduling-inactive-time").val();
+
+        AJS.$(".loadingDiv").show();
+        AJS.$.ajax({
+            url: restBaseUrl + 'scheduling/saveScheduling',
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(scheduling),
+            processData: false,
+            success: function () {
+                AJS.messages.success({
+                    title: "Success!",
+                    body: "Settings saved!"
+                });
+                AJS.$(".loadingDiv").hide();
+            },
+            error: function (error) {
+                AJS.messages.error({
+                    title: "Error!",
+                    body: error.responseText
+                });
+                AJS.$(".loadingDiv").hide();
+            }
+        });
+    }
 
     function triggerJobManually(restUrl, jobName) {
         var callREST = AJS.$.ajax({
