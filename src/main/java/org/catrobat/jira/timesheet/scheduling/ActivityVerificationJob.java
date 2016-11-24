@@ -77,7 +77,7 @@ public class ActivityVerificationJob implements PluginJob {
                 );
             }
             // user is still inactive since 2 months
-            else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() && isDateOlderThanTwoMonths(entries[0].getBeginDate())) {
+            else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() && schedulingService.isOlderThanOfflineTime(entries[0].getBeginDate())) {
                 timesheet.setIsOffline(true);
                 timesheet.setIsAutoOffline(true);
                 timesheet.setIsAutoInactive(false);
@@ -119,12 +119,6 @@ public class ActivityVerificationJob implements PluginJob {
             }
         }
         return null;
-    }
-
-    private boolean isDateOlderThanTwoMonths(Date date) {
-        DateTime twoMonthsAgo = new DateTime().minusMonths(2);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(twoMonthsAgo) < 0);
     }
 
     private boolean isDateOlderThanOneWeek(Date date) {

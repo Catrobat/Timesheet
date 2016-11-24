@@ -138,7 +138,7 @@ public class SchedulingRest {
         }
 
         Scheduling scheduling = schedulingService.getScheduling();
-        JsonScheduling jsonScheduling = new JsonScheduling(scheduling.getInactiveTime());
+        JsonScheduling jsonScheduling = new JsonScheduling(scheduling.getInactiveTime(), scheduling.getOfflineTime());
 
         return Response.ok(jsonScheduling).build();
     }
@@ -152,21 +152,9 @@ public class SchedulingRest {
             return unauthorized;
         }
 
-        schedulingService.setScheduling(jsonScheduling.getInactiveTime());
+        schedulingService.setScheduling(jsonScheduling.getInactiveTime(), jsonScheduling.getOfflineTime());
         //timesheetScheduler.reschedule(); // since parameters will be updated on the fly, no rescheduling needed
 
         return Response.noContent().build();
-    }
-
-    private boolean isDateOlderThanOneMonth(Date date) {
-        DateTime oneMonthAgo = new DateTime().minusMonths(1);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(oneMonthAgo) < 0);
-    }
-
-    private boolean isDateOlderThanXDays(Date date, int days) {
-        DateTime xDaysAgo = new DateTime().minusDays(days);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(xDaysAgo) < 0);
     }
 }

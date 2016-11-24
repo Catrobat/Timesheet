@@ -53,7 +53,7 @@ AJS.toInit(function () {
             contentType: "application/json"
         });
         AJS.$.when(schedulingFetched)
-            .done(function (scheduling) {AJS.$("#scheduling-inactive-time").val(scheduling.inactiveTime)});
+            .done(fillSchedulingData);
 
         AJS.$.when(allUsersFetched, categoriesFetched)
             .done(populateForm)
@@ -65,6 +65,11 @@ AJS.toInit(function () {
                 console.log(error);
                 AJS.$(".loadingDiv").hide();
             });
+    }
+
+    function fillSchedulingData(scheduling) {
+        AJS.$("#scheduling-inactive-time").val(scheduling.inactiveTime);
+        AJS.$("#scheduling-offline-time").val(scheduling.offlineTime);
     }
 
     function populateForm(allUsers, allCategories) {
@@ -646,6 +651,7 @@ AJS.toInit(function () {
         var scheduling = {};
 
         scheduling.inactiveTime = AJS.$("#scheduling-inactive-time").val();
+        scheduling.offlineTime = AJS.$("#scheduling-offline-time").val();
 
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({

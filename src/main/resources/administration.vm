@@ -324,11 +324,19 @@
             <h3>Inactive Settings</h3>
             <fieldset>
                 <div class="field-group">
-                    <label for="mail-subject-entry-change">Inactive Time</label>
-                    <input class="text" type="text" id="scheduling-inactive-time" name="mail-subject-entry-change"
-                           title="mail-subject-entry-change" placeholder="e.g.: [Inactive Time in days] ...">
+                    <label for="scheduling-inactive-time">Inactive Time</label>
+                    <input class="text" type="text" id="scheduling-inactive-time" name="scheduling-inactive-time"
+                           title="scheduling-inactive-time" placeholder="e.g.: [Inactive Time in days] ...">
                     <div class="description">
                         After which time will a Timesheet be marked as Inactive? (In Days)
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label for="scheduling-offline-time">Offline Time</label>
+                    <input class="text" type="text" id="scheduling-offline-time" name="scheduling-offline-time"
+                           title="scheduling-offline-time" placeholder="e.g.: [Offline Time in days] ...">
+                    <div class="description">
+                        After which time will a Timesheet be marked as Offline? (In Days)
                     </div>
                 </div>
                 <div class="field-group">

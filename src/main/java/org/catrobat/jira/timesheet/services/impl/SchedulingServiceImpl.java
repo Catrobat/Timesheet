@@ -28,7 +28,7 @@ public class SchedulingServiceImpl implements SchedulingService{
     }
 
     @Override
-    public void setScheduling(int inactiveTime) {
+    public void setScheduling(int inactiveTime, int offlineTime) {
         Scheduling[] scheduling = ao.find(Scheduling.class);
 
         if (scheduling.length == 0) {
@@ -37,6 +37,7 @@ public class SchedulingServiceImpl implements SchedulingService{
         }
 
         scheduling[0].setInactiveTime(inactiveTime);
+        scheduling[0].setOfflineTime(offlineTime);
         scheduling[0].save();
     }
 
@@ -51,8 +52,25 @@ public class SchedulingServiceImpl implements SchedulingService{
 
         int inactiveTimeDays = scheduling[0].getInactiveTime();
 
-        DateTime twoWeeksAgo = new DateTime().minusDays(inactiveTimeDays);
+        return isDateOlderThanXDays(date, inactiveTimeDays);
+    }
+
+    public boolean isOlderThanOfflineTime(Date date) {
+        Scheduling[] scheduling = ao.find(Scheduling.class);
+
+        if (scheduling.length == 0) {
+            ao.create(Scheduling.class).save();
+            scheduling = ao.find(Scheduling.class);
+        }
+
+        int offlineTimeDays = scheduling[0].getOfflineTime();
+
+        return isDateOlderThanXDays(date, offlineTimeDays);
+    }
+
+    private boolean isDateOlderThanXDays(Date date, int days) {
+        DateTime xDaysAgo = new DateTime().minusDays(days);
         DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(twoWeeksAgo) < 0);
+        return (datetime.compareTo(xDaysAgo) < 0);
     }
 }

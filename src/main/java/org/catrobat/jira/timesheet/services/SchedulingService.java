@@ -10,7 +10,9 @@ public interface SchedulingService {
 
     Scheduling getScheduling();
 
-    void setScheduling(int inactiveTime);
+    void setScheduling(int inactiveTime, int offlineTime);
 
     boolean isOlderThanInactiveTime(Date date);
+
+    boolean isOlderThanOfflineTime(Date date);
 }
