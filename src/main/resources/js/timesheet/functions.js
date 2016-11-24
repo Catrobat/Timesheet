@@ -169,8 +169,7 @@ function initTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-text").val(timesheetData.targetHours);
     AJS.$("#timesheet-hours-remain").val(timesheetData.targetHours - timesheetData.targetHoursCompleted
         + timesheetData.targetHoursRemoved);
-    AJS.$("#timesheet-hours-theory").val(timesheetData.targetHourTheory);
-    AJS.$("#timesheet-hours-practical").val(timesheetData.targetHourPractice);
+    AJS.$("#timesheet-target-hours-theory").val(timesheetData.targetHourTheory);
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
     AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
 

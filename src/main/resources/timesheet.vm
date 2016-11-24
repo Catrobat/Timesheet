@@ -225,7 +225,17 @@
                 </div>
             </div>
             <div class="field-group">
-                <label for="timesheet-hours-theory">Theory Hours</label>
+                <label for="timesheet-target-hours-theory">Target Theory Hours</label>
+                <input class="text" type="text" id="timesheet-target-hours-theory"
+                       name="timesheet-target-hours-theory"
+                       title="timesheet-target-hours-theory">
+
+                <div class="description">
+                    Shows your target theory hours.
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="timesheet-hours-theory">Finished Theory Hours</label>
                 <input disabled="disabled" class="text" type="text" id="timesheet-hours-theory"
                        name="timesheet-hours-theory"
                        title="timesheet-hours-theory">
