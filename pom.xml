@@ -14,7 +14,7 @@
         <url>https://github/Catrobat/TimesheetPlugin</url>
     </organization>
 
-    <name>Time Punch</name>
+    <name>Timesheet</name>
     <description>Final Chance.</description>
     <packaging>atlassian-plugin</packaging>
 

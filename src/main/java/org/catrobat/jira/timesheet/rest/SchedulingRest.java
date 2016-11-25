@@ -60,11 +60,22 @@ public class SchedulingRest {
         this.schedulingService = schedulingService;
     }
 
+    private boolean userHasPermission(HttpServletRequest request){
+        //verify if user is allowed to trigger jobs manually
+        ApplicationUser loggedInUser = ComponentAccessor.getUserManager().getUserByName(request.getRemoteUser());
+        if (!permissionService.isTimesheetAdmin(loggedInUser) ||
+                !permissionService.isJiraAdministrator(loggedInUser)) {
+            return false;
+        }
+        return true;
+    }
+
     @GET
     @Path("/trigger/activity/notification")
     public Response activityNotification(@Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null) {
+        if (unauthorized != null ||
+                !userHasPermission(request)) {
             return unauthorized;
         }
 
@@ -94,7 +105,8 @@ public class SchedulingRest {
     @Path("/trigger/activity/verification")
     public Response activityVerification(@Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null) {
+        if (unauthorized != null ||
+                !userHasPermission(request)) {
             return unauthorized;
         }
 
@@ -114,7 +126,8 @@ public class SchedulingRest {
     @Path("/trigger/out/of/time/notification")
     public Response outOfTimeNotification(@Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null) {
+        if (unauthorized != null ||
+                !userHasPermission(request)) {
             return unauthorized;
         }
 
@@ -133,7 +146,8 @@ public class SchedulingRest {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getScheduling(@Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null) {
+        if (unauthorized != null  ||
+                !userHasPermission(request)) {
             return unauthorized;
         }
 
@@ -148,7 +162,8 @@ public class SchedulingRest {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setScheduling(final JsonScheduling jsonScheduling, @Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null) {
+        if (unauthorized != null ||
+                !userHasPermission(request)) {
             return unauthorized;
         }
 

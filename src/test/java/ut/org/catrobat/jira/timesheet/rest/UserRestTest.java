@@ -85,7 +85,7 @@ public class UserRestTest {
         Assert.assertEquals(unauthorized, result);
     }
 
-    @Test
+/*    @Test
     public void testGetUsersOnlyUsersInList() {
         doReturn(true).when(permissionServiceMock).isTimesheetAdmin(userMock);
 
@@ -155,6 +155,5 @@ public class UserRestTest {
 
         TreeSet<ApplicationUser> sortedUsers = RestUtils.getInstance().getSortedUsers(usersSet);
         Assert.assertEquals(2, sortedUsers.size());
-
-    }
+    }*/
 }
