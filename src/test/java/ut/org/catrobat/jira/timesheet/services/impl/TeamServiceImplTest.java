@@ -265,7 +265,7 @@ public class TeamServiceImplTest {
         Mockito.doReturn(coordinatorListB).when(configService).getGroupsForRole("teamB", TeamToGroup.Role.COORDINATOR);
         Mockito.doReturn(coordinatorListC).when(configService).getGroupsForRole("teamC", TeamToGroup.Role.COORDINATOR);
 
-        Set<Team> teamsOfCoords = service.getCoordinatorTeamsOfUser("MarkusHobisch");
+        Set<Team> teamsOfCoords = service.getTeamsOfCoordinator("MarkusHobisch");
         assertEquals(2, teamsOfCoords.size());
         assertTrue(teamsOfCoords.contains(teamA));
         assertTrue(teamsOfCoords.contains(teamC));

@@ -86,7 +86,7 @@ public class TimesheetServlet extends HttpServlet {
             //TODO: is administrator the correct group, or should it be timesheet
             if (permissionService.checkIfUserIsGroupMember("Administrators") ||
                     permissionService.checkIfUserIsGroupMember("administrators") ||
-                    permissionService.checkIfUserIsTeamCoordinator(request)) {
+                    permissionService.isUserTeamCoordinator(user)) {
                 paramMap.put("iscoordinator", true);
             } else {
                 paramMap.put("iscoordinator", false);

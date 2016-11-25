@@ -41,6 +41,6 @@ public interface TeamService {
 
     Set<Team> getTeamsOfUser(String userName);
 
-    Set<Team> getCoordinatorTeamsOfUser(String userName);
+    Set<Team> getTeamsOfCoordinator(String userName);
 
 }

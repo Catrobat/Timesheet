@@ -166,7 +166,7 @@ public class TimesheetRestTest {
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
         when(timesheetServiceMock.getTimesheetByID(timesheetID).getUserKey()).thenReturn(userKey);
 
-        response = timesheetRestMock.getTeamsForTimesheet(requestMock, timesheetID);
+        response = timesheetRestMock.getTeamsForUser(requestMock);
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertNotNull(responseTeamList);
     }
@@ -194,7 +194,7 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
-        response = timesheetRest.getTeamsForTimesheet(requestMock, timesheetID);
+        response = timesheetRestMock.getTeamsForUser(requestMock);
 
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertEquals(responseTeamList, expectedTeams);
@@ -207,7 +207,7 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
 
         //execution & verifying
-        response = timesheetRest.getTeamsForTimesheet(requestMock, timesheetID);
+        response = timesheetRestMock.getTeamsForUser(requestMock);
         assertEquals(response.getEntity(), "User does not exist.");
     }
 
@@ -286,61 +286,6 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
         //execution & verifying
         response = timesheetRest.getCategories(requestMock);
-        assertEquals(response.getEntity(), "User does not exist.");
-    }
-
-    @Test
-    public void testGetAllTeamsOk() throws Exception {
-
-        Category[] categories = {categoryMock};
-        List categoryIDs = new ArrayList();
-        categoryIDs.add(1);
-
-        List<JsonTeam> expectedTeams = new LinkedList<JsonTeam>();
-        expectedTeams.add(new JsonTeam(1, "Catroid", categoryIDs));
-        expectedTeams.add(new JsonTeam(2, "IRC", new ArrayList<Integer>()));
-
-        Team team1 = Mockito.mock(Team.class);
-        Mockito.when(team1.getID()).thenReturn(1);
-        Mockito.when(team1.getTeamName()).thenReturn("Catroid");
-        Mockito.when(team1.getCategories()).thenReturn(categories);
-
-        Team team2 = Mockito.mock(Team.class);
-        Mockito.when(team2.getID()).thenReturn(2);
-        Mockito.when(team2.getTeamName()).thenReturn("IRC");
-        Mockito.when(team2.getCategories()).thenReturn(new Category[0]);
-
-        List<Team> teams = new LinkedList<Team>();
-        teams.add(team1);
-        teams.add(team2);
-
-        Mockito.when(teamServiceMock.all()).thenReturn(teams);
-
-        response = timesheetRest.getAllTeams(requestMock);
-
-        List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
-        assertNotNull(responseTeamList);
-    }
-
-    @Test
-    public void testGetAllTeamsReturnNoTeams() throws Exception {
-        List<Team> teams = new LinkedList<Team>();
-
-        Mockito.when(teamServiceMock.all()).thenReturn(teams);
-
-        response = timesheetRest.getAllTeams(requestMock);
-
-        List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
-        assertNotNull(responseTeamList);
-    }
-
-    @Test
-    public void testGetAllTeamsUserDoesNotExist() throws Exception {
-        //preparations
-        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
-
-        //execution & verifying
-        response = timesheetRest.getAllTeams(requestMock);
         assertEquals(response.getEntity(), "User does not exist.");
     }
 
