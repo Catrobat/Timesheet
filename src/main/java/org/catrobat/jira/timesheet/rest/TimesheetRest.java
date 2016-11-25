@@ -92,6 +92,11 @@ public class TimesheetRest {
             return Response.ok(false).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return Response.ok(false).build();
+        }
+
         String userName = user.getUsername();
         Set<Team> teams = teamService.getTeamsOfUser(userName);
         if (teams.isEmpty()) {
@@ -118,6 +123,11 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
         List<Team> sortedTeamsOfUsersList = asSortedList(teamsOfUser);
         List<JsonTeam> jsonTeams = convertTeamsToJSON(sortedTeamsOfUsersList);
@@ -128,10 +138,10 @@ public class TimesheetRest {
     @GET
     @Path("categoryIDs")
     public Response getCategories(@Context HttpServletRequest request) {
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         List<JsonCategory> categories = new LinkedList<>();
@@ -156,11 +166,9 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        //ToDO: check if user is coordinator of the team!
-        if (!permissionService.isUserTeamCoordinator(loggedInUser) ||
-                !permissionService.isTimesheetAdmin(loggedInUser) ||
-                !permissionService.isReadOnlyUser(loggedInUser)) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
@@ -178,6 +186,11 @@ public class TimesheetRest {
                         if (sheetService.userHasTimesheet(userKey, false)) {
                             Timesheet sheet = sheetService.getTimesheetByUser(
                                     userKey, false);
+                            //check permissions for each sheet
+                            if (!permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
+                                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+                            }
+
                             //all entries of each user
                             TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
                             addAllJsonTimesheetEntries(jsonTimesheetEntries, entries);
@@ -219,11 +232,16 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         try {
             Team team = teamService.getTeamByName(teamName);
-            if(!permissionService.isUserCoordinatorOfTeam(user, team) ||
+            if (!permissionService.isUserCoordinatorOfTeam(user, team) ||
                     !permissionService.isTimesheetAdmin(user) ||
-                    !permissionService.isReadOnlyUser(user)){
+                    !permissionService.isReadOnlyUser(user)) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to access the timesheet!").build();
             }
         } catch (ServiceException e) {
@@ -235,7 +253,13 @@ public class TimesheetRest {
             TimesheetEntry[] timesheetEntries;
             try {
                 String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(developerTeamMemberName);
-                timesheetEntries = sheetService.getTimesheetByUser(userKey, false).getEntries();
+                Timesheet timesheetByUser = sheetService.getTimesheetByUser(userKey, false);
+
+                //check permissions for each sheet
+                if (!permissionService.userCanViewTimesheet(user, timesheetByUser)) {
+                    return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+                }
+                timesheetEntries = timesheetByUser.getEntries();
             } catch (ServiceException e) {
                 return Response.serverError().entity("At least one Team Member has no valid Timesheet Entries.").build();
             }
@@ -260,10 +284,11 @@ public class TimesheetRest {
     public Response getTimesheetIDOFUser(@Context HttpServletRequest request,
             @PathParam("userName") String userName,
             @PathParam("getMTSheet") Boolean getMTSheet) {
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         Timesheet sheet;
@@ -273,6 +298,11 @@ public class TimesheetRest {
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("Timesheet of Username: "
                     + userName + " has not been initialized.").build();
+        }
+
+        //check permissions for each sheet
+        if (!permissionService.userCanViewTimesheet(user, sheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
         if (sheet == null) {
@@ -287,11 +317,10 @@ public class TimesheetRest {
     @Path("timesheets/owner/{timesheetID}")
     public Response getOwnerOfTimesheet(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
-        ApplicationUser user;
-        try {
-            user = permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         Timesheet sheet;
@@ -300,6 +329,12 @@ public class TimesheetRest {
         } catch (ServiceException e) {
             return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
         }
+
+        //check permissions for each sheet
+        if (!permissionService.userCanViewTimesheet(user, sheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+        }
+
 
         if (sheet == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
@@ -320,11 +355,10 @@ public class TimesheetRest {
             @PathParam("isMTSheet") Boolean isMTSheet) {
         Timesheet sheet;
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
-
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         try {
@@ -333,14 +367,16 @@ public class TimesheetRest {
             return Response.serverError().entity("No Timesheet available for this user.").build();
         }
 
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-
         if (sheet == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
-        } else if (!permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
+        } else if (!permissionService.userCanViewTimesheet(user, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet Access denied.").build();
         }
 
+        //check permissions for each sheet
+        if (!permissionService.userCanViewTimesheet(user, sheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+        }
         JsonTimesheet jsonTimesheet = createJsonTimesheet(sheet);
         return Response.ok(jsonTimesheet).build();
     }
@@ -366,6 +402,11 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         try {
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
@@ -377,6 +418,12 @@ public class TimesheetRest {
         } else if (!permissionService.userCanViewTimesheet(user, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet Access denied.").build();
         }
+
+        //check permissions for each sheet
+        if (!permissionService.userCanViewTimesheet(user, sheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+        }
+
 
         int completeTime = sheet.getTargetHoursCompleted();
         int targetTime = sheet.getTargetHours();
@@ -399,10 +446,10 @@ public class TimesheetRest {
     public Response getTimesheetEntries(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
 
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         Timesheet sheet;
@@ -410,6 +457,11 @@ public class TimesheetRest {
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
             return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
+        }
+
+        //check permissions for each sheet
+        if (!permissionService.userCanViewTimesheet(user, sheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
@@ -424,10 +476,10 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/getTimesheets")
     public Response getTimesheets(@Context HttpServletRequest request) {
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         List<Timesheet> timesheetList = sheetService.all();
@@ -436,17 +488,7 @@ public class TimesheetRest {
 
         TreeSet<ApplicationUser> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
 
-        //UserUtil userUtil = ComponentAccessor.getUserUtil();
-        //Collection<User> systemAdmins = userUtil.getJiraSystemAdministrators();
-
         for (ApplicationUser user : allSortedUsers) {
-            //this might be the problem for Annemarie
-            /*
-            if (systemAdmins.contains(user)) {
-                continue;
-            }
-            */
-
             JsonTimesheet jsonTimesheet = new JsonTimesheet();
 
             boolean isActive = false;
@@ -455,6 +497,11 @@ public class TimesheetRest {
             int timesheetID = 0;
 
             for (Timesheet timesheet : timesheetList) {
+                //check permissions for each sheet
+                if (!permissionService.userCanViewTimesheet(user, timesheet)) {
+                    return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+                }
+
                 if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
                         getUserByName(user.getName()).getKey()) && !timesheet.getIsMasterThesisTimesheet()) {
                     isActive = timesheet.getIsActive();
@@ -481,10 +528,9 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
 
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         Date twoMonthsAhead = new DateTime().plusMonths(2).toDate();
@@ -602,6 +648,11 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         Timesheet sheet;
         try {
             sheet = sheetService.getTimesheetByID(timesheetID);
@@ -699,10 +750,19 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         try {
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
+        }
+
+        if (!permissionService.userCanEditTimesheet(user, sheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to edit the timesheet.").build();
         }
 
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
@@ -745,12 +805,13 @@ public class TimesheetRest {
     public Response postTimesheetEnableStates(@Context HttpServletRequest request,
             final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
 
-        Timesheet sheet;
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
+
+        Timesheet sheet;
         List<JsonTimesheet> newJsonTimesheetList = new LinkedList<>();
 
         if (jsonTimesheetList == null) {
@@ -759,6 +820,9 @@ public class TimesheetRest {
 
         for (JsonTimesheet jsonTimesheet : jsonTimesheetList) {
             sheet = sheetService.getTimesheetByID(jsonTimesheet.getTimesheetID());
+            if (!permissionService.userCanEditTimesheet(user, sheet)) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to edit the timesheet.").build();
+            }
             if (sheet != null) {
                 sheet = sheetService.updateTimesheetEnableState(jsonTimesheet.getTimesheetID(), jsonTimesheet.isEnabled());
                 JsonTimesheet newJsonTimesheet = createJsonTimesheet(sheet);
@@ -776,6 +840,11 @@ public class TimesheetRest {
             @PathParam("entryID") int entryID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         if (jsonEntry.getDescription().isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
         }
@@ -789,11 +858,6 @@ public class TimesheetRest {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         try {
-            Response unauthorized = permissionService.checkGlobalPermission();
-            if (unauthorized != null) {
-                return unauthorized;
-            }
-
             user = permissionService.checkIfUserExists();
             entry = entryService.getEntryByID(entryID);
             category = categoryService.getCategoryByID(jsonEntry.getCategoryID());
@@ -863,7 +927,7 @@ public class TimesheetRest {
             @PathParam("entryID") int entryID,
             @PathParam("isMTSheet") Boolean isMTSheet) {
         ApplicationUser user;
-        TimesheetEntry entry = null;
+        TimesheetEntry entry;
         Timesheet sheet;
 
         try {
@@ -871,6 +935,12 @@ public class TimesheetRest {
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         try {
             entry = entryService.getEntryByID(entryID);
         } catch (ServiceException e) {
