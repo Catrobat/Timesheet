@@ -21,7 +21,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.services.PermissionService;
 
@@ -52,21 +51,9 @@ public class UserRest {
     @Path("/getUsers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@Context HttpServletRequest request) {
-        //verify if user is allowed to fetch user data
-        //JIRA Administrator must be able set user privileges
-        TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
-        ApplicationUser loggedInUser = ComponentAccessor.getUserManager().getUserByName(request.getRemoteUser());
-
-        if(timesheetAdmins.length > 0) {
-            if(!permissionService.isTimesheetAdmin(loggedInUser)) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
-                        "'Timesheet-Administrators' group.").build();
-            }
-        } else {
-            if(!permissionService.isJiraAdministrator(loggedInUser)){
-                return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
-                        "'jira-administrators' group.").build();
-            }
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         UserUtil userUtil = ComponentAccessor.getUserUtil();

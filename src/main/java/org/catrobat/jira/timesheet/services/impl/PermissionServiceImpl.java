@@ -60,10 +60,11 @@ public class PermissionServiceImpl implements PermissionService {
 
     public Response checkGlobalPermission() {
         try {
-            checkIfUserExists();
-            if (!(checkIfUserIsGroupMember("jira-administrators") ||
-                    checkIfUserIsGroupMember("Jira-Test-Administrators") ||
-                    checkIfUserIsGroupMember("Timesheet"))) {
+            ApplicationUser user = checkIfUserExists();
+            if (!(checkIfUserIsGroupMember("jira-administrators")
+                    || checkIfUserIsGroupMember("Jira-Test-Administrators")
+                    || checkIfUserIsGroupMember("Timesheet"))
+                    || isReadOnlyUser(user)) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                         "'jira-administrators', or 'Timesheet' group.").build();
             }
@@ -175,7 +176,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public boolean userCanEditTimesheet(ApplicationUser user, Timesheet sheet){
+    public boolean userCanEditTimesheet(ApplicationUser user, Timesheet sheet) {
         return user != null && sheet != null &&
                 (userOwnsSheet(user, sheet)
                         || isTimesheetAdmin(user));
