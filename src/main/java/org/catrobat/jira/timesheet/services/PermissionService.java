@@ -48,6 +48,8 @@ public interface PermissionService {
 
     boolean userCanViewTimesheet(ApplicationUser user, Timesheet sheet);
 
+    boolean userCanEditTimesheet(ApplicationUser user, Timesheet sheet);
+
     void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, JsonTimesheetEntry entry) throws PermissionException;
 
     void userCanDeleteTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException;

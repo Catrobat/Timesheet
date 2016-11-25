@@ -159,7 +159,7 @@ public class PermissionServiceImpl implements PermissionService {
     public boolean isUserCoordinatorOfTeam(ApplicationUser user, Team team) {
         Set<Team> teamsOfCoordinator = teamService.getTeamsOfCoordinator(user.getName());
         for (Team aTeam : teamsOfCoordinator) {
-            if(aTeam.getID() == team.getID())
+            if (aTeam.getID() == team.getID())
                 return true;
         }
         return false;
@@ -170,12 +170,19 @@ public class PermissionServiceImpl implements PermissionService {
         return user != null && sheet != null &&
                 (userOwnsSheet(user, sheet)
                         || isUserCoordinatorOfTimesheet(user, sheet)
+                        || isTimesheetAdmin(user)
+                        || isReadOnlyUser(user));
+    }
+
+    @Override
+    public boolean userCanEditTimesheet(ApplicationUser user, Timesheet sheet){
+        return user != null && sheet != null &&
+                (userOwnsSheet(user, sheet)
                         || isTimesheetAdmin(user));
     }
 
     @Override
     public void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, JsonTimesheetEntry entry) throws PermissionException {
-
         if (userOwnsSheet(user, sheet)) {
             if (!entry.getIsGoogleDocImport()) {
                 if (dateIsOlderThanAMonth(entry.getBeginDate()) || dateIsOlderThanAMonth(entry.getEndDate())) {
@@ -186,8 +193,8 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not edit an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!isJiraAdministrator(user)) {
-            throw new PermissionException("Access forbidden: Sorry, but you are not a timesheet admin or a jira administrator!");
+        } else if (!isTimesheetAdmin(user)) {
+            throw new PermissionException("Access forbidden: Sorry, you are not a timesheet admin!");
         }
     }
 
@@ -204,8 +211,8 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not delete an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!isJiraAdministrator(user)) {
-            throw new PermissionException("Access forbidden: Sorry, but you are not a timesheet admin or a jira administrator!");
+        } else if (!isTimesheetAdmin(user)) {
+            throw new PermissionException("Access forbidden: Sorry, but you are not a timesheet admin!");
         }
     }
 
