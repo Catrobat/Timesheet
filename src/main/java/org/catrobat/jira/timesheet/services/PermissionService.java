@@ -20,6 +20,7 @@ import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
@@ -35,7 +36,11 @@ public interface PermissionService {
 
     boolean checkIfUserIsGroupMember(String groupName);
 
-    boolean checkIfUserIsTeamCoordinator(HttpServletRequest request);
+    boolean isUserTeamCoordinator(ApplicationUser user);
+
+    boolean isUserCoordinatorOfTimesheet(ApplicationUser user, Timesheet sheet);
+
+    boolean isUserCoordinatorOfTeam(ApplicationUser user, Team team);
 
     Response checkGlobalPermission();
 
@@ -50,6 +55,8 @@ public interface PermissionService {
     boolean isTimesheetAdmin(ApplicationUser user);
 
     boolean isJiraAdministrator(ApplicationUser user);
+
+    boolean isReadOnlyUser(ApplicationUser user);
 
     Collection<Group> printALLUserGroups();
 

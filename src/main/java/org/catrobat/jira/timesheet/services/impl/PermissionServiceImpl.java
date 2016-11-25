@@ -54,9 +54,8 @@ public class PermissionServiceImpl implements PermissionService {
         return ComponentAccessor.getGroupManager().isUserInGroup(user, groupName);
     }
 
-    public boolean checkIfUserIsTeamCoordinator(HttpServletRequest request) {
-        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        return teamService.getCoordinatorTeamsOfUser(user.getUsername()).isEmpty();
+    public boolean isUserTeamCoordinator(ApplicationUser user) {
+        return teamService.getTeamsOfCoordinator(user.getUsername()).isEmpty();
     }
 
     public Response checkGlobalPermission() {
@@ -121,6 +120,16 @@ public class PermissionServiceImpl implements PermissionService {
         return (isJiraAdmin || isJiraTestAdmin);
     }
 
+    public boolean isReadOnlyUser(ApplicationUser user) {
+        String[] readOnlyUsers = configService.getConfiguration().getReadOnlyUsers().split(",");
+        for (String readOnlyUser : readOnlyUsers) {
+            if (readOnlyUser.equals(user.getUsername())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean userOwnsSheet(ApplicationUser user, Timesheet sheet) {
         if (sheet == null || user == null) {
             return false;
@@ -132,27 +141,35 @@ public class PermissionServiceImpl implements PermissionService {
         return sheetKey.equals(userKey);
     }
 
-    private boolean userCoordinatesTeamsOfSheet(ApplicationUser user, Timesheet sheet) {
+    public boolean isUserCoordinatorOfTimesheet(ApplicationUser user, Timesheet sheet) {
         ApplicationUser owner = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey());
 
         if (owner == null) {
             return false;
         }
 
-        Set<Team> ownerTeams = teamService.getTeamsOfUser(owner.getUsername());
-        Set<Team> userTeams = teamService.getCoordinatorTeamsOfUser(user.getUsername());
+        Set<Team> teamsOfOwner = teamService.getTeamsOfUser(owner.getUsername());
+        Set<Team> teamsOfCoordinator = teamService.getTeamsOfCoordinator(user.getUsername());
 
-        ownerTeams.retainAll(userTeams);
+        teamsOfOwner.retainAll(teamsOfCoordinator);
 
-        return ownerTeams.size() > 0;
+        return teamsOfOwner.size() > 0;
+    }
+
+    public boolean isUserCoordinatorOfTeam(ApplicationUser user, Team team) {
+        Set<Team> teamsOfCoordinator = teamService.getTeamsOfCoordinator(user.getName());
+        for (Team aTeam : teamsOfCoordinator) {
+            if(aTeam.getID() == team.getID())
+                return true;
+        }
+        return false;
     }
 
     @Override
     public boolean userCanViewTimesheet(ApplicationUser user, Timesheet sheet) {
         return user != null && sheet != null &&
                 (userOwnsSheet(user, sheet)
-                        || isJiraAdministrator(user)
-                        || userCoordinatesTeamsOfSheet(user, sheet)
+                        || isUserCoordinatorOfTimesheet(user, sheet)
                         || isTimesheetAdmin(user));
     }
 
