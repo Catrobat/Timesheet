@@ -57,10 +57,4 @@ public interface ConfigService {
     void clearTimesheetAdminGroups();
 
     void clearTimesheetAdmins();
-
-    Config removeTimesheetAdmin(String TimesheetAdminKey);
-
-    Config removeTimesheetAdminGroup(String TimesheetAdminGroupName);
-
-    int[] getCategoryIDsForTeam(String teamName);
 }
