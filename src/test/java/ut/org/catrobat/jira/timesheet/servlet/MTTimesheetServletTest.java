@@ -61,7 +61,7 @@ public class MTTimesheetServletTest {
         when(timeSheet.getIsActive()).thenReturn(true);
         when(timeSheet.getIsEnabled()).thenReturn(false);
         when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
-        when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(true);
+        when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(true);
     }
 
     @Test(expected = NullPointerException.class)

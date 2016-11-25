@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.*;
@@ -59,17 +60,28 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public Response checkGlobalPermission() {
+        ApplicationUser user;
         try {
-            ApplicationUser user = checkIfUserExists();
-            if (!(checkIfUserIsGroupMember("jira-administrators")
-                    || checkIfUserIsGroupMember("Jira-Test-Administrators")
-                    || checkIfUserIsGroupMember("Timesheet"))
-                    || isReadOnlyUser(user)) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
-                        "'jira-administrators', or 'Timesheet' group.").build();
-            }
+            user = checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        String baseurl = ComponentAccessor.getApplicationProperties().getString(APKeys.JIRA_BASEURL);
+        if (baseurl.contains("test")) {
+            if (!(checkIfUserIsGroupMember(JIRA_TEST_ADMINISTRATORS)
+                    || checkIfUserIsGroupMember("Timesheet")
+                    || isReadOnlyUser(user))) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
+                        "'Jira-Test-Administrators', 'Timesheet' or 'read only users'").build();
+            }
+        } else {
+            if (!(checkIfUserIsGroupMember(JIRA_ADMINISTRATORS)
+                    || checkIfUserIsGroupMember("Timesheet")
+                    || isReadOnlyUser(user))) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
+                        "'jira-administrators', 'Timesheet' or 'read only users'").build();
+            }
         }
         return null;
     }
@@ -116,8 +128,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean isJiraAdministrator(ApplicationUser user) {
-        boolean isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, "jira-administrators");
-        boolean isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, "Jira-Test-Administrators");
+        boolean isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_ADMINISTRATORS);
+        boolean isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_TEST_ADMINISTRATORS);
         return (isJiraAdmin || isJiraTestAdmin);
     }
 

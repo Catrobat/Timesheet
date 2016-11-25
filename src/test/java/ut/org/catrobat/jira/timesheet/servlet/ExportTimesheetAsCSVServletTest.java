@@ -70,7 +70,7 @@ public class ExportTimesheetAsCSVServletTest {
 
         when(permissionService.checkIfUserExists()).thenReturn(user);
 
-        when(permissionService.checkIfUserIsGroupMember("jira-administrators")).thenReturn(false);
+        when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
         when(timesheet.getTargetHoursPractice()).thenReturn(50);

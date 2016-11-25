@@ -13,9 +13,7 @@ import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.rest.ConfigResourceRest;
-import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
-import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
@@ -30,7 +28,10 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

@@ -32,6 +32,9 @@ import java.util.Collection;
 @Transactional
 public interface PermissionService {
 
+    String JIRA_TEST_ADMINISTRATORS = "Jira-Test-Administrators";
+    String JIRA_ADMINISTRATORS = "jira-administrators";
+
     ApplicationUser checkIfUserExists() throws PermissionException;
 
     boolean checkIfUserIsGroupMember(String groupName);

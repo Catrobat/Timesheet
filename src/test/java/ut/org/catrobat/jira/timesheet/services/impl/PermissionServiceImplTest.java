@@ -13,6 +13,7 @@ import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
+import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
@@ -119,11 +120,11 @@ public class PermissionServiceImplTest {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManager);
 
-        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(owner, "jira-administrators")).thenReturn(false);
-        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(admin, "jira-administrators")).thenReturn(true);
-        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(eve, "jira-administrators")).thenReturn(false);
-        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(test, "jira-administrators")).thenReturn(false);
-        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(coord, "jira-administrators")).thenReturn(false);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(owner, PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(admin, PermissionService.JIRA_ADMINISTRATORS)).thenReturn(true);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(eve, PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(test, PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);
+        PowerMockito.when(ComponentAccessor.getGroupManager().isUserInGroup(coord, PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);
 
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(owner_key)).thenReturn(owner);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(admin_key)).thenReturn(admin);
@@ -167,12 +168,12 @@ public class PermissionServiceImplTest {
     public void testCoordinatorCanViewTimesheet() throws Exception {
         assertTrue(permissionService.userCanViewTimesheet(coord, sheet));
     }
-/*
+
     @Test
     public void testAdminCanViewTimesheet() throws Exception {
         assertTrue(permissionService.userCanViewTimesheet(admin, sheet));
     }
-*/
+
     /*
     @Test
     public void testEveCantViewTimesheet() throws Exception {
@@ -302,7 +303,7 @@ public class PermissionServiceImplTest {
         Mockito.when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
 
         permissionService.userCanDeleteTimesheetEntry(eve, timeSheetEntry);
-        //Mockito.verify(permissionServiceException).userCanDeleteTimesheetEntry(admin, timeSheetEntry);
+        Mockito.verify(permissionServiceException).userCanDeleteTimesheetEntry(admin, timeSheetEntry);
     }
 
     @Test(expected = PermissionException.class)
@@ -320,7 +321,7 @@ public class PermissionServiceImplTest {
                 , timeSheetEntry.getPauseMinutes(), timeSheetEntry.getDescription(), 1, 1, "None", "", false);
 
         permissionService.userCanEditTimesheetEntry(eve, sheet, entry);
-        //Mockito.verify(permissionServiceException).userCanEditTimesheetEntry(eve, sheet, entry);
+        Mockito.verify(permissionServiceException).userCanEditTimesheetEntry(eve, sheet, entry);
     }
 
     @Test(expected = PermissionException.class)
@@ -337,7 +338,7 @@ public class PermissionServiceImplTest {
         Mockito.when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
 
         permissionService.userCanDeleteTimesheetEntry(eve, timeSheetEntry);
-        //Mockito.verify(permissionServiceException).userCanDeleteTimesheetEntry(eve, timeSheetEntry);
+        Mockito.verify(permissionServiceException).userCanDeleteTimesheetEntry(eve, timeSheetEntry);
     }
 
     @Test(expected = PermissionException.class)
@@ -354,7 +355,7 @@ public class PermissionServiceImplTest {
         Mockito.when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
 
         permissionService.userCanDeleteTimesheetEntry(owner, timeSheetEntry);
-        //Mockito.verify(permissionServiceException).userCanDeleteTimesheetEntry(owner, timeSheetEntry);
+        Mockito.verify(permissionServiceException).userCanDeleteTimesheetEntry(owner, timeSheetEntry);
     }
 
     public static class MyDatabaseUpdater implements DatabaseUpdater {
