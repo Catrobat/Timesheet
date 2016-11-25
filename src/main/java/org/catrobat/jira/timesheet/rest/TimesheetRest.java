@@ -92,6 +92,11 @@ public class TimesheetRest {
             return Response.ok(false).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return Response.ok(false).build();
+        }
+
         String userName = user.getUsername();
         Set<Team> teams = teamService.getTeamsOfUser(userName);
         if (teams.isEmpty()) {
@@ -118,6 +123,11 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
         List<Team> sortedTeamsOfUsersList = asSortedList(teamsOfUser);
         List<JsonTeam> jsonTeams = convertTeamsToJSON(sortedTeamsOfUsersList);
@@ -128,10 +138,10 @@ public class TimesheetRest {
     @GET
     @Path("categoryIDs")
     public Response getCategories(@Context HttpServletRequest request) {
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         List<JsonCategory> categories = new LinkedList<>();
@@ -154,6 +164,11 @@ public class TimesheetRest {
             loggedInUser = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         //ToDO: check if user is coordinator of the team!
@@ -219,11 +234,16 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         try {
             Team team = teamService.getTeamByName(teamName);
-            if(!permissionService.isUserCoordinatorOfTeam(user, team) ||
+            if (!permissionService.isUserCoordinatorOfTeam(user, team) ||
                     !permissionService.isTimesheetAdmin(user) ||
-                    !permissionService.isReadOnlyUser(user)){
+                    !permissionService.isReadOnlyUser(user)) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to access the timesheet!").build();
             }
         } catch (ServiceException e) {
@@ -260,10 +280,10 @@ public class TimesheetRest {
     public Response getTimesheetIDOFUser(@Context HttpServletRequest request,
             @PathParam("userName") String userName,
             @PathParam("getMTSheet") Boolean getMTSheet) {
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         Timesheet sheet;
@@ -294,6 +314,11 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         Timesheet sheet;
         try {
             sheet = sheetService.getTimesheetByID(timesheetID);
@@ -321,10 +346,9 @@ public class TimesheetRest {
         Timesheet sheet;
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
 
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         try {
@@ -366,6 +390,11 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         try {
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
@@ -399,10 +428,9 @@ public class TimesheetRest {
     public Response getTimesheetEntries(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
 
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         Timesheet sheet;
@@ -424,10 +452,10 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/getTimesheets")
     public Response getTimesheets(@Context HttpServletRequest request) {
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         List<Timesheet> timesheetList = sheetService.all();
@@ -481,10 +509,9 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
 
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
 
         Date twoMonthsAhead = new DateTime().plusMonths(2).toDate();
@@ -602,6 +629,11 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         Timesheet sheet;
         try {
             sheet = sheetService.getTimesheetByID(timesheetID);
@@ -699,6 +731,11 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         try {
             sheet = sheetService.getTimesheetByID(timesheetID);
         } catch (ServiceException e) {
@@ -745,12 +782,12 @@ public class TimesheetRest {
     public Response postTimesheetEnableStates(@Context HttpServletRequest request,
             final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
 
-        Timesheet sheet;
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
         }
+
+        Timesheet sheet;
         List<JsonTimesheet> newJsonTimesheetList = new LinkedList<>();
 
         if (jsonTimesheetList == null) {
@@ -775,6 +812,11 @@ public class TimesheetRest {
             final JsonTimesheetEntry jsonEntry,
             @PathParam("entryID") int entryID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
 
         if (jsonEntry.getDescription().isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
@@ -863,7 +905,7 @@ public class TimesheetRest {
             @PathParam("entryID") int entryID,
             @PathParam("isMTSheet") Boolean isMTSheet) {
         ApplicationUser user;
-        TimesheetEntry entry = null;
+        TimesheetEntry entry;
         Timesheet sheet;
 
         try {
@@ -871,6 +913,12 @@ public class TimesheetRest {
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
+
+        Response response = permissionService.checkGlobalPermission();
+        if (response != null) {
+            return response;
+        }
+
         try {
             entry = entryService.getEntryByID(entryID);
         } catch (ServiceException e) {
