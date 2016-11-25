@@ -149,13 +149,13 @@ public class PermissionServiceImplTest {
 
         Mockito.when(teamService.getTeamsOfUser("owner")).thenReturn(owner_teams);
         Mockito.when(teamService.getTeamsOfUser("eve")).thenReturn(eve_teams);
-        Mockito.when(teamService.getCoordinatorTeamsOfUser("coord")).thenReturn(coord_cteams);
+        Mockito.when(teamService.getTeamsOfCoordinator("coord")).thenReturn(coord_cteams);
 
         Mockito.when(teamService.getTeamsOfUser("coord")).thenReturn(coord_cteams);
         Mockito.when(teamService.getTeamsOfUser("admin")).thenReturn(no_teams);
-        Mockito.when(teamService.getCoordinatorTeamsOfUser("owner")).thenReturn(owner_teams);
-        Mockito.when(teamService.getCoordinatorTeamsOfUser("eve")).thenReturn(eve_teams);
-        Mockito.when(teamService.getCoordinatorTeamsOfUser("admin")).thenReturn(no_teams);
+        Mockito.when(teamService.getTeamsOfCoordinator("owner")).thenReturn(owner_teams);
+        Mockito.when(teamService.getTeamsOfCoordinator("eve")).thenReturn(eve_teams);
+        Mockito.when(teamService.getTeamsOfCoordinator("admin")).thenReturn(no_teams);
     }
 
     @Test

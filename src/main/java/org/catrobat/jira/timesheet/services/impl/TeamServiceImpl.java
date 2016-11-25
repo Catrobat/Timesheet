@@ -122,7 +122,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Set<Team> getCoordinatorTeamsOfUser(String userName) {
+    public Set<Team> getTeamsOfCoordinator(String coordinatorsName) {
 
         Set<Team> teams = new HashSet<Team>();
         Config config = configService.getConfiguration();
@@ -133,7 +133,7 @@ public class TeamServiceImpl implements TeamService {
             List<String> coordinatorList = configService.getGroupsForRole(teamName, TeamToGroup.Role.COORDINATOR);
 
             for (String coordinatorName : coordinatorList) {
-                if (coordinatorName.equals(userName)) {
+                if (coordinatorName.equals(coordinatorsName)) {
                     teams.add(team);
                 }
             }

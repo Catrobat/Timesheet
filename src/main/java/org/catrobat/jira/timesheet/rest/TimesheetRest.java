@@ -125,24 +125,6 @@ public class TimesheetRest {
         return Response.ok(jsonTeams).build();
     }
 
-    //TODO: duplicated code - remove that and check the js dependencies
-    @GET
-    @Path("teams/{timesheetID}")
-    public Response getTeamsForTimesheet(@Context HttpServletRequest request,
-            @PathParam("timesheetID") int timesheetID) throws ServiceException {
-        ApplicationUser user;
-        try {
-            user = permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-        }
-
-        Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
-        List<Team> sortedTeamsOfUsersList = asSortedList(teamsOfUser);
-        List<JsonTeam> jsonTeams = convertTeamsToJSON(sortedTeamsOfUsersList);
-        return Response.ok(jsonTeams).build();
-    }
-
     @GET
     @Path("categoryIDs")
     public Response getCategories(@Context HttpServletRequest request) {
@@ -164,40 +146,27 @@ public class TimesheetRest {
     }
 
     @GET
-    @Path("teamInformation")
-    public Response getAllTeams(@Context HttpServletRequest request) {
+    @Path("timesheet/{timesheetID}/teamEntries")
+    public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
+            @PathParam("timesheetID") int timesheetID) {
+        ApplicationUser loggedInUser;
         try {
-            permissionService.checkIfUserExists();
+            loggedInUser = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        List<Team> teamList = teamService.all();
-        Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
-        List<JsonTeam> jsonTeams = convertTeamsToJSON(teamList);
-
-        return Response.ok(jsonTeams).build();
-    }
-
-    @GET
-    @Path("timesheet/{timesheetID}/teamEntries")
-    public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
-            @PathParam("timesheetID") int timesheetID) {
-        //TODO: maybe coordinator private access is enouph - we will see
-       /* Response unauthorized = permissionService.checkRootPermission(request);
-        if (unauthorized != null) {
-            return unauthorized;
-        }*/
-
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        //ToDO: check if user is coordinator of the team!
+        if (!permissionService.isUserTeamCoordinator(loggedInUser) ||
+                !permissionService.isTimesheetAdmin(loggedInUser) ||
+                !permissionService.isReadOnlyUser(loggedInUser)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
         Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
+        //ToDO: Bitte vereinfachen!
         for (ApplicationUser user : allUsers) {
             //get all teams of that user
             for (Team team : teamService.getTeamsOfUser(user.getName())) {
@@ -205,9 +174,10 @@ public class TimesheetRest {
                 for (String teamMember : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
                     //collect all timesheet entries of those team members
                     try {
-                        if (sheetService.userHasTimesheet(ComponentAccessor.getUserManager().getUserByName(teamMember).getKey(), false)) {
+                        String userKey = ComponentAccessor.getUserManager().getUserByName(teamMember).getKey();
+                        if (sheetService.userHasTimesheet(userKey, false)) {
                             Timesheet sheet = sheetService.getTimesheetByUser(
-                                    ComponentAccessor.getUserManager().getUserByName(teamMember).getKey(), false);
+                                    userKey, false);
                             //all entries of each user
                             TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
                             addAllJsonTimesheetEntries(jsonTimesheetEntries, entries);
@@ -236,13 +206,27 @@ public class TimesheetRest {
     public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
             @PathParam("teamName") String teamName) {
         //TODO: maybe coordinator private access is enouph - we will see
+        // chess if user is coordinator of team
        /* Response unauthorized = permissionService.checkRootPermission(request);
         if (unauthorized != null) {
             return unauthorized;
         }*/
+
+        ApplicationUser user;
         try {
-            permissionService.checkIfUserExists();
+            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        try {
+            Team team = teamService.getTeamByName(teamName);
+            if(!permissionService.isUserCoordinatorOfTeam(user, team) ||
+                    !permissionService.isTimesheetAdmin(user) ||
+                    !permissionService.isReadOnlyUser(user)){
+                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to access the timesheet!").build();
+            }
+        } catch (ServiceException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
