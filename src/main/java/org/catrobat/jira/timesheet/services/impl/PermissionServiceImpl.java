@@ -55,7 +55,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public boolean isUserTeamCoordinator(ApplicationUser user) {
-        return teamService.getTeamsOfCoordinator(user.getUsername()).isEmpty();
+        return !teamService.getTeamsOfCoordinator(user.getUsername()).isEmpty();
     }
 
     public Response checkGlobalPermission() {
