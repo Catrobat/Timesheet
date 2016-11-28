@@ -330,12 +330,6 @@ public class TimesheetRest {
             return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
         }
 
-        //check permissions for each sheet
-        if (!permissionService.userCanViewTimesheet(user, sheet)) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
-        }
-
-
         if (sheet == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
         } else if (!permissionService.userCanViewTimesheet(user, sheet)) {

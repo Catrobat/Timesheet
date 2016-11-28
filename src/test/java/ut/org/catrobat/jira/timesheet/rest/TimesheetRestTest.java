@@ -2,6 +2,7 @@ package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
@@ -24,6 +25,7 @@ import org.catrobat.jira.timesheet.services.impl.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -32,6 +34,7 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -78,8 +81,6 @@ public class TimesheetRestTest {
 
     private MailQueue mailQueueMock;
 
-    private SimpleDateFormat sdf;
-
     private TestActiveObjects ao;
     private EntityManager entityManager;
     private ApplicationUser userMock;
@@ -115,7 +116,7 @@ public class TimesheetRestTest {
         permissionService = new PermissionServiceImpl(teamService, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
-        timesheetRest = new TimesheetRest(timesheetEntryService, timesheetService, categoryService, teamService, permissionService, configService);
+        timesheetRest = new TimesheetRest(timesheetEntryService, timesheetService, categoryService, teamService, permissionServiceMock, configService);
 
         timesheetRestMock = new TimesheetRest(timesheetEntryServiceMock, timesheetServiceMock, categoryServiceMock, teamServiceMock, permissionServiceMock, configServiceMock);
 
@@ -126,6 +127,7 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
         PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManagerJiraMock);
+        PowerMockito.when(permissionServiceMock.checkGlobalPermission()).thenReturn(null);
     }
 
     @Test
@@ -267,6 +269,7 @@ public class TimesheetRestTest {
     @Test
     public void testGetTeamsUserDoesNotExist() throws Exception {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
+        PowerMockito.when(permissionServiceMock.checkIfUserExists()).thenThrow(new PermissionException("User does not exist."));
         //execution & verifying
         response = timesheetRest.getTeamsForUser(requestMock);
 
@@ -284,6 +287,8 @@ public class TimesheetRestTest {
     public void testGetCategoriesUserDoesNotExist() throws Exception {
         //preparations
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
+        Response userDoesNotExist = Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist.").build();
+        PowerMockito.when(permissionServiceMock.checkGlobalPermission()).thenReturn(userDoesNotExist);
         //execution & verifying
         response = timesheetRest.getCategories(requestMock);
         assertEquals(response.getEntity(), "User does not exist.");
@@ -410,6 +415,7 @@ public class TimesheetRestTest {
     public void testGetTimesheetEntriesOfAllTeamMembersUserDoesNotExist() throws Exception {
         //preparations
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
+        PowerMockito.when(permissionServiceMock.checkIfUserExists()).thenThrow(new PermissionException("User does not exist."));
         //execution & verifying
         response = timesheetRest.getTimesheetEntriesOfAllTeamMembers(requestMock, 1);
         assertEquals(response.getEntity(), "User does not exist.");
@@ -463,6 +469,7 @@ public class TimesheetRestTest {
         //preparations
         String teamName = "Catroid";
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
+        PowerMockito.when(permissionServiceMock.checkIfUserExists()).thenThrow(new PermissionException("User does not exist."));
         //execution & verifying
         response = timesheetRest.getAllTimesheetEntriesForTeam(requestMock, teamName);
         assertEquals(response.getEntity(), "User does not exist.");
@@ -500,6 +507,7 @@ public class TimesheetRestTest {
         String userName = "test";
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
+        when(permissionServiceMock.userCanViewTimesheet(Matchers.any(), Matchers.any())).thenReturn(false);
 
         //execution & verifying
         response = timesheetRestMock.getOwnerOfTimesheet(requestMock, timesheetID);
@@ -512,6 +520,7 @@ public class TimesheetRestTest {
         int timesheetID = 1;
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(null);
+        when(permissionServiceMock.userCanViewTimesheet(Matchers.any(), Matchers.any())).thenReturn(true);
 
         //execution & verifying
         response = timesheetRestMock.getOwnerOfTimesheet(requestMock, timesheetID);
@@ -523,10 +532,14 @@ public class TimesheetRestTest {
         //preparations
         int timesheetID = 1;
         when(userManagerJiraMock.getUserByKey(any())).thenReturn(null);
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
+        Response userDoesNotExist = Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist.").build();
+        PowerMockito.when(permissionServiceMock.checkGlobalPermission()).thenReturn(userDoesNotExist);
+        when(permissionServiceMock.userCanViewTimesheet(Matchers.any(), Matchers.any())).thenReturn(true);
 
         //execution & verifying
         response = timesheetRest.getOwnerOfTimesheet(requestMock, timesheetID);
-        assertEquals(response.getEntity(), "Timesheet Access denied.");
+        assertEquals(response.getEntity(), "User does not exist.");
     }
 
     //TODO: correct this test
