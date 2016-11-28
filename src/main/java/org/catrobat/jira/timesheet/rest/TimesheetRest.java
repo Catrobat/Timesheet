@@ -562,7 +562,11 @@ public class TimesheetRest {
         }
 
         String programmingPartnerName = "";
-        if (!entry.getPairProgrammingUserName().isEmpty()) {
+        String categoryName = category.getName();
+        if (categoryName.contains("(pp)") || categoryName.contains("pair")) {
+            if (entry.getPairProgrammingUserName().isEmpty()) {
+                return Response.status(Response.Status.CONFLICT).entity("Pair Programming Partner is missing!").build();
+            }
             programmingPartnerName = entry.getPairProgrammingUserName();
         }
 
@@ -570,7 +574,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("The Timesheet your are looking for is NULL.").build();
         } else if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
-        } else if (!category.getName().toLowerCase().equals("pair programming") && !programmingPartnerName.equals("")) {
+        } else if (!categoryName.toLowerCase().equals("pair programming") && !programmingPartnerName.equals("")) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You can not select a 'Pair programming' " +
                     "Partner without selecting the 'Pair programming' category.").build();
         }
@@ -861,9 +865,22 @@ public class TimesheetRest {
         }
 
         if (sheet.getIsEnabled()) {
-            if (!entry.getPairProgrammingUserName().isEmpty()) {
-                programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(jsonEntry.getPairProgrammingUserName()).getUsername();
+
+            String categoryName = category.getName();
+            if (categoryName.contains("(pp)") || categoryName.contains("pair")) {
+                if (jsonEntry.getPairProgrammingUserName().isEmpty()) {
+                    return Response.status(Response.Status.CONFLICT).entity("Pair Programming Partner is missing!").build();
+                }
+                programmingPartnerName = jsonEntry.getPairProgrammingUserName();
             }
+
+//            if (!entry.getPairProgrammingUserName().isEmpty()) {
+//                if (!jsonEntry.getPairProgrammingUserName().isEmpty()) {
+//                    programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(jsonEntry.getPairProgrammingUserName()).getUsername();
+//                } else {
+//                    programmingPartnerName = "";
+//                }
+//            }
             try {
                 entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
                         jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport(),

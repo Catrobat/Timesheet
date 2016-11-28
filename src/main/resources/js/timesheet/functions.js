@@ -307,16 +307,26 @@ function compareTime(time1, time2) {
     return 0; // equal
 }
 
-function IsInactiveCategorySelected(timesheetData, form) {
+function isInactiveCategorySelected(timesheetData, form) {
     var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
     var categoryIndex = form.categorySelect.val();
     return indexOfInactive == categoryIndex;
 }
 
-function IsDeactivatedCategorySelected(timesheetData, form) {
+function isDeactivatedCategorySelected(timesheetData, form) {
     var indexOfDeactivated = getIDFromCategoryName("deactivated", timesheetData);
     var categoryIndex = form.categorySelect.val();
     return indexOfDeactivated == categoryIndex;
+}
+
+function isSystemCategorySelected(timesheetData, form) {
+    return isInactiveCategorySelected(timesheetData, form) || isDeactivatedCategorySelected(timesheetData, form);
+}
+
+function isPairProgrammingCategorySelected(timesheetData, form) {
+    var categoryIndex = form.categorySelect.val();
+    var categoryName = getNameFromCategoryIndex(categoryIndex, timesheetData).toLowerCase();
+    return ((categoryName.includes("(pp)") || categoryName.includes("pair")) && !form.partnerSelect.val());
 }
 
 

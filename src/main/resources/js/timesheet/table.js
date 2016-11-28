@@ -131,7 +131,7 @@ function populateTable(timesheetDataReply) {
         ajaxUrl: restBaseUrl + "timesheets/" + timesheetData.timesheetID + '/entry/' + isMasterThesisTimesheet
     };
 
-    var emptyForm = renderFormRow(timesheetData, emptyEntry, addNewEntryOptions);
+    var emptyForm = renderFormRow(timesheetData, emptyEntry, addNewEntryOptions, false);
     timesheetTable.append(emptyForm);
 
     appendEntriesToTable(timesheetData);
@@ -207,6 +207,47 @@ function editEntryCallback(entry, timesheetData, form) {
     oldViewRow.remove();
 
     form.row.hide();
+
+    if (isSystemCategorySelected(timesheetData, form)) {
+        AJS.$(".ticket").hide();
+        AJS.$(".partner").hide();
+        AJS.$(".team").hide();
+        AJS.$(".duration").hide();
+        AJS.$(".pause").hide();
+        AJS.$(".end").hide();
+        AJS.$(".start").hide();
+
+        form.ticketSelect.hide();
+        form.partnerSelect.hide();
+        form.teamSelect.hide();
+        form.durationField.hide();
+        form.pauseTimeField.hide();
+        form.endTimeField.hide();
+        form.beginTimeField.hide();
+    }
+
+    if (isPairProgrammingCategorySelected(timesheetData, form)) {
+        AJS.$(".partner").show();
+        form.partnerSelect.show();
+    }
+    else {
+        AJS.$(".partner").hide();
+        form.partnerSelect.hide();
+
+        AJS.$(".ticket").show();
+        AJS.$(".team").show();
+        AJS.$(".duration").show();
+        AJS.$(".pause").show();
+        AJS.$(".end").show();
+        AJS.$(".start").show();
+
+        form.ticketSelect.show();
+        form.teamSelect.show();
+        form.durationField.show();
+        form.pauseTimeField.show();
+        form.endTimeField.show();
+        form.beginTimeField.show();
+    }
 }
 
 /**
@@ -219,12 +260,12 @@ function editEntryCallback(entry, timesheetData, form) {
  *           httpMethod : String
  * @returns {jquery} form
  */
-function renderFormRow(timesheetData, entry, saveOptions) {
+function renderFormRow(timesheetData, entry, saveOptions, isModified) {
 
     if (entry.pause === "")
         entry.pause = "00:00";
 
-    var form = prepareForm(entry, timesheetData);
+    var form = prepareForm(entry, timesheetData, isModified);
 
     form.saveButton.click(function () {
         submit(timesheetData, saveOptions, form, entry.entryID,
@@ -241,7 +282,7 @@ function renderFormRow(timesheetData, entry, saveOptions) {
  * @param {object} timesheetData
  * @returns {object of jquery objects}
  */
-function prepareForm(entry, timesheetData) {
+function prepareForm(entry, timesheetData, isModified) {
 
     var teams = timesheetData.teams;
     var row = AJS.$(Jira.Templates.Timesheet.timesheetEntryForm(
@@ -266,6 +307,48 @@ function prepareForm(entry, timesheetData) {
         teamSelect: row.find('select.team')
     };
 
+    if (isSystemCategorySelected(timesheetData, form)) {
+        AJS.$(".ticket").hide();
+        AJS.$(".partner").hide();
+        AJS.$(".team").hide();
+        AJS.$(".duration").hide();
+        AJS.$(".pause").hide();
+        AJS.$(".end").hide();
+        AJS.$(".start").hide();
+
+        form.ticketSelect.hide();
+        form.partnerSelect.hide();
+        form.teamSelect.hide();
+        form.durationField.hide();
+        form.pauseTimeField.hide();
+        form.endTimeField.hide();
+        form.beginTimeField.hide();
+    }
+
+    if (isPairProgrammingCategorySelected(timesheetData, form)) {
+        AJS.$(".partner").show();
+        form.partnerSelect.show();
+    }
+    else {
+        AJS.$(".partner").hide();
+        form.partnerSelect.hide();
+
+        AJS.$(".ticket").show();
+        AJS.$(".team").show();
+        AJS.$(".duration").show();
+        AJS.$(".pause").show();
+        AJS.$(".end").show();
+        AJS.$(".start").show();
+
+        form.ticketSelect.show();
+        form.teamSelect.show();
+        form.durationField.show();
+        form.pauseTimeField.show();
+        form.endTimeField.show();
+        form.beginTimeField.show();
+    }
+
+
     //date time columns
     form.dateField
         .datePicker(
@@ -283,14 +366,12 @@ function prepareForm(entry, timesheetData) {
         );
 
     form.inactiveEndDateField.change(function () {
-        // Info: you can also write AJS.$("input.description").val("hello boy");
         var index = getIDFromCategoryName("inactive", timesheetData);
         form.categorySelect.auiSelect2("val", index);
         form.categorySelect.trigger("change");
     });
 
     form.deactivateEndDateField.change(function () {
-        AJS.$("input.description_").attr("placeholder", "Reason(s) for your deactivation");
         var index = getIDFromCategoryName("deactivated", timesheetData);
         form.categorySelect.auiSelect2("val", index);
         form.categorySelect.trigger("change");
@@ -328,7 +409,7 @@ function prepareForm(entry, timesheetData) {
             if (categoryIndex == indexOfInactive) {
                 var date = form.inactiveEndDateField.val();
                 checkIfDateIsInRange(date, form);
-                AJS.$("input.description_").attr("placeholder", "Reason for your inactivity");
+                form.descriptionField.attr("placeholder", "Reason for your inactivity");
                 form.deactivateEndDateField.val("");
                 AJS.$(".inactive").fadeIn(2000);
                 AJS.$(".deactivate").fadeOut(2000);
@@ -336,14 +417,14 @@ function prepareForm(entry, timesheetData) {
             else {
                 var date = form.deactivateEndDateField.val();
                 checkIfDateIsInRange(date, form);
-                AJS.$("input.description_").attr("placeholder", "Reason(s) for your deactivation");
+                form.descriptionField.attr("placeholder", "Reason(s) for your deactivation");
                 form.inactiveEndDateField.val("");
                 AJS.$(".deactivate").fadeIn(2000);
                 AJS.$(".inactive").fadeOut(2000);
             }
         }
         else {
-            AJS.$("input.description_").attr("placeholder", "a short task description");
+            form.descriptionField.attr("placeholder", "a short task description");
 
             form.inactiveEndDateField.val(""); // clear inactive field input
             form.deactivateEndDateField.val(""); // clear deactivated field input
@@ -358,9 +439,16 @@ function prepareForm(entry, timesheetData) {
             AJS.$(".end").fadeIn(2000);
             AJS.$(".pause").fadeIn(2000);
             AJS.$(".duration").fadeIn(2000);
-            AJS.$(".team").fadeIn(2000);
             AJS.$(".ticket").fadeIn(2000);
             AJS.$(".partner").fadeIn(2000);
+
+            // define special behaviour
+            if (countDefinedElementsInArray(teams) < 2) {
+                AJS.$(".team").fadeOut(2000);
+            }
+            else {
+                AJS.$(".team").fadeIn(2000);
+            }
 
             if (categoryIndex === indexOfPP) {
                 AJS.$(".partner").show();
@@ -408,7 +496,7 @@ function prepareForm(entry, timesheetData) {
     form.teamSelect.auiSelect2()
         .change(function () {
             var selectedTeamID = this.value;
-            updateCategorySelect(form.categorySelect, selectedTeamID, entry, timesheetData);
+            updateCategorySelect(form.categorySelect, selectedTeamID, entry, timesheetData, isModified, form);
         })
         .auiSelect2("val", initTeamID)
         .trigger("change");
@@ -473,11 +561,6 @@ function prepareForm(entry, timesheetData) {
         width: 'resolve'
     });
 
-    if (countDefinedElementsInArray(teams) < 2) {
-        row.find(".team").hide();
-        AJS.$(".team").hide();
-    }
-
     return form;
 }
 
@@ -539,7 +622,7 @@ function validation(form) {
  * @param {Object} entry
  * @param {Object} timesheetData
  */
-function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetData) {
+function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetData, isModified, form) {
 
     var selectedTeam = timesheetData.teams[selectedTeamID];
     if (selectedTeam == null || selectedTeam.teamCategories == null) {
@@ -549,8 +632,20 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
 
     categorySelect.auiSelect2({data: categoriesPerTeam});
 
-    var suitableIndex = getSuitableCatIndex(categoriesPerTeam);
-    categorySelect.val(suitableIndex).trigger("change");
+    if (isModified) {
+        console.log(entry.category);
+        var cat_id = getIDFromCategoryName(entry.category);
+        categorySelect.val(cat_id).trigger("change");
+
+        if (isPairProgrammingCategorySelected(timesheetData, form)) {
+            AJS.$(".partner").show();
+        }
+    }
+    else {
+        var suitableIndex = getSuitableCatIndex(categoriesPerTeam);
+        categorySelect.val(suitableIndex).trigger("change");
+    }
+
 }
 
 function getSuitableCatIndex(categoriesPerTeam) {
@@ -622,7 +717,7 @@ function editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewR
     var formRow = getFormRow(viewRow);
 
     if (formRow === undefined) {
-        formRow = renderFormRow(timesheetData, augmentedEntry, editEntryOptions);
+        formRow = renderFormRow(timesheetData, augmentedEntry, editEntryOptions, true);
         viewRow.after(formRow);
     }
 
@@ -808,8 +903,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         return;
     }
 
-    var categoryName = getNameFromCategoryIndex(categoryIndex, timesheetData).toLowerCase();
-    if ((categoryName.includes("(pp)") || categoryName.includes("pair")) && !form.partnerSelect.val()) {
+    if (isPairProgrammingCategorySelected(timesheetData, form)) {
 
         require('aui/flag')({
             type: 'error',
