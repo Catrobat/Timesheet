@@ -82,7 +82,6 @@ public class SchedulingRestTest {
         categoryService = new CategoryServiceImpl(ao);
         configService = new ConfigServiceImpl(ao, categoryService);
         teamService = new TeamServiceImpl(ao, configService);
-        permissionService = new PermissionServiceImpl(teamService, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
 
@@ -92,7 +91,7 @@ public class SchedulingRestTest {
                 timesheetServiceMock, teamServiceMock, categoryService, timesheetScheduler, schedulingService);
 
         // ... and for some tests we need a real instance of the class
-        schedulingRest = new SchedulingRest(configService, permissionService, timesheetEntryService,
+        schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
                 timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
 
         // ... and sometimes you would like to mix them together (see in test method)

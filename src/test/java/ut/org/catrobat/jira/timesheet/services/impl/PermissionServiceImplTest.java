@@ -3,6 +3,8 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.config.properties.APKeys;
+import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
@@ -86,6 +88,10 @@ public class PermissionServiceImplTest {
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
 
         assertNotNull(entityManager);
+
+        ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
+        PowerMockito.when(ComponentAccessor.getApplicationProperties()).thenReturn(applicationProperties);
+        when(applicationProperties.getString(APKeys.JIRA_BASEURL)).thenReturn("jira.catrob.at");
 
         permissionService = new PermissionServiceImpl(teamService, configService);
 
