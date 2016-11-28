@@ -127,7 +127,7 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
         PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManagerJiraMock);
-        PowerMockito.when(permissionServiceMock.checkGlobalPermission()).thenReturn(null);
+        PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
     }
 
     @Test
@@ -288,7 +288,7 @@ public class TimesheetRestTest {
         //preparations
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
         Response userDoesNotExist = Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist.").build();
-        PowerMockito.when(permissionServiceMock.checkGlobalPermission()).thenReturn(userDoesNotExist);
+        PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(userDoesNotExist);
         //execution & verifying
         response = timesheetRest.getCategories(requestMock);
         assertEquals(response.getEntity(), "User does not exist.");
@@ -534,7 +534,7 @@ public class TimesheetRestTest {
         when(userManagerJiraMock.getUserByKey(any())).thenReturn(null);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
         Response userDoesNotExist = Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist.").build();
-        PowerMockito.when(permissionServiceMock.checkGlobalPermission()).thenReturn(userDoesNotExist);
+        PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(userDoesNotExist);
         when(permissionServiceMock.userCanViewTimesheet(Matchers.any(), Matchers.any())).thenReturn(true);
 
         //execution & verifying

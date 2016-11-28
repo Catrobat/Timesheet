@@ -1,6 +1,7 @@
 package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
+import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
@@ -10,6 +11,7 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.rest.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.junit.Assert;
@@ -24,6 +26,11 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -67,7 +74,7 @@ public class UserRestTest {
         PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
-        PowerMockito.when(permissionServiceMock.checkGlobalPermission()).thenReturn(null);
+        PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
     }
 
     @Test
