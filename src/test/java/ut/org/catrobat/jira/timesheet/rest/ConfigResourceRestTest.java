@@ -13,7 +13,9 @@ import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.rest.ConfigResourceRest;
+import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
+import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
@@ -28,10 +30,7 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -102,7 +101,7 @@ public class ConfigResourceRestTest {
 
         //additional mocks
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
-        when(permissionServiceMock.checkGlobalPermission()).thenReturn(null);
+        when(permissionServiceMock.checkUserPermission()).thenReturn(null);
     }
 
     @Test
@@ -127,7 +126,6 @@ public class ConfigResourceRestTest {
         teams.add(team2);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
-        ApplicationUser user2 = mock(ApplicationUser.class);
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);
@@ -137,16 +135,15 @@ public class ConfigResourceRestTest {
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
         response = configResourceRest.getTeams(request);
-//        System.out.println(response.getEntity());
-//        List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
-     //   assertNotNull(responseTeamList);
+        List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
+        assertNotNull(responseTeamList);
     }
 
     @Test
     public void testGetCategoriesOk() throws Exception {
         response = configResourceRest.getCategories(request);
-//        List<JsonCategory> responseTeamList = (List<JsonCategory>) response.getEntity();
-      //  assertNotNull(responseTeamList);
+        List<JsonCategory> responseTeamList = (List<JsonCategory>) response.getEntity();
+        assertNotNull(responseTeamList);
     }
 
     @Test
@@ -177,40 +174,11 @@ public class ConfigResourceRestTest {
 
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
-        when(permissionServiceMock.checkGlobalPermission()).thenReturn(response);
+        when(permissionServiceMock.checkUserPermission()).thenReturn(response);
         when(categoryServiceMock.removeCategory(anyString())).thenReturn(true);
 
         response = configResourceRestMock.removeCategory("Meeting", request);
-       // assertNull(response.getEntity());
-    }
-
-    @Test
-    public void testGetTeamListOk() throws Exception {
-        String userName = "test";
-        String userKey = "USER_KEY_1";
-
-        Category[] categories = {categoryMock};
-
-        Team team1 = Mockito.mock(Team.class);
-        when(team1.getID()).thenReturn(1);
-        when(team1.getTeamName()).thenReturn("Catroid");
-        when(team1.getCategories()).thenReturn(categories);
-
-        Team team2 = Mockito.mock(Team.class);
-        when(team2.getID()).thenReturn(2);
-        when(team2.getTeamName()).thenReturn("IRC");
-        when(team2.getCategories()).thenReturn(new Category[0]);
-
-        Team[] teams = {team1, team2};
-
-        when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
-
-
-        when(permissionServiceMock.checkGlobalPermission()).thenReturn(response);
-        when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
-
-        response = configResourceRestMock.getTeamList(request);
-       // assertNotNull(response.getEntity());
+        assertNull(response.getEntity());
     }
 
     @Test
@@ -244,13 +212,13 @@ public class ConfigResourceRestTest {
 
         TSAdminGroup[] timesheetAdminGroups = {timesheetAdminGroup};
 
-        when(permissionServiceMock.checkGlobalPermission()).thenReturn(response);
+        when(permissionServiceMock.checkUserPermission()).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getTimesheetAdminGroups()).thenReturn(timesheetAdminGroups);
         when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
 
         response = configResourceRestMock.getConfig(request);
-        //assertNotNull(response.getEntity());
+        assertNotNull(response.getEntity());
     }
 
 
@@ -292,7 +260,7 @@ public class ConfigResourceRestTest {
         usersInGroup.add(user1);
         usersInGroup.add(user2);
 
-        when(permissionServiceMock.checkGlobalPermission()).thenReturn(response);
+        when(permissionServiceMock.checkUserPermission()).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getTimesheetAdminGroups()).thenReturn(timesheetAdminGroups);
         when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
@@ -302,7 +270,7 @@ public class ConfigResourceRestTest {
         JsonConfig jsonConfig = new JsonConfig(configServiceMock);
 
         response = configResourceRestMock.setConfig(jsonConfig, request);
-       // assertNull(response.getEntity());
+       assertNull(response.getEntity());
     }
 
     @Test
@@ -311,6 +279,6 @@ public class ConfigResourceRestTest {
         configResourceRest.addCategory("Hallo", request);
         String[] renamePair = new String[] {"Test","Hallo"};
         response = configResourceRest.editCategoryName(renamePair, request);
-       // assertEquals(409, response.getStatus());
+        assertEquals(409, response.getStatus());
     }
 }

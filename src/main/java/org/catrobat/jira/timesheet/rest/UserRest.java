@@ -51,7 +51,7 @@ public class UserRest {
     @Path("/getUsers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@Context HttpServletRequest request) {
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }

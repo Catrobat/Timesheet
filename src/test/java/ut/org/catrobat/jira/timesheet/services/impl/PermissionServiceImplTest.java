@@ -80,7 +80,7 @@ public class PermissionServiceImplTest {
         ao = new TestActiveObjects(entityManager);
 
         teamService = mock(TeamService.class);
-        configService = mock(ConfigService.class, RETURNS_DEEP_STUBS);
+        configService = mock(ConfigService.class);
         groupManager = mock(GroupManager.class);
         jiraUserManager = mock(UserManager.class);
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
@@ -195,33 +195,6 @@ public class PermissionServiceImplTest {
         assertFalse(permissionService.userCanViewTimesheet(jiraAdmin, sheet));
     }
 
-    @Test
-    public void testTSAdminCanViewTimesheet() throws Exception {
-        config.setReadOnlyUsers("Markus,Adrian");
-        configService.addTimesheetAdmin(tsAdmin); //-> refactor should be moved to config
-        assertTrue(permissionService.userCanViewTimesheet(tsAdmin, sheet));
-    }
-
-   /* @Test
-    public void testEveCantViewTimesheet() throws Exception {
-        configService.addTimesheetAdmin("test1", "test1_key");
-        configService.addTimesheetAdminGroup("testGroup1");
-
-        TimesheetAdmin[] approvedUsers = {tsAdmin};
-        TSAdminGroup[] approvedGroups = {timesheetAdminGroup};
-
-        userGroupNames.add("abc");
-        userGroupNames.add("def");
-
-        Mockito.when(configService.getConfiguration()).thenReturn(config);
-        Mockito.when(config.getTimesheetAdminUsers()).thenReturn(approvedUsers);
-        Mockito.when(config.getTimesheetAdminGroups()).thenReturn(approvedGroups);
-
-        Mockito.when(componentAccessor.getGroupManager().getGroupNamesForUser(eve.getUsername())).thenReturn(userGroupNames);
-
-        assertFalse(permissionService.userCanViewTimesheet(eve, sheet));
-    }
-*/
     @Test
     public void testNullUserCantViewTimesheet() throws Exception {
         assertFalse(permissionService.userCanViewTimesheet(null, sheet));

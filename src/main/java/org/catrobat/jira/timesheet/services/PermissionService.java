@@ -41,11 +41,13 @@ public interface PermissionService {
 
     boolean isUserTeamCoordinator(ApplicationUser user);
 
+    boolean timesheetAdminExists();
+
     boolean isUserCoordinatorOfTimesheet(ApplicationUser user, Timesheet sheet);
 
     boolean isUserCoordinatorOfTeam(ApplicationUser user, Team team);
 
-    Response checkGlobalPermission();
+    Response checkUserPermission();
 
     Response checkRootPermission();
 

@@ -92,7 +92,7 @@ public class TimesheetRest {
             return Response.ok(false).build();
         }
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return Response.ok(false).build();
         }
@@ -123,7 +123,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -139,7 +139,7 @@ public class TimesheetRest {
     @Path("categoryIDs")
     public Response getCategories(@Context HttpServletRequest request) {
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -166,7 +166,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -232,7 +232,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -286,7 +286,7 @@ public class TimesheetRest {
             @PathParam("getMTSheet") Boolean getMTSheet) {
 
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -318,7 +318,7 @@ public class TimesheetRest {
     public Response getOwnerOfTimesheet(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -356,7 +356,7 @@ public class TimesheetRest {
         Timesheet sheet;
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -402,7 +402,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -447,7 +447,7 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID) {
 
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -477,7 +477,7 @@ public class TimesheetRest {
     @Path("timesheets/getTimesheets")
     public Response getTimesheets(@Context HttpServletRequest request) {
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -528,7 +528,7 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -648,7 +648,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -750,7 +750,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -806,7 +806,7 @@ public class TimesheetRest {
             final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
 
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -840,7 +840,7 @@ public class TimesheetRest {
             @PathParam("entryID") int entryID,
             @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
@@ -936,7 +936,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }

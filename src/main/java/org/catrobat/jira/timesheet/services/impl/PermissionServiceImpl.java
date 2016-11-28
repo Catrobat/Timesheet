@@ -34,8 +34,10 @@ import java.util.Set;
 
 public class PermissionServiceImpl implements PermissionService {
 
+    private static final boolean DEBUG_MODE = true;
     private final TeamService teamService;
     private final ConfigService configService;
+    public final String BASE_URL = ComponentAccessor.getApplicationProperties().getString(APKeys.JIRA_BASEURL);
 
     public PermissionServiceImpl(TeamService teamService, ConfigService configService) {
         this.teamService = teamService;
@@ -50,16 +52,19 @@ public class PermissionServiceImpl implements PermissionService {
         return user;
     }
 
+    @Override
     public boolean checkIfUserIsGroupMember(String groupName) {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         return ComponentAccessor.getGroupManager().isUserInGroup(user, groupName);
     }
 
+    @Override
     public boolean isUserTeamCoordinator(ApplicationUser user) {
         return !teamService.getTeamsOfCoordinator(user.getUsername()).isEmpty();
     }
 
-    public Response checkGlobalPermission() {
+    @Override
+    public Response checkUserPermission() {
         ApplicationUser user;
         try {
             user = checkIfUserExists();
@@ -67,18 +72,19 @@ public class PermissionServiceImpl implements PermissionService {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        String baseurl = ComponentAccessor.getApplicationProperties().getString(APKeys.JIRA_BASEURL);
-        if (baseurl.contains("test")) {
-            if (!(checkIfUserIsGroupMember(JIRA_TEST_ADMINISTRATORS)
+        if (BASE_URL.contains("test")) {
+            if (!((!timesheetAdminExists() && checkIfUserIsGroupMember(JIRA_TEST_ADMINISTRATORS))
                     || checkIfUserIsGroupMember("Timesheet")
-                    || isReadOnlyUser(user))) {
+                    || isReadOnlyUser(user)
+                    || isTimesheetAdmin(user))) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                         "'Jira-Test-Administrators', 'Timesheet' or 'read only users'").build();
             }
         } else {
-            if (!(checkIfUserIsGroupMember(JIRA_ADMINISTRATORS)
+            if (!((!timesheetAdminExists() && checkIfUserIsGroupMember(JIRA_ADMINISTRATORS))
                     || checkIfUserIsGroupMember("Timesheet")
-                    || isReadOnlyUser(user))) {
+                    || isReadOnlyUser(user)
+                    || isTimesheetAdmin(user))) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                         "'jira-administrators', 'Timesheet' or 'read only users'").build();
             }
@@ -86,6 +92,7 @@ public class PermissionServiceImpl implements PermissionService {
         return null;
     }
 
+    @Override
     public Response checkRootPermission() {
         TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
         ApplicationUser user;
@@ -102,9 +109,14 @@ public class PermissionServiceImpl implements PermissionService {
             }
         }
 
+        if (!timesheetAdminExists() && isJiraAdministrator(user)) {
+            return null;
+        }
+
         return Response.status(Response.Status.UNAUTHORIZED).entity("Sorry, you are not a timesheet admin!").build();
     }
 
+    @Override
     public boolean isTimesheetAdmin(ApplicationUser user) {
         Config config = configService.getConfiguration();
 
@@ -127,12 +139,24 @@ public class PermissionServiceImpl implements PermissionService {
         return false;
     }
 
+    @Override
     public boolean isJiraAdministrator(ApplicationUser user) {
-        boolean isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_ADMINISTRATORS);
-        boolean isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_TEST_ADMINISTRATORS);
+        boolean isJiraAdmin = false;
+        boolean isJiraTestAdmin = false;
+        if (BASE_URL.contains("test")) {
+            isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_TEST_ADMINISTRATORS);
+        } else {
+            isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_ADMINISTRATORS);
+        }
+        
+        if(DEBUG_MODE){
+            isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_TEST_ADMINISTRATORS);
+            isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_ADMINISTRATORS);
+        }
         return (isJiraAdmin || isJiraTestAdmin);
     }
 
+    @Override
     public boolean isReadOnlyUser(ApplicationUser user) {
         String[] readOnlyUsers = configService.getConfiguration().getReadOnlyUsers().split(",");
         for (String readOnlyUser : readOnlyUsers) {
@@ -142,6 +166,14 @@ public class PermissionServiceImpl implements PermissionService {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean timesheetAdminExists() {
+        Config config = configService.getConfiguration();
+        TimesheetAdmin[] timesheetAdminUsers = config.getTimesheetAdminUsers();
+        TSAdminGroup[] timesheetAdminGroups = config.getTimesheetAdminGroups();
+        return timesheetAdminUsers.length > 0 || timesheetAdminGroups.length > 0;
     }
 
     private boolean userOwnsSheet(ApplicationUser user, Timesheet sheet) {
@@ -155,6 +187,7 @@ public class PermissionServiceImpl implements PermissionService {
         return sheetKey.equals(userKey);
     }
 
+    @Override
     public boolean isUserCoordinatorOfTimesheet(ApplicationUser user, Timesheet sheet) {
         ApplicationUser owner = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey());
 
@@ -170,6 +203,7 @@ public class PermissionServiceImpl implements PermissionService {
         return teamsOfOwner.size() > 0;
     }
 
+    @Override
     public boolean isUserCoordinatorOfTeam(ApplicationUser user, Team team) {
         Set<Team> teamsOfCoordinator = teamService.getTeamsOfCoordinator(user.getName());
         for (Team aTeam : teamsOfCoordinator) {

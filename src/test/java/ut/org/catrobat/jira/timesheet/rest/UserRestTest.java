@@ -1,7 +1,6 @@
 package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
@@ -11,7 +10,6 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.rest.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.junit.Assert;
@@ -26,10 +24,6 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -79,7 +73,7 @@ public class UserRestTest {
     public void testGetUsersUnauthorized() {
         doReturn(false).when(permissionServiceMock).isTimesheetAdmin(userMock);
         Response unauthorized = Response.status(Response.Status.UNAUTHORIZED).build();
-        doReturn(unauthorized).when(permissionServiceMock).checkGlobalPermission();
+        doReturn(unauthorized).when(permissionServiceMock).checkUserPermission();
 
         Response result = spyUserRest.getUsers(httpRequestMock);
         Assert.assertEquals(unauthorized, result);
