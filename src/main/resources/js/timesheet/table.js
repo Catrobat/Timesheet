@@ -208,6 +208,14 @@ function editEntryCallback(entry, timesheetData, form) {
 
     form.row.hide();
 
+    if(timesheetData.teams > 0) {
+        AJS.$(".team").show();
+        form.teamSelect.show();
+    } else {
+        AJS.$(".team").hide();
+        form.teamSelect.hide();
+    }
+
     if (isSystemCategorySelected(timesheetData, form)) {
         AJS.$(".ticket").hide();
         AJS.$(".partner").hide();

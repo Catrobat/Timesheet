@@ -12,7 +12,7 @@
     var isAdmin = $isadmin;
     var isCoordinator = $iscoordinator;
     var isMasterThesisTimesheet = $ismasterthesistimesheet;
-    // var hasTimesheet = $hasTimesheet;
+    <!-- var hasTimesheet = $hasTimesheet; -->
 </script>
 
 <script type="application/javascript">
