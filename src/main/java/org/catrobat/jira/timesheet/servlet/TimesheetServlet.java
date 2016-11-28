@@ -53,7 +53,7 @@ public class TimesheetServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Response unauthorized = permissionService.checkGlobalPermission();
+        Response unauthorized = permissionService.checkUserPermission();
         if (unauthorized != null) {
             response.sendError(HttpServletResponse.SC_CONFLICT, unauthorized.getEntity().toString());
         }

@@ -44,6 +44,8 @@ public interface ConfigService {
 
     List<String> getGroupsForRole(String teamName, TeamToGroup.Role role);
 
+    int[] getCategoryIDsForTeam(String teamName);
+
     List<String> getCategoryNamesForTeam(String teamName);
 
     boolean isTimesheetAdminGroup(String groupName);
@@ -58,9 +60,7 @@ public interface ConfigService {
 
     void clearTimesheetAdmins();
 
+    Config removeTimesheetAdminGroup(String groupName);
+
     Config removeTimesheetAdmin(String TimesheetAdminKey);
-
-    Config removeTimesheetAdminGroup(String TimesheetAdminGroupName);
-
-    int[] getCategoryIDsForTeam(String teamName);
 }

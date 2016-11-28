@@ -44,7 +44,7 @@ public class TimesheetPermissionCondition extends JiraGlobalPermissionCondition 
     }
 
     public boolean hasPermission() {
-        Response response = permissionService.checkGlobalPermission();
+        Response response = permissionService.checkUserPermission();
         if (response != null) {
             return false;
         }

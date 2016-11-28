@@ -22,7 +22,6 @@ import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
@@ -56,27 +55,11 @@ public class ConfigResourceRest {
         this.permissionService = permissionService;
     }
 
-    private boolean userHasAdministratorPermission(HttpServletRequest request){
-        TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
-        ApplicationUser loggedInUser = ComponentAccessor.getUserManager().getUserByName(request.getRemoteUser());
-
-        if(timesheetAdmins.length == 0 &&
-                permissionService.isJiraAdministrator(loggedInUser)) {
-            return true;
-        } else {
-            if(permissionService.isTimesheetAdmin(loggedInUser)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @GET
     @Path("/getCategories")
     public Response getCategories(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = permissionService.checkUserPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -91,16 +74,16 @@ public class ConfigResourceRest {
         return Response.ok(categories).build();
     }
 
+    //unused
     @GET
     @Path("/getTeams")
     public Response getTeams(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = permissionService.checkUserPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
-        List<JsonTeam> teams = new LinkedList<JsonTeam>();
+        List<JsonTeam> teams = new LinkedList<>();
 
         List<Team> teamList = teamService.all();
         Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
@@ -110,33 +93,13 @@ public class ConfigResourceRest {
     }
 
     @GET
-    @Path("/getTeamList")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getTeamList(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
-            return unauthorized;
-        }
-
-        List<String> teamList = new ArrayList<String>();
-        for (Team team : configService.getConfiguration().getTeams()) {
-            teamList.add(team.getTeamName());
-        }
-
-        return Response.ok(teamList).build();
-    }
-
-    @GET
     @Path("/getConfig")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getConfig(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = permissionService.checkUserPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
-
         return Response.ok(new JsonConfig(configService)).build();
     }
 
@@ -144,10 +107,8 @@ public class ConfigResourceRest {
     @Path("/saveConfig")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setConfig(final JsonConfig jsonConfig, @Context HttpServletRequest request) {
-
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -200,9 +161,8 @@ public class ConfigResourceRest {
     @Path("/addTeamPermission")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addTeamPermission(final String teamName, @Context HttpServletRequest request) {
-        Response unauthorized = checkParam(request);
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = checkParam();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -222,10 +182,9 @@ public class ConfigResourceRest {
         return Response.serverError().build();
     }
 
-    private Response checkParam(@Context HttpServletRequest request, String... strings) {
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+    private Response checkParam(String... strings) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
         for (String param : strings) {
@@ -240,9 +199,8 @@ public class ConfigResourceRest {
     @Path("/editTeamName")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editTeamPermission(final String[] teams, @Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = checkParam(teams);
+        if (unauthorized != null) {
             return unauthorized;
         } else if (teams == null || teams.length != 2) {
             return Response.serverError().build();
@@ -265,9 +223,8 @@ public class ConfigResourceRest {
     @Path("/removeTeamPermission")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeTeamPermission(final String teamName, @Context HttpServletRequest request) {
-        Response unauthorized = checkParam(request);
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = checkParam(teamName);
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -284,9 +241,8 @@ public class ConfigResourceRest {
     @Path("/addCategory")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addCategory(final String categoryName, @Context HttpServletRequest request) throws ServiceException {
-        Response unauthorized = checkParam(request);
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = checkParam(categoryName);
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -302,9 +258,8 @@ public class ConfigResourceRest {
     @Path("/editCategoryName")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editCategoryName(final String[] categories, @Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = checkParam(categories);
+        if (unauthorized != null) {
             return unauthorized;
         } else if (categories == null || categories.length != 2) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Not enough arguments.").build();
@@ -338,9 +293,8 @@ public class ConfigResourceRest {
     @Path("/removeCategory")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeCategory(final String removeCategory, @Context HttpServletRequest request) throws ServiceException {
-        Response unauthorized = permissionService.checkGlobalPermission();
-        if (unauthorized != null ||
-                !userHasAdministratorPermission(request)) {
+        Response unauthorized = checkParam(removeCategory);
+        if (unauthorized != null) {
             return unauthorized;
         }
 
