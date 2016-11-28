@@ -470,13 +470,11 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/getTimesheets")
     public Response getTimesheets(@Context HttpServletRequest request) {
-
-        Response response = permissionService.checkUserPermission();
+        Response response = permissionService.checkRootPermission();
         if (response != null) {
             return response;
         }
 
-        List<Timesheet> timesheetList = sheetService.all();
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<>();
         Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
@@ -490,19 +488,16 @@ public class TimesheetRest {
             Date latestEntryDate = new Date();
             int timesheetID = 0;
 
-            for (Timesheet timesheet : timesheetList) {
-                //check permissions for each sheet
-                if (!permissionService.userCanViewTimesheet(user, timesheet)) {
-                    return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
-                }
-
-                if (timesheet.getUserKey().equals(ComponentAccessor.getUserManager().
-                        getUserByName(user.getName()).getKey()) && !timesheet.getIsMasterThesisTimesheet()) {
+            try {
+                if (sheetService.userHasTimesheet(user.getKey(), false)) {
+                    Timesheet timesheet = sheetService.getTimesheetByUser(user.getKey(), false);
                     isActive = timesheet.getIsActive();
                     isEnabled = timesheet.getIsEnabled();
                     latestEntryDate = timesheet.getLatestEntryDate();
                     timesheetID = timesheet.getID();
                 }
+            } catch (ServiceException e) {
+                e.printStackTrace();
             }
 
             jsonTimesheet.setActive(isActive);
