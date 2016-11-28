@@ -141,8 +141,8 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public boolean isJiraAdministrator(ApplicationUser user) {
-        boolean isJiraAdmin = false;
-        boolean isJiraTestAdmin = false;
+        boolean isJiraAdmin;
+        boolean isJiraTestAdmin;
         if (BASE_URL.contains("test")) {
             isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_TEST_ADMINISTRATORS);
         } else {

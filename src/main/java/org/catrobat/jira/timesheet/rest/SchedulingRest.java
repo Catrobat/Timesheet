@@ -59,22 +59,11 @@ public class SchedulingRest {
         this.schedulingService = schedulingService;
     }
 
-    private boolean userHasPermission(HttpServletRequest request){
-        //verify if user is allowed to trigger jobs manually
-        ApplicationUser loggedInUser = ComponentAccessor.getUserManager().getUserByName(request.getRemoteUser());
-        if (!permissionService.isTimesheetAdmin(loggedInUser) ||
-                !permissionService.isJiraAdministrator(loggedInUser)) {
-            return false;
-        }
-        return true;
-    }
-
     @GET
     @Path("/trigger/activity/notification")
     public Response activityNotification(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkUserPermission();
-        if (unauthorized != null ||
-                !userHasPermission(request)) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -103,9 +92,8 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/activity/verification")
     public Response activityVerification(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkUserPermission();
-        if (unauthorized != null ||
-                !userHasPermission(request)) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -124,9 +112,8 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/out/of/time/notification")
     public Response outOfTimeNotification(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkUserPermission();
-        if (unauthorized != null ||
-                !userHasPermission(request)) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -144,9 +131,8 @@ public class SchedulingRest {
     @Path("/getScheduling")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getScheduling(@Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkUserPermission();
-        if (unauthorized != null  ||
-                !userHasPermission(request)) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
@@ -160,9 +146,8 @@ public class SchedulingRest {
     @Path("/saveScheduling")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setScheduling(final JsonScheduling jsonScheduling, @Context HttpServletRequest request) {
-        Response unauthorized = permissionService.checkUserPermission();
-        if (unauthorized != null ||
-                !userHasPermission(request)) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
             return unauthorized;
         }
 
