@@ -102,6 +102,7 @@ public class ConfigResourceRestTest {
         //additional mocks
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(permissionServiceMock.checkUserPermission()).thenReturn(null);
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
     }
 
     @Test
