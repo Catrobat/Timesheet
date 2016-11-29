@@ -207,55 +207,6 @@ function editEntryCallback(entry, timesheetData, form) {
     oldViewRow.remove();
 
     form.row.hide();
-
-    if(timesheetData.teams > 0) {
-        AJS.$(".team").show();
-        form.teamSelect.show();
-    } else {
-        AJS.$(".team").hide();
-        form.teamSelect.hide();
-    }
-
-    if (isSystemCategorySelected(timesheetData, form)) {
-        AJS.$(".ticket").hide();
-        AJS.$(".partner").hide();
-        AJS.$(".team").hide();
-        AJS.$(".duration").hide();
-        AJS.$(".pause").hide();
-        AJS.$(".end").hide();
-        AJS.$(".start").hide();
-
-        form.ticketSelect.hide();
-        form.partnerSelect.hide();
-        form.teamSelect.hide();
-        form.durationField.hide();
-        form.pauseTimeField.hide();
-        form.endTimeField.hide();
-        form.beginTimeField.hide();
-    }
-
-    if (isPairProgrammingCategorySelected(timesheetData, form)) {
-        AJS.$(".partner").show();
-        form.partnerSelect.show();
-    }
-    else {
-        AJS.$(".partner").hide();
-        form.partnerSelect.hide();
-
-        AJS.$(".ticket").show();
-        AJS.$(".team").show();
-        AJS.$(".duration").show();
-        AJS.$(".pause").show();
-        AJS.$(".end").show();
-        AJS.$(".start").show();
-
-        form.ticketSelect.show();
-        form.teamSelect.show();
-        form.durationField.show();
-        form.pauseTimeField.show();
-        form.endTimeField.show();
-        form.beginTimeField.show();
-    }
 }
 
 /**
@@ -314,48 +265,6 @@ function prepareForm(entry, timesheetData, isModified) {
         partnerSelect: row.find('span.partner_'),
         teamSelect: row.find('select.team')
     };
-
-    if (isSystemCategorySelected(timesheetData, form)) {
-        AJS.$(".ticket").hide();
-        AJS.$(".partner").hide();
-        AJS.$(".team").hide();
-        AJS.$(".duration").hide();
-        AJS.$(".pause").hide();
-        AJS.$(".end").hide();
-        AJS.$(".start").hide();
-
-        form.ticketSelect.hide();
-        form.partnerSelect.hide();
-        form.teamSelect.hide();
-        form.durationField.hide();
-        form.pauseTimeField.hide();
-        form.endTimeField.hide();
-        form.beginTimeField.hide();
-    }
-
-    if (isPairProgrammingCategorySelected(timesheetData, form)) {
-        AJS.$(".partner").show();
-        form.partnerSelect.show();
-    }
-    else {
-        AJS.$(".partner").hide();
-        form.partnerSelect.hide();
-
-        AJS.$(".ticket").show();
-        AJS.$(".team").show();
-        AJS.$(".duration").show();
-        AJS.$(".pause").show();
-        AJS.$(".end").show();
-        AJS.$(".start").show();
-
-        form.ticketSelect.show();
-        form.teamSelect.show();
-        form.durationField.show();
-        form.pauseTimeField.show();
-        form.endTimeField.show();
-        form.beginTimeField.show();
-    }
-
 
     //date time columns
     form.dateField
@@ -448,7 +357,6 @@ function prepareForm(entry, timesheetData, isModified) {
             AJS.$(".pause").fadeIn(2000);
             AJS.$(".duration").fadeIn(2000);
             AJS.$(".ticket").fadeIn(2000);
-            AJS.$(".partner").fadeIn(2000);
 
             // define special behaviour
             if (countDefinedElementsInArray(teams) < 2) {
@@ -459,15 +367,22 @@ function prepareForm(entry, timesheetData, isModified) {
             }
 
             if (categoryIndex === indexOfPP) {
-                AJS.$(".partner").show();
+                setTimeout(function(){ //little hack we have to do
+                    AJS.$(".partner").show();
+                    form.partnerSelect.show();
+                }, 100);
             }
-            else {
-                AJS.$(".partner").hide();
+            else{
+                setTimeout(function(){
+                    AJS.$(".partner").hide();
+                }, 100);
+                form.partnerSelect.select2("val", "");
             }
         }
     });
 
     form.partnerSelect.change(function () {
+        //not necessary anymore, because it is hidden
         var index = getIDFromCategoryName("Pair programming", timesheetData);
         form.categorySelect.auiSelect2("val", index);
     });
@@ -641,13 +556,9 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
     categorySelect.auiSelect2({data: categoriesPerTeam});
 
     if (isModified) {
-        console.log(entry.category);
         var cat_id = getIDFromCategoryName(entry.category);
         categorySelect.val(cat_id).trigger("change");
-
-        if (isPairProgrammingCategorySelected(timesheetData, form)) {
-            AJS.$(".partner").show();
-        }
+        form.partnerSelect.val(entry.partner);
     }
     else {
         var suitableIndex = getSuitableCatIndex(categoriesPerTeam);

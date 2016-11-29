@@ -4,3 +4,4 @@
 *.iml
 saved database/
 target/
+src/main/resources/js/timesheet/table.js.rej
