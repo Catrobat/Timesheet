@@ -329,6 +329,14 @@ function isPairProgrammingCategorySelected(timesheetData, form) {
     return ((categoryName.includes("(pp)") || categoryName.includes("pair")) && !form.partnerSelect.val());
 }
 
+function getLengthOfArray(array) {
+    var length = 0;
+    for (var k in array) {
+        length++;
+    }
+    return length;
+}
+
 
 // function printDomainAttributes() {
 //     var baseUrl = AJS.params.baseURL;

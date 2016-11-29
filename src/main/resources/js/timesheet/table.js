@@ -207,6 +207,7 @@ function editEntryCallback(entry, timesheetData, form) {
     oldViewRow.remove();
 
     form.row.hide();
+
 }
 
 /**
@@ -266,6 +267,7 @@ function prepareForm(entry, timesheetData, isModified) {
         teamSelect: row.find('select.team')
     };
 
+    form.ticketSelect.show();
     //date time columns
     form.dateField
         .datePicker(
@@ -359,21 +361,22 @@ function prepareForm(entry, timesheetData, isModified) {
             AJS.$(".ticket").fadeIn(2000);
 
             // define special behaviour
-            if (countDefinedElementsInArray(teams) < 2) {
-                AJS.$(".team").fadeOut(2000);
-            }
-            else {
-                AJS.$(".team").fadeIn(2000);
-            }
+            setTimeout(function () { //little hack we have to do
+                if (getLengthOfArray(timesheetData.teams) > 1) {
+                    AJS.$(".team").show();
+                } else {
+                    AJS.$(".team").hide();
+                }
+            }, 100);
 
             if (categoryIndex === indexOfPP) {
-                setTimeout(function(){ //little hack we have to do
+                setTimeout(function () { //little hack we have to do
                     AJS.$(".partner").show();
                     form.partnerSelect.show();
                 }, 100);
             }
-            else{
-                setTimeout(function(){
+            else {
+                setTimeout(function () {
                     AJS.$(".partner").hide();
                 }, 100);
                 form.partnerSelect.select2("val", "");
