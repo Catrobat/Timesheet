@@ -21,7 +21,10 @@ import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.services.impl.*;
+import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TimesheetServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +38,6 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -747,9 +749,10 @@ public class TimesheetRestTest {
         when(timesheetMock.getEntries()).thenReturn(timesheetEntries);
         when(timesheetEntryServiceMock.getEntriesBySheet(timesheetMock)).thenReturn(timesheetEntries);
         when(ComponentAccessor.getUserManager().getUserByKey(any()).getEmailAddress()).thenReturn("user@test.at");
+        when(categoryMock.getName()).thenReturn("category 1");
 
-        //response = timesheetRestMock.putTimesheetEntry(requestMock, jsonTimesheetEntry, timesheetID, isMTSheet);
-        //assertNotNull(response.getEntity());
+        response = timesheetRestMock.putTimesheetEntry(requestMock, jsonTimesheetEntry, timesheetID, isMTSheet);
+        assertNotNull(response.getEntity());
     }
 
     @Test
