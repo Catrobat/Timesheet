@@ -486,7 +486,7 @@ public class TimesheetRest {
             boolean isActive = false;
             boolean isOffline = false;
             boolean isEnabled = false;
-            Date latestEntryDate = new Date();
+            Date latestEntryDate = new Date(0);
             int timesheetID = 0;
 
             try {
