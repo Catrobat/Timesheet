@@ -484,6 +484,7 @@ public class TimesheetRest {
             JsonTimesheet jsonTimesheet = new JsonTimesheet();
 
             boolean isActive = false;
+            boolean isOffline = false;
             boolean isEnabled = false;
             Date latestEntryDate = new Date();
             int timesheetID = 0;
@@ -492,6 +493,7 @@ public class TimesheetRest {
                 if (sheetService.userHasTimesheet(user.getKey(), false)) {
                     Timesheet timesheet = sheetService.getTimesheetByUser(user.getKey(), false);
                     isActive = timesheet.getIsActive();
+                    isOffline = timesheet.getIsOffline();
                     isEnabled = timesheet.getIsEnabled();
                     latestEntryDate = timesheet.getLatestEntryDate();
                     timesheetID = timesheet.getID();
@@ -501,6 +503,7 @@ public class TimesheetRest {
             }
 
             jsonTimesheet.setActive(isActive);
+            jsonTimesheet.setOffline(isOffline);
             jsonTimesheet.setEnabled(isEnabled);
             jsonTimesheet.setLatestEntryDate(latestEntryDate);
             jsonTimesheet.setTimesheetID(timesheetID);
