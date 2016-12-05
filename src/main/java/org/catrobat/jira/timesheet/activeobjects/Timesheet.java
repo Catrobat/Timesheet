@@ -87,6 +87,10 @@ public interface Timesheet extends Entity {
 
     void setIsMasterThesisTimesheet(boolean isMasterThesisTimesheet);
 
+    void setIsReactivated(boolean reactivated);
+
+    boolean getIsReactivated();
+
     @OneToMany(reverse = "getTimeSheet")
     TimesheetEntry[] getEntries();
 

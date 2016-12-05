@@ -10,9 +10,11 @@ import org.catrobat.jira.timesheet.services.SchedulingService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
-import org.joda.time.DateTime;
 
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ActivityNotificationJob implements PluginJob {
 
@@ -26,11 +28,11 @@ public class ActivityNotificationJob implements PluginJob {
     public void execute(Map<String, Object> map) {
         System.out.println((new Date()).toString() + " ActivityNotificationJob");
 
-        sheetService = (TimesheetService)map.get("sheetService");
-        entryService = (TimesheetEntryService)map.get("entryService");
-        teamService = (TeamService)map.get("teamService");
-        configService = (ConfigService)map.get("configService");
-        schedulingService = (SchedulingService)map.get("schedulingService");
+        sheetService = (TimesheetService) map.get("sheetService");
+        entryService = (TimesheetEntryService) map.get("entryService");
+        teamService = (TeamService) map.get("teamService");
+        configService = (ConfigService) map.get("configService");
+        schedulingService = (SchedulingService) map.get("schedulingService");
 
         List<Timesheet> timesheetList = sheetService.all();
         Config config = configService.getConfiguration();
@@ -41,7 +43,6 @@ public class ActivityNotificationJob implements PluginJob {
                 continue;
             }
             if (timesheet.getIsOffline()) {  // user is offline
-
                 //inform coordinators
                 for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                     sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectOfflineState(),
@@ -49,9 +50,8 @@ public class ActivityNotificationJob implements PluginJob {
                     System.out.println("Coordinator-email: " + coordinatorMailAddress);
                 }
 
-                //Todo: inform all user in approved group
+                //inform timesheet admins
                 TimesheetAdmin[] timesheetAdmins = config.getTimesheetAdminUsers();
-                //inform timesheet admins (approved users)
                 for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
                     System.out.println("timesheetAdmin: = " + timesheetAdmin.getUserName());
                     sendMail(createEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectOfflineState(),
@@ -70,14 +70,15 @@ public class ActivityNotificationJob implements PluginJob {
                         }
                     }
                 }
-            } else { // user is active again
-                        /*for (Map.Entry<ApplicationUser, Vector<ApplicationUser>> entry : notifyUsersMap.entrySet()) {
-                            List<ApplicationUser> appUserList = entry.getValue();
-                            for (ApplicationUser appUser : appUserList) {
-                                sendMail(createEmail(appUser.getEmailAddress(), config.getMailSubjectActiveState(),
-                                        config.getMailBodyActiveState()));
-                            }
-                        }*/
+            } else if (timesheet.getIsReactivated()) {
+                // user is active again
+                //inform coordinators that the user is back and active now
+                for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+                    sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectActiveState(),
+                            config.getMailBodyActiveState()));
+                }
+            } else {
+                System.out.println("User is still active and no reaction is necessary.");
             }
         }
 
