@@ -38,6 +38,7 @@ public class ActivityVerificationJob implements PluginJob {
             if (entries.length == 0) {
                 continue;
             }
+            Date latestEntryDate = entries[0].getBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null) {
                 if (latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) { // user has set himself to inactive
@@ -49,7 +50,7 @@ public class ActivityVerificationJob implements PluginJob {
                 }
             }
             // user is active, but latest entry is older than 2 weeks
-            if (timesheet.getIsActive() && schedulingService.isOlderThanInactiveTime(entries[0].getBeginDate())) {
+            if (timesheet.getIsActive() && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setIsActive(false);
                 timesheet.setIsAutoInactive(true);
                 timesheet.save();
@@ -77,7 +78,8 @@ public class ActivityVerificationJob implements PluginJob {
                 );
             }
             // user is still inactive since 2 months
-            else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() && schedulingService.isOlderThanOfflineTime(entries[0].getBeginDate())) {
+            else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() &&
+                    schedulingService.isOlderThanOfflineTime(latestEntryDate)) {
                 timesheet.setIsOffline(true);
                 timesheet.setIsAutoOffline(true);
                 timesheet.setIsAutoInactive(false);
@@ -85,7 +87,7 @@ public class ActivityVerificationJob implements PluginJob {
 
             }
             //user is back again
-            else if (!schedulingService.isOlderThanInactiveTime(entries[0].getBeginDate())) {
+            else if (!schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setIsActive(true);
                 timesheet.setIsOffline(false);
                 timesheet.setIsAutoInactive(false);
@@ -95,7 +97,7 @@ public class ActivityVerificationJob implements PluginJob {
             // user has set himself inactive
             else if (!timesheet.getIsActive() && !timesheet.getIsAutoInactive()) {
                 // user remains inactive, will be set to offline
-                if (isDateOlderThanOneWeek(entries[0].getBeginDate())) {
+                if (isDateOlderThanOneWeek(latestEntryDate)) {
                     timesheet.setIsActive(false);
                     timesheet.setIsOffline(true);
                     timesheet.setIsAutoInactive(false);

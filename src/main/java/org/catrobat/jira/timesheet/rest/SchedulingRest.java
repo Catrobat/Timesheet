@@ -72,6 +72,7 @@ public class SchedulingRest {
         params.put("entryService", entryService);
         params.put("teamService", teamService);
         params.put("configService", configService);
+        params.put("schedulingService", schedulingService);
 
         ActivityNotificationJob activityNotificationJob = new ActivityNotificationJob();
         activityNotificationJob.execute(params);
@@ -102,6 +103,7 @@ public class SchedulingRest {
         params.put("entryService", entryService);
         params.put("teamService", teamService);
         params.put("categoryService", categoryService);
+        params.put("schedulingService", schedulingService);
 
         ActivityVerificationJob activityVerificationJob = new ActivityVerificationJob();
         activityVerificationJob.execute(params);
@@ -120,6 +122,7 @@ public class SchedulingRest {
         Map<String, Object> params = new HashMap<>();
         params.put("sheetService", sheetService);
         params.put("configService", configService);
+        params.put("schedulingService", schedulingService);
 
         OutOfTimeJob outOfTimeJob = new OutOfTimeJob();
         outOfTimeJob.execute(params);
