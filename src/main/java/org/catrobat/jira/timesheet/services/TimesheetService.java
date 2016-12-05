@@ -30,39 +30,41 @@ import java.util.List;
 public interface TimesheetService {
     /**
      * Edits a existing Timesheet
-     *
-     * @param userKey             identifies the user
+     *  @param userKey             identifies the user
      * @param targetHoursPractice specifies the amount of hours the user has to
      *                            solve in practical work
      * @param targetHoursTheory   specifies the amount of hours the user has to
-     *                            invest in theoretical work
+ *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
      * @param ects
-     * @return the new Timesheet, or null
-     */
+     * @param isActive
+     * @param isOffline
+     * @param isMasterThesisTimesheet @return the new Timesheet, or null
+     * @param isEnabled
+     * */
     @Nullable
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
-                            int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                            String reason, double ects, Date latestEntryDate, Boolean isActive, Boolean isEnabled,
-                            Boolean isMasterThesisTimesheet) throws ServiceException;
+            int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
+            String reason, double ects, Date latestEntryDate, boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled) throws ServiceException;
 
     /**
      * Adds a new Timesheet
-     *
-     * @param userKey             identifies the user
+     *  @param userKey             identifies the user
      * @param targetHoursPractice specifies the amount of hours the user has to
      *                            solve in practical work
      * @param targetHoursTheory   specifies the amount of hours the user has to
-     *                            invest in theoretical work
+ *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
      * @param ects
-     * @return the new Timesheet
-     */
+     * @param isActive
+     * @param isOffline
+     * @param isMasterThesisTimesheet @return the new Timesheet
+     * @param isEnabled
+     * */
     @NotNull
     Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
-                  int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                  String reason, double ects, Boolean isActive, Boolean isEnabled,
-                  Boolean isMasterThesisTimesheet);
+            int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
+            String reason, double ects, boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled);
 
     /**
      * Return all Timesheets

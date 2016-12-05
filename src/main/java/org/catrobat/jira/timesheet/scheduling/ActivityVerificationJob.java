@@ -40,6 +40,18 @@ public class ActivityVerificationJob implements PluginJob {
             }
             Date latestEntryDate = entries[0].getBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
+            TimesheetEntry latestDeactivatedEntry = getLatestDeactivatedEntry(timesheet);
+            if (latestDeactivatedEntry != null) {
+                if (latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0 ) {// user has set himself to deactivated
+                    timesheet.setIsActive(false);
+                    timesheet.setIsAutoInactive(false);
+                    timesheet.setIsOffline(true);
+                    timesheet.setIsAutoOffline(false);
+                    timesheet.save();
+                    printStatusFlags(timesheet);
+                    continue;
+                }
+            }
             if (latestInactiveEntry != null) {
                 if (latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) { // user has set himself to inactive
                     timesheet.setIsActive(false);
@@ -110,6 +122,17 @@ public class ActivityVerificationJob implements PluginJob {
 
             printStatusFlags(timesheet);
         }
+    }
+
+    private TimesheetEntry getLatestDeactivatedEntry(Timesheet timesheet) {
+        TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
+        for (TimesheetEntry entry : entries) {
+            if (entry.getCategory().getName().equals("Deactivated")
+                    && (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
+                return entry;
+            }
+        }
+        return null;
     }
 
     private TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {

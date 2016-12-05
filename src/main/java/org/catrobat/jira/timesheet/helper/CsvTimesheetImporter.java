@@ -85,9 +85,10 @@ public class CsvTimesheetImporter {
                         columns[7],                     //admin reason
                         Double.parseDouble(columns[8]), //ects
                         true,                           //isActice
-                        true,                           //isEnabled
-                        false                           //isMTSheet
-                );
+                        false,                          //isOffline
+                        //isEnabled
+                        false,                           //isMTSheet
+                        true);
             } else if (columns.length == 10) {
                 Timesheet timesheet = timesheetService.getTimesheetImport(columns[9]);
                 SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm");

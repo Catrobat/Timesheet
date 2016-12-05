@@ -41,9 +41,9 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
-                                   int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-                                   String lectures, String reason, double ects, Date latestEntryDate,
-                                   Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) throws ServiceException {
+            int targetHours, int targetHoursCompleted, int targetHoursRemoved,
+            String lectures, String reason, double ects, Date latestEntryDate,
+            boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         if (found.length > 2) {
@@ -53,7 +53,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         }
 
         for (Timesheet aFound : found) {
-            if (isMasterThesisTimesheet.equals(aFound.getIsMasterThesisTimesheet())) {
+            if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
                 Timesheet sheet = aFound;
 
                 sheet.setUserKey(userKey);
@@ -67,6 +67,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                 sheet.setEcts(ects);
                 sheet.setLatestEntryDate(latestEntryDate);
                 sheet.setIsActive(isActive);
+                sheet.setIsOffline(isOffline);
                 sheet.setIsEnabled(isEnabled);
                 sheet.save();
                 return sheet;
@@ -79,9 +80,9 @@ public class TimesheetServiceImpl implements TimesheetService {
     @NotNull
     @Override
     public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
-                         int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-                         String lectures, String reason, double ects,
-                         Boolean isActive, Boolean isEnabled, Boolean isMasterThesisTimesheet) {
+            int targetHours, int targetHoursCompleted, int targetHoursRemoved,
+            String lectures, String reason, double ects,
+            boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled) {
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
         sheet.setTargetHoursPractice(targetHoursPractice);
@@ -95,6 +96,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setLatestEntryDate(new Date());
         sheet.setIsActive(isActive);
         sheet.setIsEnabled(isEnabled);
+        sheet.setIsOffline(isOffline);
         sheet.setIsMasterThesisTimesheet(isMasterThesisTimesheet);
         sheet.save();
         return sheet;

@@ -31,8 +31,7 @@ public interface TimesheetEntryService {
             Team team, boolean isGoogleDocImport, Date inactiveEndDate, Date deactivateEndDate, String jiraTicketID, String userName);
 
     TimesheetEntry edit(int entryID, Timesheet sheet, Date begin, Date end, Category category, String description,
-                        int pause, Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
-                        String userName) throws ServiceException;
+            int pause, Team team, boolean isGoogleDocImport, Date inactiveEndDate, Date deactivatedEndDate, String userName, String jiraTicketID) throws ServiceException;
 
     TimesheetEntry getEntryByID(int entryID) throws ServiceException;
 

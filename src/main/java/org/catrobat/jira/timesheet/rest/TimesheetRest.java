@@ -594,9 +594,12 @@ public class TimesheetRest {
                 entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), programmingPartnerName);
 
         boolean isActive = sheet.getIsActive();
+        boolean isOffline = sheet.getIsOffline();
 
         if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
             isActive = false;
+        } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0 )) {
+            isOffline = false;
         }
 
         //update latest timesheet entry date if latest entry date is < new latest entry in the table
@@ -606,7 +609,7 @@ public class TimesheetRest {
                         sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                         sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
                         sheet.getReason(), sheet.getEcts(), entryService.getEntriesBySheet(sheet)[0].
-                                getBeginDate(), isActive, sheet.getIsEnabled(), isMTSheet);
+                                getBeginDate(), isActive, isOffline, isMTSheet, sheet.getIsEnabled());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -615,8 +618,8 @@ public class TimesheetRest {
                 sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
                         sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                         sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
-                        sheet.getReason(), sheet.getEcts(), entry.getBeginDate(), isActive,
-                        sheet.getIsEnabled(), isMTSheet);
+                        sheet.getReason(), sheet.getEcts(), entry.getBeginDate(), isActive, isOffline,
+                        isMTSheet, sheet.getIsEnabled());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -675,6 +678,7 @@ public class TimesheetRest {
 
             String programmingPartnerName = "";
             boolean isActive = sheet.getIsActive();
+            boolean isOffline = sheet.getIsOffline();
             ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
             try {
@@ -687,6 +691,8 @@ public class TimesheetRest {
                     programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName()).getUsername();
                 } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
                     isActive = false;
+                } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
+                    isOffline = false;
                 }
 
                 TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
@@ -699,15 +705,15 @@ public class TimesheetRest {
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive,
-                            sheet.getIsEnabled(), isMTSheet);
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive, isOffline,
+                            isMTSheet, sheet.getIsEnabled());
                 } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
                     sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive,
-                            sheet.getIsEnabled(), isMTSheet);
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive, isOffline,
+                            isMTSheet, sheet.getIsEnabled());
                 }
 
                 entry.setEntryID(newEntry.getID());
@@ -771,15 +777,15 @@ public class TimesheetRest {
                 sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isEnabled(),
-                        isMTSheet);
+                        jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isOffline(),
+                        isMTSheet, jsonTimesheet.isEnabled());
             } else {
                 sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isEnabled(),
-                        isMTSheet);
+                        jsonTimesheet.getEcts(), jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isOffline(),
+                        isMTSheet, jsonTimesheet.isEnabled());
             }
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -884,7 +890,7 @@ public class TimesheetRest {
             try {
                 entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
                         jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport(),
-                        jsonEntry.getInactiveEndDate(), jsonEntry.getTicketID(), programmingPartnerName);
+                        jsonEntry.getInactiveEndDate(), jsonEntry.getDeactivateEndDate(), programmingPartnerName, jsonEntry.getTicketID());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -923,8 +929,8 @@ public class TimesheetRest {
                         getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                 sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                 sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                entryService.getEntriesBySheet(sheet)[0].getBeginDate(), sheet.getIsActive(),
-                sheet.getIsEnabled(), isMTSheet);
+                entryService.getEntriesBySheet(sheet)[0].getBeginDate(), sheet.getIsActive(), sheet.getIsOffline(),
+                isMTSheet, sheet.getIsEnabled());
     }
 
     @DELETE
@@ -999,7 +1005,7 @@ public class TimesheetRest {
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(), sheet.getEcts(),
-                        new Date(), sheet.getIsActive(), sheet.getIsEnabled(), isMTSheet);
+                        new Date(), sheet.getIsActive(), sheet.getIsOffline(), isMTSheet, sheet.getIsEnabled());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }

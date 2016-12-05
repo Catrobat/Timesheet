@@ -118,9 +118,9 @@ public class SchedulingRestTest {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
                 timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
 
-        timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, true, true, true); // master thesis
-        timesheetService.add("key 2", 450, 0, 450, 450, 0, "bachelor thesis", "", 15, true, false, false); // disabled
-        timesheetService.add("key 3", 450, 0, 450, 200, 20, "seminar paper", "", 7.5, false, true, false); // inactive
+        timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, true, false, true, true); // master thesis
+        timesheetService.add("key 2", 450, 0, 450, 450, 0, "bachelor thesis", "", 15, true, false, false, false); // disabled
+        timesheetService.add("key 3", 450, 0, 450, 200, 20, "seminar paper", "", 7.5, false, false, false, true); // inactive
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
@@ -145,7 +145,7 @@ public class SchedulingRestTest {
         SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
                 timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
 
-        Timesheet timesheet1 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, true, true, true);
+        Timesheet timesheet1 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, true, false, true, true);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -187,7 +187,7 @@ public class SchedulingRestTest {
         //PowerMockito.verifyPrivate(spy, never()).invoke("sendMail", Matchers.anyObject());
 
         timesheetService.remove(timesheet1);
-        Timesheet timesheet2 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, false, true, true); // inactive
+        Timesheet timesheet2 = timesheetService.add("key 1", 450, 450, 900, 200, 0, "master thesis", "", 30, false, false, true, true); // inactive
 
         timesheetEntryService.add(timesheet2, yesterday, today, categoryDrone, "testing a lot of things",
                 30, droneTeam, false, today, today, "123456", "MarkusHobisch"); // this should work

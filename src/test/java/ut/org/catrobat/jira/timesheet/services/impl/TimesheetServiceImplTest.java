@@ -49,7 +49,7 @@ public class TimesheetServiceImplTest {
     public void testAdd() throws Exception {
         //Act
         service.add(userKey, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted,
-                targetHoursRemoved, lectures, reason, ects, true, true, false);
+                targetHoursRemoved, lectures, reason, ects, true, false, false, true);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         //Assert

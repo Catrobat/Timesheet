@@ -143,8 +143,8 @@ public class TimesheetEntryServiceImplTest {
         int newPause = 30;
 
         TimesheetEntry changedEntry = service.edit(newEntry.getID(), sheet, begin, end, category,
-                newDesc, newPause, team, isGoogleDocImport, TODAY, jiraTicketID,
-                pairProgrammingUserName);
+                newDesc, newPause, team, isGoogleDocImport, TODAY, TODAY,
+                pairProgrammingUserName, jiraTicketID);
 
         //Assert
         assertEquals(changedEntry.getDescription(), newDesc);
