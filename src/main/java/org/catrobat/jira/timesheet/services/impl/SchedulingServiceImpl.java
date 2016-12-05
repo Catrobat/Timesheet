@@ -41,6 +41,7 @@ public class SchedulingServiceImpl implements SchedulingService{
         scheduling[0].save();
     }
 
+    @Override
     public boolean isOlderThanInactiveTime(Date date) {
 
         Scheduling[] scheduling = ao.find(Scheduling.class);
@@ -55,6 +56,7 @@ public class SchedulingServiceImpl implements SchedulingService{
         return isDateOlderThanXDays(date, inactiveTimeDays);
     }
 
+    @Override
     public boolean isOlderThanOfflineTime(Date date) {
         Scheduling[] scheduling = ao.find(Scheduling.class);
 
@@ -68,7 +70,8 @@ public class SchedulingServiceImpl implements SchedulingService{
         return isDateOlderThanXDays(date, offlineTimeDays);
     }
 
-    private boolean isDateOlderThanXDays(Date date, int days) {
+    @Override
+    public boolean isDateOlderThanXDays(Date date, int days) {
         DateTime xDaysAgo = new DateTime().minusDays(days);
         DateTime datetime = new DateTime(date);
         return (datetime.compareTo(xDaysAgo) < 0);

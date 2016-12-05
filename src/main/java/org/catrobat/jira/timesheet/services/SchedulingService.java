@@ -15,4 +15,6 @@ public interface SchedulingService {
     boolean isOlderThanInactiveTime(Date date);
 
     boolean isOlderThanOfflineTime(Date date);
+
+    boolean isDateOlderThanXDays(Date date, int days);
 }

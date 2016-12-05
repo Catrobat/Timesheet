@@ -798,8 +798,7 @@ public class TimesheetRest {
     public Response postTimesheetEnableStates(@Context HttpServletRequest request,
             final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
 
-        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        Response response = permissionService.checkUserPermission();
+        Response response = permissionService.checkRootPermission();
         if (response != null) {
             return response;
         }
@@ -813,9 +812,6 @@ public class TimesheetRest {
 
         for (JsonTimesheet jsonTimesheet : jsonTimesheetList) {
             sheet = sheetService.getTimesheetByID(jsonTimesheet.getTimesheetID());
-            if (!permissionService.userCanEditTimesheet(user, sheet)) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to edit the timesheet.").build();
-            }
             if (sheet != null) {
                 sheet = sheetService.updateTimesheetEnableState(jsonTimesheet.getTimesheetID(), jsonTimesheet.isEnabled());
                 JsonTimesheet newJsonTimesheet = createJsonTimesheet(sheet);

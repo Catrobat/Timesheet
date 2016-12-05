@@ -26,11 +26,11 @@ public class ActivityVerificationJob implements PluginJob {
 
         Date today = new Date();
 
-        sheetService = (TimesheetService)map.get("sheetService");
-        entryService = (TimesheetEntryService)map.get("entryService");
-        teamService = (TeamService)map.get("teamService");
-        categoryService = (CategoryService)map.get("categoryService");
-        schedulingService = (SchedulingService)map.get("schedulingService");
+        sheetService = (TimesheetService) map.get("sheetService");
+        entryService = (TimesheetEntryService) map.get("entryService");
+        teamService = (TeamService) map.get("teamService");
+        categoryService = (CategoryService) map.get("categoryService");
+        schedulingService = (SchedulingService) map.get("schedulingService");
 
         List<Timesheet> timesheetList = sheetService.all();
         for (Timesheet timesheet : timesheetList) {
@@ -38,6 +38,12 @@ public class ActivityVerificationJob implements PluginJob {
             if (entries.length == 0) {
                 continue;
             }
+
+            // if the user is already reactivated, the coordinators should already be informed
+            if (timesheet.getIsReactivated()) {
+                timesheet.setIsReactivated(false);
+            }
+
             Date latestEntryDate = entries[0].getBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null) {
@@ -87,11 +93,12 @@ public class ActivityVerificationJob implements PluginJob {
 
             }
             //user is back again
-            else if (!schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
+            else if (!timesheet.getIsActive() && !schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setIsActive(true);
                 timesheet.setIsOffline(false);
                 timesheet.setIsAutoInactive(false);
                 timesheet.setIsAutoOffline(false);
+                timesheet.setIsReactivated(true);
                 timesheet.save();
             }
             // user has set himself inactive
@@ -104,6 +111,14 @@ public class ActivityVerificationJob implements PluginJob {
                     timesheet.setIsAutoOffline(true);
                     timesheet.save();
                 }
+            }
+            //default case: user is active
+            else if (!schedulingService.isOlderThanInactiveTime(entries[0].getBeginDate())) {
+                timesheet.setIsActive(true);
+                timesheet.setIsOffline(false);
+                timesheet.setIsAutoInactive(false);
+                timesheet.setIsAutoOffline(false);
+                timesheet.save();
             }
 
             //else: more possibilities with isActive: [false] isAutoInactive: [true]
