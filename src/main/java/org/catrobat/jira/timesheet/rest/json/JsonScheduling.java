@@ -13,10 +13,12 @@ public class JsonScheduling {
     @XmlElement
     private int inactiveTime;
     private int offlineTime;
+    public int remainingTime;
 
-    public JsonScheduling(int inactiveTime, int offlineTime) {
+    public JsonScheduling(int inactiveTime, int offlineTime, int remainingTime) {
         this.inactiveTime = inactiveTime;
         this.offlineTime = offlineTime;
+        this.remainingTime = remainingTime;
     }
 
     public JsonScheduling() {
@@ -38,4 +40,8 @@ public class JsonScheduling {
     public void setOfflineTime(int offlineTime) {
         this.offlineTime = offlineTime;
     }
+
+    public int getRemainingTime() {return remainingTime;}
+
+    public void setRemainingTime(int remainingTime) {this.remainingTime = remainingTime;}
 }

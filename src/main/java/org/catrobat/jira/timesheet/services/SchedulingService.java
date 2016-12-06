@@ -10,11 +10,13 @@ public interface SchedulingService {
 
     Scheduling getScheduling();
 
-    void setScheduling(int inactiveTime, int offlineTime);
+    void setScheduling(int inactiveTime, int offlineTime, int remainingTime);
 
     boolean isOlderThanInactiveTime(Date date);
 
     boolean isOlderThanOfflineTime(Date date);
 
     boolean isDateOlderThanXDays(Date date, int days);
+
+    boolean isOlderThanRemainingTime(Date date);
 }

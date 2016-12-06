@@ -19,7 +19,10 @@ package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
-import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.activeobjects.Scheduling;
+import org.catrobat.jira.timesheet.activeobjects.Team;
+import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
 import org.catrobat.jira.timesheet.rest.json.JsonScheduling;
 import org.catrobat.jira.timesheet.scheduling.ActivityNotificationJob;
 import org.catrobat.jira.timesheet.scheduling.ActivityVerificationJob;
@@ -32,7 +35,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Path("/scheduling")
 @Produces({MediaType.APPLICATION_JSON})
@@ -140,7 +146,8 @@ public class SchedulingRest {
         }
 
         Scheduling scheduling = schedulingService.getScheduling();
-        JsonScheduling jsonScheduling = new JsonScheduling(scheduling.getInactiveTime(), scheduling.getOfflineTime());
+        JsonScheduling jsonScheduling = new JsonScheduling(scheduling.getInactiveTime(),
+                scheduling.getOfflineTime(), scheduling.getRemainingTime());
 
         return Response.ok(jsonScheduling).build();
     }
@@ -154,7 +161,8 @@ public class SchedulingRest {
             return unauthorized;
         }
 
-        schedulingService.setScheduling(jsonScheduling.getInactiveTime(), jsonScheduling.getOfflineTime());
+        schedulingService.setScheduling(jsonScheduling.getInactiveTime(),
+                jsonScheduling.getOfflineTime(), jsonScheduling.getRemainingTime());
         //timesheetScheduler.reschedule(); // since parameters will be updated on the fly, no rescheduling needed
 
         return Response.noContent().build();

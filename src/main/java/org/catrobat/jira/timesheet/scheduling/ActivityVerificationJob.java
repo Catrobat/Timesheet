@@ -5,7 +5,6 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
-import org.joda.time.DateTime;
 
 import java.util.Date;
 import java.util.List;
@@ -39,6 +38,13 @@ public class ActivityVerificationJob implements PluginJob {
                 continue;
             }
 
+            System.out.println("begin with print");
+            for (TimesheetEntry entry : entries) {
+                System.out.println("entry.getDescription() = " + entry.getDescription());
+                System.out.println("entry.getBeginDate() = " + entry.getBeginDate());
+            }
+
+
             // if the user is already reactivated, the coordinators should already be informed
             if (timesheet.getIsReactivated()) {
                 timesheet.setIsReactivated(false);
@@ -48,7 +54,7 @@ public class ActivityVerificationJob implements PluginJob {
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             TimesheetEntry latestDeactivatedEntry = getLatestDeactivatedEntry(timesheet);
             if (latestDeactivatedEntry != null) {
-                if (latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0 ) {// user has set himself to deactivated
+                if (latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0) {// user has set himself to deactivated
                     timesheet.setIsActive(false);
                     timesheet.setIsAutoInactive(false);
                     timesheet.setIsOffline(true);
@@ -67,12 +73,13 @@ public class ActivityVerificationJob implements PluginJob {
                     continue;
                 }
             }
-            // user is active, but latest entry is older than 2 weeks
+            // user is active, but latest entry is older than the specified inactive limit
             if (timesheet.getIsActive() && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setIsActive(false);
                 timesheet.setIsAutoInactive(true);
                 timesheet.save();
                 Date begin = timesheet.getLatestEntryDate();
+                if (begin == null) begin = new Date();
                 Date end = new Date();
 
                 Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());
@@ -95,7 +102,7 @@ public class ActivityVerificationJob implements PluginJob {
                         ""
                 );
             }
-            // user is still inactive since 2 months
+            // user is still inactive since the specified deactivated/offline limit
             else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() &&
                     schedulingService.isOlderThanOfflineTime(latestEntryDate)) {
                 timesheet.setIsOffline(true);
@@ -116,7 +123,7 @@ public class ActivityVerificationJob implements PluginJob {
             // user has set himself inactive
             else if (!timesheet.getIsActive() && !timesheet.getIsAutoInactive()) {
                 // user remains inactive, will be set to offline
-                if (isDateOlderThanOneWeek(latestEntryDate)) {
+                if (schedulingService.isOlderThanRemainingTime(latestEntryDate)) {
                     timesheet.setIsActive(false);
                     timesheet.setIsOffline(true);
                     timesheet.setIsAutoInactive(false);
@@ -125,7 +132,7 @@ public class ActivityVerificationJob implements PluginJob {
                 }
             }
             //default case: user is active
-            else if (!schedulingService.isOlderThanInactiveTime(entries[0].getBeginDate())) {
+            else if (!schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setIsActive(true);
                 timesheet.setIsOffline(false);
                 timesheet.setIsAutoInactive(false);
@@ -161,18 +168,13 @@ public class ActivityVerificationJob implements PluginJob {
         return null;
     }
 
-    private boolean isDateOlderThanOneWeek(Date date) {
-        DateTime oneWeekAgo = new DateTime().minusWeeks(1);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(oneWeekAgo) < 0);
-    }
-
     private String printStatusFlags(Timesheet timesheet) {
         System.out.println("Status:     -----------------------------------------------------------------------");
         String message = "isActive: [" +
                 timesheet.getIsActive() + "] isAutoInactive: [" + timesheet.getIsAutoInactive() + "] isOffline: [" +
                 timesheet.getIsOffline() + "] isAutoOffline: [" + timesheet.getIsAutoOffline() + "] |";
         System.out.println(message);
+        System.out.println("isReactivated: " + timesheet.getIsReactivated());
         System.out.println("END Status: -----------------------------------------------------------------------");
         return message;
     }

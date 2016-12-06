@@ -1,6 +1,7 @@
 package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
+
 public interface Scheduling extends Entity {
 
     int getInactiveTime();
@@ -10,4 +11,8 @@ public interface Scheduling extends Entity {
     int getOfflineTime();
 
     void setOfflineTime(int offlineTime);
+
+    int getRemainingTime();
+
+    void setRemainingTime(int remainingTime);
 }

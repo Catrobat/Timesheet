@@ -81,7 +81,7 @@ public interface Timesheet extends Entity {
 
     Date getLatestEntryDate();
 
-    void setLatestEntryDate(Date latestEntryDate);
+    void setLatestEntryDate(Date date);
 
     boolean getIsMasterThesisTimesheet();
 

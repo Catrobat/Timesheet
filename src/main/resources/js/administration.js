@@ -70,6 +70,7 @@ AJS.toInit(function () {
     function fillSchedulingData(scheduling) {
         AJS.$("#scheduling-inactive-time").val(scheduling.inactiveTime);
         AJS.$("#scheduling-offline-time").val(scheduling.offlineTime);
+        AJS.$("#scheduling-remaining-time").val(scheduling.remainingTime);
     }
 
     function populateForm(allUsers, allCategories) {
@@ -652,6 +653,7 @@ AJS.toInit(function () {
 
         scheduling.inactiveTime = AJS.$("#scheduling-inactive-time").val();
         scheduling.offlineTime = AJS.$("#scheduling-offline-time").val();
+        scheduling.remainingTime = AJS.$("#scheduling-remaining-time").val();
 
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({

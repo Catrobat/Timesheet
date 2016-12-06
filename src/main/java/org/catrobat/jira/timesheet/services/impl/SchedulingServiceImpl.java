@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 
 import java.util.Date;
 
-public class SchedulingServiceImpl implements SchedulingService{
+public class SchedulingServiceImpl implements SchedulingService {
 
     private final ActiveObjects ao;
 
@@ -28,7 +28,7 @@ public class SchedulingServiceImpl implements SchedulingService{
     }
 
     @Override
-    public void setScheduling(int inactiveTime, int offlineTime) {
+    public void setScheduling(int inactiveTime, int offlineTime, int remainingTime) {
         Scheduling[] scheduling = ao.find(Scheduling.class);
 
         if (scheduling.length == 0) {
@@ -36,11 +36,25 @@ public class SchedulingServiceImpl implements SchedulingService{
             scheduling = ao.find(Scheduling.class);
         }
 
+        if (inactiveTime <= 0 || inactiveTime >= 999) {
+            inactiveTime = 31; // 1 month
+        }
+
+        if (offlineTime <= 0 || offlineTime >= 999) {
+            offlineTime = 61; // 2 months
+        }
+
+        if (remainingTime <= 2 || remainingTime >= 999) {
+            remainingTime = 7; // one week
+        }
+
         scheduling[0].setInactiveTime(inactiveTime);
         scheduling[0].setOfflineTime(offlineTime);
+        scheduling[0].setRemainingTime(remainingTime);
         scheduling[0].save();
     }
 
+    // default value one month
     @Override
     public boolean isOlderThanInactiveTime(Date date) {
 
@@ -56,6 +70,7 @@ public class SchedulingServiceImpl implements SchedulingService{
         return isDateOlderThanXDays(date, inactiveTimeDays);
     }
 
+    // default value two months
     @Override
     public boolean isOlderThanOfflineTime(Date date) {
         Scheduling[] scheduling = ao.find(Scheduling.class);
@@ -68,6 +83,21 @@ public class SchedulingServiceImpl implements SchedulingService{
         int offlineTimeDays = scheduling[0].getOfflineTime();
 
         return isDateOlderThanXDays(date, offlineTimeDays);
+    }
+
+    // default value one week, minimum value 3 days
+    @Override
+    public boolean isOlderThanRemainingTime(Date date) {
+        Scheduling[] scheduling = ao.find(Scheduling.class);
+
+        if (scheduling.length == 0) {
+            ao.create(Scheduling.class).save();
+            scheduling = ao.find(Scheduling.class);
+        }
+
+        int remainingTimeDays = scheduling[0].getRemainingTime();
+
+        return isDateOlderThanXDays(date, remainingTimeDays);
     }
 
     @Override

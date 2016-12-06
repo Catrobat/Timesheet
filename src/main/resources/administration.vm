@@ -340,6 +340,14 @@
                     </div>
                 </div>
                 <div class="field-group">
+                    <label for="scheduling-remaining-time">Remaining Time</label>
+                    <input class="text" type="text" id="scheduling-remaining-time" name="scheduling-remaining-time"
+                           title="scheduling-remaining-time" placeholder="e.g.: [Remaining Time in days] ...">
+                    <div class="description">
+                        When should the user be deactivated after reaching the inactive end date? (In Days)
+                    </div>
+                </div>
+                <div class="field-group">
                     <input type="submit" value="Save" class="aui-button aui-button-primary">
                 </div>
             </fieldset>
