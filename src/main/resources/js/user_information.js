@@ -57,7 +57,12 @@ AJS.toInit(function () {
                 timesheetState = "inactive";
             }
 
-            var latestEntryDate = (new Date(timesheet[i]['latestEntryDate'])).toLocaleDateString("en-US");
+            var latestEntryDate;
+            if (new Date(timesheet[i]['latestEntryDate']).getTime() == new Date(0).getTime()) {
+                latestEntryDate = "none";
+            } else {
+                latestEntryDate = (new Date(timesheet[i]['latestEntryDate'])).toLocaleDateString("en-US");
+            }
 
             if (obj['active']) {
                 if (timesheet[i]['isEnabled']) {
