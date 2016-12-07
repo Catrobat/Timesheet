@@ -427,18 +427,15 @@ function prepareForm(entry, timesheetData, isModified) {
     });
 
     var baseUrl = AJS.params.baseURL; // we have to reassign it otherwise it would be undefined
-    var queryString = "/rest/api/2/project?recent=20";
-    var projectKeys = [];
+    var currentUser = "";
+    var queryString = "/rest/gadget/1.0/currentUser";
 
     AJS.$.ajax({
         type: 'GET',
         url: baseUrl + queryString,
         dataType: 'json',
         success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                var key = data[i].key;
-                projectKeys[i] = key;
-            }
+            currentUser = data.username;
         },
         error: function (jqXHR) {
             console.log("error message: " + jqXHR.responseText);
@@ -446,35 +443,30 @@ function prepareForm(entry, timesheetData, isModified) {
         async: false
     });
 
+
     var tickets = [];
-    AJS.$.each(projectKeys, function (index, value) {
-        if (value === undefined) {
-            value = null; // null is a accepted value, but undefined is going worse
-        }
-        var queryString = "/rest/api/latest/search?jql=project%20in%20(" + value +
-            ")%20AND%20(status%20not%20in%20(closed))";
-
-        AJS.$.ajax({
-            type: 'GET',
-            url: baseUrl + queryString,
-            dataType: 'json',
-            success: function (data) {
-                for (var i = 0; i < data.total; i++) {
-                    if (data.issues[i] && data.issues[i].key) {
-                        var key = data.issues[i].key;
-                        var summary = data.issues[i].fields.summary;
-                        tickets.push(key + " : " + summary);
-                    }
+    var queryString = "/rest/api/2/search?jql=assignee=" + currentUser + "+order+by+duedate";
+    AJS.$.ajax({
+        type: 'GET',
+        url: baseUrl + queryString,
+        dataType: 'json',
+        success: function (data) {
+            for (var i = 0; i < data.total; i++) {
+                if (data.issues[i] && data.issues[i].key) {
+                    var key = data.issues[i].key;
+                    var summary = data.issues[i].fields.summary;
+                    tickets.push(key + " : " + summary);
                 }
-                console.log("Amount of fetched issues: " + i);
+            }
+            console.log("Amount of fetched issues: " + i);
 
-            },
-            error: function (jqXHR) {
-                console.log("error message: " + jqXHR.responseText);
-            },
-            async: false
-        });
+        },
+        error: function (jqXHR) {
+            console.log("error message: " + jqXHR.responseText);
+        },
+        async: false
     });
+
 
     form.ticketSelect.auiSelect2({
         tags: tickets,

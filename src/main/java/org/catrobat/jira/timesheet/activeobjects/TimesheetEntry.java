@@ -76,4 +76,8 @@ public interface TimesheetEntry extends Entity {
     String getJiraTicketID();
 
     void setJiraTicketID(String ticketID);
+
+    boolean getIsTheory();
+
+    void setIsTheory();
 }

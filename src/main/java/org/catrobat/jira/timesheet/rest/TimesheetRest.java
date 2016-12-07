@@ -211,7 +211,7 @@ public class TimesheetRest {
             jsonTimesheetEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
                     entry.getEndDate(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getPauseMinutes(),
                     entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
-                    entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport()));
+                    entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport(), entry.getIsTheory()));
         }
     }
 
@@ -265,14 +265,14 @@ public class TimesheetRest {
                 return Response.serverError().entity("At least one Team Member has no valid Timesheet Entries.").build();
             }
 
-            for (TimesheetEntry timesheetEntry : timesheetEntries) {
-                if (timesheetEntry.getTeam().getTeamName().equals(teamName)) {
-                    jsonTimesheetEntries.add(new JsonTimesheetEntry(timesheetEntry.getID(),
-                            timesheetEntry.getBeginDate(), timesheetEntry.getEndDate(),
-                            timesheetEntry.getInactiveEndDate(), timesheetEntry.getDeactivateEndDate(), timesheetEntry.getPauseMinutes(),
-                            timesheetEntry.getDescription(), timesheetEntry.getTeam().getID(),
-                            timesheetEntry.getCategory().getID(), timesheetEntry.getJiraTicketID(),
-                            timesheetEntry.getPairProgrammingUserName(), timesheetEntry.getIsGoogleDocImport()));
+            for (TimesheetEntry entry : timesheetEntries) {
+                if (entry.getTeam().getTeamName().equals(teamName)) {
+                    jsonTimesheetEntries.add(new JsonTimesheetEntry(entry.getID(),
+                            entry.getBeginDate(), entry.getEndDate(),
+                            entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getPauseMinutes(),
+                            entry.getDescription(), entry.getTeam().getID(),
+                            entry.getCategory().getID(), entry.getJiraTicketID(),
+                            entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport(), entry.getIsTheory()));
                 }
             }
         }
@@ -558,7 +558,7 @@ public class TimesheetRest {
             category = categoryService.getCategoryByID(entry.getCategoryID());
             team = teamService.getTeamByID(entry.getTeamID());
             checkIfCategoryIsAssociatedWithTeam(team, category);
-            permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.getIsGoogleDocImport());
+            permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         } catch (com.atlassian.jira.exception.PermissionException e) {
@@ -594,7 +594,7 @@ public class TimesheetRest {
         }
 
         TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
-                entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
+                entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
                 entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), programmingPartnerName);
 
         boolean isActive = sheet.getIsActive();
@@ -686,7 +686,7 @@ public class TimesheetRest {
             ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
             try {
-                permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.getIsGoogleDocImport());
+                permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
                 checkIfCategoryIsAssociatedWithTeam(team, category);
@@ -699,12 +699,15 @@ public class TimesheetRest {
                     isOffline = false;
                 }
 
-                if (entry.getIsGoogleDocImport()) {
+                if(entry.isTheory()){
+                    category = categoryService.getCategoryByName(SpecialCategories.THEORY);
+                }
+                else if (entry.IsGoogleDocImport()) {
                     category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
                 }
 
                 TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
-                        entry.getDescription(), entry.getPauseMinutes(), team, entry.getIsGoogleDocImport(),
+                        entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
                         entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), programmingPartnerName);
 
                 //update latest timesheet entry date if latest entry date is < new latest entry in the table
@@ -893,7 +896,7 @@ public class TimesheetRest {
 //            }
             try {
                 entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
-                        jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.getIsGoogleDocImport(),
+                        jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.IsGoogleDocImport(),
                         jsonEntry.getInactiveEndDate(), jsonEntry.getDeactivateEndDate(), programmingPartnerName, jsonEntry.getTicketID());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();

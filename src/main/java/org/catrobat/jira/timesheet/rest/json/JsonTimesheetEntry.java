@@ -75,12 +75,15 @@ public final class JsonTimesheetEntry {
     @XmlElement
     private boolean isGoogleDocImport;
 
+    @XmlElement
+    private boolean isTheory;
+
     public JsonTimesheetEntry() {
     }
 
-    public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, Date inactiveEndDate, Date deactivateEndDate, int pauseMinutes,
-            String description, int teamID, int categoryID, String ticketID, String partner,
-            boolean isGoogleDocImport) {
+    public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, Date inactiveEndDate, Date deactivateEndDate,
+            int pauseMinutes, String description, int teamID, int categoryID, String ticketID, String partner,
+            boolean isGoogleDocImport, boolean isTheory) {
         this.entryID = entryID;
         this.beginDate = beginDate;
         this.endDate = endDate;
@@ -93,6 +96,7 @@ public final class JsonTimesheetEntry {
         this.ticketID = ticketID;
         this.partner = partner;
         this.isGoogleDocImport = isGoogleDocImport;
+        this.isTheory = this.isTheory;
     }
 
     public int getEntryID() {
@@ -179,13 +183,15 @@ public final class JsonTimesheetEntry {
         this.partner = partner;
     }
 
-    public boolean getIsGoogleDocImport() {
-        return isGoogleDocImport;
-    }
+    public boolean IsGoogleDocImport() {return isGoogleDocImport;}
 
     public void setIsGoogleDocImport(boolean isGoogleDocImport) {
         this.isGoogleDocImport = isGoogleDocImport;
     }
+
+    public boolean isTheory() {return isTheory;}
+
+    public void setIsTheory(boolean theory) {isTheory = theory; }
 
     @Override
     public boolean equals(Object o) {
@@ -199,14 +205,16 @@ public final class JsonTimesheetEntry {
         if (teamID != that.teamID) return false;
         if (categoryID != that.categoryID) return false;
         if (isGoogleDocImport != that.isGoogleDocImport) return false;
+        if (isTheory != that.isTheory) return false;
         if (!beginDate.equals(that.beginDate)) return false;
         if (!endDate.equals(that.endDate)) return false;
         if (!inactiveEndDate.equals(that.inactiveEndDate)) return false;
         if (!deactivateEndDate.equals(that.deactivateEndDate)) return false;
         if (!partner.equals(that.partner)) return false;
         if (!ticketID.equals(that.ticketID)) return false;
+        if (!description.equals(that.description)) return false;
 
-        return description.equals(that.description);
+        return true;
     }
 
     @Override
@@ -242,7 +250,8 @@ public final class JsonTimesheetEntry {
                 ", description='" + description + '\'' +
                 ", teamID=" + teamID +
                 ", categoryID=" + categoryID +
-                ", isGoogleDocImprt=" + isGoogleDocImport +
+                ", isGoogleDocImport=" + isGoogleDocImport +
+                ", isTheory=" + isTheory +
                 '}';
     }
 }

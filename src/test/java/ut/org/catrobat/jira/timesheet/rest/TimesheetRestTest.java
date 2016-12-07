@@ -631,7 +631,7 @@ public class TimesheetRestTest {
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
                 new Date(), new Date(), new Date(), new Date()
                 , 0, "Description", 1, 1,
-                "CAT-1530", "Partner", false);
+                "CAT-1530", "Partner", false, false);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
@@ -648,7 +648,7 @@ public class TimesheetRestTest {
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
                 new Date(), new Date(), new Date(), new Date()
                 , 0, "Description", 1, 1,
-                "CAT-1530", "Partner", false);
+                "CAT-1530", "Partner", false, false);
 
         JsonTimesheetEntry[] jsonTimesheetEntries = {jsonTimesheetEntry};
 
@@ -714,7 +714,7 @@ public class TimesheetRestTest {
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
                 new Date(), new Date(), new Date(), new Date()
                 , 0, "Description", 1, 1,
-                "CAT-1530", "Partner", false);
+                "CAT-1530", "Partner", false, false);
 
         Date today = new Date();
         TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,

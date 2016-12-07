@@ -16,6 +16,7 @@ function prepareImportDialog(timesheetDataReply) {
     startImportButton.click(function () {
         importGoogleDocsTable(importTextarea.val(), timesheetData, importDialog);
     });
+
 }
 
 function importGoogleDocsTable(table, timesheetData, importDialog) {
@@ -25,11 +26,11 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
     if (entries.length === 0) return;
 
     AJS.$.ajax({
-            type: "post",
-            url: url,
-            contentType: "application/json",
-            data: JSON.stringify(entries)
-        })
+        type: "post",
+        url: url,
+        contentType: "application/json",
+        data: JSON.stringify(entries)
+    })
         .then(function (response) {
             showImportMessage(response);
             AJS.dialog2(importDialog).hide();
@@ -90,29 +91,34 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
 }
 
 function parseEntryFromGoogleDocRow(row, timesheetData) {
+    var isTheory;
     var pieces = row.split("\t");
 
     //check if import entry length is valid
-    if((pieces.length < 7)){
+    if ((pieces.length < 7)) {
         return null;
     }
     //if no pause is specified 0 minutes is given
-    if(pieces[4] == "") {
+    if (pieces[4] == "") {
         pieces[4] = "00:00";
     }
     //check if any field of the import entry is empty
-    for(var i = 0; i <= 7; i++) {
+    for (var i = 0; i <= 7; i++) {
         //Category is allowed to be empty
-        if (i==5) {
-            continue;
+        if (i == 5 && pieces[i].toLowerCase() == "j") {
+            isTheory = true;
+            pieces[i] = "Theory";
         }
-        if(pieces[i] == "") {
+        else if (i == 5 && pieces[i] == "") {
+            pieces[i] = "GoogleDocsImport";
+        }
+        else if (pieces[i] == "") {
             return null;
         }
     }
 
     //check if entry values are correct
-    if((!isValidDate(new Date(pieces[0] + " " + pieces[1]))) ||
+    if ((!isValidDate(new Date(pieces[0] + " " + pieces[1]))) ||
         (!isValidDate(new Date(pieces[0] + " " + pieces[2]))))
         return null;
 
@@ -123,7 +129,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     //import category ID from Google Doc
     var categoryID = getCategoryID(pieces[5], firstTeam.teamCategories, timesheetData);
 
-    if(categoryID == 0) {
+    if (categoryID == 0) {
         categoryID = firstCategoryIDOfFirstTeam;
     }
 
@@ -138,6 +144,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         ticketID: "None",
         partner: "",
         inactiveEndDate: new Date(pieces[0] + " " + pieces[1]),
-        deactivateEndDate: new Date()
+        deactivateEndDate: new Date(),
+        isTheory: isTheory
     };
 }

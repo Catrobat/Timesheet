@@ -39,7 +39,7 @@ public class CsvTimesheetImporter {
     private final ActiveObjects ao;
 
     public CsvTimesheetImporter(TimesheetService timesheetService,
-                                TimesheetEntryService timesheetEntryService, CategoryService categoryService, TeamService teamService, ActiveObjects ao) {
+            TimesheetEntryService timesheetEntryService, CategoryService categoryService, TeamService teamService, ActiveObjects ao) {
 
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
@@ -107,7 +107,7 @@ public class CsvTimesheetImporter {
                 }
             } else if (columns.length == 10) {
                 Timesheet timesheet = timesheetService.getTimesheetImport(columns[9]);
-                SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
                 Calendar cal = Calendar.getInstance();
 
@@ -115,7 +115,7 @@ public class CsvTimesheetImporter {
                 Date pause = sdfPause.parse(columns[5]);
                 cal.setTime(pause);
 
-                int pauseMinutes = cal.get(Calendar.HOUR)*60 + cal.get(Calendar.MINUTE);
+                int pauseMinutes = cal.get(Calendar.HOUR) * 60 + cal.get(Calendar.MINUTE);
 
                 timesheetEntryService.add(
                         timesheet,                                     //timesheet
