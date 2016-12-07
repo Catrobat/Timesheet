@@ -232,7 +232,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public void userCanAddTimesheetEntry(ApplicationUser user, Timesheet sheet, Date beginDate, boolean isGoogleDocsImport) throws PermissionException {
         if (userOwnsSheet(user, sheet)) {
-            if (isGoogleDocsImport) {
+            if (!isGoogleDocsImport) {
                 if (dateIsOlderThanAMonth(beginDate)) {
                     throw new PermissionException("You can not add an entry that is older than 30 days.");
                 }
