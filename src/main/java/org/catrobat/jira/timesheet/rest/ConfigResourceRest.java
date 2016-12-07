@@ -16,6 +16,7 @@
 
 package org.catrobat.jira.timesheet.rest;
 
+import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
@@ -29,13 +30,17 @@ import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
+import org.catrobat.jira.timesheet.utility.DatabaseUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.catrobat.jira.timesheet.rest.RestUtils.convertTeamsToJSON;
 
@@ -46,13 +51,15 @@ public class ConfigResourceRest {
     private final TeamService teamService;
     private final CategoryService categoryService;
     private final PermissionService permissionService;
+    private final ActiveObjects ao;
 
     public ConfigResourceRest(final ConfigService configService, final TeamService teamService,
-            final CategoryService categoryService, final PermissionService permissionService) {
+            final CategoryService categoryService, final PermissionService permissionService, ActiveObjects ao) {
         this.configService = configService;
         this.teamService = teamService;
         this.categoryService = categoryService;
         this.permissionService = permissionService;
+        this.ao = ao;
     }
 
     @GET
@@ -155,6 +162,20 @@ public class ConfigResourceRest {
         }
 
         return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/dropTables")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response dropTables(@Context HttpServletRequest request) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        DatabaseUtil db = new DatabaseUtil(ao);
+        db.clearAllTimesheetTables();
+        return Response.status(Response.Status.OK).entity("All timesheet tables has been dropped!").build();
     }
 
     @PUT

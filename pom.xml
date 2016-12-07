@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.catrobat.jira</groupId>
     <artifactId>timesheet</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 
     <organization>
         <name>Catrobat</name>
@@ -15,7 +15,7 @@
     </organization>
 
     <name>Timesheet</name>
-    <description>Final Chance.</description>
+    <description>A timesheet plugin for everyone</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>

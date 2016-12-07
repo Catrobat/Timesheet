@@ -88,9 +88,9 @@ public class ConfigResourceRestTest {
         categoryService = new CategoryServiceImpl(ao);
         configService = new ConfigServiceImpl(ao, categoryService);
         teamService = new TeamServiceImpl(ao, configService);
-        configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock);
+        configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock, ao);
 
-        configResourceRestMock = new ConfigResourceRest(configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock);
+        configResourceRestMock = new ConfigResourceRest(configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock, ao);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
