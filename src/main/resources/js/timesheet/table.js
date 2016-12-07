@@ -384,12 +384,6 @@ function prepareForm(entry, timesheetData, isModified) {
         }
     });
 
-    form.partnerSelect.change(function () {
-        //not necessary anymore, because it is hidden
-        var index = getIDFromCategoryName("Pair programming", timesheetData);
-        form.categorySelect.auiSelect2("val", index);
-    });
-
     form.descriptionField.change(function () {
         form.saveButton.prop('disabled', false);
         validation(form.descriptionField);
