@@ -92,7 +92,6 @@ public interface TimesheetService {
      * @param userKey
      * @return Boolean
      */
-    @Nullable
     Boolean userHasTimesheet(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException;
 
     /**

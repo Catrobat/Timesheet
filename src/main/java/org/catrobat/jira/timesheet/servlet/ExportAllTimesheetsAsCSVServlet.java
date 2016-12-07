@@ -18,9 +18,9 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
+import org.catrobat.jira.timesheet.helper.CsvTimesheetExporter;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.helper.CsvTimesheetExporterAll;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
@@ -35,14 +35,12 @@ import java.util.List;
 public class ExportAllTimesheetsAsCSVServlet extends HighPrivilegeServlet {
 
     private final TimesheetService timesheetService;
-    private final ConfigService configService;
 
     public ExportAllTimesheetsAsCSVServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                            TimesheetService timesheetService, ConfigService configService,
                                            PermissionService permissionService) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
         this.timesheetService = timesheetService;
-        this.configService = configService;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class ExportAllTimesheetsAsCSVServlet extends HighPrivilegeServlet {
 
         List<Timesheet> timesheetList = timesheetService.all();
 
-        CsvTimesheetExporterAll csvTimesheetExporterAll = new CsvTimesheetExporterAll(configService);
+        CsvTimesheetExporter csvTimesheetExporterAll = new CsvTimesheetExporter();
         PrintStream printStream = new PrintStream(response.getOutputStream(), false, "UTF-8");
         printStream.print(csvTimesheetExporterAll.getTimesheetCsvDataAll(timesheetList));
         printStream.flush();

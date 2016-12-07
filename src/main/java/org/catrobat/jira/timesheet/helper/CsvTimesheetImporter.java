@@ -64,7 +64,7 @@ public class CsvTimesheetImporter {
                 continue;
             }
 
-            String[] columns = line.split(CsvExporter.DELIMITER);
+            String[] columns = line.split(CsvConstants.DELIMITER);
 
             if ((columns[0].equals("Username") ||
                     columns[0].equals("Inactive Date")) &&
@@ -73,22 +73,38 @@ public class CsvTimesheetImporter {
             }
 
             if (columns.length == 11) {
-
-                timesheetService.add(
-                        columns[0],                     //userkey
-                        Integer.parseInt(columns[1]),   //practical
-                        Integer.parseInt(columns[2]),   //theory
-                        Integer.parseInt(columns[5]),   //total
-                        Integer.parseInt(columns[3]),   //completed
-                        Integer.parseInt(columns[4]),   //removed
-                        columns[9],                     //lectures
-                        columns[7],                     //admin reason
-                        Double.parseDouble(columns[8]), //ects
-                        true,                           //isActice
-                        false,                          //isOffline
-                        //isEnabled
-                        false,                           //isMTSheet
-                        true);
+                if (timesheetService.userHasTimesheet(columns[0], false)) {
+                    timesheetService.editTimesheet(
+                            columns[0],                     //userkey
+                            Integer.parseInt(columns[1]),   //practical
+                            Integer.parseInt(columns[2]),   //theory
+                            Integer.parseInt(columns[5]),   //total
+                            Integer.parseInt(columns[3]),   //completed
+                            Integer.parseInt(columns[4]),   //removed
+                            columns[9],                     //lectures
+                            columns[7],                     //admin reason
+                            Double.parseDouble(columns[8]), //ects
+                            new Date(),                     // latest entry date
+                            true,                           //isActice
+                            false,                          //isOffline
+                            false,                           //isMTSheet
+                            true);                          //isEnabled
+                } else {
+                    timesheetService.add(
+                            columns[0],                     //userkey
+                            Integer.parseInt(columns[1]),   //practical
+                            Integer.parseInt(columns[2]),   //theory
+                            Integer.parseInt(columns[5]),   //total
+                            Integer.parseInt(columns[3]),   //completed
+                            Integer.parseInt(columns[4]),   //removed
+                            columns[9],                     //lectures
+                            columns[7],                     //admin reason
+                            Double.parseDouble(columns[8]), //ects
+                            true,                           //isActice
+                            false,                          //isOffline
+                            false,                           //isMTSheet
+                            true);                          //isEnabled
+                }
             } else if (columns.length == 10) {
                 Timesheet timesheet = timesheetService.getTimesheetImport(columns[9]);
                 SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -111,7 +127,7 @@ public class CsvTimesheetImporter {
                         teamService.getTeamByName(columns[8]),         //team
                         true,                                          //isGoogleDocImport
                         sdf.parse(columns[0]),                         //inactive date
-                        new Date(),                                            //deactivate date
+                        sdf.parse(columns[0]),                         //deactivate date
                         "",                                            //JIRA ticket ID
                         ""                                             //pair programming partner
                 );

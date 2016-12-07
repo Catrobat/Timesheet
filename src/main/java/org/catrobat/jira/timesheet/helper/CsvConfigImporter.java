@@ -65,8 +65,8 @@ public class CsvConfigImporter {
                 continue;
             }
 
-            //String[] columns = line.split(CsvExporter.DELIMITER, 24);
-            String[] columns = line.split(CsvExporter.DELIMITER);
+            //String[] columns = line.split(CsvConstants.DELIMITER, 24);
+            String[] columns = line.split(CsvConstants.DELIMITER);
 
             if (columns.length < 2) {
                 errorStringBuilder.append("<li>field has no value (line ")

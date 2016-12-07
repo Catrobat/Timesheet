@@ -16,20 +16,8 @@
 
 package org.catrobat.jira.timesheet.helper;
 
-import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+public class CsvConstants {
 
-import java.util.List;
-
-public class CsvTimesheetExporterAll extends CsvExporter {
-
-
-    public CsvTimesheetExporterAll(ConfigService configService) {
-        super(configService);
-    }
-
-    @Override
-    public String getTimesheetCsvDataAll(List<Timesheet> timesheetList) {
-        return super.getTimesheetCsvDataAll(timesheetList);
-    }
+    public static final String DELIMITER = ";";
+    public static final String NEW_LINE = "\n";
 }

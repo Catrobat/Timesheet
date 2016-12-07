@@ -15,7 +15,6 @@ import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl;
 import org.junit.Assert;
