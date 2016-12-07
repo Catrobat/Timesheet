@@ -21,7 +21,6 @@ import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
@@ -231,7 +230,24 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, JsonTimesheetEntry entry) throws PermissionException {
+    public void userCanAddTimesheetEntry(ApplicationUser user, Timesheet sheet, Date beginDate, boolean isGoogleDocsImport) throws PermissionException {
+        if (userOwnsSheet(user, sheet)) {
+            if (isGoogleDocsImport) {
+                if (dateIsOlderThanAMonth(beginDate)) {
+                    throw new PermissionException("You can not add an entry that is older than 30 days.");
+                }
+            } else {
+                if (dateIsOlderThanFiveYears(beginDate)) {
+                    throw new PermissionException("You can not add an imported entry that is older than 5 years.");
+                }
+            }
+        } else if (!isTimesheetAdmin(user)) {
+            throw new PermissionException("Access forbidden: Sorry, you are not a timesheet admin!");
+        }
+    }
+
+    @Override
+    public void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, TimesheetEntry entry) throws PermissionException {
         if (userOwnsSheet(user, sheet)) {
             if (!entry.getIsGoogleDocImport()) {
                 if (dateIsOlderThanAMonth(entry.getBeginDate()) || dateIsOlderThanAMonth(entry.getEndDate())) {

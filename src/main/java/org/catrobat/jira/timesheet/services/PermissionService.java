@@ -23,11 +23,11 @@ import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
-import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
+import java.util.Date;
 
 @Transactional
 public interface PermissionService {
@@ -55,7 +55,9 @@ public interface PermissionService {
 
     boolean userCanEditTimesheet(ApplicationUser user, Timesheet sheet);
 
-    void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, JsonTimesheetEntry entry) throws PermissionException;
+    void userCanAddTimesheetEntry(ApplicationUser user, Timesheet sheet, Date beginDate, boolean isGoogleDocsImport) throws PermissionException;
+
+    void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, TimesheetEntry entry) throws PermissionException;
 
     void userCanDeleteTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException;
 

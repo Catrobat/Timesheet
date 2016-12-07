@@ -227,12 +227,8 @@ public class PermissionServiceImplTest {
 
     @Test
     public void testIfUserCanEditTimesheetEntry() throws Exception {
-        JsonTimesheetEntry entry = new JsonTimesheetEntry(1,
-                timeSheetEntry.getBeginDate(), timeSheetEntry.getEndDate(), timeSheetEntry.getBeginDate(), timeSheetEntry.getBeginDate()
-                , timeSheetEntry.getPauseMinutes(), timeSheetEntry.getDescription(), 1, 1, "None", "", false);
-
-        permissionServiceException.userCanEditTimesheetEntry(owner, sheet, entry);
-        verify(permissionServiceException).userCanEditTimesheetEntry(owner, sheet, entry);
+        permissionServiceException.userCanEditTimesheetEntry(owner, sheet, timeSheetEntry);
+        verify(permissionServiceException).userCanEditTimesheetEntry(owner, sheet, timeSheetEntry);
     }
 
     @Test(expected = PermissionException.class)
@@ -250,11 +246,7 @@ public class PermissionServiceImplTest {
         when(sheetService.getTimesheetByID(1)).thenReturn(sheet);
         when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
 
-        JsonTimesheetEntry entry = new JsonTimesheetEntry(1,
-                timeSheetEntry.getBeginDate(), timeSheetEntry.getEndDate(), timeSheetEntry.getBeginDate(), timeSheetEntry.getBeginDate()
-                , timeSheetEntry.getPauseMinutes(), timeSheetEntry.getDescription(), 1, 1, "None", "", false);
-
-        permissionService.userCanEditTimesheetEntry(owner, sheet, entry);
+        permissionService.userCanEditTimesheetEntry(owner, sheet, timeSheetEntry);
     }
 
     @Test(expected = PermissionException.class)
@@ -270,12 +262,7 @@ public class PermissionServiceImplTest {
         when(sheetService.getTimesheetByID(1)).thenReturn(sheet);
         when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
 
-        JsonTimesheetEntry entry = new JsonTimesheetEntry(1,
-                timeSheetEntry.getBeginDate(), timeSheetEntry.getEndDate(), timeSheetEntry.getBeginDate(), timeSheetEntry.getBeginDate()
-                , timeSheetEntry.getPauseMinutes(), timeSheetEntry.getDescription(), 1, 1,
-                "None", "", false);
-
-        permissionService.userCanEditTimesheetEntry(owner, sheet, entry);
+        permissionService.userCanEditTimesheetEntry(owner, sheet, timeSheetEntry);
     }
 
     @Test
@@ -318,12 +305,8 @@ public class PermissionServiceImplTest {
 
     @Test(expected = PermissionException.class)
     public void testNullUserCanNotEditTimesheetException() throws Exception {
-        JsonTimesheetEntry entry = new JsonTimesheetEntry(1,
-                timeSheetEntry.getBeginDate(), timeSheetEntry.getEndDate(), timeSheetEntry.getBeginDate(), timeSheetEntry.getBeginDate()
-                , timeSheetEntry.getPauseMinutes(), timeSheetEntry.getDescription(), 1, 1, "None", "", false);
-
-        permissionService.userCanEditTimesheetEntry(eve, sheet, entry);
-        verify(permissionServiceException).userCanEditTimesheetEntry(eve, sheet, entry);
+        permissionService.userCanEditTimesheetEntry(eve, sheet, timeSheetEntry);
+        verify(permissionServiceException).userCanEditTimesheetEntry(eve, sheet, timeSheetEntry);
     }
 
     @Test(expected = PermissionException.class)

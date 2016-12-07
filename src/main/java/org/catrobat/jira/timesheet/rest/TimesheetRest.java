@@ -558,7 +558,7 @@ public class TimesheetRest {
             category = categoryService.getCategoryByID(entry.getCategoryID());
             team = teamService.getTeamByID(entry.getTeamID());
             checkIfCategoryIsAssociatedWithTeam(team, category);
-            permissionService.userCanEditTimesheetEntry(loggedInUser, sheet, entry);
+            permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.getIsGoogleDocImport());
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         } catch (com.atlassian.jira.exception.PermissionException e) {
@@ -686,7 +686,7 @@ public class TimesheetRest {
             ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
             try {
-                permissionService.userCanEditTimesheetEntry(loggedInUser, sheet, entry);
+                permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.getIsGoogleDocImport());
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
                 checkIfCategoryIsAssociatedWithTeam(team, category);
@@ -867,7 +867,7 @@ public class TimesheetRest {
             team = teamService.getTeamByID(jsonEntry.getTeamID());
             sheet = entry.getTimeSheet();
             checkIfCategoryIsAssociatedWithTeam(team, category);
-            permissionService.userCanEditTimesheetEntry(loggedInUser, entry.getTimeSheet(), jsonEntry);
+            permissionService.userCanEditTimesheetEntry(loggedInUser, entry.getTimeSheet(), entry);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         } catch (PermissionException e) {
