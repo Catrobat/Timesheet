@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private void init() {
-        for (String special : SpecialCategories.LIST) {
+        for (String special : SpecialCategories.AllSpecialCategories) {
             Category[] found = ao.find(Category.class, "NAME = ?", special);
             if (found.length == 0) {
                 Category category = ao.create(Category.class);
@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryByName(String name) {
-        if (SpecialCategories.LIST.contains(name)) {
+        if (SpecialCategories.AllSpecialCategories.contains(name)) {
             initIfNotAlready();
         }
         Category[] found = ao.find(Category.class, "NAME = ?", name);
@@ -90,7 +90,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public boolean removeCategory(String name) throws ServiceException {
-        if (SpecialCategories.LIST.contains(name)) {
+        if (SpecialCategories.AllSpecialCategories.contains(name)) {
             throw new ServiceException("This is a special category that cannot be deleted");
         }
 

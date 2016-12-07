@@ -83,7 +83,7 @@ public class ConfigServiceImplTest {
 
         List<CategoryToTeam> categoryToTeamList = Arrays.asList(categoryToTeamArray);
 
-        for (String specialCategory : SpecialCategories.LIST) {
+        for (String specialCategory : SpecialCategories.DefaultCategories) {
             Assert.assertFalse(categoryToTeamList.contains(specialCategory));
         }
     }

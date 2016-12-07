@@ -297,7 +297,7 @@ public class ConfigResourceRest {
             return Response.status(Response.Status.CONFLICT).entity("Category name already exists.").build();
         }
 
-        if (SpecialCategories.LIST.contains(categories[0])) {
+        if (SpecialCategories.AllSpecialCategories.contains(categories[0])) {
             return Response.status(Response.Status.CONFLICT).entity("Special categories cannot be renamed.").build();
         }
 

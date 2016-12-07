@@ -36,6 +36,7 @@ import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
@@ -696,6 +697,10 @@ public class TimesheetRest {
                     isActive = false;
                 } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
                     isOffline = false;
+                }
+
+                if (entry.getIsGoogleDocImport()) {
+                    category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
                 }
 
                 TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,

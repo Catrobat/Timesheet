@@ -26,7 +26,7 @@ public class CategoryServiceImplTest {
     private ActiveObjects ao;
     private EntityManager entityManager;
 
-    private int specialCategoryCount = SpecialCategories.LIST.size();
+    private int specialCategoryCount = SpecialCategories.AllSpecialCategories.size();
 
     @Before
     public void setUp() throws Exception {

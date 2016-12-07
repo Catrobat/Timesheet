@@ -197,7 +197,8 @@ AJS.toInit(function () {
                 //build category list
                 AJS.$("#categories").empty();
                 for (var i = 0; i < categoryList.length; i++) {
-                    if (categoryList[i] === "Inactive" || categoryList[i] === "Deactivated") {
+                    if (categoryList[i] === "Inactive" || categoryList[i] === "Deactivated"
+                        || categoryList[i] === "GoogleDocsImport" || categoryList[i] === "Theory") {
                         AJS.$("#categories").append("<h3>" + categoryList[i] +
                             "<button class=\"aui-button aui-button-subtle\" disabled>" +
                             "<span>This Category cannot be renamed</span></button></h3><fieldset>");

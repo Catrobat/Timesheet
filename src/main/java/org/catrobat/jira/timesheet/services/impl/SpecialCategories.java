@@ -7,5 +7,8 @@ public class SpecialCategories {
 
     private static final String INACTIVE = "Inactive";
     private static final String DEACTIVATED= "Deactivated";
-    public static final ImmutableList<String> LIST = ImmutableList.of(INACTIVE, DEACTIVATED);
+    private static final String THEORY = "Theory";
+    public static final String GOOGLEDOCSIMPORT = "GoogleDocsImport";
+    public static final ImmutableList<String> DefaultCategories = ImmutableList.of(INACTIVE, DEACTIVATED, THEORY);
+    public static final ImmutableList<String> AllSpecialCategories = ImmutableList.of(GOOGLEDOCSIMPORT, INACTIVE, DEACTIVATED, THEORY);
 }
