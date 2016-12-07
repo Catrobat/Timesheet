@@ -6,7 +6,7 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.Config;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.SchedulingService;
 import org.catrobat.jira.timesheet.services.TimesheetService;

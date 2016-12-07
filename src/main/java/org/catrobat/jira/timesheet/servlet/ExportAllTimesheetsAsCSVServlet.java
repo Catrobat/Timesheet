@@ -18,7 +18,7 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
+import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.helper.CsvTimesheetExporterAll;
 import org.catrobat.jira.timesheet.services.PermissionService;

@@ -3,8 +3,7 @@ package org.catrobat.jira.timesheet.scheduling;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
-import org.catrobat.jira.timesheet.activeobjects.ConfigService;
-import org.catrobat.jira.timesheet.activeobjects.Scheduling;
+import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.*;
 import org.joda.time.DateTime;
 

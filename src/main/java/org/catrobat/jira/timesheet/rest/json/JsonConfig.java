@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.rest.json;
 
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.services.ConfigService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

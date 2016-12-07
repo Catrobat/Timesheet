@@ -188,7 +188,7 @@
 
     <!-- administration-components -->
     <component key="configuration" name="Config Service"
-               class="org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl"/>
+               class="org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl"/>
     <!-- end of administration-components -->
 
     <!-- scheduling-components -->

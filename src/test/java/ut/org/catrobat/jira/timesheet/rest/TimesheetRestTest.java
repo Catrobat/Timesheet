@@ -14,7 +14,7 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.activeobjects.impl.ConfigServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.rest.TimesheetRest;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;

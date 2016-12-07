@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.helper;
 
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.services.ConfigService;
 
 import java.util.List;
 
