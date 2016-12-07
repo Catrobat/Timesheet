@@ -75,8 +75,7 @@ public class TimesheetScheduler implements LifecycleAware {
     }
 
     private long jobInterval() {
-        //return 1000*60*60*24; // Everyday
-        return 1000*120; // Testing
+        return 1000*60*60*24; // Everyday
     }
 
     @Override
