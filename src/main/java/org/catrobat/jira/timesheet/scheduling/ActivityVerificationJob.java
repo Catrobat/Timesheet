@@ -78,7 +78,7 @@ public class ActivityVerificationJob implements PluginJob {
                 timesheet.setIsActive(false);
                 timesheet.setIsAutoInactive(true);
                 timesheet.save();
-                Date begin = timesheet.getLatestEntryDate();
+                Date begin = timesheet.getLatestEntryBeginDate();
                 if (begin == null) begin = new Date();
                 Date end = new Date();
 

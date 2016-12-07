@@ -79,7 +79,7 @@ public class ExportMTTimesheetAsCSVServletTest {
         when(timesheet.getTargetHours()).thenReturn(300);
         when(timesheet.getTargetHoursCompleted()).thenReturn(150);
         when(timesheet.getEcts()).thenReturn(10.0);
-        when(timesheet.getLatestEntryDate()).thenReturn(new Date());
+        when(timesheet.getLatestEntryBeginDate()).thenReturn(new Date());
         when(timesheet.getLectures()).thenReturn("Mobile Computing");
         when(timesheet.getIsActive()).thenReturn(true);
         when(timesheet.getIsEnabled()).thenReturn(true);

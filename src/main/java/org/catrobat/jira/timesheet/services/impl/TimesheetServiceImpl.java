@@ -65,7 +65,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                 sheet.setLectures(lectures);
                 sheet.setReason(reason);
                 sheet.setEcts(ects);
-                sheet.setLatestEntryDate(latestEntryDate);
+                sheet.setLatestEntryBeginDate(latestEntryDate);
                 sheet.setIsActive(isActive);
                 sheet.setIsOffline(isOffline);
                 sheet.setIsEnabled(isEnabled);
@@ -93,7 +93,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setLectures(lectures);
         sheet.setReason(reason);
         sheet.setEcts(ects);
-        sheet.setLatestEntryDate(new Date());
+        sheet.setLatestEntryBeginDate(new Date());
         sheet.setIsActive(isActive);
         sheet.setIsEnabled(isEnabled);
         sheet.setIsOffline(isOffline);

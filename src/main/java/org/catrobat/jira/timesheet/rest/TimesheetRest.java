@@ -377,7 +377,7 @@ public class TimesheetRest {
 
     private JsonTimesheet createJsonTimesheet(Timesheet sheet) {
         return new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
-                sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
+                sheet.getEcts(), sheet.getLatestEntryBeginDate(), sheet.getTargetHoursPractice(),
                 sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                 sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsAutoInactive(), sheet.getIsOffline(),
                 sheet.getIsAutoOffline(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
@@ -427,7 +427,7 @@ public class TimesheetRest {
         }
 
         JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheetID, sheet.getLectures(), sheet.getReason(),
-                sheet.getEcts(), sheet.getLatestEntryDate(), sheet.getTargetHoursPractice(),
+                sheet.getEcts(), sheet.getLatestEntryBeginDate(), sheet.getTargetHoursPractice(),
                 sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                 sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsAutoInactive(), sheet.getIsOffline(),
                 sheet.getIsAutoOffline(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
@@ -495,7 +495,7 @@ public class TimesheetRest {
                     isActive = timesheet.getIsActive();
                     isOffline = timesheet.getIsOffline();
                     isEnabled = timesheet.getIsEnabled();
-                    latestEntryDate = timesheet.getLatestEntryDate();
+                    latestEntryDate = timesheet.getLatestEntryBeginDate();
                     timesheetID = timesheet.getID();
                 }
             } catch (ServiceException e) {
@@ -1188,7 +1188,7 @@ public class TimesheetRest {
 
         List<Timesheet> timesheetList = sheetService.all();
         ArrayList<String> users = new ArrayList<>();
-        Comparator<Timesheet> timesheetComparator = (o1, o2) -> o2.getLatestEntryDate().compareTo(o1.getLatestEntryDate());
+        Comparator<Timesheet> timesheetComparator = (o1, o2) -> o2.getLatestEntryBeginDate().compareTo(o1.getLatestEntryBeginDate());
         ArrayList<Timesheet> timesheets = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetList) {
@@ -1204,7 +1204,7 @@ public class TimesheetRest {
         for (Timesheet timesheet : timesheets) {
             String userKey = timesheet.getUserKey();
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
-            String entry = user.getDisplayName() + "  (" + timesheet.getLatestEntryDate().toString() + ")";
+            String entry = user.getDisplayName() + "  (" + timesheet.getLatestEntryBeginDate().toString() + ")";
             users.add(entry);
         }
 

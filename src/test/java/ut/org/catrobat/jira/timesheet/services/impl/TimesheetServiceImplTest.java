@@ -61,7 +61,7 @@ public class TimesheetServiceImplTest {
         assertEquals(targetHoursCompleted, timesheet[0].getTargetHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
         assertEquals(ects, timesheet[0].getEcts(), 0.0);
-        assertTrue(latestEntryDate.getTime() - timesheet[0].getLatestEntryDate().getTime() < 1000);
+        assertTrue(latestEntryDate.getTime() - timesheet[0].getLatestEntryBeginDate().getTime() < 1000);
         assertEquals(true, timesheet[0].getIsActive());
         assertEquals(true, timesheet[0].getIsEnabled());
     }
