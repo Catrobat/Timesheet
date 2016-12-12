@@ -38,18 +38,12 @@ public class ActivityVerificationJob implements PluginJob {
                 continue;
             }
 
-            System.out.println("begin with print");
-            for (TimesheetEntry entry : entries) {
-                System.out.println("entry.getDescription() = " + entry.getDescription());
-                System.out.println("entry.getBeginDate() = " + entry.getBeginDate());
-            }
-
-
             // if the user is already reactivated, the coordinators should already be informed
             if (timesheet.getIsReactivated()) {
                 timesheet.setIsReactivated(false);
             }
 
+            if(entries.length == 0) return;
             Date latestEntryDate = entries[0].getBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             TimesheetEntry latestDeactivatedEntry = getLatestDeactivatedEntry(timesheet);
@@ -85,6 +79,7 @@ public class ActivityVerificationJob implements PluginJob {
                 Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());
                 Team[] teamArray = new Team[teamsOfUser.size()];
                 teamArray = teamsOfUser.toArray(teamArray);
+                if(teamArray.length == 0) return; // very rare case
                 Team team = teamArray[0];
 
                 entryService.add(

@@ -74,6 +74,18 @@ public class ActivityNotificationJob implements PluginJob {
                     sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectActiveState(),
                             config.getMailBodyActiveState()));
                 }
+
+                // user was offline
+                TimesheetEntry latestOfflineEntry = getLatestOfflineEntry(timesheet);
+                if (schedulingService.isOlderThanOfflineTime(latestOfflineEntry.getDeactivateEndDate())) {
+                    //inform timesheet admins
+                    TimesheetAdmin[] timesheetAdmins = config.getTimesheetAdminUsers();
+                    for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
+                        System.out.println("timesheetAdmin: = " + timesheetAdmin.getUserName());
+                        sendMail(createEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectActiveState(),
+                                config.getMailBodyActiveState()));
+                    }
+                }
             } else {
                 System.out.println("User is still active and no reaction is necessary.");
             }
@@ -107,6 +119,17 @@ public class ActivityNotificationJob implements PluginJob {
         TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
         for (TimesheetEntry entry : entries) {
             if (entry.getCategory().getName().equals("Inactive")
+                    && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    private TimesheetEntry getLatestOfflineEntry(Timesheet timesheet) {
+        TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
+        for (TimesheetEntry entry : entries) {
+            if (entry.getCategory().getName().equals("Deactivated")
                     && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
                 return entry;
             }
