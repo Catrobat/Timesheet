@@ -603,7 +603,7 @@ public class TimesheetRest {
         if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
             isActive = false;
         } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0 )) {
-            isOffline = false;
+            isOffline = true;
         }
 
         //update latest timesheet entry date if latest entry date is < new latest entry in the table
@@ -696,7 +696,7 @@ public class TimesheetRest {
                 } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
                     isActive = false;
                 } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                    isOffline = false;
+                    isOffline = true;
                 }
 
                 if(entry.isTheory()){
