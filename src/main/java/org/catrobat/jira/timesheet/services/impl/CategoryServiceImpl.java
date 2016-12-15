@@ -79,7 +79,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category add(String name) throws ServiceException {
         Category[] found = ao.find(Category.class, "NAME = ?", name);
         if (found.length > 0) {
-            throw new ServiceException("Category already exists");
+            throw new ServiceException("This category already exists!");
         }
 
         Category category = ao.create(Category.class);
@@ -89,20 +89,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean removeCategory(String name) throws ServiceException {
+    public void removeCategory(String name) throws ServiceException {
         if (SpecialCategories.AllSpecialCategories.contains(name)) {
-            throw new ServiceException("This is a special category that cannot be deleted");
+            throw new ServiceException("This is a special category that cannot be deleted!");
         }
 
         Category[] found = ao.find(Category.class, "NAME = ?", name);
 
         if (found.length > 1) {
-            throw new ServiceException("Multiple Categories with the same Name");
+            throw new ServiceException("Found multiple categories with the same name!");
         } else if (found.length == 0) {
-            throw new ServiceException("No Category with this Name");
+            throw new ServiceException("Could not find category with this name!");
         }
 
         ao.delete(found);
-        return true;
     }
 }

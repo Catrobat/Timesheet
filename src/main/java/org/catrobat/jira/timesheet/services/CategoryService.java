@@ -36,6 +36,6 @@ public interface CategoryService {
 
     Category add(String name) throws ServiceException;
 
-    boolean removeCategory(String name) throws ServiceException;
+    void removeCategory(String name) throws ServiceException;
 
 }

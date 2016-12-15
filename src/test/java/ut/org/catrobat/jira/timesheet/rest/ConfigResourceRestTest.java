@@ -176,7 +176,6 @@ public class ConfigResourceRestTest {
         when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
 
         when(permissionServiceMock.checkUserPermission()).thenReturn(response);
-        when(categoryServiceMock.removeCategory(anyString())).thenReturn(true);
 
         response = configResourceRestMock.removeCategory("Meeting", request);
         assertNull(response.getEntity());
