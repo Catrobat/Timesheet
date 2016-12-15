@@ -97,6 +97,12 @@ public interface Config extends Entity {
     @StringLength(StringLength.UNLIMITED)
     void setReadOnlyUsers(String readOnlyUsers);
 
+    @StringLength(StringLength.UNLIMITED)
+    String getPairProgrammingGroup();
+
+    @StringLength(StringLength.UNLIMITED)
+    void setPairProgrammingGroup(String pairProgrammingGroup);
+
     @OneToMany(reverse = "getConfiguration")
     TSAdminGroup[] getTimesheetAdminGroups();
 

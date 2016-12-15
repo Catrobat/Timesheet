@@ -512,4 +512,14 @@ public class ConfigServiceImpl implements ConfigService {
 
         return getConfiguration();
     }
+
+    @Override
+    public Config editPairProgrammingGroup(String pairProgrammingGroup) {
+        Config config = getConfiguration();
+        config.setPairProgrammingGroup(pairProgrammingGroup);
+
+        config.save();
+
+        return config;
+    }
 }

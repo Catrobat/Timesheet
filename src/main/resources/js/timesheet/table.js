@@ -422,7 +422,7 @@ function prepareForm(entry, timesheetData, isModified) {
         .trigger("change");
 
     form.partnerSelect.auiSelect2({
-        tags: timesheetData.users.sort(),
+        tags: timesheetData.pairProgrammingGroup.sort(),
         width: 'resolve'
     });
 

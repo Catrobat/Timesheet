@@ -88,6 +88,19 @@
                 </div>
             </fieldset>
 
+            <h2>Pair Programming LDAP Group</h2>
+            <fieldset>
+                <div class="field-group">
+                    <label for="Timesheet PP LDAP">LDAP Group for Pair Programming</label>
+                    <input class="text" type="text" id="pp-ldap" name="pp-ldap"
+                           title="pp-ldap">
+
+                    <div class="description">
+                        The LDAP group which will be displayed for the Pair Programming Category.
+                    </div>
+                </div>
+            </fieldset>
+
             <h2>E-Mail Notifications</h2>
             <fieldset>
                 <div class="field-group">

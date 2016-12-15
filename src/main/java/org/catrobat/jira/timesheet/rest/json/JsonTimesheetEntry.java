@@ -96,7 +96,7 @@ public final class JsonTimesheetEntry {
         this.ticketID = ticketID;
         this.partner = partner;
         this.isGoogleDocImport = isGoogleDocImport;
-        this.isTheory = this.isTheory;
+        this.isTheory = isTheory;
     }
 
     public int getEntryID() {

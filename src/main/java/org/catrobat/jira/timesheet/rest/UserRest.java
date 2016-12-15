@@ -31,10 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Path("/user")
 public class UserRest {
@@ -51,6 +48,7 @@ public class UserRest {
     @Path("/getUsers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@Context HttpServletRequest request) {
+        // TODO: check whether user permission is still needed
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
@@ -87,5 +85,42 @@ public class UserRest {
         }
 
         return Response.ok(jsonUserList).build();
+    }
+
+    @GET
+    @Path("/getPairProgrammingUsers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPairProgrammingUsers(@Context HttpServletRequest request) {
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
+            return response;
+        }
+
+        String pairProgrammingGroup = configService.getConfiguration().getPairProgrammingGroup();
+        List<String> jsonUserList = new ArrayList<String>();
+        Collection<ApplicationUser> allUsers = ComponentAccessor.getGroupManager().getUsersInGroup(pairProgrammingGroup);
+        for (ApplicationUser user : allUsers) {
+            jsonUserList.add(user.getName());
+        }
+
+        return Response.ok(jsonUserList).build();
+    }
+
+    @GET
+    @Path("/getGroups")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getGroups(@Context HttpServletRequest request) {
+        Response response = permissionService.checkRootPermission();
+        if (response != null) {
+            return response;
+        }
+
+        List<String> groupList = new ArrayList<String>();
+        Collection<Group> allGroups = ComponentAccessor.getGroupManager().getAllGroups();
+        for (Group group : allGroups) {
+            groupList.add(group.getName());
+        }
+
+        return Response.ok(groupList).build();
     }
 }

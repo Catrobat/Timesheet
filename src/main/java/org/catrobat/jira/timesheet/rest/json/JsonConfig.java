@@ -47,6 +47,8 @@ public final class JsonConfig {
     @XmlElement
     private List<String> timesheetAdmins;
     @XmlElement
+    private String pairProgrammingGroup;
+    @XmlElement
     private String readOnlyUsers;
     @XmlElement
     private String mailFromName;
@@ -100,6 +102,8 @@ public final class JsonConfig {
             timesheetAdminGroups.add(timesheetAdminGroup.getGroupName());
         }
 
+        this.pairProgrammingGroup = toCopy.getPairProgrammingGroup();
+
         this.readOnlyUsers = toCopy.getReadOnlyUsers();
 
         this.mailFromName = toCopy.getMailFromName();
@@ -148,6 +152,14 @@ public final class JsonConfig {
 
     public void setReadOnlyUsers(String readOnlyUsers) {
         this.readOnlyUsers = readOnlyUsers;
+    }
+
+    public String getPairProgrammingGroup() {
+        return pairProgrammingGroup;
+    }
+
+    public void setPairProgrammingGroup(String pairProgrammingGroup) {
+        this.pairProgrammingGroup = pairProgrammingGroup;
     }
 
     public String getMailFromName() {

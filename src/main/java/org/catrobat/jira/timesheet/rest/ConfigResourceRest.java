@@ -125,6 +125,7 @@ public class ConfigResourceRest {
                 jsonConfig.getMailBodyInactive(), jsonConfig.getMailBodyOffline(), jsonConfig.getMailBodyActive(), jsonConfig.getMailBodyEntry());
 
         configService.editReadOnlyUsers(jsonConfig.getReadOnlyUsers());
+        configService.editPairProgrammingGroup(jsonConfig.getPairProgrammingGroup());
 
         //clear fields
         configService.clearTimesheetAdminGroups();

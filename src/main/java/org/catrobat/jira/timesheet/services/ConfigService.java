@@ -64,4 +64,6 @@ public interface ConfigService {
     Config removeTimesheetAdminGroup(String groupName);
 
     Config removeTimesheetAdmin(String TimesheetAdminKey);
+
+    Config editPairProgrammingGroup(String pairProgrammingGroup);
 }

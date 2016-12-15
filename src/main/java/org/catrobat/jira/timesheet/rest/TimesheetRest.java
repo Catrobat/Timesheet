@@ -567,7 +567,7 @@ public class TimesheetRest {
 
         String programmingPartnerName = "";
         String categoryName = category.getName();
-        if (categoryName.contains("(pp)") || categoryName.contains("pair")) {
+        if (categoryName.toLowerCase().contains("(pp)") || categoryName.toLowerCase().contains("pair")) {
             if (entry.getPairProgrammingUserName().isEmpty()) {
                 return Response.status(Response.Status.CONFLICT).entity("Pair Programming Partner is missing!").build();
             }

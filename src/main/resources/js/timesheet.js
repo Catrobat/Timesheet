@@ -129,7 +129,12 @@ function fetchData() {
         url: restBaseUrl + 'user/getUsers',
         contentType: "application/json"
     });
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched)
+    var pairProgrammingFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'user/getPairProgrammingUsers',
+        contentType: "application/json"
+    })
+    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, pairProgrammingFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
         .done(assembleTimesheetVisData)
@@ -377,7 +382,7 @@ function fetchUsers() {
         });
 }
 
-function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply) {
+function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply, pairProgrammingReply) {
     timesheetData_ = timesheetReply[0];
     categoryData_ = categoriesReply[0];
     teamData_ = teamsReply[0];
@@ -388,6 +393,7 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     timesheetData_.categoryIDs = [];
     timesheetData_.teams = [];
     timesheetData_['users'] = [];
+    timesheetData_.pairProgrammingGroup = pairProgrammingReply[0];
 
     //fill user names
     for (var i = 0; i < usersReply[0].length; i++) {

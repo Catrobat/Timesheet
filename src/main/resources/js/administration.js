@@ -47,6 +47,12 @@ AJS.toInit(function () {
             contentType: "application/json"
         });
 
+        var groupsFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'user/getGroups',
+            contentType: "application/json"
+        });
+
         var schedulingFetched = AJS.$.ajax({
             type: 'GET',
             url: restBaseUrl + 'scheduling/getScheduling',
@@ -55,7 +61,7 @@ AJS.toInit(function () {
         AJS.$.when(schedulingFetched)
             .done(fillSchedulingData);
 
-        AJS.$.when(allUsersFetched, categoriesFetched)
+        AJS.$.when(allUsersFetched, categoriesFetched, groupsFetched)
             .done(populateForm)
             .fail(function (error) {
                 AJS.messages.error({
@@ -73,7 +79,7 @@ AJS.toInit(function () {
         AJS.$("#scheduling-remaining-time").val(scheduling.remainingTime);
     }
 
-    function populateForm(allUsers, allCategories) {
+    function populateForm(allUsers, allCategories, allGroups) {
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
             url: restBaseUrl + 'config/getConfig',
@@ -180,6 +186,11 @@ AJS.toInit(function () {
                     }
                 }
 
+                // pair programming group
+                if (config.pairProgrammingGroup) {
+                    AJS.$("#pp-ldap").val(config.pairProgrammingGroup);
+                }
+
                 AJS.$("#plugin-administration").auiSelect2("data", approved);
 
                 //list of all available LDAP users
@@ -210,6 +221,13 @@ AJS.toInit(function () {
                         AJS.$("#categories").append("</fieldset>");
                     }
                 }
+
+                //Pair Programmign - ldap group
+                AJS.$("#pp-ldap").auiSelect2({
+                    placeholder: "Select Pair Programming Group",
+                    tags: allGroups[0].sort(),
+                    tokenSeparators: [",", " "]
+                });
 
                 //Timesheet - supervisor picker
                 AJS.$("#plugin-permission").auiSelect2({
@@ -268,6 +286,7 @@ AJS.toInit(function () {
         config.mailBodyEntry = AJS.$("#mail-body-entry-change").val();
 
         config.readOnlyUsers = AJS.$("#plugin-permission").val();
+        config.pairProgrammingGroup = AJS.$("#pp-ldap").val();
 
         var usersAndGroups = AJS.$("#plugin-administration").auiSelect2("val");
         var timesheetAdmins = [];
