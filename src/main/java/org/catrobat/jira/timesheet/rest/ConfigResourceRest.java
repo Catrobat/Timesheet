@@ -21,12 +21,12 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Category;
-import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.CategoryService;
+import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
@@ -313,18 +313,18 @@ public class ConfigResourceRest {
     @PUT
     @Path("/removeCategory")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeCategory(final String removeCategory, @Context HttpServletRequest request) throws ServiceException {
+    public Response removeCategory(final String removeCategory, @Context HttpServletRequest request) {
         Response unauthorized = checkParam(removeCategory);
         if (unauthorized != null) {
             return unauthorized;
         }
 
-        boolean successful = categoryService.removeCategory(removeCategory);
-
-        if (successful) {
-            return Response.noContent().build();
+        try {
+            categoryService.removeCategory(removeCategory);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
 
-        return Response.status(Response.Status.CONFLICT).entity("Could not remove Category.").build();
+        return Response.noContent().build();
     }
 }

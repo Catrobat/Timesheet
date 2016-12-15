@@ -201,7 +201,7 @@ AJS.toInit(function () {
                         || categoryList[i] === "GoogleDocsImport" || categoryList[i] === "Theory") {
                         AJS.$("#categories").append("<h3>" + categoryList[i] +
                             "<button class=\"aui-button aui-button-subtle\" disabled>" +
-                            "<span>This Category cannot be renamed</span></button></h3><fieldset>");
+                            "<span>This category cannot be renamed or deleted</span></button></h3><fieldset>");
                         AJS.$("#categories").append("</fieldset>");
                     } else {
                         AJS.$("#categories").append("<h3>" + categoryList[i] +
@@ -561,10 +561,10 @@ AJS.toInit(function () {
                 AJS.$("#category-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
-            error: function () {
+            error: function (xhr) {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Could not delete 'Category'."
+                    body: xhr.responseText
                 });
                 AJS.$(".loadingDiv").hide();
             }

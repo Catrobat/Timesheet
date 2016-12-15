@@ -84,9 +84,8 @@ public class CategoryServiceImplTest {
 
         Category inserted = categoryService.add(category1);
 
-        boolean ret = categoryService.removeCategory(category1);
+        categoryService.removeCategory(category1);
 
-        Assert.assertTrue(ret);
         Assert.assertFalse(categoryService.all().contains(inserted));
     }
 

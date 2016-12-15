@@ -47,13 +47,13 @@ AJS.toInit(function () {
 
             var timesheetState;
 
-            if (timesheet[i].isActive){
+            if (timesheet[i].isActive) {
                 timesheetState = "active";
             }
-            else if (timesheet[i].isOffline){
+            else if (timesheet[i].isOffline) {
                 timesheetState = "offline";
             }
-            else{
+            else {
                 timesheetState = "inactive";
             }
 
@@ -103,13 +103,15 @@ AJS.toInit(function () {
     function updateTimesheetStatus() {
 
         var data = [];
+        var tmpCheckBox;
 
         for (var i = 0; i < timesheet.length; i++) {
             if (users[i]['active']) {
                 var tempData = {};
                 tempData.timesheetID = timesheet[i]['timesheetID'];
                 tempData.isActive = timesheet[i]['isActive'];
-                tempData.isEnabled = AJS.$("#" + users[i]['userName'] + "checkBox")[0].checked;
+                tmpCheckBox = AJS.$("#" + users[i]['userName'] + "checkBox");
+                tempData.isEnabled = tmpCheckBox.prop("checked");
                 data.push(tempData);
             }
         }
