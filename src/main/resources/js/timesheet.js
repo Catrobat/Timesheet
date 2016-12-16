@@ -149,23 +149,25 @@ function fetchData() {
             console.log(error);
         });
 
-    var teamEntries = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
-        contentType: "application/json"
-    });
-
-    AJS.$.when(teamEntries, categoriesFetched, teamsFetched, entriesFetched)
-        .done(assembleTimesheetVisData)
-        .done(computeTeamDiagramData)
-
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while fetching timesheet data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-            console.log(error);
+    if (isCoordinator) {
+        var teamEntries = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
+            contentType: "application/json"
         });
+
+        AJS.$.when(teamEntries, categoriesFetched, teamsFetched, entriesFetched)
+            .done(assembleTimesheetVisData)
+            .done(computeTeamDiagramData)
+
+            .fail(function (error) {
+                AJS.messages.error({
+                    title: 'There was an error while fetching timesheet data.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
+            });
+    }
 }
 
 function fetchUserTimesheetData(timesheetID) {
