@@ -15,6 +15,7 @@
  */
 package org.catrobat.jira.timesheet.rest.json;
 
+import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -97,6 +98,22 @@ public final class JsonTimesheetEntry {
         this.partner = partner;
         this.isGoogleDocImport = isGoogleDocImport;
         this.isTheory = isTheory;
+    }
+
+    public JsonTimesheetEntry(TimesheetEntry timesheetEntry) {
+        this.entryID = timesheetEntry.getID();
+        this.beginDate = timesheetEntry.getBeginDate();
+        this.endDate = timesheetEntry.getEndDate();
+        this.inactiveEndDate = timesheetEntry.getInactiveEndDate();
+        this.deactivateEndDate = timesheetEntry.getDeactivateEndDate();
+        this.pauseMinutes = timesheetEntry.getPauseMinutes();
+        this.description = timesheetEntry.getDescription();
+        this.teamID = timesheetEntry.getID();
+        this.categoryID = timesheetEntry.getID();
+        this.ticketID = timesheetEntry.getJiraTicketID();
+        this.partner = timesheetEntry.getDescription();
+        this.isGoogleDocImport = timesheetEntry.getIsGoogleDocImport();
+        this.isTheory = timesheetEntry.getIsTheory();
     }
 
     public int getEntryID() {

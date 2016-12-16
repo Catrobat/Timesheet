@@ -22,6 +22,7 @@ import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
+import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
@@ -177,6 +178,42 @@ public class ConfigResourceRest {
         DatabaseUtil db = new DatabaseUtil(ao);
         db.clearAllTimesheetTables();
         return Response.status(Response.Status.OK).entity("All timesheet tables has been dropped!").build();
+    }
+
+    @GET
+    @Path("/database/{tableName}/{query}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTable(@Context HttpServletRequest request,
+            @PathParam("tableName") String tableName, @PathParam("query") String query) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+        DatabaseUtil db = new DatabaseUtil(ao);
+        List table = db.getActiveObjectsAsJson(tableName, query);
+        return Response.ok(table).build();
+    }
+
+    @GET
+    @Path("/permissions/{userName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPermissionFlags(@Context HttpServletRequest request,
+            @PathParam("userName") String userName) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(userName);
+        String jsonFlags = "[{";
+        jsonFlags += "canView: ";
+        for (Timesheet sheet : ao.find(Timesheet.class)) {
+            jsonFlags += "{" + sheet.getID() + ": " + permissionService.userCanViewTimesheet(user, sheet) + "},";
+        }
+
+        jsonFlags += "]";
+
+        return Response.ok(jsonFlags).build();
     }
 
     @PUT

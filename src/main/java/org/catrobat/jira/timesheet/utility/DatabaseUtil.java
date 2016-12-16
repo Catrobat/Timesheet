@@ -2,6 +2,12 @@ package org.catrobat.jira.timesheet.utility;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Helper class for DatabaseUtil issues
@@ -29,5 +35,27 @@ public class DatabaseUtil {
         ao.deleteWithSQL(Scheduling.class, "ID > ?", 0);
 
         System.out.println("All timesheet tables has been deleted!");
+    }
+
+    public List getActiveObjectsAsJson(String tableName, String query) {
+        if (query.equals("*")) {
+            query = "ID >= 0";
+        } else {
+            query = "ID = " + query;
+        }
+        List jsonList = new ArrayList();
+        switch (tableName) {
+            case "Timesheet":
+                Timesheet[] timesheets = ao.find(Timesheet.class, query);
+                for (Timesheet timesheet : timesheets) {
+                    jsonList.add(new JsonTimesheet(timesheet));
+                } break;
+            case "TimesheetEntry":
+                TimesheetEntry[] timesheetEntries = ao.find(TimesheetEntry.class, query);
+                for (TimesheetEntry timesheetEntry : timesheetEntries) {
+                    jsonList.add(new JsonTimesheetEntry(timesheetEntry));
+                } break;
+        }
+        return jsonList;
     }
 }
