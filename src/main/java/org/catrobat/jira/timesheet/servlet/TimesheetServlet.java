@@ -66,20 +66,18 @@ public class TimesheetServlet extends HttpServlet {
             ApplicationUser user = permissionService.checkIfUserExists();
             String userKey = user.getKey();
             Map<String, Object> paramMap = Maps.newHashMap();
-            Timesheet timesheet;
+            Timesheet timesheet = null;
 
             //info: testuser added
             if (permissionService.checkIfUserIsGroupMember("Administrators") ||
                     permissionService.checkIfUserIsGroupMember("administrators")) {
                 paramMap.put("isadmin", true);
-                timesheet = sheetService.getTimesheetByUser(userKey, false);
             } else {
                 paramMap.put("isadmin", false);
-                if (sheetService.userHasTimesheet(userKey, false)) {
-                    timesheet = sheetService.getTimesheetByUser(userKey, false);
-                } else {
-                    timesheet = null;
-                }
+            }
+
+            if (sheetService.userHasTimesheet(userKey, false)) {
+                timesheet = sheetService.getTimesheetByUser(userKey, false);
             }
 
             //check if user is Team-Coordinator
