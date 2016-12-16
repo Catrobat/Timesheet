@@ -372,16 +372,8 @@ public class TimesheetRest {
         if (!permissionService.userCanViewTimesheet(user, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
-        JsonTimesheet jsonTimesheet = createJsonTimesheet(sheet);
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
         return Response.ok(jsonTimesheet).build();
-    }
-
-    private JsonTimesheet createJsonTimesheet(Timesheet sheet) {
-        return new JsonTimesheet(sheet.getID(), sheet.getLectures(), sheet.getReason(),
-                sheet.getEcts(), sheet.getLatestEntryBeginDate(), sheet.getTargetHoursPractice(),
-                sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                sheet.getTargetHoursRemoved(), sheet.getIsActive(), sheet.getIsAutoInactive(), sheet.getIsOffline(),
-                sheet.getIsAutoOffline(), sheet.getIsEnabled(), sheet.getIsMasterThesisTimesheet());
     }
 
     @GET
@@ -475,7 +467,7 @@ public class TimesheetRest {
         if (response != null) {
             return response;
         }
-
+        
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<>();
         Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
@@ -498,6 +490,8 @@ public class TimesheetRest {
                     isEnabled = timesheet.getIsEnabled();
                     latestEntryDate = timesheet.getLatestEntryBeginDate();
                     timesheetID = timesheet.getID();
+                } else {
+                    continue;
                 }
             } catch (ServiceException e) {
                 e.printStackTrace();
@@ -805,7 +799,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("'Timesheet' not found.").build();
         }
 
-        JsonTimesheet newJsonTimesheet = createJsonTimesheet(sheet);
+        JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet);
         return Response.ok(newJsonTimesheet).build();
     }
 
@@ -831,7 +825,7 @@ public class TimesheetRest {
             sheet = sheetService.getTimesheetByID(jsonTimesheet.getTimesheetID());
             if (sheet != null) {
                 sheet = sheetService.updateTimesheetEnableState(jsonTimesheet.getTimesheetID(), jsonTimesheet.isEnabled());
-                JsonTimesheet newJsonTimesheet = createJsonTimesheet(sheet);
+                JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet);
                 newJsonTimesheetList.add(newJsonTimesheet);
             }
         }

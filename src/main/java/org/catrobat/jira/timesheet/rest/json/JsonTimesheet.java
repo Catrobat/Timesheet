@@ -15,6 +15,7 @@
  */
 package org.catrobat.jira.timesheet.rest.json;
 
+import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -89,6 +90,25 @@ public final class JsonTimesheet {
         this.isAutoOffline = isAutoOffline;
         this.isEnabled = isEnabled;
         this.isMTSheet = isMTSheet;
+    }
+
+    public JsonTimesheet(Timesheet timesheet) {
+        this.timesheetID = timesheet.getID();
+        this.lectures = timesheet.getLectures();
+        this.reason = timesheet.getReason();
+        this.ects = timesheet.getEcts();
+        this.latestEntryDate = timesheet.getLatestEntryBeginDate();
+        this.targetHourPractice = timesheet.getTargetHoursPractice();
+        this.targetHourTheory = timesheet.getTargetHoursTheory();
+        this.targetHours = timesheet.getTargetHours();
+        this.targetHoursCompleted = timesheet.getTargetHoursCompleted();
+        this.targetHoursRemoved = timesheet.getTargetHoursRemoved();
+        this.isActive = timesheet.getIsActive();
+        this.isAutoInactive = timesheet.getIsAutoInactive();
+        this.isOffline = timesheet.getIsOffline();
+        this.isAutoOffline = timesheet.getIsAutoOffline();
+        this.isEnabled = timesheet.getIsEnabled();
+        this.isMTSheet = timesheet.getIsMasterThesisTimesheet();
     }
 
     public JsonTimesheet() {
