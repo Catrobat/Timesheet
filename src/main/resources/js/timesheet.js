@@ -374,9 +374,26 @@ function fetchUsers() {
     AJS.$.when(config, jsonUser, userList)
         .done(initCoordinatorTimesheetSelect)
         .done(initTimesheetAdminTimesheetSelect)
+        .done(initCoordinatorUserList)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching user data.',
+                body: '<p>Reason: ' + error.responseText + '</p>'
+            });
+            console.log(error);
+        });
+
+    var allTimesheetsFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheets/getTimesheets',
+        contentType: "application/json"
+    });
+
+    AJS.$.when(userList, allTimesheetsFetched)
+        .done(initCoordinatorUserList)
+        .fail(function (error) {
+            AJS.messages.error({
+                title: 'There was an error while team user data.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);

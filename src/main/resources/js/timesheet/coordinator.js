@@ -1,5 +1,35 @@
 "use strict";
 
+function initCoordinatorUserList(userList, timesheetData) {
+    var users = userList[0];
+    var timesheet = timesheetData[0];
+    for (var i = 0; i < users.length; i++) {
+        //check if user has a timesheet
+        if (!timesheet[i]) {
+            continue;
+        }
+
+        var timesheetstate = "notimesheet";
+        if (timesheet[i].isActive) {
+            timesheetstate = "active";
+        } else {
+            timesheetstate = "inactive";
+        }
+
+
+        var latestEntryDate;
+        if (new Date(timesheet[i]['latestEntryDate']).getTime() == new Date(0).getTime()) {
+            latestEntryDate = "none";
+        } else {
+            latestEntryDate = (new Date(timesheet[i]['latestEntryDate'])).toLocaleDateString("en-US");
+        }
+
+        AJS.$("#team-information-table-content").append("<tr>");
+        AJS.$("#team-information-table-content").append("<td>" + users[i].userName + "</td><td>" + timesheetstate +"</td><td></td><td></td><td>" + latestEntryDate + "</td>");
+        AJS.$("#team-information-table-content").append("</tr>");
+    }
+}
+
 function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
     var config = jsonConfig[0];
     var userName = jsonUser[0]['userName'];

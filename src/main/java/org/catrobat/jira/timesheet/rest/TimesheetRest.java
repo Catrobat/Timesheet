@@ -505,8 +505,6 @@ public class TimesheetRest {
                     isEnabled = timesheet.getIsEnabled();
                     latestEntryDate = timesheet.getLatestEntryBeginDate();
                     timesheetID = timesheet.getID();
-                } else {
-                    continue;
                 }
             } catch (ServiceException e) {
                 e.printStackTrace();
