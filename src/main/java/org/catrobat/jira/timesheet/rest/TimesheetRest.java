@@ -172,6 +172,16 @@ public class TimesheetRest {
             return response;
         }
 
+        Timesheet ownerSheet;
+        try {
+            ownerSheet = sheetService.getTimesheetByID(timesheetID);
+            if (!permissionService.userCanViewTimesheet(loggedInUser, ownerSheet)) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+            }
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
+
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
         Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
@@ -187,14 +197,10 @@ public class TimesheetRest {
                         if (sheetService.userHasTimesheet(userKey, false)) {
                             Timesheet sheet = sheetService.getTimesheetByUser(
                                     userKey, false);
-                            //check permissions for each sheet
-                            if (!permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
-                                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
-                            }
 
                             //all entries of each user
                             TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
-                            addAllJsonTimesheetEntries(jsonTimesheetEntries, entries);
+                            addAllJsonTimesheetEntriesAnonymously(jsonTimesheetEntries, entries);
                         }
                     } catch (ServiceException e) {
                         return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -204,6 +210,15 @@ public class TimesheetRest {
         }
 
         return Response.ok(jsonTimesheetEntries).build();
+    }
+
+    private void addAllJsonTimesheetEntriesAnonymously(List<JsonTimesheetEntry> jsonTimesheetEntries, TimesheetEntry[] entries) {
+        for (TimesheetEntry entry : entries) {
+            jsonTimesheetEntries.add(new JsonTimesheetEntry(0, entry.getBeginDate(),
+                    entry.getEndDate(), null, null, entry.getPauseMinutes(),
+                    null, entry.getTeam().getID(), entry.getCategory().getID(),
+                    null, null, false, entry.getIsTheory()));
+        }
     }
 
     private void addAllJsonTimesheetEntries(List<JsonTimesheetEntry> jsonTimesheetEntries, TimesheetEntry[] entries) {
