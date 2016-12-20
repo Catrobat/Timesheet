@@ -243,7 +243,7 @@
                     Shows your finished practical hours.
                 </div>
             </div>
-            <div class="field-group">
+            <div class="field-group" id="theory-hour-key-data">
                 <label for="timesheet-hours-theory">Finished Theory Hours</label>
                 <input disabled="disabled" class="text" type="text" id="timesheet-hours-theory"
                        name="timesheet-hours-theory"
@@ -252,8 +252,6 @@
                 <div class="description">
                     Shows your finished theory hours.
                 </div>
-            </div>
-            <div class="field-group">
                 <label for="timesheet-target-hours-theory">Target Theory Hours</label>
                 <input class="text" type="text" id="timesheet-target-hours-theory"
                        name="timesheet-target-hours-theory"

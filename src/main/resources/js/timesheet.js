@@ -52,6 +52,12 @@ AJS.toInit(function () {
         AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as <a href=\"download/timesheet\">CSV</a>.");
     }
 
+    if (!isMasterThesisTimesheet) {
+        AJS.$("#theory-hour-key-data").hide();
+    } else {
+        AJS.$("#theory-hour-key-data").show();
+    }
+
     AJS.$("#tabs-team").submit(function (e) {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Visualize') {
