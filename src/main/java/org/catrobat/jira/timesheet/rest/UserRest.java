@@ -18,11 +18,16 @@ package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
+import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -38,10 +43,14 @@ public class UserRest {
     public static final String DISABLED_GROUP = "Disabled";
     private final ConfigService configService;
     private final PermissionService permissionService;
+    private TimesheetService timesheetService;
+    private TimesheetEntryService timesheetEntryService;
 
-    public UserRest(final ConfigService configService, PermissionService permissionService) {
+    public UserRest(final ConfigService configService, PermissionService permissionService, TimesheetService timesheetService, TimesheetEntryService timesheetEntryService) {
         this.configService = configService;
         this.permissionService = permissionService;
+        this.timesheetService = timesheetService;
+        this.timesheetEntryService = timesheetEntryService;
     }
 
     @GET
@@ -85,6 +94,53 @@ public class UserRest {
         }
 
         return Response.ok(jsonUserList).build();
+    }
+
+    @GET
+    @Path("/getUsersForCoordinator")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsersForCoordinator(@Context HttpServletRequest request) {
+        ApplicationUser user;
+        try {
+            user = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
+            return response;
+        }
+
+        if (!permissionService.isUserTeamCoordinator(user)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not a team coordinator.").build();
+        }
+
+        List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
+
+        for (Timesheet timesheet : timesheetService.all()) {
+            if (permissionService.isUserCoordinatorOfTimesheet(user, timesheet)) {
+                JsonUserInformation jsonUserInformation = new JsonUserInformation();
+                // TODO: check whether user key == name
+                jsonUserInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
+                // TODO: if else cascade for all combinations
+                if (timesheet.getIsActive()) {
+                    jsonUserInformation.setState("Active");
+                } else {
+                    jsonUserInformation.setState("Inactive");
+                }
+                jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
+                jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
+                jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+                jsonUserInformationList.add(jsonUserInformation);
+            }
+        }
+
+        return Response.ok(jsonUserInformationList).build();
+    }
+
+    private String getUserNameOfUserKey(String userKey) {
+        return ComponentAccessor.getUserManager().getUserByKey(userKey).getName();
     }
 
     @GET

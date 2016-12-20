@@ -38,8 +38,10 @@ AJS.toInit(function () {
 
     if (!isCoordinator) {
         AJS.$("#coord_private").hide();
+        AJS.$("#coord_private_table").hide();
     } else {
         AJS.$("#coord_private").show();
+        AJS.$("#coord_private_table").show();
     }
 
     if (isMasterThesisTimesheet) {
@@ -374,7 +376,6 @@ function fetchUsers() {
     AJS.$.when(config, jsonUser, userList)
         .done(initCoordinatorTimesheetSelect)
         .done(initTimesheetAdminTimesheetSelect)
-        .done(initCoordinatorUserList)
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching user data.',
@@ -383,13 +384,13 @@ function fetchUsers() {
             console.log(error);
         });
 
-    var allTimesheetsFetched = AJS.$.ajax({
+    var userInformation = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'timesheets/getTimesheets',
+        url: restBaseUrl + 'user/getUsersForCoordinator',
         contentType: "application/json"
     });
 
-    AJS.$.when(userList, allTimesheetsFetched)
+    AJS.$.when(userInformation)
         .done(initCoordinatorUserList)
         .fail(function (error) {
             AJS.messages.error({

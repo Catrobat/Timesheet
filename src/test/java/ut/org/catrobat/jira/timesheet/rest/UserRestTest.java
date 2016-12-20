@@ -14,6 +14,8 @@ import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.rest.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +54,8 @@ public class UserRestTest {
     private TestActiveObjects ao;
     private JiraAuthenticationContext jiraAuthMock;
     private PermissionService permissionServiceMock;
+    private TimesheetService timesheetServiceMock;
+    private TimesheetEntryService timesheetEntryServiceMock;
 
     @Before
     public void setUp() throws Exception {
@@ -65,8 +69,10 @@ public class UserRestTest {
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
+        timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
+        timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
 
-        userRest = new UserRest(configServiceMock, permissionServiceMock);
+        userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock, timesheetEntryServiceMock);
         spyUserRest = spy(userRest);
 
         PowerMockito.mockStatic(ComponentAccessor.class);

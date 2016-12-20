@@ -1,31 +1,15 @@
 "use strict";
 
-function initCoordinatorUserList(userList, timesheetData) {
-    var users = userList[0];
-    var timesheet = timesheetData[0];
-    for (var i = 0; i < users.length; i++) {
-        //check if user has a timesheet
-        if (!timesheet[i]) {
-            continue;
-        }
-
-        var timesheetstate = "notimesheet";
-        if (timesheet[i].isActive) {
-            timesheetstate = "active";
-        } else {
-            timesheetstate = "inactive";
-        }
-
-
+function initCoordinatorUserList(userInformation) {
+    for (var i = 0; i < userInformation.length; i++) {
         var latestEntryDate;
-        if (new Date(timesheet[i]['latestEntryDate']).getTime() == new Date(0).getTime()) {
+        if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
             latestEntryDate = "none";
         } else {
-            latestEntryDate = (new Date(timesheet[i]['latestEntryDate'])).toLocaleDateString("en-US");
+            latestEntryDate = (new Date(userInformation[i].latestEntryDate)).toLocaleDateString("en-US");
         }
-
         AJS.$("#team-information-table-content").append("<tr>");
-        AJS.$("#team-information-table-content").append("<td>" + users[i].userName + "</td><td>" + timesheetstate +"</td><td></td><td></td><td>" + latestEntryDate + "</td>");
+        AJS.$("#team-information-table-content").append("<td>" + userInformation[i].userName + "</td><td>" + userInformation[i].state + "</td><td>" + userInformation[i].hoursPerMonth + "</td><td>" + userInformation[i].hoursPerHalfYear + "</td><td>" + latestEntryDate + "</td>");
         AJS.$("#team-information-table-content").append("</tr>");
     }
 }

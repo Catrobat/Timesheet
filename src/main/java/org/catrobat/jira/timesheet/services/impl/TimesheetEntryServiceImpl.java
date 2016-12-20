@@ -24,6 +24,7 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
 import java.util.Date;
@@ -117,5 +118,19 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Override
     public void delete(TimesheetEntry entry) {
         ao.delete(entry);
+    }
+
+
+    @Override
+    public int getHoursOfLastXMonths(Timesheet sheet, int months) {
+        DateTime now = DateTime.now();
+        int minutes = 0;
+        for (TimesheetEntry entry : getEntriesBySheet(sheet)) {
+            DateTime beginDate = new DateTime(entry.getBeginDate());
+            if (beginDate.plusMonths(months).compareTo(now) >= 0) {
+                minutes += entry.getDurationMinutes();
+            }
+        }
+        return minutes/60;
     }
 }
