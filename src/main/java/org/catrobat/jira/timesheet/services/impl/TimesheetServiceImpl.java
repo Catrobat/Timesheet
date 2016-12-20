@@ -42,7 +42,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-            String lectures, String reason, double ects, Date latestEntryDate,
+            String lectures, String reason, Date latestEntryDate,
             boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
@@ -64,7 +64,6 @@ public class TimesheetServiceImpl implements TimesheetService {
                 sheet.setTargetHoursRemoved(targetHoursRemoved);
                 sheet.setLectures(lectures);
                 sheet.setReason(reason);
-                sheet.setEcts(ects);
                 sheet.setLatestEntryBeginDate(latestEntryDate);
                 sheet.setIsActive(isActive);
                 sheet.setIsOffline(isOffline);
@@ -81,7 +80,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-            String lectures, String reason, double ects,
+            String lectures, String reason,
             boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled) {
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
@@ -92,7 +91,6 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setTargetHoursRemoved(targetHoursRemoved);
         sheet.setLectures(lectures);
         sheet.setReason(reason);
-        sheet.setEcts(ects);
         sheet.setLatestEntryBeginDate(new Date());
         sheet.setIsActive(isActive);
         sheet.setIsEnabled(isEnabled);

@@ -215,7 +215,6 @@ function updateTimesheetInformationValues(timesheetData) {
         - AJS.$("#timesheet-hours-practical").val() - (-AJS.$("#timesheet-hours-substract").val()), 2));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
     AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
-    AJS.$("#timesheet-hours-text").val(timesheetData.ects * 30);
 }
 
 function toUTCTimeString(date) {

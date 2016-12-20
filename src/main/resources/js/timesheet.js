@@ -329,7 +329,7 @@ function updateTimesheetHours(existingTimesheetData) {
         ects: AJS.$("#timesheet-hours-ects").val(),
         targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
         targetHourTheory: toFixed(AJS.$("#timesheet-target-hours-theory").val(), 2),
-        targetHours: AJS.$("#timesheet-hours-ects").val() * 30,
+        targetHours: AJS.$("#timesheet-hours-text").val(),
         targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
         - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),

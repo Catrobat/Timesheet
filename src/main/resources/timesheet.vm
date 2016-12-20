@@ -233,26 +233,14 @@
                 </div>
             </div>
 
-            <div class="field-group" id="substractTimesheetHours"></div>
-
             <div class="field-group">
-                <label for="timesheet-hours-practical">Practical Hours</label>
+                <label for="timesheet-hours-practical">Finished Practical Hours</label>
                 <input disabled="disabled" class="text" type="text" id="timesheet-hours-practical"
                        name="timesheet-hours-practical"
                        title="timesheet-hours-practical">
 
                 <div class="description">
                     Shows your finished practical hours.
-                </div>
-            </div>
-            <div class="field-group">
-                <label for="timesheet-target-hours-theory">Target Theory Hours</label>
-                <input class="text" type="text" id="timesheet-target-hours-theory"
-                       name="timesheet-target-hours-theory"
-                       title="timesheet-target-hours-theory">
-
-                <div class="description">
-                    Shows your target theory hours.
                 </div>
             </div>
             <div class="field-group">
@@ -265,15 +253,25 @@
                     Shows your finished theory hours.
                 </div>
             </div>
+            <div class="field-group">
+                <label for="timesheet-target-hours-theory">Target Theory Hours</label>
+                <input class="text" type="text" id="timesheet-target-hours-theory"
+                       name="timesheet-target-hours-theory"
+                       title="timesheet-target-hours-theory">
+
+                <div class="description">
+                    Shows your target theory hours.
+                </div>
+            </div>
 
             <div class="field-group">
-                <label for="timesheet-hours-text">Timesheet Hours</label>
-                <input disabled="disabled" class="text" type="text" id="timesheet-hours-text"
+                <label for="timesheet-hours-text">Target Total Timesheet Hours</label>
+                <input class="text" type="text" id="timesheet-hours-text"
                        name="timesheet-hours-text"
                        title="timesheet-hours-text">
 
                 <div class="description">
-                    Shows your timesheet hours.
+                    Shows your target total timesheet hours.
                 </div>
             </div>
 
@@ -287,15 +285,9 @@
                 </div>
             </div>
 
+            <div class="field-group" id="substractTimesheetHours"></div>
+
             <div class="field-group">
-                <label for="timesheet-hours-ects">ECTS</label>
-                <input class="text" type="text" id="timesheet-hours-ects" name="timesheet-hours-ects"
-                       title="timesheet-hours-ects">
-
-                <div class="description">
-                    Shows your ECTS.
-                </div>
-
                 <div class="timesheet-hours" id="timesheet-hours-update-button">
                     <input type="submit" value="Update" class="aui-button aui-button-primary">
                 </div>

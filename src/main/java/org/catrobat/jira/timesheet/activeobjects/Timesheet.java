@@ -75,10 +75,6 @@ public interface Timesheet extends Entity {
 
     void setReason(String reason);
 
-    double getEcts();
-
-    void setEcts(double ects);
-
     Date getLatestEntryBeginDate();
 
     void setLatestEntryBeginDate(Date date);

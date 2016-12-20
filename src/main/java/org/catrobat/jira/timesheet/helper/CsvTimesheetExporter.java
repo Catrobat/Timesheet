@@ -57,7 +57,6 @@ public class CsvTimesheetExporter {
         sb.append(Integer.toString(timesheet.getTargetHours())).append(CsvConstants.DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getTargetHoursCompleted())).append(CsvConstants.DELIMITER);
         sb.append(timesheet.getReason()).append(CsvConstants.DELIMITER);
-        sb.append(Double.toString(timesheet.getEcts())).append(CsvConstants.DELIMITER);
         sb.append(timesheet.getLectures()).append(CsvConstants.DELIMITER);
         sb.append(timesheet.getIsMasterThesisTimesheet()).append(CsvConstants.NEW_LINE);
 

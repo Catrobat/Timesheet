@@ -43,8 +43,6 @@ public final class JsonTimesheet {
     @XmlElement
     private String reason;
     @XmlElement
-    private double ects;
-    @XmlElement
     @JsonDeserialize(using=DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
@@ -71,13 +69,12 @@ public final class JsonTimesheet {
     @XmlElement
     private boolean isMTSheet;
 
-    public JsonTimesheet(int timesheetID, String lectures, String reason, double ects, Date latestEntryDate, int targetHourPractice,
+    public JsonTimesheet(int timesheetID, String lectures, String reason, Date latestEntryDate, int targetHourPractice,
             int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
             boolean isAutoInactive, boolean isOffline, boolean isAutoOffline, boolean isEnabled, boolean isMTSheet) {
         this.timesheetID = timesheetID;
         this.lectures = lectures;
         this.reason = reason;
-        this.ects = ects;
         this.latestEntryDate = latestEntryDate;
         this.targetHourPractice = targetHourPractice;
         this.targetHourTheory = targetHourTheory;
@@ -96,7 +93,6 @@ public final class JsonTimesheet {
         this.timesheetID = timesheet.getID();
         this.lectures = timesheet.getLectures();
         this.reason = timesheet.getReason();
-        this.ects = timesheet.getEcts();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
         this.targetHourPractice = timesheet.getTargetHoursPractice();
         this.targetHourTheory = timesheet.getTargetHoursTheory();
@@ -136,14 +132,6 @@ public final class JsonTimesheet {
 
     public void setReason(String reason) {
         this.reason = reason;
-    }
-
-    public double getEcts() {
-        return ects;
-    }
-
-    public void setEcts(double ects) {
-        this.ects = ects;
     }
 
     public Date getLatestEntryDate() {
@@ -251,7 +239,6 @@ public final class JsonTimesheet {
         JsonTimesheet that = (JsonTimesheet) o;
 
         if (timesheetID != that.timesheetID) { return false; }
-        if (ects != that.ects) { return false; }
         if (latestEntryDate != that.latestEntryDate) { return false; }
         if (targetHourPractice != that.targetHourPractice) { return false; }
         if (targetHourTheory != that.targetHourTheory) { return false; }
@@ -272,7 +259,6 @@ public final class JsonTimesheet {
         int result = timesheetID;
         result = 31 * result + lectures.hashCode();
         result = 31 * result + reason.hashCode();
-        result = 31 * result + (int) ects;
         //result = 31 * result + latestEntryDate.hashCode();
         result = 31 * result + targetHourPractice;
         result = 31 * result + targetHourTheory;

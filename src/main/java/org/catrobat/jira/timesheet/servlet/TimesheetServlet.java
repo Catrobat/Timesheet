@@ -92,7 +92,7 @@ public class TimesheetServlet extends HttpServlet {
 
             if (timesheet == null) {
                 timesheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
-                        "", 5, true, false, false, true);
+                        "", true, false, false, true);
             }
 
             paramMap.put("timesheetid", timesheet.getID());

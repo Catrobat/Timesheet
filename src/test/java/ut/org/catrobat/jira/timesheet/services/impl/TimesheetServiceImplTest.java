@@ -30,7 +30,6 @@ public class TimesheetServiceImplTest {
     final int targeHours = 300;
     final int targetHoursCompleted = 150;
     final int targetHoursRemoved = 0;
-    final double ects = 10.0;
     final Date latestEntryDate = new Date();
     final String lectures = "Mobile Applications (705.881)";
     final String reason = "Agathe Bauer";
@@ -49,7 +48,7 @@ public class TimesheetServiceImplTest {
     public void testAdd() throws Exception {
         //Act
         service.add(userKey, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted,
-                targetHoursRemoved, lectures, reason, ects, true, false, false, true);
+                targetHoursRemoved, lectures, reason, true, false, false, true);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         //Assert
@@ -60,7 +59,6 @@ public class TimesheetServiceImplTest {
         assertEquals(targeHours, timesheet[0].getTargetHours());
         assertEquals(targetHoursCompleted, timesheet[0].getTargetHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
-        assertEquals(ects, timesheet[0].getEcts(), 0.0);
         assertTrue(latestEntryDate.getTime() - timesheet[0].getLatestEntryBeginDate().getTime() < 1000);
         assertEquals(true, timesheet[0].getIsActive());
         assertEquals(true, timesheet[0].getIsEnabled());
@@ -76,7 +74,6 @@ public class TimesheetServiceImplTest {
         sheet.setTargetHoursTheory(targeHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
-        sheet.setEcts(ects);
         sheet.setIsActive(true);
         sheet.setIsEnabled(true);
         sheet.save();
@@ -99,7 +96,6 @@ public class TimesheetServiceImplTest {
         sheet.setTargetHoursTheory(targeHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
-        sheet.setEcts(ects);
         sheet.setIsActive(true);
         sheet.setIsEnabled(true);
         sheet.save();
