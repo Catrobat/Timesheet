@@ -36,15 +36,11 @@ public final class JsonTimesheetEntries {
     @XmlElement
     private JsonTimesheetEntry[] entries;
 
-    @XmlElement
-    private String[] errorMessages;
-
     public JsonTimesheetEntries() {
     }
 
-    public JsonTimesheetEntries(JsonTimesheetEntry[] entries, String[] errorMessages) {
+    public JsonTimesheetEntries(JsonTimesheetEntry[] entries) {
         this.entries = entries;
-        this.errorMessages = errorMessages;
     }
 
     public JsonTimesheetEntry[] getEntries() {
@@ -53,13 +49,5 @@ public final class JsonTimesheetEntries {
 
     public void setEntries(JsonTimesheetEntry[] entries) {
         this.entries = entries;
-    }
-
-    public String[] getErrorMessages() {
-        return errorMessages;
-    }
-
-    public void setErrorMessages(String[] errorMessages) {
-        this.errorMessages = errorMessages;
     }
 }

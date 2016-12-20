@@ -676,7 +676,6 @@ public class TimesheetRest {
         }
 
         List<JsonTimesheetEntry> newEntries = new LinkedList<>();
-        List<String> errorMessages = new LinkedList<>();
 
         for (JsonTimesheetEntry entry : entries) {
             if (entry == null) {
@@ -745,8 +744,7 @@ public class TimesheetRest {
         }
 
         JsonTimesheetEntries jsonNewEntries = new JsonTimesheetEntries(
-                newEntries.toArray(new JsonTimesheetEntry[newEntries.size()]),
-                errorMessages.toArray(new String[errorMessages.size()])
+                newEntries.toArray(new JsonTimesheetEntry[newEntries.size()])
         );
 
         return Response.ok(jsonNewEntries).build();

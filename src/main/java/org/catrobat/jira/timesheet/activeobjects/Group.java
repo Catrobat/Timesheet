@@ -18,7 +18,6 @@ package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
-import net.java.ao.OneToMany;
 import net.java.ao.Preload;
 
 @Preload
@@ -27,9 +26,6 @@ public interface Group extends Entity {
     String getGroupName();
 
     void setGroupName(String groupName);
-
-    @OneToMany(reverse = "getGroup")
-    TeamToGroup[] getTeamToGroups();
 
     @ManyToMany(value = TeamToGroup.class, reverse = "getGroup", through = "getTeam")
     Team[] getTeams();
