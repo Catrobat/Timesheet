@@ -47,9 +47,11 @@ AJS.toInit(function () {
     if (isMasterThesisTimesheet) {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
         document.getElementById("tabs-team").style.display = "none";
-        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Master Thesis Timesheet' as <a href=\"download/masterthesis\">CSV</a>.");
+        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Master Thesis Timesheet' as " +
+            "<a href=\"download/masterthesis\">CSV</a> or only Entries as <a href=\"download/timesheet/json/masterthesis\">Json</a>.");
     } else {
-        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as <a href=\"download/timesheet\">CSV</a>.");
+        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as + " +
+            "<a href=\"download/timesheet\">CSV</a> or only Entries as <a href=\"download/timesheet/json\">Json</a>.");
     }
 
     if (!isMasterThesisTimesheet) {
