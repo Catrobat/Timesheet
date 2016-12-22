@@ -47,7 +47,7 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
 
 function showImportMessage(response) {
     var successfulEntries = response.entries.length;
-    var errorEntries = response.errorMessages.length;
+    /*var errorEntries = response.errorMessages.length;
 
     if (errorEntries > 0) {
 
@@ -67,13 +67,13 @@ function showImportMessage(response) {
         else
             AJS.messages.warning({title: 'Import Error', body: message});
 
-    } else {
+    } else {*/
         var message = "Imported " + successfulEntries + " entries.";
         AJS.messages.success({
             title: 'Import was successful!',
             body: message
         });
-    }
+    //}
 }
 
 function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {

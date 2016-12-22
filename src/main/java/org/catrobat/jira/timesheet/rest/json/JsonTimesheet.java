@@ -37,6 +37,8 @@ import java.util.Date;
 public final class JsonTimesheet {
 
     @XmlElement
+    private String userKey;
+    @XmlElement
     private int timesheetID;
     @XmlElement
     private String lectures;
@@ -63,7 +65,6 @@ public final class JsonTimesheet {
     private boolean isOffline;
     @XmlElement
     private boolean isAutoOffline;
-
     @XmlElement
     private boolean isEnabled;
     @XmlElement
@@ -73,6 +74,7 @@ public final class JsonTimesheet {
             int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
             boolean isAutoInactive, boolean isOffline, boolean isAutoOffline, boolean isEnabled, boolean isMTSheet) {
         this.timesheetID = timesheetID;
+        // TODO: userKey missing
         this.lectures = lectures;
         this.reason = reason;
         this.latestEntryDate = latestEntryDate;
@@ -91,6 +93,7 @@ public final class JsonTimesheet {
 
     public JsonTimesheet(Timesheet timesheet) {
         this.timesheetID = timesheet.getID();
+        this.userKey = timesheet.getUserKey();
         this.lectures = timesheet.getLectures();
         this.reason = timesheet.getReason();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
@@ -108,6 +111,10 @@ public final class JsonTimesheet {
     }
 
     public JsonTimesheet() {
+    }
+
+    public String getUserKey() {
+        return userKey;
     }
 
     public int getTimesheetID() {

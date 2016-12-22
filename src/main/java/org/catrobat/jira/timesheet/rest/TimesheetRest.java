@@ -223,10 +223,7 @@ public class TimesheetRest {
 
     private void addAllJsonTimesheetEntries(List<JsonTimesheetEntry> jsonTimesheetEntries, TimesheetEntry[] entries) {
         for (TimesheetEntry entry : entries) {
-            jsonTimesheetEntries.add(new JsonTimesheetEntry(entry.getID(), entry.getBeginDate(),
-                    entry.getEndDate(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getPauseMinutes(),
-                    entry.getDescription(), entry.getTeam().getID(), entry.getCategory().getID(),
-                    entry.getJiraTicketID(), entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport(), entry.getIsTheory()));
+            jsonTimesheetEntries.add(new JsonTimesheetEntry(entry));
         }
     }
 

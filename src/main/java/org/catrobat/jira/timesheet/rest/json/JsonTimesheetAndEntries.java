@@ -20,4 +20,12 @@ public class JsonTimesheetAndEntries {
         this.jsonTimesheet = jsonTimesheet;
         this.jsonTimesheetEntryList = jsonTimesheetEntriesList;
     }
+
+    public JsonTimesheet getJsonTimesheet() {
+        return jsonTimesheet;
+    }
+
+    public List<JsonTimesheetEntry> getJsonTimesheetEntryList() {
+        return jsonTimesheetEntryList;
+    }
 }

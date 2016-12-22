@@ -80,7 +80,7 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
 
         TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
 
-        List<JsonTimesheetEntry> jsonEntries = new ArrayList<JsonTimesheetEntry>(entries.length);
+        List<JsonTimesheetEntry> jsonEntries = new ArrayList<JsonTimesheetEntry>();
 
         for (TimesheetEntry entry : entries) {
             jsonEntries.add(new JsonTimesheetEntry(entry));
