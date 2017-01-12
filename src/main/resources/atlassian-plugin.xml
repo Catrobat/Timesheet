@@ -252,15 +252,21 @@
               weight="1">
         <description>Link to Administration menu</description>
         <label>Timesheet - Configuration</label>
-        <link linkId="administration_view_link">/plugins/servlet/timesheet/administration</link>
+        <link linkId="administration_view_link">/plugins/servlet/timesheet/download</link>
         <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
     </web-item>
 
     <web-item key="user_information" name="Link to User Information View"
-              section="admin_plugins_menu/timesheet-config-section"
-              weight="2">
+              section="admin_plugins_menu/timesheet-config-section" weight="2">
         <label>Timesheet - User Information</label>
         <link linkId="user_information_view_link">/plugins/servlet/timesheet/user/information</link>
+        <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
+    </web-item>
+
+    <web-item key="timesheet_user_information" name="Link to User Information Servlet"
+              section="system.user.options/personal" weight="2">
+        <label>Timesheet - User Information</label>
+        <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/user/information</link>
         <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
     </web-item>
 
@@ -269,13 +275,6 @@
               weight="1">
         <label>Timesheet - Configuration</label>
         <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/administration</link>
-        <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
-    </web-item>
-
-    <web-item key="timesheet_user_information" name="Link to User Information Servlet"
-              section="system.user.options/personal" weight="2">
-        <label>Timesheet - User Information</label>
-        <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/user/information</link>
         <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
     </web-item>
 

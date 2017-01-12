@@ -54,16 +54,16 @@ public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
     }
 
     public boolean hasPermission(ApplicationUser user) {
-        if (user == null || !permissionService.isJiraAdministrator(user)) {
+        if (user == null)
             return false;
-        }
 
         Config config = configurationService.getConfiguration();
         if (config.getTimesheetAdminGroups().length == 0 && config.getTimesheetAdminUsers().length == 0) {
-            return true;
+            if (permissionService.isJiraAdministrator(user)) {
+                return true;
+            }
         }
-
-        if (configurationService.isTimesheetAdmin(user.getKey())) {
+        else if (configurationService.isTimesheetAdmin(user.getKey())) {
             return true;
         }
 

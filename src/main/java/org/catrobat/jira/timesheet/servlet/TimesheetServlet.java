@@ -55,7 +55,7 @@ public class TimesheetServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Response unauthorized = permissionService.checkUserPermission();
         if (unauthorized != null) {
-            response.sendError(HttpServletResponse.SC_CONFLICT, unauthorized.getEntity().toString());
+            redirectToLogin(request, response);
         }
         super.service(request, response);
     }
@@ -68,9 +68,7 @@ public class TimesheetServlet extends HttpServlet {
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet = null;
 
-            //info: testuser added
-            if (permissionService.checkIfUserIsGroupMember("Administrators") ||
-                    permissionService.checkIfUserIsGroupMember("administrators")) {
+            if (permissionService.isJiraAdministrator(user) || permissionService.isTimesheetAdmin(user)) {
                 paramMap.put("isadmin", true);
             } else {
                 paramMap.put("isadmin", false);
@@ -80,10 +78,7 @@ public class TimesheetServlet extends HttpServlet {
                 timesheet = sheetService.getTimesheetByUser(userKey, false);
             }
 
-            //check if user is Team-Coordinator
-            //TODO: is administrator the correct group, or should it be timesheet
-            if (permissionService.checkIfUserIsGroupMember("Administrators") ||
-                    permissionService.checkIfUserIsGroupMember("administrators") ||
+            if (permissionService.isJiraAdministrator(user) || permissionService.isTimesheetAdmin(user) ||
                     permissionService.isUserTeamCoordinator(user)) {
                 paramMap.put("iscoordinator", true);
             } else {
