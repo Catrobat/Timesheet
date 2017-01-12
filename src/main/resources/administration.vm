@@ -264,8 +264,9 @@
 
             <h2><font color="red">Import</font></h2>
             <p>Upload an existing 'Timesheet - Configuration' <a href="upload/config">here</a>.</p>
-            <p>Upload existing 'Timesheets' <a href="upload/timesheets">here</a>.</p>
-            <p>Upload an existing 'Timesheets' as Json <a href="upload/timesheets/json">here</a>.</p>
+            <p>Upload existing 'Timesheets' from <a href="upload/timesheets">CSV</a> or from
+                <a href="upload/timesheets/json">Json</a>.
+            </p>
 
             <!-- moved the team & category configuration to other tabs -->
 
