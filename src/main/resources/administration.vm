@@ -257,7 +257,9 @@
             </fieldset>
 
             <h2><font color="green">Export</font></h2>
-            <p>Download 'All Timesheets' as <a href="download/timesheets">CSV</a>.</p>
+            <p>Download 'All Timesheets' as <a href="download/timesheets">CSV</a> or as
+                <a href="download/timesheets/json">Json</a>.
+            </p>
             <p>Download 'Config' as <a href="download/config">CSV</a>.</p>
 
             <h2><font color="red">Import</font></h2>

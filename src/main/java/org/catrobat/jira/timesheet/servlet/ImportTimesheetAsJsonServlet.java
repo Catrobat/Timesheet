@@ -84,37 +84,40 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
         }
 
         Gson gson = new Gson();
-        JsonTimesheetAndEntries timesheetAndEntries = gson.fromJson(jsonString, JsonTimesheetAndEntries.class);
+        JsonTimesheetAndEntries[] timesheetAndEntriesList = gson.fromJson(jsonString, JsonTimesheetAndEntries[].class);
 
-        if (timesheetAndEntries == null) {
+        if (timesheetAndEntriesList == null) {
             response.getWriter().print("No Json given");
             return;
         }
 
-        JsonTimesheet jsonTimesheet = timesheetAndEntries.getJsonTimesheet();
-        List<JsonTimesheetEntry> timesheetEntryList = timesheetAndEntries.getJsonTimesheetEntryList();
-
-        Timesheet sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
-                jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(), jsonTimesheet.getTargetHoursRemoved(),
-                jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                jsonTimesheet.isActive(), jsonTimesheet.isOffline(), jsonTimesheet.isMTSheet(), jsonTimesheet.isEnabled());
-
         String errorString = "";
-        System.out.println("sheetid: " + sheet.getID());
-        for (JsonTimesheetEntry entry : timesheetEntryList) {
-            Category category = categoryService.getCategoryByID(entry.getCategoryID());
-            Team team;
-            System.out.println(entry.getEntryID());
-            try {
-                // TODO: check service exception
-                team = teamService.getTeamByID(entry.getTeamID());
-            } catch (ServiceException e) {
-                errorString += "Team with ID " + entry.getTeamID() + " not found. Entry #" + entry.getEntryID() + " not ignored.";
-                continue;
+
+        for (JsonTimesheetAndEntries timesheetAndEntries : timesheetAndEntriesList) {
+            JsonTimesheet jsonTimesheet = timesheetAndEntries.getJsonTimesheet();
+            List<JsonTimesheetEntry> timesheetEntryList = timesheetAndEntries.getJsonTimesheetEntryList();
+
+            Timesheet sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
+                    jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(), jsonTimesheet.getTargetHoursRemoved(),
+                    jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
+                    jsonTimesheet.isActive(), jsonTimesheet.isOffline(), jsonTimesheet.isMTSheet(), jsonTimesheet.isEnabled());
+
+            System.out.println("sheetid: " + sheet.getID());
+            for (JsonTimesheetEntry entry : timesheetEntryList) {
+                Category category = categoryService.getCategoryByID(entry.getCategoryID());
+                Team team;
+                System.out.println(entry.getEntryID());
+                try {
+                    // TODO: check service exception
+                    team = teamService.getTeamByID(entry.getTeamID());
+                } catch (ServiceException e) {
+                    errorString += "Team with ID " + entry.getTeamID() + " not found. Entry #" + entry.getEntryID() + " not ignored.";
+                    continue;
+                }
+                timesheetEntryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category, entry.getDescription(),
+                        entry.getPauseMinutes(), team, entry.IsGoogleDocImport(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(),
+                        entry.getTicketID(), entry.getPairProgrammingUserName());
             }
-            timesheetEntryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category, entry.getDescription(),
-                    entry.getPauseMinutes(), team, entry.IsGoogleDocImport(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(),
-                    entry.getTicketID(), entry.getPairProgrammingUserName());
         }
 
         response.getWriter().print("Successfully executed following string:<br />" +
