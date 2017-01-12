@@ -44,6 +44,10 @@ public class PermissionServiceImpl implements PermissionService {
         this.configService = configService;
     }
 
+    public ApplicationUser getLoggedInUser() {
+        return ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+    }
+
     public ApplicationUser checkIfUserExists() throws PermissionException {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         if (user == null) {

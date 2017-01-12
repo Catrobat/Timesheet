@@ -1,10 +1,8 @@
 package org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
@@ -28,16 +26,12 @@ import java.util.List;
 
 public class ExportTimesheetAsJsonServlet extends HttpServlet {
 
-    private final LoginUriProvider loginUriProvider;
-    private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
     private final PermissionService permissionService;
     private final TimesheetEntryService entryService;
 
-    public ExportTimesheetAsJsonServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
-            final TimesheetService sheetService, final PermissionService permissionService, TimesheetEntryService timesheetEntryService) {
-        this.loginUriProvider = loginUriProvider;
-        this.templateRenderer = templateRenderer;
+    public ExportTimesheetAsJsonServlet(final TimesheetService sheetService, final PermissionService permissionService,
+                                        final TimesheetEntryService timesheetEntryService) {
         this.sheetService = sheetService;
         this.permissionService = permissionService;
         this.entryService = timesheetEntryService;
@@ -54,7 +48,12 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        ApplicationUser loggedInUser = null;
+        try {
+            loggedInUser = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            throw new ServletException(e);
+        }
         Date actualDate =  new Date();
         String filename = "attachment; filename=\"" +
                 actualDate.toString().substring(0,10) +

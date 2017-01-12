@@ -104,7 +104,6 @@ public class ExportTimesheetAsCSVServletTest {
         TimesheetEntry[] timesheetEntries = {};
         when(timesheet.getEntries()).thenReturn(timesheetEntries);
 
-
         exportTimesheetAsCSVServlet.doGet(request, response);
     }
 }

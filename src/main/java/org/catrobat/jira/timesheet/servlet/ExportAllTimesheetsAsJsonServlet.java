@@ -1,8 +1,6 @@
 package org.catrobat.jira.timesheet.servlet;
 
-
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -44,7 +42,12 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        ApplicationUser loggedInUser = null;
+        try {
+            loggedInUser = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            throw new ServletException(e);
+        }
         Date actualDate =  new Date();
         String filename = "attachment; filename=\"" +
                 actualDate.toString().substring(0,10) +
