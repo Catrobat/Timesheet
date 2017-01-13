@@ -19,29 +19,23 @@ package org.catrobat.jira.timesheet.servlet;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.websudo.WebSudoManager;
-import org.catrobat.jira.timesheet.helper.CsvTimesheetExporter;
-import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.helper.CsvTimesheetExporter;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
 
-public class ExportTimesheetAsCSVServlet extends HighPrivilegeServlet {
+public class ExportTimesheetAsCSVServlet extends HttpServlet {
 
     private final TimesheetService timesheetService;
 
-    public ExportTimesheetAsCSVServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                       TimesheetService timesheetService, ConfigService configService,
-                                       PermissionService permissionService) {
-        super(loginUriProvider, webSudoManager, permissionService, configService);
+    public ExportTimesheetAsCSVServlet(TimesheetService timesheetService) {
         this.timesheetService = timesheetService;
     }
 
@@ -50,11 +44,11 @@ public class ExportTimesheetAsCSVServlet extends HighPrivilegeServlet {
         super.doGet(request, response);
 
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-        Date actualDate =  new Date();
+        Date actualDate = new Date();
         String filename = "attachment; filename=\"" +
-                actualDate.toString().substring(0,10) +
+                actualDate.toString().substring(0, 10) +
                 "-" +
-                actualDate.toString().substring(25,28) +
+                actualDate.toString().substring(25, 28) +
                 "-" +
                 loggedInUser.getUsername() +
                 "_Timesheet_Timesheet.csv\"";

@@ -132,16 +132,19 @@ function fetchData() {
         url: restBaseUrl + 'teams',
         contentType: "application/json"
     });
+
     var usersFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'user/getUsers',
         contentType: "application/json"
     });
+
     var pairProgrammingFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'user/getPairProgrammingUsers',
         contentType: "application/json"
-    })
+    });
+
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, pairProgrammingFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
@@ -202,12 +205,20 @@ function fetchUserTimesheetData(timesheetID) {
         url: restBaseUrl + 'teams/',
         contentType: "application/json"
     });
+
     var usersFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'user/getUsers',
         contentType: "application/json"
     });
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched)
+
+    var pairProgrammingFetched = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'user/getPairProgrammingUsers',
+        contentType: "application/json"
+    });
+
+    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, pairProgrammingFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
         .fail(function (error) {

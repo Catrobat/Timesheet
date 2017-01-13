@@ -22,9 +22,9 @@ import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
 import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
@@ -153,6 +153,10 @@ public class UserRest {
         }
 
         String pairProgrammingGroup = configService.getConfiguration().getPairProgrammingGroup();
+        if(pairProgrammingGroup.isEmpty()){
+            return getUsers(request);
+        }
+
         List<String> jsonUserList = new ArrayList<String>();
         Collection<ApplicationUser> allUsers = ComponentAccessor.getGroupManager().getUsersInGroup(pairProgrammingGroup);
         for (ApplicationUser user : allUsers) {

@@ -77,7 +77,7 @@ function initSelectTimesheetButton() {
         AJS.$("#timesheet-export-csv-link").empty();
         AJS.$("#timesheet-owner-information").empty();
         AJS.messages.generic({
-            title: 'Timesheet Information.',
+            title: 'Timesheet Information',
             body: '<p>You selected a timesheet of another user. ' +
             'If you want to enable all your ' +
             'visualizations again you have to refresh the page..</p>'
@@ -92,7 +92,7 @@ function initSelectTimesheetButton() {
             AJS.$("#timesheet-export-csv-link").empty();
             if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser, false);
-                hideVisualizationTabs();
+                //hideVisualizationTabs();
             }
         } else if (AJS.$(document.activeElement).val() === 'Display') {
             AJS.$("#timesheet-hours-save-button").hide();
@@ -102,7 +102,7 @@ function initSelectTimesheetButton() {
             isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
             if (selectedUser[0] !== "") {
                 getTimesheetOfUser(selectedUser, isMTSheetSelected);
-                hideVisualizationTabs();
+                //hideVisualizationTabs();
             }
         }
     });

@@ -46,7 +46,6 @@ function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
     });
     */
 
-    // ToDO: der Userbutton wird im timesheet initialisiert, aber der AdminButton muss ja hier initialisiert werden.
     if(isAdmin) {
         initAdministratorButton();
     }

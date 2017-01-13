@@ -1,4 +1,5 @@
 "use strict";
+var orig;
 
 function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
     var timesheetData = timesheetReply[0];
@@ -35,7 +36,8 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
 
 function populateVisTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
-    AJS.$("#visualization-table-content").empty();
+    AJS.$("#visualization-table-content");
+
     AJS.$("#piChartDiagramTag").empty();
     AJS.$("#piChartDiagram").empty();
     appendEntriesToVisTable(timesheetData);

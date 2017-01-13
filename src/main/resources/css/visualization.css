@@ -73,11 +73,6 @@ code {
     visibility: hidden;
 }
 
-#piChartDiagramTag {
-    margin-top: 25px;
-    visibility: hidden;
-}
-
 #lineDiagram {
     margin-top: 25px;
     width: 100%;

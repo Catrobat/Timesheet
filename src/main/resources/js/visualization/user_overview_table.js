@@ -1,5 +1,6 @@
 "use strict";
 
+//Todo: append umschreiben und mittels html einfügen probieren, append macht probleme
 function appendEntriesToVisTable(timesheetData) {
 
     var availableEntries = timesheetData.entries;
