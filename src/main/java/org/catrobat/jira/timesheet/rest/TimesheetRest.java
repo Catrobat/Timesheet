@@ -307,13 +307,15 @@ public class TimesheetRest {
             return response;
         }
 
+        System.out.println("userName = " + userName);
+        System.out.println("getMTSheet = " + getMTSheet);
+
         Timesheet sheet;
         try {
             sheet = sheetService.getTimesheetByUser(ComponentAccessor.
                     getUserKeyService().getKeyForUsername(userName), getMTSheet);
         } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity("Timesheet of Username: "
-                    + userName + " has not been initialized.").build();
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
 
         //check permissions for each sheet
@@ -323,7 +325,7 @@ public class TimesheetRest {
 
         if (sheet == null) {
             return Response.status(Response.Status.FORBIDDEN).entity("Timesheet of Username: "
-                    + userName + " has not been initialized.").build();
+                    + userName + " has not been initialized.  [sheet is null]").build();
         }
 
         return Response.ok(sheet.getID()).build();

@@ -38,7 +38,6 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
 
-
     @Override
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved,
@@ -139,11 +138,8 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet getTimesheetByUser(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
-
         if (found.length > 2) {
             throw new ServiceException("Found more than two Timesheets with the same UserKey.");
-        } else if (found.length == 0) {
-            throw new ServiceException("No Timesheet found.");
         }
 
         if (isMasterThesisTimesheet) {
@@ -153,7 +149,6 @@ public class TimesheetServiceImpl implements TimesheetService {
                 }
             }
         } else {
-
             for (int i = 0; i < found.length; i++) {
                 if (!found[i].getIsMasterThesisTimesheet()) {
                     return found[i];
@@ -161,7 +156,8 @@ public class TimesheetServiceImpl implements TimesheetService {
             }
         }
 
-        return null;
+        System.out.println("found.length = " + found.length);
+        throw new ServiceException("No Timesheet found.");
     }
 
     @Override

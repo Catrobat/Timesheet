@@ -81,7 +81,24 @@ AJS.toInit(function () {
     if (isCoordinator) {
         fetchUsers();
     }
-    fetchData();
+
+    var selectedUser = sessionStorage.getItem('selectedUser');
+    if (selectedUser) {
+        var isMTSheetSelected = sessionStorage.getItem('isMTSheetSelected');
+        var timesheetIDOfUser = sessionStorage.getItem('timesheetID');
+        console.log("User:" + selectedUser);
+        console.log("is master sheet : " + isMTSheetSelected);
+        console.log("timesheetID:",timesheetIDOfUser);
+        fetchData(timesheetIDOfUser);
+
+        // defining beghavoir: should the user only once
+        sessionStorage.removeItem('selectedUser');
+        sessionStorage.removeItem('isMTSheetSelected');
+        sessionStorage.removeItem('timesheetID');
+    }
+    else {
+        fetchData(timesheetID);
+    }
 });
 
 function checkConstrains() {
@@ -108,7 +125,10 @@ function checkConstrains() {
     }).responseText;
 }
 
-function fetchData() {
+function fetchData(timesheetID) {
+
+    clearDiagramSelections();
+
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheets/' + timesheetID,
@@ -180,94 +200,6 @@ function fetchData() {
 
 }
 
-function fetchUserTimesheetData(timesheetID) {
-
-    var timesheetFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheets/' + timesheetID,
-        contentType: "application/json"
-    });
-
-    var entriesFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheets/' + timesheetID + '/entries',
-        contentType: "application/json"
-    });
-
-    var categoriesFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'categoryIDs',
-        contentType: "application/json"
-    });
-
-    var teamsFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'teams/',
-        contentType: "application/json"
-    });
-
-    var usersFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'user/getUsers',
-        contentType: "application/json"
-    });
-
-    var pairProgrammingFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'user/getPairProgrammingUsers',
-        contentType: "application/json"
-    });
-
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, pairProgrammingFetched)
-        .done(assembleTimesheetData)
-        .done(populateTable, prepareImportDialog)
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while fetching data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-            console.log(error);
-        });
-}
-
-
-function fetchUserVisData(timesheetID) {
-    var timesheetFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheets/' + timesheetID,
-        contentType: "application/json"
-    });
-
-    var entriesFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheets/' + timesheetID + '/entries',
-        contentType: "application/json"
-    });
-
-    var categoriesFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'categoryIDs',
-        contentType: "application/json"
-    });
-
-    var teamsFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'teams',
-        contentType: "application/json"
-    });
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched)
-        .done(assembleTimesheetVisData)
-        .done(populateVisTable)
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while fetching data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-            console.log(error);
-        });
-}
-
-
 function getDataOfTeam(teamName) {
     var teamData = AJS.$.ajax({
         type: 'GET',
@@ -285,22 +217,22 @@ function getDataOfTeam(teamName) {
         });
 }
 
-function getTimesheetOfUser(selectedUser, isMTSheet) {
-    var timesheetIDFetched = AJS.$.ajax({
+function getTimesheetIdOfUser(selectedUser, isMTSheet) {
+    AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheet/timesheetID/' + selectedUser[0] + '/' + isMTSheet,
-        contentType: "application/json"
-    });
-    AJS.$.when(timesheetIDFetched)
-        .done(fetchUserTimesheetData)
-        .done(fetchUserVisData)
-        .fail(function (error) {
+        contentType: "application/json",
+        success: function (timesheetID) {
+            sessionStorage.setItem('timesheetID', timesheetID); // defining the session variable
+        },
+        error: function (error) {
             AJS.messages.error({
                 title: 'There was an error while getting timesheet data of another user.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);
-        });
+        }
+    });
 }
 
 function getTimesheetByUser(selectedUser, isMTSheetSelected) {
@@ -455,4 +387,19 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     updateTimesheetInformationValues(timesheetData_);
 
     return timesheetData_;
+}
+
+// first we have to clear the lineDiagram sections before we can repaint the lineDiagram.
+function clearDiagramSelections() {
+
+    //summary lineDiagram
+    AJS.$("#piChartDiagram").empty();
+
+    // user time visualization
+    AJS.$("#lineDiagram").empty();
+    AJS.$("#categoryLineDiagram").empty();
+
+    //team visualization
+    AJS.$("#teamDataDiagram").empty();
+    AJS.$("#teamLineDiagram").empty();
 }

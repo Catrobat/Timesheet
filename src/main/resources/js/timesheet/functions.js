@@ -78,10 +78,11 @@ function initSelectTimesheetButton() {
         AJS.$("#timesheet-owner-information").empty();
         AJS.messages.generic({
             title: 'Timesheet Information',
-            body: '<p>You selected a timesheet of another user. ' +
-            'If you want to enable all your ' +
+            body: '<p>You selected a timesheet of another user. If you want to enable all your ' +
             'visualizations again you have to refresh the page..</p>'
         });
+        var selectedUser;
+        var isMTSheetSelected = false;
 
         if (AJS.$(document.activeElement).val() === 'Show') {
             AJS.$("#timesheet-hours-save-button").hide();
@@ -90,21 +91,22 @@ function initSelectTimesheetButton() {
             selectedUser = AJS.$("#user-select2-field").val().split(',');
 
             AJS.$("#timesheet-export-csv-link").empty();
-            if (selectedUser[0] !== "") {
-                getTimesheetOfUser(selectedUser, false);
-                //hideVisualizationTabs();
-            }
         } else if (AJS.$(document.activeElement).val() === 'Display') {
             AJS.$("#timesheet-hours-save-button").hide();
 
             selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
 
             isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
-            if (selectedUser[0] !== "") {
-                getTimesheetOfUser(selectedUser, isMTSheetSelected);
-                //hideVisualizationTabs();
-            }
         }
+
+        if (selectedUser[0] !== "") {
+            getTimesheetIdOfUser(selectedUser, isMTSheetSelected);
+            //hideVisualizationTabs();
+        }
+
+        //save the selectedUser in the session so we can later access it on reloading the page
+        sessionStorage.setItem('selectedUser', selectedUser); // defining the session variable
+        sessionStorage.setItem('isMTSheetSelected', isMTSheetSelected); // defining the session variable
     });
 }
 

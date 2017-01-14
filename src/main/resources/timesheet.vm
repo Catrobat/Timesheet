@@ -354,7 +354,7 @@
 </script>
 
 <script>
-    function drawDiagram(data) {
+    function drawLineDiagram(data) {
         new Morris.Line({
             // ID of the element in which to draw the chart.
             element: 'lineDiagram',

@@ -36,10 +36,15 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
 
 function populateVisTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
-    AJS.$("#visualization-table-content");
+    AJS.$("#visualization-table-content").empty();
 
     AJS.$("#piChartDiagramTag").empty();
     AJS.$("#piChartDiagram").empty();
+
+    // user time visualization
+    AJS.$("#lineDiagram").html("");
+    AJS.$("#categoryLineDiagram").html("");
+
     appendEntriesToVisTable(timesheetData);
 }
 // eine funktion soll mehr als nur eine weitere Funktion beinhalten, kann gelöscht werden

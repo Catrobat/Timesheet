@@ -1,6 +1,5 @@
 "use strict";
 
-//Todo: append umschreiben und mittels html einfügen probieren, append macht probleme
 function appendEntriesToVisTable(timesheetData) {
 
     var availableEntries = timesheetData.entries;
@@ -70,7 +69,7 @@ function appendEntriesToVisTable(timesheetData) {
         }
 
         if (oldPos != pos || i == availableEntries.length - 1) {
-            //add points to line diagram
+            //add points to line lineDiagram
             var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
             var dataY = toFixed(totalHours + totalMinutes / 60, 2);
             dataPoints.push(dataX);
@@ -127,8 +126,8 @@ function appendEntriesToVisTable(timesheetData) {
         "<td headers=\"basic-time\" class=\"time\">" + timeLastSixMonthHours + "hours " + timeLastSixMonthMinutes + "mins" + "</td>" +
         "</tr>");
 
-    //assign JSON data for line graph
-    diagram(dataPoints);
     appendTimeToPiChart(theoryHours, totalTime - theoryHours, totalTime);
+    //assign JSON data for line graph
+    lineDiagram(dataPoints);
 }
 
