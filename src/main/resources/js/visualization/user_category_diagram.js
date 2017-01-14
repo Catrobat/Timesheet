@@ -3,7 +3,7 @@
 //reverse order of the table from bottom to top
 function assignCategoryDiagramData(timesheetData) {
 
-    var availableEntries = timesheetData.entries;
+    var availableEntries = timesheetData[0].entries;
 
     var pos = availableEntries.length - 1;
     var i = availableEntries.length - 1;
@@ -45,7 +45,7 @@ function assignCategoryDiagramData(timesheetData) {
             var dataY = totalHours + totalMinutes / 60;
             dataPoints.push(dataX);
             dataPoints.push(dataY);
-            dataPoints.push(timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName);
+            dataPoints.push(timesheetData[0].categoryIDs[availableEntries[i].categoryID].categoryName);
         } else {
             pos = i;
             i = i + 1;

@@ -73,7 +73,7 @@ function initSelectTimesheetButton() {
             type: 'info',
             title: 'Page will be reloaded',
             body: '<p>Page will be loaded soon. Please wait...</p>' +
-            'You can <u>quick roload</u> by pressing the F5 key.',
+            'You can <u>quick reload</u> by pressing the F5 key.',
             close: 'auto'
         });
 

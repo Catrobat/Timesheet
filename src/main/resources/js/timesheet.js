@@ -59,16 +59,6 @@ AJS.toInit(function () {
         AJS.$("#theory-hour-key-data").show();
     }
 
-    AJS.$("#tabs-team").submit(function (e) {
-        e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Visualize') {
-            var selectedTeam = AJS.$("#select-team-select2-field").val().split(',');
-            if (selectedTeam[0] !== "") {
-                getDataOfTeam(selectedTeam[0]);
-            }
-        }
-    });
-
     if (isAdmin) {
         AJS.$("#timesheet-hours-save-button").hide();
         AJS.$("#timesheet-hours-update-button").show();
@@ -161,7 +151,7 @@ function fetchData(timesheetID) {
         .done(populateTable, prepareImportDialog)
         .done(assembleTimesheetVisData)
         .done(populateVisTable)
-        .done(computeCategoryDiagramData)
+        .done(assignCategoryDiagramData)
 
         .fail(function (error) {
             AJS.messages.error({
@@ -189,23 +179,6 @@ function fetchData(timesheetID) {
             console.log(error);
         });
 
-}
-
-function getDataOfTeam(teamName) {
-    var teamData = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheet/' + teamName + '/entries',
-        contentType: "application/json"
-    });
-    AJS.$.when(teamData)
-        .done(assignTeamData)
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while fetching team data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-            console.log(error);
-        });
 }
 
 function saveTimesheetIDOfUserInSession(selectedUser, isMTSheet) {

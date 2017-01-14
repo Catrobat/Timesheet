@@ -35,7 +35,6 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
 }
 
 function populateVisTable(timesheetDataReply) {
-    var timesheetData = timesheetDataReply[0];
     AJS.$("#visualization-table-content").empty();
 
     AJS.$("#piChartDiagramTag").empty();
@@ -45,17 +44,13 @@ function populateVisTable(timesheetDataReply) {
     AJS.$("#lineDiagram").html("");
     AJS.$("#categoryLineDiagram").html("");
 
+    var timesheetData = timesheetDataReply[0];
     appendEntriesToVisTable(timesheetData);
 }
-// eine funktion soll mehr als nur eine weitere Funktion beinhalten, kann gelöscht werden
-function computeCategoryDiagramData(timesheetDataReply) {
-    assignCategoryDiagramData(timesheetDataReply[0], false);
-}
 
-// ToDO:
-function computeTeamDiagramData(timesheetDataReply) {
-    assignTeamVisData(timesheetDataReply[0], true); // 1.Parameter: timesheetData
-    assignTeamData(timesheetDataReply[0]); // aber hier 1. Parameter: entries - what the hell ?!?!
+function computeTeamDiagramData(teamEntries) {
+    assignTeamVisData(teamEntries[0]);
+    assignTeamData(teamEntries[0]);
 }
 
 function calculateDuration(begin, end, pause) {

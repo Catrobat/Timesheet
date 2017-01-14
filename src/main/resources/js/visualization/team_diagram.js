@@ -1,11 +1,13 @@
 "use strict";
 
-function assignTeamData(entries) {
+function assignTeamData(teamEntries) {
     AJS.$("#teamDataDiagram").empty();
-    var availableEntries = entries;
+    var availableEntries = teamEntries;
 
     var pos = availableEntries.length - 1;
     //variables for the time calculation
+    var tmpHours = 0;
+    var tmpMinutes = 0;
     var totalHours = 0;
     var totalMinutes = 0;
 
@@ -31,12 +33,12 @@ function assignTeamData(entries) {
             var pause = availableEntries[i].pauseMinutes;
             var calculatedTime = hours * 60 + minutes - pause;
 
-            totalMinutes = totalMinutes + calculatedTime;
+            tmpMinutes = tmpMinutes + calculatedTime;
 
-            if (totalMinutes >= 60) {
-                var minutesToFullHours = Math.floor(totalMinutes / 60); //get only full hours
-                totalHours = totalHours + minutesToFullHours;
-                totalMinutes = totalMinutes - minutesToFullHours * 60;
+            if (tmpMinutes >= 60) {
+                var minutesToFullHours = Math.floor(tmpMinutes / 60); //get only full hours
+                tmpHours = tmpHours + minutesToFullHours;
+                tmpMinutes = tmpMinutes - minutesToFullHours * 60;
             }
         } else {
             pos = i;
@@ -44,18 +46,26 @@ function assignTeamData(entries) {
         }
 
         if (oldPos != pos || i == 0) {
-            var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
-            var dataY = toFixed(totalHours + (totalMinutes / 60), 2);
+            var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1); // time (year)
+            var dataY = toFixed(tmpHours + (tmpMinutes / 60), 2); // total hours
+            console.log("hours:", tmpHours);
+            console.log("min", tmpMinutes);
+            totalHours += tmpHours;
+            totalMinutes += tmpMinutes;
             if (!containsElement(data['year'], dataX)) {
                 data['year'].push(dataX);
             }
-            data['dataX'].push(dataX);
-            data['dataY'].push(dataY);
 
-            totalHours = 0;
-            totalMinutes = 0;
+            tmpHours = 0;
+            tmpMinutes = 0;
         }
     }
+
+    console.log("dataY ", dataY);
+    console.log(totalHours);
+    console.log(totalMinutes);
+    data['dataX'].push(dataX);
+    data['dataY'].push(dataY);
     assignDataPoints(data);
 }
 
@@ -63,12 +73,14 @@ function assignDataPoints(data) {
     var dataPoints = [];
     var sum = 0;
 
-    for(var i = 0; i < data['year'].length; i++) {
-        for(var j = 0; j < data['dataX'].length; j++) {
-            if(data['dataX'][j] == data['year'][i]) {
+    for (var i = 0; i < data['year'].length; i++) {
+        for (var j = 0; j < data['dataX'].length; j++) {
+            if (data['dataX'][j] == data['year'][i]) {
                 sum = sum + data['dataY'][j];
             }
         }
+        console.log("sum:", sum);
+        console.log("year: ", data['year'][i]);
         dataPoints.push(data['year'][i]);
         dataPoints.push(sum);
         sum = 0;
@@ -87,5 +99,8 @@ function teamDiagram(dataPoints) {
             value: dataPoints[i + 1]
         });
     }
+    data.forEach(function (ele) {
+        console.log("value", ele.value);
+    });
     drawSelectedTeamDiagram(data);
 }

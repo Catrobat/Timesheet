@@ -1,9 +1,9 @@
 "use strict";
 
 //reverse order of the table from bottom to top
-function assignTeamVisData(timesheetData) {
+function assignTeamVisData(teamEntries) {
 
-    var availableEntries = timesheetData;
+    var availableEntries = teamEntries;
 
     var pos = availableEntries.length - 1;
     var i = availableEntries.length - 1;
@@ -42,7 +42,7 @@ function assignTeamVisData(timesheetData) {
             var dataY = totalHours + totalMinutes / 60;
             dataPoints.push(dataX);
             dataPoints.push(dataY);
-            dataPoints.push(timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName);
+            dataPoints.push(teamEntries.categoryIDs[availableEntries[i].categoryID].categoryName);
         } else {
             pos = i;
             i = i + 1;
