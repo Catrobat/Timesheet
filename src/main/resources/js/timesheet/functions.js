@@ -13,11 +13,6 @@ function isReadOnlyUser(userName, config) {
     return false;
 }
 
-function hideVisualizationTabs() {
-    document.getElementById("tabs-line").style.display = "none";
-    document.getElementById("tabs-team").style.display = "none";
-}
-
 function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
     var categoriesPerTeam = [];
     selectedTeam.teamCategories.filter(function (categoryID) {
@@ -74,39 +69,32 @@ function initSelectTimesheetButton() {
     AJS.$("#timesheet-settings").submit(function (e) {
         e.preventDefault();
 
-        AJS.$("#timesheet-export-csv-link").empty();
-        AJS.$("#timesheet-owner-information").empty();
-        AJS.messages.generic({
-            title: 'Timesheet Information',
-            body: '<p>You selected a timesheet of another user. If you want to enable all your ' +
-            'visualizations again you have to refresh the page..</p>'
+        require('aui/flag')({
+            type: 'info',
+            title: 'Page will be reloaded',
+            body: '<p>Page will be loaded soon. Please wait...</p>' +
+            'You can <u>quick roload</u> by pressing the F5 key.',
+            close: 'auto'
         });
+
         var selectedUser;
         var isMTSheetSelected = false;
 
         if (AJS.$(document.activeElement).val() === 'Show') {
-            AJS.$("#timesheet-hours-save-button").hide();
-            AJS.$("#timesheet-hours-save-button").hide();
-
             selectedUser = AJS.$("#user-select2-field").val().split(',');
-
-            AJS.$("#timesheet-export-csv-link").empty();
         } else if (AJS.$(document.activeElement).val() === 'Display') {
-            AJS.$("#timesheet-hours-save-button").hide();
-
             selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
-
             isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
         }
 
         if (selectedUser[0] !== "") {
-            getTimesheetIdOfUser(selectedUser, isMTSheetSelected);
-            //hideVisualizationTabs();
+            saveTimesheetIDOfUserInSession(selectedUser, isMTSheetSelected);
         }
 
-        //save the selectedUser in the session so we can later access it on reloading the page
-        sessionStorage.setItem('selectedUser', selectedUser); // defining the session variable
-        sessionStorage.setItem('isMTSheetSelected', isMTSheetSelected); // defining the session variable
+        //browser reload
+        window.setTimeout(function () {
+            location.reload()
+        }, 4000);
     });
 }
 

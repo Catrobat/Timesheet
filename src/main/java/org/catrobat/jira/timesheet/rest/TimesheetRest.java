@@ -307,9 +307,6 @@ public class TimesheetRest {
             return response;
         }
 
-        System.out.println("userName = " + userName);
-        System.out.println("getMTSheet = " + getMTSheet);
-
         Timesheet sheet;
         try {
             sheet = sheetService.getTimesheetByUser(ComponentAccessor.

@@ -124,7 +124,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Set<Team> getTeamsOfCoordinator(String coordinatorsName) {
 
-        Set<Team> teams = new HashSet<Team>();
+        Set<Team> teams = new HashSet<>();
         Config config = configService.getConfiguration();
 
         for (Team team : config.getTeams()) {

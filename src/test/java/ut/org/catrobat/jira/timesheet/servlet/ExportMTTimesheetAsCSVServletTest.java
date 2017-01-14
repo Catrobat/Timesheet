@@ -8,6 +8,7 @@ import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.ExportMasterThesisTimesheetAsCSVServlet;
 import org.junit.Before;
@@ -64,8 +65,7 @@ public class ExportMTTimesheetAsCSVServletTest {
         configService = Mockito.mock(ConfigService.class);
         config = Mockito.mock(Config.class);
 
-        exportMasterThesisTimesheetAsCSVServlet = new ExportMasterThesisTimesheetAsCSVServlet(loginUriProvider, webSudoManager, timesheetService,
-                configService, permissionService);
+        exportMasterThesisTimesheetAsCSVServlet = new ExportMasterThesisTimesheetAsCSVServlet(timesheetService);
 
         when(user.getUsername()).thenReturn("test");
         when(user.getKey()).thenReturn(test_key);

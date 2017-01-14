@@ -68,30 +68,21 @@ public class TimesheetServlet extends HttpServlet {
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet = null;
 
-            if (permissionService.isJiraAdministrator(user) || permissionService.isTimesheetAdmin(user)) {
-                paramMap.put("isadmin", true);
-            } else {
-                paramMap.put("isadmin", false);
-            }
-
             if (sheetService.userHasTimesheet(userKey, false)) {
                 timesheet = sheetService.getTimesheetByUser(userKey, false);
             }
-
-            if (permissionService.isJiraAdministrator(user) || permissionService.isTimesheetAdmin(user) ||
-                    permissionService.isUserTeamCoordinator(user)) {
-                paramMap.put("iscoordinator", true);
-            } else {
-                paramMap.put("iscoordinator", false);
-            }
-
             if (timesheet == null) {
                 timesheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
                         "", true, false, false, true);
             }
 
-            paramMap.put("timesheetid", timesheet.getID());
-            paramMap.put("ismasterthesistimesheet", false);
+            paramMap.put("isAdmin", permissionService.isJiraAdministrator(user) || permissionService.isTimesheetAdmin(user));
+            paramMap.put("isCoordinator", permissionService.isUserTeamCoordinator(user));
+            paramMap.put("isReadOnlyUser", permissionService.isReadOnlyUser(user));
+
+            paramMap.put("timesheetID", timesheet.getID());
+            paramMap.put("isMasterThesisTimesheet", false);
+
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
         } catch (ServiceException e) {

@@ -157,7 +157,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         }
 
         System.out.println("found.length = " + found.length);
-        throw new ServiceException("No Timesheet found.");
+        throw new ServiceException("No Timesheet found. Maybe user does not have one.");
     }
 
     @Override

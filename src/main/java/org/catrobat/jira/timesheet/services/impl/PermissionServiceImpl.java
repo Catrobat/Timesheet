@@ -148,8 +148,8 @@ public class PermissionServiceImpl implements PermissionService {
         } else {
             isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_ADMINISTRATORS);
         }
-        
-        if(DEBUG_MODE){
+
+        if (DEBUG_MODE) {
             isJiraTestAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_TEST_ADMINISTRATORS);
             isJiraAdmin = ComponentAccessor.getGroupManager().isUserInGroup(user, JIRA_ADMINISTRATORS);
         }
@@ -204,11 +204,13 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public boolean isUserCoordinatorOfTeam(ApplicationUser user, Team team) {
+    public boolean isUserCoordinatorOfTeam(ApplicationUser user, Team... teams) {
         Set<Team> teamsOfCoordinator = teamService.getTeamsOfCoordinator(user.getName());
-        for (Team aTeam : teamsOfCoordinator) {
-            if (aTeam.getID() == team.getID())
-                return true;
+        for (Team coordinatorTeam : teamsOfCoordinator) {
+            for (Team team : teams) {
+                if (coordinatorTeam.getID() == team.getID())
+                    return true;
+            }
         }
         return false;
     }

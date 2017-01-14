@@ -36,12 +36,13 @@ AJS.toInit(function () {
     AJS.$("#table-header").hide();
     checkConstrains();
 
-    if (!isCoordinator) {
-        AJS.$("#coord_private").hide();
-        AJS.$("#coord_private_table").hide();
-    } else {
+    if (isCoordinator || isSupervisor) {
+        fetchUsers();
         AJS.$("#coord_private").show();
         AJS.$("#coord_private_table").show();
+    } else {
+        AJS.$("#coord_private").hide();
+        AJS.$("#coord_private_table").hide();
     }
 
     if (isMasterThesisTimesheet) {
@@ -69,7 +70,6 @@ AJS.toInit(function () {
     });
 
     if (isAdmin) {
-        //hideVisualizationTabs();
         AJS.$("#timesheet-hours-save-button").hide();
         AJS.$("#timesheet-hours-update-button").show();
     } else {
@@ -78,20 +78,11 @@ AJS.toInit(function () {
         AJS.$("#timesheet-hours-update-button").hide();
     }
 
-    if (isCoordinator) {
-        fetchUsers();
-    }
-
-    var selectedUser = sessionStorage.getItem('selectedUser');
-    if (selectedUser) {
-        var isMTSheetSelected = sessionStorage.getItem('isMTSheetSelected');
-        var timesheetIDOfUser = sessionStorage.getItem('timesheetID');
-        console.log("User:" + selectedUser);
-        console.log("is master sheet : " + isMTSheetSelected);
-        console.log("timesheetID:",timesheetIDOfUser);
+    var timesheetIDOfUser = sessionStorage.getItem('timesheetID');
+    if (timesheetIDOfUser) {
         fetchData(timesheetIDOfUser);
 
-        // defining beghavoir: should the user only once
+        //defining behaviour: after double refresh original data are shown
         sessionStorage.removeItem('selectedUser');
         sessionStorage.removeItem('isMTSheetSelected');
         sessionStorage.removeItem('timesheetID');
@@ -217,7 +208,7 @@ function getDataOfTeam(teamName) {
         });
 }
 
-function getTimesheetIdOfUser(selectedUser, isMTSheet) {
+function saveTimesheetIDOfUserInSession(selectedUser, isMTSheet) {
     AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheet/timesheetID/' + selectedUser[0] + '/' + isMTSheet,

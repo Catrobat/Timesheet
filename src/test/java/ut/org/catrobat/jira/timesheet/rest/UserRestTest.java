@@ -10,12 +10,9 @@ import com.atlassian.jira.user.util.UserUtil;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.rest.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +53,7 @@ public class UserRestTest {
     private PermissionService permissionServiceMock;
     private TimesheetService timesheetServiceMock;
     private TimesheetEntryService timesheetEntryServiceMock;
+    private TeamService teamServiceMock;
 
     @Before
     public void setUp() throws Exception {
@@ -71,8 +69,9 @@ public class UserRestTest {
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
         timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
         timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
+        teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
 
-        userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock, timesheetEntryServiceMock);
+        userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock, timesheetEntryServiceMock, teamServiceMock);
         spyUserRest = spy(userRest);
 
         PowerMockito.mockStatic(ComponentAccessor.class);

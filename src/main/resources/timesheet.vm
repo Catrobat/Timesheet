@@ -8,11 +8,11 @@
 
 <body>
 <script type="text/javascript">
-    var timesheetID = $timesheetid;
-    var isAdmin = $isadmin;
-    var isCoordinator = $iscoordinator;
-    var isMasterThesisTimesheet = $ismasterthesistimesheet;
-    <!-- var hasTimesheet = $hasTimesheet; -->
+    var timesheetID = $timesheetID;
+    var isAdmin = $isAdmin;
+    var isCoordinator = $isCoordinator;
+    var isMasterThesisTimesheet = $isMasterThesisTimesheet;
+    var isSupervisor = $isReadOnlyUser;
 </script>
 
 <script type="application/javascript">

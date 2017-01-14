@@ -24,10 +24,7 @@ import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
-import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -43,14 +40,17 @@ public class UserRest {
     public static final String DISABLED_GROUP = "Disabled";
     private final ConfigService configService;
     private final PermissionService permissionService;
-    private TimesheetService timesheetService;
-    private TimesheetEntryService timesheetEntryService;
+    private final TimesheetService timesheetService;
+    private final TimesheetEntryService timesheetEntryService;
+    private final TeamService teamService;
 
-    public UserRest(final ConfigService configService, PermissionService permissionService, TimesheetService timesheetService, TimesheetEntryService timesheetEntryService) {
+    public UserRest(ConfigService configService, PermissionService permissionService,
+            TimesheetService timesheetService, TimesheetEntryService timesheetEntryService, TeamService teamService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
+        this.teamService = teamService;
     }
 
     @GET
@@ -112,7 +112,7 @@ public class UserRest {
             return response;
         }
 
-        if (!permissionService.isUserTeamCoordinator(user)) {
+        if (!(permissionService.isUserTeamCoordinator(user) || permissionService.isReadOnlyUser(user))) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not a team coordinator.").build();
         }
 
@@ -153,7 +153,7 @@ public class UserRest {
         }
 
         String pairProgrammingGroup = configService.getConfiguration().getPairProgrammingGroup();
-        if(pairProgrammingGroup.isEmpty()){
+        if (pairProgrammingGroup.isEmpty()) {
             return getUsers(request);
         }
 
