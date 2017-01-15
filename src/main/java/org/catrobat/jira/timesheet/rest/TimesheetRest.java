@@ -183,28 +183,23 @@ public class TimesheetRest {
         }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
-        Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
-        //ToDO: Bitte vereinfachen!
-        for (ApplicationUser user : allUsers) {
-            //get all teams of that user
-            for (Team team : teamService.getTeamsOfUser(user.getName())) {
-                //get all team members
-                for (String teamMember : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
-                    //collect all timesheet entries of those team members
-                    try {
-                        String userKey = ComponentAccessor.getUserManager().getUserByName(teamMember).getKey();
-                        if (sheetService.userHasTimesheet(userKey, false)) {
-                            Timesheet sheet = sheetService.getTimesheetByUser(
-                                    userKey, false);
+        //get all teams of that user
+        for (Team team : teamService.getTeamsOfUser(loggedInUser.getName())) {
+            //get all team members
+            for (String teamMember : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
+                //collect all timesheet entries of all team members
+                try {
+                    String userKey = ComponentAccessor.getUserManager().getUserByName(teamMember).getKey();
+                    if (sheetService.userHasTimesheet(userKey, false)) {
+                        Timesheet sheet = sheetService.getTimesheetByUser(userKey, false);
 
-                            //all entries of each user
-                            TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
-                            addAllJsonTimesheetEntriesAnonymously(jsonTimesheetEntries, entries);
-                        }
-                    } catch (ServiceException e) {
-                        return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+                        //all entries of each user
+                        TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
+                        addAllJsonTimesheetEntriesAnonymously(jsonTimesheetEntries, entries);
                     }
+                } catch (ServiceException e) {
+                    return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
                 }
             }
         }
@@ -467,7 +462,7 @@ public class TimesheetRest {
 
         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
 
-        List<JsonTimesheetEntry> jsonEntries = new ArrayList<JsonTimesheetEntry>(entries.length);
+        List<JsonTimesheetEntry> jsonEntries = new ArrayList<>(entries.length);
 
         addAllJsonTimesheetEntries(jsonEntries, entries);
         return Response.ok(jsonEntries).build();
@@ -481,7 +476,7 @@ public class TimesheetRest {
         if (response != null) {
             return response;
         }
-        
+
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<>();
         Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
@@ -608,7 +603,7 @@ public class TimesheetRest {
 
         if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
             isActive = false;
-        } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0 )) {
+        } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
             isOffline = true;
         }
 
@@ -704,10 +699,9 @@ public class TimesheetRest {
                     isOffline = true;
                 }
 
-                if(entry.isTheory()){
+                if (entry.isTheory()) {
                     category = categoryService.getCategoryByName(SpecialCategories.THEORY);
-                }
-                else if (entry.IsGoogleDocImport()) {
+                } else if (entry.IsGoogleDocImport()) {
                     category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
                 }
 

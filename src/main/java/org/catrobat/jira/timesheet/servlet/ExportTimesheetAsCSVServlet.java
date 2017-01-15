@@ -41,7 +41,6 @@ public class ExportTimesheetAsCSVServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        super.doGet(request, response);
 
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         Date actualDate = new Date();

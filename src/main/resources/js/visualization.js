@@ -49,8 +49,8 @@ function populateVisTable(timesheetDataReply) {
 }
 
 function computeTeamDiagramData(teamEntries) {
-    assignTeamVisData(teamEntries[0]);
-    assignTeamData(teamEntries[0]);
+    assignTeamVisDiagramData(teamEntries[0]);
+    assignTeamVisCategoryDiagramData(teamEntries[0]);
 }
 
 function calculateDuration(begin, end, pause) {

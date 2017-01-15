@@ -122,6 +122,12 @@ function fetchData(timesheetID) {
         contentType: "application/json"
     });
 
+    var teamEntries = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
+        contentType: "application/json"
+    });
+
     var categoriesFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'categoryIDs',
@@ -146,6 +152,7 @@ function fetchData(timesheetID) {
         contentType: "application/json"
     });
 
+
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, pairProgrammingFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
@@ -160,12 +167,6 @@ function fetchData(timesheetID) {
             });
             console.log(error);
         });
-
-    var teamEntries = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheet/' + timesheetID + '/teamEntries',
-        contentType: "application/json"
-    });
 
     AJS.$.when(teamEntries, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetVisData)

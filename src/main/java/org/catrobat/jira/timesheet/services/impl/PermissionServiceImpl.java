@@ -233,6 +233,9 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public void userCanAddTimesheetEntry(ApplicationUser user, Timesheet sheet, Date beginDate, boolean isGoogleDocsImport) throws PermissionException {
+        if (isTimesheetAdmin(user)) {
+            return;
+        }
         if (userOwnsSheet(user, sheet)) {
             if (!isGoogleDocsImport) {
                 if (dateIsOlderThanAMonth(beginDate)) {
@@ -243,13 +246,16 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not add an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!isTimesheetAdmin(user)) {
+        } else {
             throw new PermissionException("Access forbidden: Sorry, you are not a timesheet admin!");
         }
     }
 
     @Override
     public void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, TimesheetEntry entry) throws PermissionException {
+        if (isTimesheetAdmin(user)) {
+            return;
+        }
         if (userOwnsSheet(user, sheet)) {
             if (!entry.getIsGoogleDocImport()) {
                 if (dateIsOlderThanAMonth(entry.getBeginDate()) || dateIsOlderThanAMonth(entry.getEndDate())) {
@@ -260,13 +266,16 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not edit an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!isTimesheetAdmin(user)) {
+        } else {
             throw new PermissionException("Access forbidden: Sorry, you are not a timesheet admin!");
         }
     }
 
     @Override
     public void userCanDeleteTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException {
+        if (isTimesheetAdmin(user)) {
+            return;
+        }
 
         if (userOwnsSheet(user, entry.getTimeSheet())) {
             if (!entry.getIsGoogleDocImport()) {
@@ -278,7 +287,7 @@ public class PermissionServiceImpl implements PermissionService {
                     throw new PermissionException("You can not delete an imported entry that is older than 5 years.");
                 }
             }
-        } else if (!isTimesheetAdmin(user)) {
+        } else {
             throw new PermissionException("Access forbidden: Sorry, but you are not a timesheet admin!");
         }
     }

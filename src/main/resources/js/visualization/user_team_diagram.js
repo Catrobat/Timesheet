@@ -1,7 +1,7 @@
 "use strict";
 
 //reverse order of the table from bottom to top
-function assignTeamVisData(teamEntries) {
+function assignTeamVisCategoryDiagramData(teamEntries) {
 
     var availableEntries = teamEntries;
 

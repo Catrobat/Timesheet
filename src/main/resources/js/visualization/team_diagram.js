@@ -1,13 +1,11 @@
 "use strict";
 
-function assignTeamData(teamEntries) {
+function assignTeamVisDiagramData(teamEntries) {
     AJS.$("#teamDataDiagram").empty();
     var availableEntries = teamEntries;
 
     var pos = availableEntries.length - 1;
     //variables for the time calculation
-    var tmpHours = 0;
-    var tmpMinutes = 0;
     var totalHours = 0;
     var totalMinutes = 0;
 
@@ -33,12 +31,12 @@ function assignTeamData(teamEntries) {
             var pause = availableEntries[i].pauseMinutes;
             var calculatedTime = hours * 60 + minutes - pause;
 
-            tmpMinutes = tmpMinutes + calculatedTime;
+            totalMinutes = totalMinutes + calculatedTime;
 
-            if (tmpMinutes >= 60) {
-                var minutesToFullHours = Math.floor(tmpMinutes / 60); //get only full hours
-                tmpHours = tmpHours + minutesToFullHours;
-                tmpMinutes = tmpMinutes - minutesToFullHours * 60;
+            if (totalMinutes >= 60) {
+                var minutesToFullHours = Math.floor(totalMinutes / 60); //get only full hours
+                totalHours = totalHours + minutesToFullHours;
+                totalMinutes = totalMinutes - minutesToFullHours * 60;
             }
         } else {
             pos = i;
@@ -47,23 +45,16 @@ function assignTeamData(teamEntries) {
 
         if (oldPos != pos || i == 0) {
             var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1); // time (year)
-            var dataY = toFixed(tmpHours + (tmpMinutes / 60), 2); // total hours
-            console.log("hours:", tmpHours);
-            console.log("min", tmpMinutes);
-            totalHours += tmpHours;
-            totalMinutes += tmpMinutes;
+            var dataY = toFixed(totalHours + (totalMinutes / 60), 2); // total hours
             if (!containsElement(data['year'], dataX)) {
                 data['year'].push(dataX);
             }
 
-            tmpHours = 0;
-            tmpMinutes = 0;
+            totalHours = 0;
+            totalMinutes = 0;
         }
     }
 
-    console.log("dataY ", dataY);
-    console.log(totalHours);
-    console.log(totalMinutes);
     data['dataX'].push(dataX);
     data['dataY'].push(dataY);
     assignDataPoints(data);
@@ -79,8 +70,6 @@ function assignDataPoints(data) {
                 sum = sum + data['dataY'][j];
             }
         }
-        console.log("sum:", sum);
-        console.log("year: ", data['year'][i]);
         dataPoints.push(data['year'][i]);
         dataPoints.push(sum);
         sum = 0;
@@ -99,8 +88,5 @@ function teamDiagram(dataPoints) {
             value: dataPoints[i + 1]
         });
     }
-    data.forEach(function (ele) {
-        console.log("value", ele.value);
-    });
     drawSelectedTeamDiagram(data);
 }
