@@ -49,10 +49,12 @@ AJS.toInit(function () {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
         document.getElementById("tabs-team").style.display = "none";
         AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Master Thesis Timesheet' as " +
-            "<a href=\"download/masterthesis\">CSV</a> or only Entries as <a href=\"download/timesheet/json/masterthesis\">Json</a>.");
+            "<a id=\"download-csv\" href=\"download/masterthesis\">CSV</a> or only Entries as " +
+            "<a id=\"download-json\" href=\"download/timesheet/json/masterthesis\">Json</a>.");
     } else {
         AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as + " +
-            "<a href=\"download/timesheet\">CSV</a> or only Entries as <a href=\"download/timesheet/json\">Json</a>.");
+            "<a id=\"download-csv\" href=\"download/timesheet\">CSV</a> or only Entries as " +
+            "<a id=\"download-json\" href=\"download/timesheet/json\">Json</a>.");
     }
 
     if (!isMasterThesisTimesheet) {
@@ -73,6 +75,11 @@ AJS.toInit(function () {
     var timesheetIDOfUser = sessionStorage.getItem('timesheetID');
     if (timesheetIDOfUser) {
         fetchData(timesheetIDOfUser);
+        var param = "?id=" + timesheetIDOfUser;
+        var url_json = AJS.$("#download-json").attr("href");
+        var url_csv = AJS.$("#download-csv").attr("href");
+        AJS.$("#download-json").attr("href", url_json + param);
+        AJS.$("#download-csv").attr("href", url_csv + param);
 
         //defining behaviour: after double refresh original data are shown
         sessionStorage.removeItem('selectedUser');

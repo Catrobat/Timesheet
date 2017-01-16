@@ -21,6 +21,7 @@ import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.helper.CsvTimesheetExporter;
+import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import javax.servlet.ServletException;
@@ -34,9 +35,11 @@ import java.util.Date;
 public class ExportTimesheetAsCSVServlet extends HttpServlet {
 
     private final TimesheetService timesheetService;
+    private final PermissionService permissionService;
 
-    public ExportTimesheetAsCSVServlet(TimesheetService timesheetService) {
+    public ExportTimesheetAsCSVServlet(TimesheetService timesheetService, PermissionService permissionService) {
         this.timesheetService = timesheetService;
+        this.permissionService = permissionService;
     }
 
     @Override
@@ -52,14 +55,24 @@ public class ExportTimesheetAsCSVServlet extends HttpServlet {
                 loggedInUser.getUsername() +
                 "_Timesheet_Timesheet.csv\"";
 
+        String id = request.getParameter("id");
+
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);
 
         Timesheet timesheet = null;
         try {
-            timesheet = timesheetService.getTimesheetByUser(loggedInUser.getKey(), false);
+            if (id == null) {
+                timesheet = timesheetService.getTimesheetByUser(loggedInUser.getKey(), false);
+            } else {
+                timesheet = timesheetService.getTimesheetByID(Integer.parseInt(id));
+            }
         } catch (ServiceException e) {
             e.printStackTrace();
+        }
+
+        if (!permissionService.userCanViewTimesheet(loggedInUser, timesheet)) {
+            response.sendError(HttpServletResponse.SC_CONFLICT, "You are not allowed to see the timesheet.");
         }
 
         CsvTimesheetExporter csvTimesheetExporterSingle = new CsvTimesheetExporter();

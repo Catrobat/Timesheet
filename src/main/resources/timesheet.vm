@@ -219,8 +219,8 @@
         <p>
         <form id="timesheet-information" class="aui">
             <div class="field-group" id="timesheet-export-csv-link">
-                <h2>Export</h2>Download timesheet as <a href="download/timesheet">CSV</a> or only Entries as
-                <a href="download/timesheet/json">Json</a>.
+                <h2>Export</h2>Download timesheet as <a id="download-csv" href="download/timesheet">CSV</a> or only Entries as
+                <a id="download-json" href="download/timesheet/json">Json</a>.
             </div>
 
             <div class="field-group">

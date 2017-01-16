@@ -63,12 +63,18 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
                 loggedInUser.getUsername() +
                 "_Timesheet_Timesheet.json\"";
 
+        String id = request.getParameter("id");
+
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);
 
         Timesheet timesheet = null;
         try {
-            timesheet = sheetService.getTimesheetByUser(loggedInUser.getKey(), false);
+            if (id == null) {
+                timesheet = sheetService.getTimesheetByUser(loggedInUser.getKey(), false);
+            } else {
+                timesheet = sheetService.getTimesheetByID(Integer.parseInt(id));
+            }
         } catch (ServiceException e) {
             e.printStackTrace();
         }
