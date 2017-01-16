@@ -63,7 +63,7 @@ public class ExportTimesheetAsCSVServletTest {
         configService = mock(ConfigService.class);
         config = mock(Config.class);
 
-        exportTimesheetAsCSVServlet = new ExportTimesheetAsCSVServlet(timesheetService);
+        exportTimesheetAsCSVServlet = new ExportTimesheetAsCSVServlet(timesheetService,  permissionService);
 
         when(user.getUsername()).thenReturn("test");
         when(user.getKey()).thenReturn(test_key);
