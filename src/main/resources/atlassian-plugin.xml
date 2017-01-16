@@ -119,6 +119,10 @@
         <url-pattern>/timesheet/download/config</url-pattern>
     </servlet>
 
+    <servlet key="download-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportConfigAsJsonServlet">
+        <url-pattern>/timesheet/download/config/json</url-pattern>
+    </servlet>
+
     <servlet key="download-all-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet">
         <url-pattern>/timesheet/download/timesheets</url-pattern>
     </servlet>
@@ -142,6 +146,10 @@
 
     <servlet key="upload-config-servlet" class="org.catrobat.jira.timesheet.servlet.ImportConfigCsvServlet">
         <url-pattern>/timesheet/upload/config</url-pattern>
+    </servlet>
+
+    <servlet key="upload-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ImportConfigAsJsonServlet">
+        <url-pattern>/timesheet/upload/config/json</url-pattern>
     </servlet>
 
     <servlet key="upload-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ImportTimesheetCsvServlet">
