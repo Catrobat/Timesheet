@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -64,7 +63,7 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
 
         TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
-        ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        ApplicationUser user = permissionService.getLoggedInUser();
 
         if (timesheetAdmins.length > 0) {
             for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
@@ -88,7 +87,7 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
     }
 
     private void enforceLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        if (ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser() == null)  // (3)
+        if (permissionService.getLoggedInUser() == null)  // (3)
         {
             res.sendRedirect(req.getContextPath() + "/plugins/servlet/login");
         }

@@ -119,12 +119,24 @@
         <url-pattern>/timesheet/download/config</url-pattern>
     </servlet>
 
+    <servlet key="download-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportConfigAsJsonServlet">
+        <url-pattern>/timesheet/download/config/json</url-pattern>
+    </servlet>
+
     <servlet key="download-all-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet">
         <url-pattern>/timesheet/download/timesheets</url-pattern>
     </servlet>
 
+    <servlet key="download-all-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsJsonServlet">
+        <url-pattern>/timesheet/download/timesheets/json</url-pattern>
+    </servlet>
+
     <servlet key="download-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsCSVServlet">
         <url-pattern>/download/timesheet</url-pattern>
+    </servlet>
+
+    <servlet key="download-timesheet-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsJsonServlet">
+        <url-pattern>/download/timesheet/json</url-pattern>
     </servlet>
 
     <servlet key="download-master-thesis-timesheet-servlet"
@@ -136,8 +148,16 @@
         <url-pattern>/timesheet/upload/config</url-pattern>
     </servlet>
 
+    <servlet key="upload-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ImportConfigAsJsonServlet">
+        <url-pattern>/timesheet/upload/config/json</url-pattern>
+    </servlet>
+
     <servlet key="upload-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ImportTimesheetCsvServlet">
         <url-pattern>/timesheet/upload/timesheets</url-pattern>
+    </servlet>
+
+    <servlet key="upload-timesheet-json-servlet" class="org.catrobat.jira.timesheet.servlet.ImportTimesheetAsJsonServlet">
+        <url-pattern>/timesheet/upload/timesheets/json</url-pattern>
     </servlet>
     <!-- end of servlets -->
 

@@ -108,10 +108,10 @@ public final class JsonTimesheetEntry {
         this.deactivateEndDate = timesheetEntry.getDeactivateEndDate();
         this.pauseMinutes = timesheetEntry.getPauseMinutes();
         this.description = timesheetEntry.getDescription();
-        this.teamID = timesheetEntry.getID();
-        this.categoryID = timesheetEntry.getID();
+        this.teamID = timesheetEntry.getTeam().getID();
+        this.categoryID = timesheetEntry.getCategory().getID();
         this.ticketID = timesheetEntry.getJiraTicketID();
-        this.partner = timesheetEntry.getDescription();
+        this.partner = timesheetEntry.getPairProgrammingUserName();
         this.isGoogleDocImport = timesheetEntry.getIsGoogleDocImport();
         this.isTheory = timesheetEntry.getIsTheory();
     }
