@@ -7,6 +7,8 @@ import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
@@ -94,6 +96,8 @@ public class CategoryServiceImplTest {
         @Override
         public void update(EntityManager em) throws Exception {
             em.migrate(Category.class);
+            em.migrate(CategoryToTeam.class);
+            em.migrate(TimesheetEntry.class);
 
             Category meeting = em.create(Category.class);
             meeting.setName("Meeting");
@@ -102,6 +106,12 @@ public class CategoryServiceImplTest {
             Category programming = em.create(Category.class);
             programming.setName("Programming");
             programming.save();
+
+            CategoryToTeam categoryToTeam = em.create(CategoryToTeam.class);
+            categoryToTeam.save();
+
+            TimesheetEntry timesheetEntry = em.create(TimesheetEntry.class);
+            timesheetEntry.save();
         }
     }
 }

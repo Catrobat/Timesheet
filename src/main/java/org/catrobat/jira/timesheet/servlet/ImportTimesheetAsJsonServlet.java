@@ -114,6 +114,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                     errorString += "Team with ID " + entry.getTeamID() + " not found. Entry #" + entry.getEntryID() + " not ignored.";
                     continue;
                 }
+                // FIXME: verify that team and entry is not null
                 timesheetEntryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category, entry.getDescription(),
                         entry.getPauseMinutes(), team, entry.IsGoogleDocImport(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(),
                         entry.getTicketID(), entry.getPairProgrammingUserName());

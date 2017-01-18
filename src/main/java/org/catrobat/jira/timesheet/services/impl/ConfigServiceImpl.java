@@ -161,9 +161,7 @@ public class ConfigServiceImpl implements ConfigService {
         CategoryToTeam[] allCategoryToTeam = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
         for (CategoryToTeam oldTeamRelation : allCategoryToTeam) {
             if (!addedRelations.contains(oldTeamRelation)) {
-                oldTeamRelation.setCategory(null);
-                oldTeamRelation.setTeam(null);
-                oldTeamRelation.save();
+                ao.delete(oldTeamRelation);
             }
         }
     }
@@ -239,10 +237,7 @@ public class ConfigServiceImpl implements ConfigService {
         //update all existing categoryToTeam relations of a team
         for (TeamToGroup oldTeamRelation : allTeamToGroups) {
             if (!addedRelations.contains(oldTeamRelation)) {
-                oldTeamRelation.setGroup(null);
-                oldTeamRelation.setRole(null);
-                oldTeamRelation.setTeam(null);
-                oldTeamRelation.save();
+                ao.delete(oldTeamRelation);
             }
         }
     }

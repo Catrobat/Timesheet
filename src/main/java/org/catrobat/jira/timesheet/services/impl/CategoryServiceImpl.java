@@ -20,6 +20,8 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.CategoryService;
 
 import java.util.List;
@@ -100,6 +102,19 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ServiceException("Found multiple categories with the same name!");
         } else if (found.length == 0) {
             throw new ServiceException("Could not find category with this name!");
+        }
+
+        if (ao.find(CategoryToTeam.class, "CATEGORY_ID = ?", found[0].getID()).length != 0) {
+            throw new ServiceException("Category is still in use by some teams.");
+        }
+
+        Category[] defaultCategory = ao.find(Category.class, "NAME = ?", SpecialCategories.DEFAULT);
+
+        for (TimesheetEntry entry : ao.find(TimesheetEntry.class)) {
+            if (entry.getCategory() != null && entry.getCategory().equals(found[0])) {
+                entry.setCategory(defaultCategory[0]);
+                entry.save();
+            }
         }
 
         ao.delete(found);
