@@ -123,12 +123,8 @@ public class UserRest {
                 JsonUserInformation jsonUserInformation = new JsonUserInformation();
                 // TODO: check whether user key == name
                 jsonUserInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
-                // TODO: if else cascade for all combinations
-                if (timesheet.getIsActive()) {
-                    jsonUserInformation.setState("Active");
-                } else {
-                    jsonUserInformation.setState("Inactive");
-                }
+                // TODO: change state from String to enum
+                jsonUserInformation.setState(timesheet.getState().toString());
                 jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
                 jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
                 jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
@@ -153,7 +149,7 @@ public class UserRest {
         }
 
         String pairProgrammingGroup = configService.getConfiguration().getPairProgrammingGroup();
-        if (pairProgrammingGroup.isEmpty()) {
+        if (pairProgrammingGroup == null || pairProgrammingGroup.isEmpty()) {
             return getUsers(request);
         }
 

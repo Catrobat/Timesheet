@@ -43,7 +43,8 @@ public interface TimesheetService {
     @Nullable
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-            String reason, Date latestEntryDate, boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled) throws ServiceException;
+            String reason, Date latestEntryDate, boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled,
+            Timesheet.State state) throws ServiceException;
 
     /**
      * Adds a new Timesheet
@@ -60,7 +61,8 @@ public interface TimesheetService {
     @NotNull
     Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-            String reason, boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled);
+            String reason, boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled,
+            Timesheet.State state);
 
     /**
      * Return all Timesheets

@@ -261,7 +261,8 @@ function updateTimesheetHours(existingTimesheetData) {
         isOffline: existingTimesheetData.isOffline,
         isAutoOffline: existingTimesheetData.isAutoOffline,
         isEnabled: existingTimesheetData.isEnabled,
-        isMTSheet: existingTimesheetData.isMTSheet
+        isMTSheet: existingTimesheetData.isMTSheet,
+        state: existingTimesheetData.state
     };
 
     AJS.$.ajax({

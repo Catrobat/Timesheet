@@ -171,6 +171,11 @@
                 <th>Hours per Month</th>
                 <th>Hours per Half Year</th>
                 <th>Latest Entry</th>
+
+                <th>Inactive End Date</th>
+
+                <th>Total Practice Hours</th>
+                <th>Practice Hours in last 30 Days</th>
             </tr>
             </thead>
             <tbody class="list" id="team-information-table-content">

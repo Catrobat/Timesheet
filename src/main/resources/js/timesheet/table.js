@@ -24,7 +24,22 @@ function populateTable(timesheetDataReply) {
                 '<p> If you notice any uncommon plugin behaviour, or need support feel free to ' +
                 'contact one of the project "Coordinators", or an "Administrator".</p>'
             });
-        else if (timesheetData.isOffline) {
+        else if (timesheetData.state != "ACTIVE") {
+            // TODO: do we really need both (banner and warning)?
+
+            AJS.messages.warning({
+                title: 'Timesheet Warning.',
+                closeable: true,
+                body: '<p> Your Timesheet is marked as <em>' + timesheetData.state + '</em>.</p>'
+            });
+
+            require(['aui/banner'], function (banner) {
+                banner({
+                    body: 'Your Timesheet is marked as <strong>' + timesheetData.state + '</strong>.'
+                });
+            });
+        }
+        /*else if (timesheetData.isOffline) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
@@ -64,7 +79,7 @@ function populateTable(timesheetDataReply) {
                     body: 'Your Timesheet is marked as <strong>inactive</strong>.'
                 });
             });
-        }
+        } */
         else if (!timesheetData.isEnabled) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',

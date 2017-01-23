@@ -69,10 +69,12 @@ public final class JsonTimesheet {
     private boolean isEnabled;
     @XmlElement
     private boolean isMTSheet;
+    @XmlElement
+    private Timesheet.State state;
 
-    public JsonTimesheet(int timesheetID, String lectures, String reason, Date latestEntryDate, int targetHourPractice,
+    /*public JsonTimesheet(int timesheetID, String lectures, String reason, Date latestEntryDate, int targetHourPractice,
             int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
-            boolean isAutoInactive, boolean isOffline, boolean isAutoOffline, boolean isEnabled, boolean isMTSheet) {
+            boolean isAutoInactive, boolean isOffline, boolean isAutoOffline, boolean isEnabled, boolean isMTSheet, Timesheet.State state) {
         this.timesheetID = timesheetID;
         // TODO: userKey missing
         this.lectures = lectures;
@@ -89,7 +91,8 @@ public final class JsonTimesheet {
         this.isAutoOffline = isAutoOffline;
         this.isEnabled = isEnabled;
         this.isMTSheet = isMTSheet;
-    }
+        this.state = state;
+    }*/
 
     public JsonTimesheet(Timesheet timesheet) {
         this.timesheetID = timesheet.getID();
@@ -108,6 +111,7 @@ public final class JsonTimesheet {
         this.isAutoOffline = timesheet.getIsAutoOffline();
         this.isEnabled = timesheet.getIsEnabled();
         this.isMTSheet = timesheet.getIsMasterThesisTimesheet();
+        this.state = timesheet.getState();
     }
 
     public JsonTimesheet() {
@@ -237,6 +241,13 @@ public final class JsonTimesheet {
         isMTSheet = MTSheet;
     }
 
+    public Timesheet.State getState() {
+        return state;
+    }
+
+    public void setState(Timesheet.State state) {
+        this.state = state;
+    }
 
     @Override
     public boolean equals(Object o) {

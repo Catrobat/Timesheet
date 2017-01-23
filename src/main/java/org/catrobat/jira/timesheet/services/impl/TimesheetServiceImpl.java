@@ -40,9 +40,8 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
-            int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-            String lectures, String reason, Date latestEntryDate,
-            boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled) throws ServiceException {
+            int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures, String reason, Date latestEntryDate,
+            boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         if (found.length > 2) {
@@ -67,6 +66,7 @@ public class TimesheetServiceImpl implements TimesheetService {
                 sheet.setIsActive(isActive);
                 sheet.setIsOffline(isOffline);
                 sheet.setIsEnabled(isEnabled);
+                sheet.setState(state);
                 sheet.save();
                 return sheet;
             }
@@ -80,7 +80,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved,
             String lectures, String reason,
-            boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled) {
+            boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) {
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
         sheet.setTargetHoursPractice(targetHoursPractice);
@@ -95,6 +95,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setIsEnabled(isEnabled);
         sheet.setIsOffline(isOffline);
         sheet.setIsMasterThesisTimesheet(isMasterThesisTimesheet);
+        sheet.setState(state);
         sheet.save();
         return sheet;
     }

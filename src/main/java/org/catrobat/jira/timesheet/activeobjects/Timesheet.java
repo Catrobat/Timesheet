@@ -87,6 +87,14 @@ public interface Timesheet extends Entity {
 
     boolean getIsReactivated();
 
+    void setState(State state);
+
+    State getState();
+
+    enum State {
+        ACTIVE, INACTIVE, AUTO_INACTIVE, INACTIVE_OFFLINE
+    }
+
     @OneToMany(reverse = "getTimeSheet")
     TimesheetEntry[] getEntries();
 

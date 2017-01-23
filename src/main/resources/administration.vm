@@ -175,7 +175,7 @@
                 </div>
             </fieldset>
 
-            <h3>Offline</h3>
+            <h3>Inactive & Offline</h3>
             <fieldset>
                 <div class="field-group">
                     <label for="mail-subject-offline">Subject</label>

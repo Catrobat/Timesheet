@@ -162,6 +162,9 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public boolean isReadOnlyUser(ApplicationUser user) {
+        if (configService.getConfiguration().getReadOnlyUsers() == null) {
+            return false;
+        }
         String[] readOnlyUsers = configService.getConfiguration().getReadOnlyUsers().split(",");
         for (String readOnlyUser : readOnlyUsers) {
             System.out.println("readOnlyUser = " + readOnlyUser);

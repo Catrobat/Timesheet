@@ -88,7 +88,8 @@ public class CsvTimesheetImporter {
                             true,                           //isActice
                             false,                          //isOffline
                             false,                           //isMTSheet
-                            true);                          //isEnabled
+                            true,                           //isEnabled
+                            Timesheet.State.ACTIVE );
                 } else {
                     timesheetService.add(
                             columns[0],                     //userkey
@@ -103,7 +104,8 @@ public class CsvTimesheetImporter {
                             true,                           //isActice
                             false,                          //isOffline
                             false,                           //isMTSheet
-                            true);                          //isEnabled
+                            true,                         //isEnabled
+                            Timesheet.State.ACTIVE);
                 }
             } else if (columns.length == 10) {
                 Timesheet timesheet = timesheetService.getTimesheetImport(columns[9]);

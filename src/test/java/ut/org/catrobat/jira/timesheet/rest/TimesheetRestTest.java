@@ -131,6 +131,27 @@ public class TimesheetRestTest {
         PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
     }
 
+    private Timesheet createTimesheetMock() {
+        Timesheet sheet = mock(Timesheet.class);
+        when(sheet.getID()).thenReturn(1);
+        when(sheet.getLectures()).thenReturn("Mobile Computing");
+        Date latestEntryDate = new Date();
+        when(sheet.getLatestEntryBeginDate()).thenReturn(latestEntryDate);
+        when(sheet.getTargetHoursPractice()).thenReturn(50);
+        when(sheet.getTargetHoursTheory()).thenReturn(50);
+        when(sheet.getTargetHours()).thenReturn(150);
+        when(sheet.getTargetHoursCompleted()).thenReturn(50);
+        when(sheet.getTargetHoursRemoved()).thenReturn(0);
+        when(sheet.getIsActive()).thenReturn(true);
+        when(sheet.getIsAutoInactive()).thenReturn(false);
+        when(sheet.getIsOffline()).thenReturn(false);
+        when(sheet.getIsAutoOffline()).thenReturn(false);
+        when(sheet.getIsEnabled()).thenReturn(true);
+        when(sheet.getIsMasterThesisTimesheet()).thenReturn(false);
+        when(sheet.getState()).thenReturn(Timesheet.State.ACTIVE);
+        return sheet;
+    }
+
     @Test
     public void testGetTeamsForTimesheetOk() throws Exception {
         int timesheetID = 1;
@@ -663,8 +684,9 @@ public class TimesheetRestTest {
         int timesheetID = 1;
         String userKey = "USER_KEY";
         Boolean isMTSheet = false;
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(1, "Mobile Computing", "", new Date(), 50, 50, 150, 50,
-                0, true, false, false, false, true, false);
+
+        Timesheet sheet = createTimesheetMock();
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
 
         Date begin = new Date();
         Date end = new Date(begin.getTime());
@@ -693,8 +715,8 @@ public class TimesheetRestTest {
 
     @Test
     public void testPostTimesheetEnableStatesOk() throws Exception {
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(1, "Mobile Computing", "", new Date(), 50, 50, 150, 50,
-                0, true, false, false, false, true, false);
+        Timesheet sheet = createTimesheetMock();
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
 
         JsonTimesheet[] jsonTimesheets = {jsonTimesheet};
 
