@@ -365,7 +365,7 @@
                     <input class="text" type="text" id="scheduling-remaining-time" name="scheduling-remaining-time"
                            title="scheduling-remaining-time" placeholder="e.g.: [Remaining Time in days] ...">
                     <div class="description">
-                        When should the user be deactivated after reaching the inactive end date? (In Days)
+                        When should the user be disabled after reaching the inactive end date? (In Days)
                     </div>
                 </div>
                 <div class="field-group">

@@ -303,7 +303,7 @@ function isInactiveCategorySelected(timesheetData, form) {
 }
 
 function isDeactivatedCategorySelected(timesheetData, form) {
-    var indexOfDeactivated = getIDFromCategoryName("deactivated", timesheetData);
+    var indexOfDeactivated = getIDFromCategoryName("inactive & offline", timesheetData);
     var categoryIndex = form.categorySelect.val();
     return indexOfDeactivated == categoryIndex;
 }

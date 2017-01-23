@@ -181,7 +181,7 @@ function addNewEntryCallback(entry, timesheetData, form) {
     form.categorySelect.trigger("change"); // this is needed for the sparkling effect
 
     var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
-    var indexOfDeactivated = getIDFromCategoryName("deactivated", timesheetData);
+    var indexOfDeactivated = getIDFromCategoryName("inactive & offline", timesheetData);
     var categoryIndex = form.categorySelect.val();
 
     if (indexOfInactive == categoryIndex || indexOfDeactivated == categoryIndex) {
@@ -306,7 +306,7 @@ function prepareForm(entry, timesheetData, isModified) {
     });
 
     form.deactivateEndDateField.change(function () {
-        var index = getIDFromCategoryName("deactivated", timesheetData);
+        var index = getIDFromCategoryName("inactive & offline", timesheetData);
         form.categorySelect.auiSelect2("val", index);
         form.categorySelect.trigger("change");
     });
@@ -315,7 +315,7 @@ function prepareForm(entry, timesheetData, isModified) {
         form.saveButton.prop('disabled', false);
 
         var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
-        var indexOfDeactivated = getIDFromCategoryName("deactivated", timesheetData);
+        var indexOfDeactivated = getIDFromCategoryName("inactive & offline", timesheetData);
         var indexOfPP = -1;
         var categoryIndex = form.categorySelect.val();
 
@@ -575,7 +575,7 @@ function getSuitableCatIndex(categoriesPerTeam) {
     for (var k in categoriesPerTeam) {
         if (categoriesPerTeam.hasOwnProperty(k)) {
             var name = categoriesPerTeam[k].text.toLowerCase();
-            if (name !== "inactive" && name !== "deactivated") {
+            if (name !== "inactive" && name !== "inactive & offline") {
                 return categoriesPerTeam[k].id;
             }
         }
@@ -815,7 +815,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         return;
     }
 
-    if (categoryIndex == getIDFromCategoryName("deactivated", timesheetData) && form.deactivateEndDateField.val() == "") {
+    if (categoryIndex == getIDFromCategoryName("inactive & offline", timesheetData) && form.deactivateEndDateField.val() == "") {
 
         require('aui/flag')({
             type: 'info',

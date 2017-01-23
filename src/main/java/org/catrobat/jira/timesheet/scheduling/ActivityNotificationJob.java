@@ -7,6 +7,7 @@ import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -118,7 +119,7 @@ public class ActivityNotificationJob implements PluginJob {
     private TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {
         TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
         for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals("Inactive")
+            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE)
                     && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
                 return entry;
             }
@@ -129,7 +130,7 @@ public class ActivityNotificationJob implements PluginJob {
     private TimesheetEntry getLatestOfflineEntry(Timesheet timesheet) {
         TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
         for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals("Deactivated")
+            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE_OFFLINE)
                     && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
                 return entry;
             }

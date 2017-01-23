@@ -5,6 +5,7 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 
 import java.util.Date;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ActivityVerificationJob implements PluginJob {
                 if (latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0) {
                     timesheet.setState(Timesheet.State.INACTIVE_OFFLINE);
                     timesheet.save();
-                    printStatusFlags(timesheet, "user has set himself to deactivated");
+                    printStatusFlags(timesheet, "user has set himself to inactive & offline");
                     continue;
                 }
             }
@@ -122,7 +123,7 @@ public class ActivityVerificationJob implements PluginJob {
     private TimesheetEntry getLatestDeactivatedEntry(Timesheet timesheet) {
         TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
         for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals("Deactivated")
+            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE_OFFLINE)
                     && (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
                 return entry;
             }
@@ -133,7 +134,7 @@ public class ActivityVerificationJob implements PluginJob {
     private TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {
         TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
         for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals("Inactive")
+            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE)
                     && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
                 return entry;
             }

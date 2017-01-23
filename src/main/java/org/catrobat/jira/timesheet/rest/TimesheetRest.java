@@ -530,7 +530,7 @@ public class TimesheetRest {
                 (!categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive"))) {
             return Response.status(Response.Status.FORBIDDEN).entity("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.").build();
         } else if (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) < 0) {
-            String message = "The 'Deactivated End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
+            String message = "The 'Inactive & Offline End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
                     " but your inactive end date is " + entry.getDeactivateEndDate();
             return Response.status(Response.Status.FORBIDDEN).entity(message).build();
         } else if (entry.getDescription().isEmpty()) {
