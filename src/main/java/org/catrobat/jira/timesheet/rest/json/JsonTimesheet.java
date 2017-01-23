@@ -108,7 +108,6 @@ public final class JsonTimesheet {
         this.isActive = timesheet.getIsActive();
         this.isAutoInactive = timesheet.getIsAutoInactive();
         this.isOffline = timesheet.getIsOffline();
-        this.isAutoOffline = timesheet.getIsAutoOffline();
         this.isEnabled = timesheet.getIsEnabled();
         this.isMTSheet = timesheet.getIsMasterThesisTimesheet();
         this.state = timesheet.getState();

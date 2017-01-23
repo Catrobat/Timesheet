@@ -145,7 +145,6 @@ public class TimesheetRestTest {
         when(sheet.getIsActive()).thenReturn(true);
         when(sheet.getIsAutoInactive()).thenReturn(false);
         when(sheet.getIsOffline()).thenReturn(false);
-        when(sheet.getIsAutoOffline()).thenReturn(false);
         when(sheet.getIsEnabled()).thenReturn(true);
         when(sheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(sheet.getState()).thenReturn(Timesheet.State.ACTIVE);

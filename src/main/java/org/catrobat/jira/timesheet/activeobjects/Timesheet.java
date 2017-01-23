@@ -59,10 +59,6 @@ public interface Timesheet extends Entity {
 
     void setIsOffline(boolean isOffline);
 
-    boolean getIsAutoOffline();
-
-    void setIsAutoOffline(boolean isAutoOffline);
-
     boolean getIsEnabled();
 
     void setIsEnabled(boolean isEnabled);
