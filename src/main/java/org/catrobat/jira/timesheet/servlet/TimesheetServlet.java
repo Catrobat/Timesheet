@@ -73,7 +73,7 @@ public class TimesheetServlet extends HttpServlet {
             }
             if (timesheet == null) {
                 timesheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
-                        "", true, false, false, true, Timesheet.State.ACTIVE);
+                        "", false, true, Timesheet.State.ACTIVE);
             }
 
             paramMap.put("isAdmin", permissionService.isJiraAdministrator(user) || permissionService.isTimesheetAdmin(user));

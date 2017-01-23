@@ -58,10 +58,6 @@ public final class JsonTimesheet {
     @XmlElement
     private int targetHoursRemoved;
     @XmlElement
-    private boolean isActive;
-    @XmlElement
-    private boolean isOffline;
-    @XmlElement
     private boolean isEnabled;
     @XmlElement
     private boolean isMTSheet;
@@ -101,8 +97,6 @@ public final class JsonTimesheet {
         this.targetHours = timesheet.getTargetHours();
         this.targetHoursCompleted = timesheet.getTargetHoursCompleted();
         this.targetHoursRemoved = timesheet.getTargetHoursRemoved();
-        this.isActive = timesheet.getIsActive();
-        this.isOffline = timesheet.getIsOffline();
         this.isEnabled = timesheet.getIsEnabled();
         this.isMTSheet = timesheet.getIsMasterThesisTimesheet();
         this.state = timesheet.getState();
@@ -187,28 +181,12 @@ public final class JsonTimesheet {
         this.targetHoursRemoved = targetHoursRemoved;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
     public boolean isEnabled() {
         return isEnabled;
     }
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
-    }
-
-    public boolean isOffline() {
-        return isOffline;
-    }
-
-    public void setOffline(boolean offline) {
-        isOffline = offline;
     }
 
     public boolean isMTSheet() {
@@ -241,8 +219,6 @@ public final class JsonTimesheet {
         if (targetHours != that.targetHours) { return false; }
         if (targetHoursCompleted != that.targetHoursCompleted) { return false; }
         if (targetHoursRemoved != that.targetHoursRemoved) { return false; }
-        if (isActive != that.isActive) { return false; }
-        if (isOffline != that.isOffline) { return false;}
         if (isEnabled != that.isEnabled) { return false; }
 
         return lectures.equals(that.lectures);
@@ -259,8 +235,6 @@ public final class JsonTimesheet {
         result = 31 * result + targetHours;
         result = 31 * result + targetHoursCompleted;
         result = 31 * result + targetHoursRemoved;
-        result = 31 * result + (isActive ? 1 : 0);
-        result = 31 * result + (isOffline ? 1 : 0);
         result = 31 * result + (isEnabled ? 1 : 0);
         return result;
     }

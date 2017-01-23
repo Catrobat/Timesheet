@@ -100,7 +100,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             Timesheet sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
                     jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(), jsonTimesheet.getTargetHoursRemoved(),
                     jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                    jsonTimesheet.isActive(), jsonTimesheet.isOffline(), jsonTimesheet.isMTSheet(), jsonTimesheet.isEnabled(), jsonTimesheet.getState());
+                    jsonTimesheet.isMTSheet(), jsonTimesheet.isEnabled(), jsonTimesheet.getState());
 
             System.out.println("sheetid: " + sheet.getID());
             for (JsonTimesheetEntry entry : timesheetEntryList) {

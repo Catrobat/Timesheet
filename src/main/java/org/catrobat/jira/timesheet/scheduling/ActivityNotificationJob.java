@@ -39,7 +39,7 @@ public class ActivityNotificationJob implements PluginJob {
             if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
                 continue;
             }
-            if (timesheet.getIsOffline()) {  // user is offline
+            if (timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE) {  // user is offline
                 //inform coordinators
                 for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
                     sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectOfflineState(),
@@ -54,7 +54,7 @@ public class ActivityNotificationJob implements PluginJob {
                     sendMail(createEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectOfflineState(),
                             config.getMailBodyOfflineState()));
                 }
-            } else if (!timesheet.getIsActive()) { // user is inactive
+            } else if (timesheet.getState() == Timesheet.State.INACTIVE) { // user is inactive
                 //inform coordinators
                 TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null) {

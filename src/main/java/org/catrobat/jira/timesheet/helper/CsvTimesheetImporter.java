@@ -83,10 +83,7 @@ public class CsvTimesheetImporter {
                             Integer.parseInt(columns[4]),   //removed
                             columns[9],                     //lectures
                             columns[7],                     //admin reason
-                            //ects
                             new Date(),                     // latest entry date
-                            true,                           //isActice
-                            false,                          //isOffline
                             false,                           //isMTSheet
                             true,                           //isEnabled
                             Timesheet.State.ACTIVE );
@@ -100,9 +97,6 @@ public class CsvTimesheetImporter {
                             Integer.parseInt(columns[4]),   //removed
                             columns[9],                     //lectures
                             columns[7],                     //admin reason
-                            //ects
-                            true,                           //isActice
-                            false,                          //isOffline
                             false,                           //isMTSheet
                             true,                         //isEnabled
                             Timesheet.State.ACTIVE);

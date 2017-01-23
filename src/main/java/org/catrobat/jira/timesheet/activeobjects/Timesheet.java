@@ -47,14 +47,6 @@ public interface Timesheet extends Entity {
 
     void setTargetHoursRemoved(int hours);
 
-    boolean getIsActive();
-
-    void setIsActive(boolean isActive);
-
-    boolean getIsOffline();
-
-    void setIsOffline(boolean isOffline);
-
     boolean getIsEnabled();
 
     void setIsEnabled(boolean isEnabled);

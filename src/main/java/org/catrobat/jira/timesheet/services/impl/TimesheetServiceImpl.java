@@ -41,7 +41,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures, String reason, Date latestEntryDate,
-            boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) throws ServiceException {
+            boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         if (found.length > 2) {
@@ -63,8 +63,6 @@ public class TimesheetServiceImpl implements TimesheetService {
                 sheet.setLectures(lectures);
                 sheet.setReason(reason);
                 sheet.setLatestEntryBeginDate(latestEntryDate);
-                sheet.setIsActive(isActive);
-                sheet.setIsOffline(isOffline);
                 sheet.setIsEnabled(isEnabled);
                 sheet.setState(state);
                 sheet.save();
@@ -80,7 +78,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved,
             String lectures, String reason,
-            boolean isActive, boolean isOffline, boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) {
+            boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) {
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
         sheet.setTargetHoursPractice(targetHoursPractice);
@@ -91,9 +89,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setLectures(lectures);
         sheet.setReason(reason);
         sheet.setLatestEntryBeginDate(new Date());
-        sheet.setIsActive(isActive);
         sheet.setIsEnabled(isEnabled);
-        sheet.setIsOffline(isOffline);
         sheet.setIsMasterThesisTimesheet(isMasterThesisTimesheet);
         sheet.setState(state);
         sheet.save();

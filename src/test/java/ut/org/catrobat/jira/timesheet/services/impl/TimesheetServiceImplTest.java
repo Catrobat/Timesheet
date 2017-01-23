@@ -48,7 +48,7 @@ public class TimesheetServiceImplTest {
     public void testAdd() throws Exception {
         //Act
         service.add(userKey, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted,
-                targetHoursRemoved, lectures, reason, true, false, false, true, Timesheet.State.ACTIVE);
+                targetHoursRemoved, lectures, reason, false, true, Timesheet.State.ACTIVE);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         //Assert
@@ -60,7 +60,7 @@ public class TimesheetServiceImplTest {
         assertEquals(targetHoursCompleted, timesheet[0].getTargetHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
         assertTrue(latestEntryDate.getTime() - timesheet[0].getLatestEntryBeginDate().getTime() < 1000);
-        assertEquals(true, timesheet[0].getIsActive());
+        assertEquals(Timesheet.State.ACTIVE, timesheet[0].getState());
         assertEquals(true, timesheet[0].getIsEnabled());
     }
 
@@ -74,7 +74,7 @@ public class TimesheetServiceImplTest {
         sheet.setTargetHoursTheory(targeHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
-        sheet.setIsActive(true);
+        sheet.setState(Timesheet.State.ACTIVE);
         sheet.setIsEnabled(true);
         sheet.save();
         ao.flushAll();
@@ -96,7 +96,7 @@ public class TimesheetServiceImplTest {
         sheet.setTargetHoursTheory(targeHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
-        sheet.setIsActive(true);
+        sheet.setState(Timesheet.State.ACTIVE);
         sheet.setIsEnabled(true);
         sheet.save();
         ao.flushAll();

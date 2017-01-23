@@ -79,7 +79,6 @@ public class ExportTimesheetAsCSVServletTest {
         when(timesheet.getTargetHoursCompleted()).thenReturn(150);
         when(timesheet.getLatestEntryBeginDate()).thenReturn(new Date());
         when(timesheet.getLectures()).thenReturn("Mobile Computing");
-        when(timesheet.getIsActive()).thenReturn(true);
         when(timesheet.getIsEnabled()).thenReturn(true);
         when(timesheet.getUserKey()).thenReturn(test_key);
         when(timesheet.getTargetHoursRemoved()).thenReturn(0);

@@ -478,17 +478,15 @@ public class TimesheetRest {
         for (ApplicationUser user : allSortedUsers) {
             JsonTimesheet jsonTimesheet = new JsonTimesheet();
 
-            boolean isActive = false;
-            boolean isOffline = false;
             boolean isEnabled = false;
+            Timesheet.State state = Timesheet.State.ACTIVE;
             Date latestEntryDate = new Date(0);
             int timesheetID = 0;
 
             try {
                 if (sheetService.userHasTimesheet(user.getKey(), false)) {
                     Timesheet timesheet = sheetService.getTimesheetByUser(user.getKey(), false);
-                    isActive = timesheet.getIsActive();
-                    isOffline = timesheet.getIsOffline();
+                    state = timesheet.getState();
                     isEnabled = timesheet.getIsEnabled();
                     latestEntryDate = timesheet.getLatestEntryBeginDate();
                     timesheetID = timesheet.getID();
@@ -497,8 +495,7 @@ public class TimesheetRest {
                 e.printStackTrace();
             }
 
-            jsonTimesheet.setActive(isActive);
-            jsonTimesheet.setOffline(isOffline);
+            jsonTimesheet.setState(state);
             jsonTimesheet.setEnabled(isEnabled);
             jsonTimesheet.setLatestEntryDate(latestEntryDate);
             jsonTimesheet.setTimesheetID(timesheetID);
@@ -591,15 +588,11 @@ public class TimesheetRest {
                 entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
                 entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), programmingPartnerName);
 
-        boolean isActive = sheet.getIsActive();
-        boolean isOffline = sheet.getIsOffline();
         Timesheet.State state = sheet.getState();
 
         if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-            isActive = false;
             state = Timesheet.State.INACTIVE;
         } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
-            isOffline = true;
             state = Timesheet.State.INACTIVE_OFFLINE;
         }
 
@@ -610,7 +603,7 @@ public class TimesheetRest {
                         sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                         sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
                         sheet.getReason(), entryService.getEntriesBySheet(sheet)[0].
-                                getBeginDate(), isActive, isOffline, isMTSheet, sheet.getIsEnabled(), state);
+                                getBeginDate(), isMTSheet, sheet.getIsEnabled(), state);
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -619,8 +612,7 @@ public class TimesheetRest {
                 sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
                         sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
                         sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
-                        sheet.getReason(), entry.getBeginDate(), isActive, isOffline,
-                        isMTSheet, sheet.getIsEnabled(), state);
+                        sheet.getReason(), entry.getBeginDate(), isMTSheet, sheet.getIsEnabled(), state);
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -682,8 +674,6 @@ public class TimesheetRest {
             }
 
             String programmingPartnerName = "";
-            boolean isActive = sheet.getIsActive();
-            boolean isOffline = sheet.getIsOffline();
             Timesheet.State state = sheet.getState();
             ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
@@ -696,10 +686,8 @@ public class TimesheetRest {
                 if (!entry.getPairProgrammingUserName().isEmpty()) {
                     programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName()).getUsername();
                 } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                    isActive = false;
                     state = Timesheet.State.INACTIVE;
                 } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                    isOffline = true;
                     state = Timesheet.State.INACTIVE_OFFLINE;
                 }
 
@@ -719,14 +707,14 @@ public class TimesheetRest {
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive, isOffline,
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(),
                             isMTSheet, sheet.getIsEnabled(), state);
                 } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
                     sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive, isOffline,
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(),
                             isMTSheet, sheet.getIsEnabled(), state);
                 }
 
@@ -790,15 +778,13 @@ public class TimesheetRest {
                 sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isOffline(),
-                        isMTSheet, jsonTimesheet.isEnabled(), jsonTimesheet.getState());
+                        jsonTimesheet.getLatestEntryDate(), isMTSheet, jsonTimesheet.isEnabled(), jsonTimesheet.getState());
             } else {
                 sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isActive(), jsonTimesheet.isOffline(),
-                        isMTSheet, jsonTimesheet.isEnabled(), jsonTimesheet.getState());
+                        jsonTimesheet.getLatestEntryDate(), isMTSheet, jsonTimesheet.isEnabled(), jsonTimesheet.getState());
             }
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -921,7 +907,7 @@ public class TimesheetRest {
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), sheet.getIsActive(), sheet.getIsOffline(),
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(),
                             isMTSheet, sheet.getIsEnabled(), sheet.getState());
                 } catch (ServiceException e) {
                     return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -988,17 +974,13 @@ public class TimesheetRest {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
 
-        boolean isActive = sheet.getIsActive();
-        boolean isOffline = sheet.getIsOffline();
         Timesheet.State state = sheet.getState();
 
         // FIXME: Set Back to Active if it was INACTIVE OR OFFLINE
         if (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) {
             state = Timesheet.State.ACTIVE;
-            isActive = true;
         } else if(entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0) {
             state = Timesheet.State.ACTIVE;
-            isOffline = false;
         }
 
         entryService.delete(entry);
@@ -1011,8 +993,7 @@ public class TimesheetRest {
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isActive, isOffline,
-                            isMTSheet, sheet.getIsEnabled(), state);
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isMTSheet, sheet.getIsEnabled(), state);
                 } catch (ServiceException e) {
                     return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
                 }
@@ -1023,7 +1004,7 @@ public class TimesheetRest {
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                        new Date(), sheet.getIsActive(), sheet.getIsOffline(), isMTSheet, sheet.getIsEnabled(), sheet.getState());
+                        new Date(), isMTSheet, sheet.getIsEnabled(), sheet.getState());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -1214,7 +1195,7 @@ public class TimesheetRest {
             if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
                 continue;
             }
-            if (!timesheet.getIsActive()) {
+            if (timesheet.getState() != Timesheet.State.ACTIVE) {
                 timesheets.add(timesheet);
             }
         }
