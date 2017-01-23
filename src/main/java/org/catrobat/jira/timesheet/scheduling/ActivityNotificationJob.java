@@ -67,7 +67,7 @@ public class ActivityNotificationJob implements PluginJob {
                         }
                     }
                 }
-            } else if (timesheet.getIsReactivated()) {
+            } /*else if (timesheet.getIsReactivated()) {
                 // user is active again
                 //inform coordinators that the user is back and active now
                 for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
@@ -86,7 +86,7 @@ public class ActivityNotificationJob implements PluginJob {
                                 config.getMailBodyActiveState()));
                     }
                 }
-            } else {
+            } */else {
                 System.out.println("User is still active and no reaction is necessary.");
             }
         }

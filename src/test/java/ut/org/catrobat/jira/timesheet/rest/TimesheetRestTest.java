@@ -143,7 +143,6 @@ public class TimesheetRestTest {
         when(sheet.getTargetHoursCompleted()).thenReturn(50);
         when(sheet.getTargetHoursRemoved()).thenReturn(0);
         when(sheet.getIsActive()).thenReturn(true);
-        when(sheet.getIsAutoInactive()).thenReturn(false);
         when(sheet.getIsOffline()).thenReturn(false);
         when(sheet.getIsEnabled()).thenReturn(true);
         when(sheet.getIsMasterThesisTimesheet()).thenReturn(false);

@@ -51,10 +51,6 @@ public interface Timesheet extends Entity {
 
     void setIsActive(boolean isActive);
 
-    boolean getIsAutoInactive();
-
-    void setIsAutoInactive(boolean isAutoInactive);
-
     boolean getIsOffline();
 
     void setIsOffline(boolean isOffline);
@@ -78,10 +74,6 @@ public interface Timesheet extends Entity {
     boolean getIsMasterThesisTimesheet();
 
     void setIsMasterThesisTimesheet(boolean isMasterThesisTimesheet);
-
-    void setIsReactivated(boolean reactivated);
-
-    boolean getIsReactivated();
 
     void setState(State state);
 

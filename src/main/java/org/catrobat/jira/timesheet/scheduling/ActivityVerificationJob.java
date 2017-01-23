@@ -38,19 +38,12 @@ public class ActivityVerificationJob implements PluginJob {
                 continue;
             }
 
-            // if the user is already reactivated, the coordinators should already be informed
-            if (timesheet.getIsReactivated()) {
-                timesheet.setIsReactivated(false);
-            }
-
             Date latestEntryDate = entries[0].getBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             TimesheetEntry latestDeactivatedEntry = getLatestDeactivatedEntry(timesheet);
             if (latestDeactivatedEntry != null) {
                 if (latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0) {
-                    timesheet.setIsActive(false);
-                    timesheet.setIsAutoInactive(false);
-                    timesheet.setIsOffline(true);
+                    timesheet.setState(Timesheet.State.INACTIVE_OFFLINE);
                     timesheet.save();
                     printStatusFlags(timesheet, "user has set himself to deactivated");
                     continue;
@@ -58,16 +51,14 @@ public class ActivityVerificationJob implements PluginJob {
             }
             if (latestInactiveEntry != null) {
                 if (latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) {
-                    timesheet.setIsActive(false);
-                    timesheet.setIsAutoInactive(false);
+                    timesheet.setState(Timesheet.State.INACTIVE);
                     timesheet.save();
                     printStatusFlags(timesheet, "user has set himself to inactive");
                     continue;
                 }
             }
             if (timesheet.getIsActive() && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
-                timesheet.setIsActive(false);
-                timesheet.setIsAutoInactive(true);
+                timesheet.setState(Timesheet.State.AUTO_INACTIVE);
                 timesheet.save();
                 Date begin = timesheet.getLatestEntryBeginDate();
                 if (begin == null) begin = new Date();
@@ -95,23 +86,20 @@ public class ActivityVerificationJob implements PluginJob {
                 );
                 printStatusFlags(timesheet, "user is active, but latest entry is older than the specified inactive limit");
             }
-            else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() &&
+            /*else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() &&
                     schedulingService.isOlderThanOfflineTime(latestEntryDate)) {
                 timesheet.setIsOffline(true);
-                timesheet.setIsAutoInactive(false);
                 timesheet.save();
                 printStatusFlags(timesheet, "user is still inactive since the specified deactivated/offline limit");
-            }
+            }*/
             else if (!timesheet.getIsActive() && !schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setIsActive(true);
                 timesheet.setIsOffline(false);
-                timesheet.setIsAutoInactive(false);
-                timesheet.setIsReactivated(true);
                 timesheet.save();
                 printStatusFlags(timesheet, "user is back again");
             }
             // user has set himself inactive
-            else if (!timesheet.getIsActive() && !timesheet.getIsAutoInactive()) {
+            /*else if (!timesheet.getIsActive() && !timesheet.getIsAutoInactive()) {
                 if (schedulingService.isOlderThanRemainingTime(latestEntryDate)) {
                     timesheet.setIsActive(false);
                     timesheet.setIsOffline(true);
@@ -119,11 +107,9 @@ public class ActivityVerificationJob implements PluginJob {
                     timesheet.save();
                     printStatusFlags(timesheet, "user remains inactive, will be set to offline");
                 }
-            }
+            }*/
             else if (!schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
-                timesheet.setIsActive(true);
-                timesheet.setIsOffline(false);
-                timesheet.setIsAutoInactive(false);
+                timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
                 printStatusFlags(timesheet, "default case: user is active");
             }
@@ -159,11 +145,8 @@ public class ActivityVerificationJob implements PluginJob {
     private String printStatusFlags(Timesheet timesheet, String statusString) {
         String header = "Status: " + statusString + "  -----------------------------------------------------------------------";
         System.out.println(header);
-        String message = "isActive: [" +
-                timesheet.getIsActive() + "] isAutoInactive: [" + timesheet.getIsAutoInactive() + "] isOffline: [" +
-                timesheet.getIsOffline() + "]";
+        String message = "state: " + timesheet.getState();
         System.out.println(message);
-        System.out.println("isReactivated: " + timesheet.getIsReactivated());
         System.out.println("latest Entry: " + timesheet.getLatestEntryBeginDate().toString());
         System.out.println("END Status: -----------------------------------------------------------------------");
         return message;
