@@ -87,27 +87,25 @@ public class ActivityVerificationJob implements PluginJob {
                 );
                 printStatusFlags(timesheet, "user is active, but latest entry is older than the specified inactive limit");
             }
-            /*else if (!timesheet.getIsActive() && timesheet.getIsAutoInactive() &&
+            else if (timesheet.getState() == Timesheet.State.AUTO_INACTIVE &&
                     schedulingService.isOlderThanOfflineTime(latestEntryDate)) {
-                timesheet.setIsOffline(true);
+                timesheet.setIsEnabled(false);
                 timesheet.save();
                 printStatusFlags(timesheet, "user is still inactive since the specified deactivated/offline limit");
-            }*/
+            }
             else if (timesheet.getState() != Timesheet.State.ACTIVE && !schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
                 printStatusFlags(timesheet, "user is back again");
             }
             // user has set himself inactive
-            /*else if (!timesheet.getIsActive() && !timesheet.getIsAutoInactive()) {
+            else if (timesheet.getState() == Timesheet.State.INACTIVE) {
                 if (schedulingService.isOlderThanRemainingTime(latestEntryDate)) {
-                    timesheet.setIsActive(false);
-                    timesheet.setIsOffline(true);
-                    timesheet.setIsAutoInactive(false);
+                    timesheet.setState(Timesheet.State.AUTO_INACTIVE);
                     timesheet.save();
-                    printStatusFlags(timesheet, "user remains inactive, will be set to offline");
+                    printStatusFlags(timesheet, "user remains inactive, will be set to auto inactive");
                 }
-            }*/
+            }
             else if (!schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
