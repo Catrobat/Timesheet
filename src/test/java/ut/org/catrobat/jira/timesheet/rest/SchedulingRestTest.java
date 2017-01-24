@@ -124,8 +124,6 @@ public class SchedulingRestTest {
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
-        Set<ApplicationUser> userSet = new HashSet<>(Arrays.asList(user1, user2));
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(userSet);
 
         when(user1.getName()).thenReturn("MarkusHobisch");
         when(user2.getName()).thenReturn("AdrianSchnedlitz");
@@ -154,15 +152,12 @@ public class SchedulingRestTest {
         Date today = new Date();
 
         cal.add(Calendar.DATE, +1);
-        Date tomorrow = cal.getTime();
 
         Category categoryDrone = categoryService.add("Drone");
         Team droneTeam = teamService.add("Drone Team");
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
-        Set<ApplicationUser> userSet = new HashSet<>(Arrays.asList(user1, user2));
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(userSet);
 
         when(user1.getName()).thenReturn("MarkusHobisch");
         when(user2.getName()).thenReturn("AdrianSchnedlitz");

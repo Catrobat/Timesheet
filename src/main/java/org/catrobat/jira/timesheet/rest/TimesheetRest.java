@@ -190,6 +190,9 @@ public class TimesheetRest {
             for (String teamMember : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
                 //collect all timesheet entries of all team members
                 try {
+                    if (ComponentAccessor.getUserManager().getUserByName(teamMember) == null) {
+                        continue; // FIXME: User no longer in Ldap group is this an error? or can it happen?
+                    }
                     String userKey = ComponentAccessor.getUserManager().getUserByName(teamMember).getKey();
                     if (sheetService.userHasTimesheet(userKey, false)) {
                         Timesheet sheet = sheetService.getTimesheetByUser(userKey, false);
@@ -475,6 +478,7 @@ public class TimesheetRest {
 
         TreeSet<ApplicationUser> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
 
+        //FIXME: remove Application user, beware of client side changes
         for (ApplicationUser user : allSortedUsers) {
             JsonTimesheet jsonTimesheet = new JsonTimesheet();
 

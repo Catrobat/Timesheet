@@ -28,7 +28,6 @@ AJS.toInit(function () {
         return;
     }
 
-
     // printDomainAttributes();
 
     AJS.$("#timesheet-table").hide();
@@ -49,15 +48,13 @@ AJS.toInit(function () {
         document.getElementById("tabs-team").style.display = "none";
         AJS.$("#download-csv").attr("href", "download/timesheet/masterthesis");
         AJS.$("#download-json").attr("href", "download/timesheet/json/masterthesis");
+
+        AJS.$("#theory-hour-key-data").show();
     } else {
         AJS.$("#download-csv").attr("href", "download/timesheet");
         AJS.$("#download-json").attr("href", "download/timesheet/json");
-    }
 
-    if (!isMasterThesisTimesheet) {
         AJS.$("#theory-hour-key-data").hide();
-    } else {
-        AJS.$("#theory-hour-key-data").show();
     }
 
     if (isAdmin) {
