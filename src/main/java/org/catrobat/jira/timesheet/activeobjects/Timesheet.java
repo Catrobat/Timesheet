@@ -18,9 +18,12 @@ package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
 import net.java.ao.OneToMany;
+import net.java.ao.schema.Table;
 
 import java.util.Date;
 
+// This is only needed for the test server because of data model update
+@Table("TimesheetModel2")
 public interface Timesheet extends Entity {
 
     String getUserKey();
