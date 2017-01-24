@@ -140,7 +140,7 @@
                     <textarea name="mail-body-out-of-time" id="mail-body-out-of-time" rows="10" cols="70"
                               placeholder="Text Of The Email"></textarea>
                     <div class="description">
-                        The text of the mail. Following strings will be replaced by Confluence automatically:
+                        The text of the mail. Following strings will be replaced by Jira automatically:
                         <ul>
                             <li><span class="mono">{{name}}</span>: The name of the member</li>
                             <li><span class="mono">{{time}}</span>: The remaining timesheet hours of the member</li>
@@ -166,7 +166,7 @@
                     <textarea name="mail-body-inactive" id="mail-body-inactive" rows="10" cols="70"
                               placeholder="Text Of The Email"></textarea>
                     <div class="description">
-                        The text of the mail. Following strings will be replaced by Confluence automatically:
+                        The text of the mail. Following strings will be replaced by Jira automatically:
                         <ul>
                             <li><span class="mono">{{name}}</span>: The name of the member</li>
                             <li><span class="mono">{{date}}</span>: The date of the members last entry</li>
@@ -192,7 +192,7 @@
                     <textarea name="mail-body-offline" id="mail-body-offline" rows="10" cols="70"
                               placeholder="Text Of The Email"></textarea>
                     <div class="description">
-                        The text of the mail. Following strings will be replaced by Confluence automatically:
+                        The text of the mail. Following strings will be replaced by Jira automatically:
                         <ul>
                             <li><span class="mono">{{name}}</span>: The name of the member</li>
                             <li><span class="mono">{{date}}</span>: The date of the members last entry</li>
@@ -218,7 +218,7 @@
                     <textarea name="mail-body-active" id="mail-body-active" rows="10" cols="70"
                               placeholder="Text Of The Email"></textarea>
                     <div class="description">
-                        The text of the mail. Following strings will be replaced by Confluence automatically:
+                        The text of the mail. Following strings will be replaced by Jira automatically:
                         <ul>
                             <li><span class="mono">{{name}}</span>: The name of the member</li>
                             <li><span class="mono">{{date}}</span>: The date of the members last entry</li>
@@ -244,7 +244,7 @@
                     <textarea name="mail-body-entry-change" id="mail-body-entry-change" rows="10" cols="70"
                               placeholder="Text Of The Email"></textarea>
                     <div class="description">
-                        The text of the mail. Following strings will be replaced by Confluence automatically:
+                        The text of the mail. Following strings will be replaced by Jira automatically:
                         <ul>
                             <li><span class="mono">{{name}}</span>: The name of the member</li>
                             <li><span class="mono">{{original}}</span>: The original member entry</li>

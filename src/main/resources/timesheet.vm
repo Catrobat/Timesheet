@@ -163,25 +163,31 @@
 
 #*   content of the tab "Team Information"*#
     <div class="tabs-pane" id="tabs-team-information">
-        <table class="aui aui-table-interactive aui-table-sortable">
-            <thead>
-            <tr>
-                <th>User</th>
-                <th>State</th>
-                <th>Hours per Month</th>
-                <th>Hours per Half Year</th>
-                <th>Latest Entry</th>
+        <div class="aui-page-panel">
+            <div class="aui-page-panel-inner">
+                <section class="aui-page-panel-content">
+                    <table id="team-information-table" class="aui aui-table-interactive aui-table-sortable">
+                        <thead>
+                        <tr>
+                            <th id="ti-users">User</th>
+                            <th id="ti-state">State</th>
+                            <th id="ti-hours-per-month">Hours per Month</th>
+                            <th id="ti-hours-per-half-year">Hours per Half Year</th>
+                            <th id="ti-latest-entry">Latest Entry</th>
 
-                <th>Inactive End Date</th>
+                            <th id="ti-inactive-end-date">Inactive End Date</th>
 
-                <th>Total Practice Hours</th>
-                <th>Practice Hours in last 30 Days</th>
-            </tr>
-            </thead>
-            <tbody class="list" id="team-information-table-content">
+                            <th id="ti-total-practice-hours">Total Practice Hours</th>
+                            <th id="ti-practice-30-days">Practice Hours in last 30 Days</th>
+                        </tr>
+                        </thead>
+                        <tbody class="list" id="team-information-table-content">
 
-            </tbody>
-        </table>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
     </div>
 
 #*    content of the third tab "Time-Visualization"*#

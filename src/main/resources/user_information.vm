@@ -68,9 +68,6 @@
             </section>
         </div>
     </div>
-    <div class="note">
-        Note that Confluence System Administrators will not be shown in this list.
-    </div>
 </div>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>

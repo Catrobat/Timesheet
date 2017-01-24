@@ -9,7 +9,11 @@ function initCoordinatorUserList(userInformation) {
             latestEntryDate = (new Date(userInformation[i].latestEntryDate)).toLocaleDateString("en-US");
         }
         AJS.$("#team-information-table-content").append("<tr>");
-        AJS.$("#team-information-table-content").append("<td>" + userInformation[i].userName + "</td><td>" + userInformation[i].state + "</td><td>" + userInformation[i].hoursPerMonth + "</td><td>" + userInformation[i].hoursPerHalfYear + "</td><td>" + latestEntryDate + "</td>");
+        AJS.$("#team-information-table-content").append("<td>" + userInformation[i].userName +
+            "</td><td>" + userInformation[i].state +
+            "</td><td>" + userInformation[i].hoursPerMonth +
+            "</td><td>" + userInformation[i].hoursPerHalfYear +
+            "</td><td>" + latestEntryDate + "</td>");
         AJS.$("#team-information-table-content").append("</tr>");
     }
 }
