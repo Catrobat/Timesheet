@@ -210,7 +210,7 @@ function getTimesheetByUser(selectedUser, isMTSheetSelected) {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheet/of/' + selectedUser + '/' + isMTSheetSelected,
-        contentType: "applicatPion/json"
+        contentType: "application/json"
     });
     AJS.$.when(timesheetFetched)
         .done(updateTimesheetHours)
@@ -227,7 +227,7 @@ function getExistingTimesheetHours(timesheetID) {
     var timesheetFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'timesheets/' + timesheetID,
-        contentType: "applicatPion/json"
+        contentType: "application/json"
     });
     AJS.$.when(timesheetFetched)
         .done(updateTimesheetHours)
