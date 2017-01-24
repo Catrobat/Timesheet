@@ -88,5 +88,11 @@ function teamDiagram(dataPoints) {
             value: dataPoints[i + 1]
         });
     }
-    drawSelectedTeamDiagram(data);
+    var selectedTeamDiagram = drawSelectedTeamDiagram(data);
+
+    AJS.$("#table-header > ul > li > a").bind("tabSelect", function(e, o) {
+        if (o.tab.attr("href") == "#tabs-team") {
+            selectedTeamDiagram.redraw();
+        }
+    });
 }

@@ -51,7 +51,7 @@
 #*Tabs view*#
 <div class="aui-tabs horizontal-tabs" id="table-header">
 
-    <ul class="tabs-menu">
+    <ul class="tabs-menu nav nav-tabs" id="tabs">
         <li class="menu-item active-tab">
             <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
         </li>
@@ -185,7 +185,7 @@
     </div>
 
 #*    content of the third tab "Time-Visualization"*#
-    <div class="tabs-pane active-pane" id="tabs-overview">
+    <div class="tabs-pane" id="tabs-overview">
         <table id="visualization-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
@@ -198,11 +198,12 @@
             </tbody>
         </table>
 
-        <h3 id="piChartDiagramTag">Visualization of your theory - practical hours distribution</h3>
+        #*TODO: do we need that header? *#
+        <h3 id="piChartDiagramTag" >Visualization of your theory - practical hours distribution</h3>
         <div id="piChartDiagram" style="height: 200px;"></div>
     </div>
 #*    content of the third tab "Time-Visualization"*#
-    <div class="tabs-pane active-pane" id="tabs-line">
+    <div class="tabs-pane" id="tabs-line">
         <h3 id="lineDiagramTag">Visualization of your working time</h3>
         <div id="lineDiagram" style="height:300px;"></div>
 
@@ -210,7 +211,7 @@
         <div id="categoryLineDiagram" style="height:400px;"></div>
     </div>
 #*    content of the third tab "Team-Visualization"*#
-    <div class="tabs-pane active-pane" id="tabs-team">
+    <div class="tabs-pane" id="tabs-team">
         <form id="team-visualization" class="aui">
             <h3 id="teamDiagramTag">Team Visualization</h3>
             <div id="teamDataDiagram" style="height: 300px;"></div>
@@ -224,8 +225,12 @@
         <p>
         <form id="timesheet-information" class="aui">
             <div class="field-group" id="timesheet-export-csv-link">
-                <h2>Export</h2>Download timesheet as <a id="download-csv" href="download/timesheet">CSV</a> or only Entries as
-                <a id="download-json" href="download/timesheet/json">Json</a>.
+                <label>Export</label>
+                <div>Download timesheet as <a id="download-csv" href="download/timesheet">CSV</a> or only Entries as
+                <a id="download-json" href="download/timesheet/json">Json</a>.</div>
+                <div class="description">
+                    Link for downloading your timesheet.
+                </div>
             </div>
 
             <div class="field-group">
@@ -309,7 +314,7 @@
 
 <script>
     function drawSelectedTeamDiagram(data) {
-        new Morris.Line({
+        var selectedTeamDiagram = new Morris.Line({
             // ID of the element in which to draw the chart.
             element: 'teamDataDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
@@ -323,12 +328,13 @@
             // chart.
             labels: ['hours'],
         });
+        return selectedTeamDiagram;
     }
 </script>
 
 <script>
     function drawTeamDiagram(data, labelData) {
-        new Morris.Area({
+        var teamDiagram = new Morris.Area({
             // ID of the element in which to draw the chart.
             element: 'teamLineDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
@@ -343,12 +349,13 @@
             // chart.
             labels: labelData,
         });
+        return teamDiagram;
     }
 </script>
 
 <script>
     function drawPiChart(data) {
-        new Morris.Donut({
+        var piChart = new Morris.Donut({
             // ID of the element in which to draw the chart.
             //element: 'piChartDiagram',
             element: 'piChartDiagram',
@@ -356,12 +363,13 @@
             // the chart.
             data: data,
         });
+        return piChart;
     }
 </script>
 
 <script>
     function drawLineDiagram(data) {
-        new Morris.Line({
+        var lineDiagram = new Morris.Line({
             // ID of the element in which to draw the chart.
             element: 'lineDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
@@ -375,12 +383,13 @@
             // chart.
             labels: ['hours'],
         });
+        return lineDiagram;
     }
 </script>
 
 <script>
     function drawCategoryDiagram(data, labelData) {
-        new Morris.Area({
+        var categoryDiagram = new Morris.Area({
             // ID of the element in which to draw the chart.
             element: 'categoryLineDiagram',
             // Chart data records -- each entry in this array corresponds to a point on
@@ -395,6 +404,7 @@
             // chart.
             labels: labelData,
         });
+        return categoryDiagram;
     }
 </script>
 </body>

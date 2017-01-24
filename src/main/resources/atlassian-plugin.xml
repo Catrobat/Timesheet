@@ -272,7 +272,7 @@
               weight="1">
         <description>Link to Administration menu</description>
         <label>Timesheet - Configuration</label>
-        <link linkId="administration_view_link">/plugins/servlet/timesheet/download</link>
+        <link linkId="administration_view_link">/plugins/servlet/timesheet/administration</link>
         <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
     </web-item>
 

@@ -8,5 +8,11 @@ function lineDiagram(dataPoints) {
             value: dataPoints[i + 1]
         });
     }
-    drawLineDiagram(data);
+    var lineDiagram = drawLineDiagram(data);
+
+    AJS.$("#table-header > ul > li > a").bind("tabSelect", function(e, o) {
+        if (o.tab.attr("href") == "#tabs-line") {
+            lineDiagram.redraw();
+        }
+    });
 }

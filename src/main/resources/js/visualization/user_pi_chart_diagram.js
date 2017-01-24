@@ -17,5 +17,12 @@ function appendTimeToPiChart(theoryTime, practicalTime, totalTime) {
             value: piChartDataPoints[i + 1]
         });
     }
-    drawPiChart(data);
+
+    var piChart = drawPiChart(data);
+
+    AJS.$("#table-header > ul > li > a").bind("tabSelect", function(e, o) {
+        if (o.tab.attr("href") == "#tabs-overview") {
+            piChart.redraw();
+        }
+    });
 }

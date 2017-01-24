@@ -46,7 +46,7 @@
                 </p>
                 <div id="update-timesheet-button" class="field-group">
                     <form id="update-timesheet-status">
-                        <input type="submit" value="Refresh List" class="aui-button aui-button-primary"
+                        <input type="submit" value="Save User Information" class="aui-button aui-button-primary"
                                style="float: right;">
                     </form>
                 </div>

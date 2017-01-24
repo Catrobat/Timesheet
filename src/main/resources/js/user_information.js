@@ -188,7 +188,7 @@ AJS.toInit(function () {
 
     AJS.$("#update-timesheet-status").submit(function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === "Refresh List") {
+        if (AJS.$(document.activeElement).val() === "Save User Information") {
             updateTimesheetStatus();
         }
     });

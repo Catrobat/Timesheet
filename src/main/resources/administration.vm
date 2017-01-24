@@ -349,7 +349,7 @@
                     <input class="text" type="text" id="scheduling-inactive-time" name="scheduling-inactive-time"
                            title="scheduling-inactive-time" placeholder="e.g.: [Inactive Time in days] ...">
                     <div class="description">
-                        After which time will a Timesheet be marked as Inactive? (In Days)
+                        After which time will a Timesheet be marked as Auto Inactive? (In Days)
                     </div>
                 </div>
                 <div class="field-group">
@@ -357,7 +357,7 @@
                     <input class="text" type="text" id="scheduling-offline-time" name="scheduling-offline-time"
                            title="scheduling-offline-time" placeholder="e.g.: [Offline Time in days] ...">
                     <div class="description">
-                        After which time will a Timesheet be marked as Offline? (In Days)
+                        After which time will a Timesheet be marked as Disabled? (In Days)
                     </div>
                 </div>
                 <div class="field-group">
@@ -365,7 +365,8 @@
                     <input class="text" type="text" id="scheduling-remaining-time" name="scheduling-remaining-time"
                            title="scheduling-remaining-time" placeholder="e.g.: [Remaining Time in days] ...">
                     <div class="description">
-                        When should the user be disabled after reaching the inactive end date? (In Days)
+                        After which time will a Timesheet be marked as Auto Inactive,
+                        when the user set himself to inactive and that inactive period ran out? (In Days)
                     </div>
                 </div>
                 <div class="field-group">

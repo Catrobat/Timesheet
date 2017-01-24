@@ -39,26 +39,22 @@ public class ActivityVerificationJob implements PluginJob {
                 continue;
             }
 
+            String statusFlagMessage = "";
+
             Date latestEntryDate = entries[0].getBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             TimesheetEntry latestDeactivatedEntry = getLatestDeactivatedEntry(timesheet);
-            if (latestDeactivatedEntry != null) {
-                if (latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0) {
-                    timesheet.setState(Timesheet.State.INACTIVE_OFFLINE);
-                    timesheet.save();
-                    printStatusFlags(timesheet, "user has set himself to inactive & offline");
-                    continue;
-                }
+            if (latestDeactivatedEntry != null && latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0) {
+                timesheet.setState(Timesheet.State.INACTIVE_OFFLINE);
+                timesheet.save();
+                statusFlagMessage = "user has set himself to inactive & offline";
             }
-            if (latestInactiveEntry != null) {
-                if (latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) {
-                    timesheet.setState(Timesheet.State.INACTIVE);
-                    timesheet.save();
-                    printStatusFlags(timesheet, "user has set himself to inactive");
-                    continue;
-                }
+            else if (latestInactiveEntry != null && latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) {
+                timesheet.setState(Timesheet.State.INACTIVE);
+                timesheet.save();
+                statusFlagMessage = "user has set himself to inactive";
             }
-            if (timesheet.getState() == Timesheet.State.ACTIVE && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
+            else if (timesheet.getState() == Timesheet.State.ACTIVE && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setState(Timesheet.State.AUTO_INACTIVE);
                 timesheet.save();
                 Date begin = timesheet.getLatestEntryBeginDate();
@@ -85,36 +81,34 @@ public class ActivityVerificationJob implements PluginJob {
                         "",
                         ""
                 );
-                printStatusFlags(timesheet, "user is active, but latest entry is older than the specified inactive limit");
+                statusFlagMessage = "user is active, but latest entry is older than the specified inactive limit";
             }
             else if (timesheet.getState() == Timesheet.State.AUTO_INACTIVE &&
                     schedulingService.isOlderThanOfflineTime(latestEntryDate)) {
                 timesheet.setIsEnabled(false);
                 timesheet.save();
-                printStatusFlags(timesheet, "user is still inactive since the specified deactivated/offline limit");
+                statusFlagMessage = "user is still inactive since the specified deactivated/offline limit";
             }
             else if (timesheet.getState() != Timesheet.State.ACTIVE && !schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
-                printStatusFlags(timesheet, "user is back again");
+                statusFlagMessage = "user is back again";
             }
             // user has set himself inactive
-            else if (timesheet.getState() == Timesheet.State.INACTIVE) {
-                if (schedulingService.isOlderThanRemainingTime(latestEntryDate)) {
-                    timesheet.setState(Timesheet.State.AUTO_INACTIVE);
-                    timesheet.save();
-                    printStatusFlags(timesheet, "user remains inactive, will be set to auto inactive");
-                }
+            else if (timesheet.getState() == Timesheet.State.INACTIVE && schedulingService.isOlderThanRemainingTime(latestEntryDate)) {
+                timesheet.setState(Timesheet.State.AUTO_INACTIVE);
+                timesheet.save();
+                statusFlagMessage = "user remains inactive, will be set to auto inactive";
             }
             else if (!schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
-                printStatusFlags(timesheet, "default case: user is active");
+                statusFlagMessage = "default case: user is active";
             }
             else {
-                //more possibilities with isActive: [false] isAutoInactive: [true]
-                printStatusFlags(timesheet, "nothing changed");
+                statusFlagMessage = "nothing changed";
             }
+            printStatusFlags(timesheet, statusFlagMessage);
         }
     }
 

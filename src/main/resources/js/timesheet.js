@@ -23,12 +23,11 @@ AJS.toInit(function () {
     if (isFirefox) {
         AJS.messages.error({
             title: 'Sorry, Firefox is not supported at the moment!',
-            body: 'Firefox has an critical bug so would you be so kind and take an different browser. We suggest Chrome as perfect search engine.'
+            body: 'Firefox has an critical bug so would you be so kind and take a different browser. We suggest Chrome as perfect search engine.'
         });
         return;
     }
 
-    AJS.$("#timesheet-export-csv-link").empty();
 
     // printDomainAttributes();
 
@@ -48,13 +47,11 @@ AJS.toInit(function () {
     if (isMasterThesisTimesheet) {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
         document.getElementById("tabs-team").style.display = "none";
-        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Master Thesis Timesheet' as " +
-            "<a id=\"download-csv\" href=\"download/masterthesis\">CSV</a> or only Entries as " +
-            "<a id=\"download-json\" href=\"download/timesheet/json/masterthesis\">Json</a>.");
+        AJS.$("#download-csv").attr("href", "download/timesheet/masterthesis");
+        AJS.$("#download-json").attr("href", "download/timesheet/json/masterthesis");
     } else {
-        AJS.$("#timesheet-export-csv-link").append("<h2>Export</h2>Download 'Timesheet' as + " +
-            "<a id=\"download-csv\" href=\"download/timesheet\">CSV</a> or only Entries as " +
-            "<a id=\"download-json\" href=\"download/timesheet/json\">Json</a>.");
+        AJS.$("#download-csv").attr("href", "download/timesheet");
+        AJS.$("#download-json").attr("href", "download/timesheet/json");
     }
 
     if (!isMasterThesisTimesheet) {

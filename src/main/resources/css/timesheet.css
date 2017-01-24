@@ -119,3 +119,21 @@ code {
 #coordinatorTimesheetSelect {
     margin-top: 25px;
 }
+
+/* Fixes for rescaling of morris.js charts */
+
+#lineDiagram > svg {
+    width: 100% !important;
+}
+
+#categoryLineDiagram > svg {
+    width: 100% !important;
+}
+
+#teamDataDiagram > svg {
+    width: 100% !important;
+}
+
+#teamLineDiagram > svg {
+    width: 100% !important;
+}

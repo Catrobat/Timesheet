@@ -52,7 +52,7 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
         maximumSelectionSize: 1
     });
 
-    if (isTeamCoordinator && !isSupervisedUser) {
+    if (isTeamCoordinator && !isSupervisedUser && !isAdmin) {
         initSelectTimesheetButton();
         AJS.$("#coordinatorTimesheetSelect").show();
         AJS.$("#approvedUserTimesheetSelect").hide();

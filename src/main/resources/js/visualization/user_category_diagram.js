@@ -156,8 +156,20 @@ function categoryDiagram(sortedDataArray, numberOfCategories, isTeamDiagram) {
         tempData = [];
     }
     if (isTeamDiagram) {
-        drawTeamDiagram(dataJSON, data['label']);
+        var teamDiagram = drawTeamDiagram(dataJSON, data['label']);
+
+        AJS.$("#table-header > ul > li > a").bind("tabSelect", function(e, o) {
+            if (o.tab.attr("href") == "#tabs-team") {
+                teamDiagram.redraw();
+            }
+        });
     } else {
-        drawCategoryDiagram(dataJSON, data['label']);
+        var categoryDiagram = drawCategoryDiagram(dataJSON, data['label']);
+
+        AJS.$("#table-header > ul > li > a").bind("tabSelect", function(e, o) {
+            if (o.tab.attr("href") == "#tabs-line") {
+                categoryDiagram.redraw();
+            }
+        });
     }
 }
