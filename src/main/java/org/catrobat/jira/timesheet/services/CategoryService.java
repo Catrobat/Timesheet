@@ -38,4 +38,6 @@ public interface CategoryService {
 
     void removeCategory(String name) throws ServiceException;
 
+    boolean isPairProgrammingCategory(Category category);
+
 }

@@ -119,4 +119,12 @@ public class CategoryServiceImpl implements CategoryService {
 
         ao.delete(found);
     }
+
+    public boolean isPairProgrammingCategory(Category category) {
+        String categoryName = category.getName();
+        if (categoryName.toLowerCase().contains("(pp)") || categoryName.toLowerCase().contains("pair")) {
+            return true;
+        }
+        return false;
+    }
 }

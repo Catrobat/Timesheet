@@ -544,8 +544,7 @@ public class TimesheetRest {
         }
 
         String programmingPartnerName = "";
-        String categoryName = category.getName();
-        if (categoryName.toLowerCase().contains("(pp)") || categoryName.toLowerCase().contains("pair")) {
+        if (categoryService.isPairProgrammingCategory(category)) {
             if (entry.getPairProgrammingUserName().isEmpty()) {
                 return Response.status(Response.Status.CONFLICT).entity("Pair Programming Partner is missing!").build();
             }
@@ -556,7 +555,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("The Timesheet your are looking for is NULL.").build();
         } else if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
-        } else if (!categoryName.toLowerCase().equals("pair programming") && !programmingPartnerName.equals("")) {
+        } else if (!categoryService.isPairProgrammingCategory(category) && !programmingPartnerName.equals("")) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You can not select a 'Pair programming' " +
                     "Partner without selecting the 'Pair programming' category.").build();
         }
@@ -853,9 +852,7 @@ public class TimesheetRest {
         }
 
         if (sheet.getIsEnabled()) {
-
-            String categoryName = category.getName();
-            if (categoryName.contains("(pp)") || categoryName.contains("pair")) {
+            if (categoryService.isPairProgrammingCategory(category)) {
                 if (jsonEntry.getPairProgrammingUserName().isEmpty()) {
                     return Response.status(Response.Status.CONFLICT).entity("Pair Programming Partner is missing!").build();
                 }
