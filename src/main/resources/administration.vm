@@ -349,15 +349,15 @@
                     <input class="text" type="text" id="scheduling-inactive-time" name="scheduling-inactive-time"
                            title="scheduling-inactive-time" placeholder="e.g.: [Inactive Time in days] ...">
                     <div class="description">
-                        After which time will a Timesheet be marked as Auto Inactive? (In Days)
+                        After which time will a Timesheet be marked as Auto Inactive? (In Weeks)
                     </div>
                 </div>
                 <div class="field-group">
-                    <label for="scheduling-offline-time">Offline Time</label>
+                    <label for="scheduling-offline-time">Disabled Time</label>
                     <input class="text" type="text" id="scheduling-offline-time" name="scheduling-offline-time"
                            title="scheduling-offline-time" placeholder="e.g.: [Offline Time in days] ...">
                     <div class="description">
-                        After which time will a Timesheet be marked as Disabled? (In Days)
+                        After which time will a Timesheet be marked as Disabled? (In Weeks)
                     </div>
                 </div>
                 <div class="field-group">
@@ -366,7 +366,15 @@
                            title="scheduling-remaining-time" placeholder="e.g.: [Remaining Time in days] ...">
                     <div class="description">
                         After which time will a Timesheet be marked as Auto Inactive,
-                        when the user set himself to inactive and that inactive period ran out? (In Days)
+                        when the user set himself to inactive and that inactive period ran out? (In Weeks)
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label for="scheduling-out-of-time">Out Of Time</label>
+                    <input class="text" type="text" id="scheduling-out-of-time" name="scheduling-out-of-time"
+                           title="scheduling-out-of-time" placeholder="e.g.: [Out Of Time in hours] ...">
+                    <div class="description">
+                        When a user has less than this much hours remaining a notification will be send.
                     </div>
                 </div>
                 <div class="field-group">

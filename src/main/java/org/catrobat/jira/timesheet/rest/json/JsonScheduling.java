@@ -1,5 +1,7 @@
 package org.catrobat.jira.timesheet.rest.json;
 
+import org.catrobat.jira.timesheet.activeobjects.Scheduling;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,10 +17,13 @@ public class JsonScheduling {
     private int offlineTime;
     private int remainingTime;
 
-    public JsonScheduling(int inactiveTime, int offlineTime, int remainingTime) {
-        this.inactiveTime = inactiveTime;
-        this.offlineTime = offlineTime;
-        this.remainingTime = remainingTime;
+    private int outOfTime;
+
+    public JsonScheduling(Scheduling scheduling) {
+        this.inactiveTime = scheduling.getInactiveTime();
+        this.offlineTime = scheduling.getOfflineTime();
+        this.remainingTime = scheduling.getRemainingTime();
+        this.outOfTime = scheduling.getOutOfTime();
     }
 
     public JsonScheduling() {
@@ -44,4 +49,12 @@ public class JsonScheduling {
     public int getRemainingTime() {return remainingTime;}
 
     public void setRemainingTime(int remainingTime) {this.remainingTime = remainingTime;}
+
+    public int getOutOfTime() {
+        return outOfTime;
+    }
+
+    public void setOutOfTime(int outOfTime) {
+        this.outOfTime = outOfTime;
+    }
 }

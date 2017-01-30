@@ -28,7 +28,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public void setScheduling(int inactiveTime, int offlineTime, int remainingTime) {
+    public void setScheduling(int inactiveTime, int offlineTime, int remainingTime, int outOfTime) {
         Scheduling[] scheduling = ao.find(Scheduling.class);
 
         if (scheduling.length == 0) {
@@ -37,20 +37,25 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
 
         if (inactiveTime <= 0 || inactiveTime >= 999) {
-            inactiveTime = 31; // 1 month
+            inactiveTime = 4; // ~ 1 month
         }
 
         if (offlineTime <= 0 || offlineTime >= 999) {
-            offlineTime = 61; // 2 months
+            offlineTime = 8; // ~ 2 months
         }
 
         if (remainingTime <= 2 || remainingTime >= 999) {
-            remainingTime = 7; // one week
+            remainingTime = 1; // one week
+        }
+
+        if (outOfTime <= 0 || outOfTime >= 999) {
+            outOfTime = 80;
         }
 
         scheduling[0].setInactiveTime(inactiveTime);
         scheduling[0].setOfflineTime(offlineTime);
         scheduling[0].setRemainingTime(remainingTime);
+        scheduling[0].setOutOfTime(outOfTime);
         scheduling[0].save();
     }
 
@@ -65,9 +70,9 @@ public class SchedulingServiceImpl implements SchedulingService {
             scheduling = ao.find(Scheduling.class);
         }
 
-        int inactiveTimeDays = scheduling[0].getInactiveTime();
+        int inactiveTimeWeeks = scheduling[0].getInactiveTime();
 
-        return isDateOlderThanXDays(date, inactiveTimeDays);
+        return isDateOlderThanXWeeks(date, inactiveTimeWeeks);
     }
 
     // default value two months
@@ -80,9 +85,9 @@ public class SchedulingServiceImpl implements SchedulingService {
             scheduling = ao.find(Scheduling.class);
         }
 
-        int offlineTimeDays = scheduling[0].getOfflineTime();
+        int offlineTimeWeeks = scheduling[0].getOfflineTime();
 
-        return isDateOlderThanXDays(date, offlineTimeDays);
+        return isDateOlderThanXWeeks(date, offlineTimeWeeks);
     }
 
     // default value one week, minimum value 3 days
@@ -95,14 +100,14 @@ public class SchedulingServiceImpl implements SchedulingService {
             scheduling = ao.find(Scheduling.class);
         }
 
-        int remainingTimeDays = scheduling[0].getRemainingTime();
+        int remainingTimeWeeks = scheduling[0].getRemainingTime();
 
-        return isDateOlderThanXDays(date, remainingTimeDays);
+        return isDateOlderThanXWeeks(date, remainingTimeWeeks);
     }
 
     @Override
-    public boolean isDateOlderThanXDays(Date date, int days) {
-        DateTime xDaysAgo = new DateTime().minusDays(days);
+    public boolean isDateOlderThanXWeeks(Date date, int weeks) {
+        DateTime xDaysAgo = new DateTime().minusWeeks(weeks);
         DateTime datetime = new DateTime(date);
         return (datetime.compareTo(xDaysAgo) < 0);
     }

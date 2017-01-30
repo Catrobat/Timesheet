@@ -32,7 +32,7 @@ public class OutOfTimeJob implements PluginJob {
         for (Timesheet timesheet : timesheetList) {
             String userKey = timesheet.getUserKey();
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
-            if ((timesheet.getTargetHours() - timesheet.getTargetHoursCompleted()) <= 80) {
+            if ((timesheet.getTargetHours() - timesheet.getTargetHoursCompleted()) <= schedulingService.getScheduling().getOutOfTime()) {
                 Email email = new Email(user.getEmailAddress());
                 email.setSubject(config.getMailSubjectTime());
                 email.setBody(config.getMailBodyTime());

@@ -146,8 +146,7 @@ public class SchedulingRest {
         }
 
         Scheduling scheduling = schedulingService.getScheduling();
-        JsonScheduling jsonScheduling = new JsonScheduling(scheduling.getInactiveTime(),
-                scheduling.getOfflineTime(), scheduling.getRemainingTime());
+        JsonScheduling jsonScheduling = new JsonScheduling(scheduling);
 
         return Response.ok(jsonScheduling).build();
     }
@@ -162,7 +161,7 @@ public class SchedulingRest {
         }
 
         schedulingService.setScheduling(jsonScheduling.getInactiveTime(),
-                jsonScheduling.getOfflineTime(), jsonScheduling.getRemainingTime());
+                jsonScheduling.getOfflineTime(), jsonScheduling.getRemainingTime(), jsonScheduling.getOutOfTime());
         //timesheetScheduler.reschedule(); // since parameters will be updated on the fly, no rescheduling needed
 
         return Response.noContent().build();

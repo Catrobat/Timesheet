@@ -410,6 +410,7 @@ public class TimesheetRest {
         int completeTime = sheet.getTargetHoursCompleted();
         int targetTime = sheet.getTargetHours();
 
+        // FIXME: i dont think here is the right place for that check
         if ((targetTime - completeTime) <= 80) {
             buildEmailOutOfTime(user.getEmailAddress(), sheet, user);
         }

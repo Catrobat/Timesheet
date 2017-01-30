@@ -95,6 +95,8 @@ function populateTable(timesheetDataReply) {
             });
         } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
 
+            // FIXME: is this banner needed?
+
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
