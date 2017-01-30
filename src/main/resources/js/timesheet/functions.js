@@ -61,7 +61,11 @@ function initAdministratorButton() {
     AJS.$("#timesheet-hours-update-button").show();
     AJS.$("#timesheet-hours-update-button").click('click', function (e) {
         e.preventDefault();
-        getTimesheetByUser(selectedUser, isMTSheetSelected);
+        if (timesheetIDOfUser) {
+            getExistingTimesheetHours(timesheetIDOfUser);
+        } else {
+            getExistingTimesheetHours(timesheetID);
+        }
     });
 }
 

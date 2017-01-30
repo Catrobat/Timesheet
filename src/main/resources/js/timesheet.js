@@ -9,6 +9,8 @@ var teamData_;
 var entryData_;
 var userData_;
 
+var timesheetIDOfUser;
+
 AJS.toInit(function () {
     if (hostname.includes("catrob.at")) {
         baseUrl = "https://" + hostname;
@@ -66,7 +68,7 @@ AJS.toInit(function () {
         AJS.$("#timesheet-hours-update-button").hide();
     }
 
-    var timesheetIDOfUser = sessionStorage.getItem('timesheetID');
+    timesheetIDOfUser = sessionStorage.getItem('timesheetID');
     if (timesheetIDOfUser) {
         fetchData(timesheetIDOfUser);
         var param = "?id=" + timesheetIDOfUser;
@@ -201,23 +203,6 @@ function saveTimesheetIDOfUserInSession(selectedUser, isMTSheet) {
             console.log(error);
         }
     });
-}
-
-function getTimesheetByUser(selectedUser, isMTSheetSelected) {
-    var timesheetFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheet/of/' + selectedUser + '/' + isMTSheetSelected,
-        contentType: "application/json"
-    });
-    AJS.$.when(timesheetFetched)
-        .done(updateTimesheetHours)
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while fetching existing timesheet data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-            console.log(error);
-        });
 }
 
 function getExistingTimesheetHours(timesheetID) {
