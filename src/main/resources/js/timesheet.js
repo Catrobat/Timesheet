@@ -91,7 +91,11 @@ function replaceJiraTicketLinks() {
     var tickets = AJS.$(".td.ticket a");
     for (var i = 0; i < tickets.length; i++) {
         var ticket = tickets[i];
-        AJS.$(ticket).attr("href", baseUrl + "/browse/" + ticket.text.split(" ")[0]);
+        if (ticket.text == "None") {
+            AJS.$(ticket).removeAttr("href");
+        } else {
+            AJS.$(ticket).attr("href", baseUrl + "/browse/" + ticket.text.split(" ")[0]);
+        }
     }
 }
 
