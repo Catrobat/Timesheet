@@ -49,14 +49,14 @@ function assignTeamVisDiagramData(teamEntries) {
             if (!containsElement(data['year'], dataX)) {
                 data['year'].push(dataX);
             }
+            data['dataX'].push(dataX);
+            data['dataY'].push(dataY);
 
             totalHours = 0;
             totalMinutes = 0;
         }
     }
-
-    data['dataX'].push(dataX);
-    data['dataY'].push(dataY);
+    
     assignDataPoints(data);
 }
 
