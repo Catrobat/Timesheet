@@ -91,11 +91,9 @@ public class ConfigResourceRest {
             return unauthorized;
         }
 
-        List<JsonTeam> teams = new LinkedList<>();
-
         List<Team> teamList = teamService.all();
         Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
-        convertTeamsToJSON(teamList);
+        List<JsonTeam> teams = convertTeamsToJSON(teamList);
 
         return Response.ok(teams).build();
     }

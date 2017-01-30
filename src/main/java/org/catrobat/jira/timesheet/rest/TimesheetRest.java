@@ -116,7 +116,8 @@ public class TimesheetRest {
 
     @GET
     @Path("teams")
-    public Response getTeamsForUser(@Context HttpServletRequest request) {
+    public Response getTeamsForLoggedInUser(@Context HttpServletRequest request) {
+        // TODO: check whether this method is still needed
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -128,6 +129,44 @@ public class TimesheetRest {
         if (response != null) {
             return response;
         }
+
+        Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
+        List<Team> sortedTeamsOfUsersList = asSortedList(teamsOfUser);
+        List<JsonTeam> jsonTeams = convertTeamsToJSON(sortedTeamsOfUsersList);
+
+        return Response.ok(jsonTeams).build();
+    }
+
+    @GET
+    @Path("teams/{timesheetID}")
+    public Response getTeamsForTimesheetID(@Context HttpServletRequest request,
+                                            @PathParam("timesheetID") int timesheetID) {
+        // TODO: security
+
+        ApplicationUser loggedInUser;
+        try {
+            loggedInUser = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
+            return response;
+        }
+
+        Timesheet sheet;
+        try {
+            sheet = sheetService.getTimesheetByID(timesheetID);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
+
+        if (!permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
+        }
+
+        ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey());
 
         Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
         List<Team> sortedTeamsOfUsersList = asSortedList(teamsOfUser);

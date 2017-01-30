@@ -139,7 +139,7 @@ function fetchData(timesheetID) {
 
     var teamsFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'teams',
+        url: restBaseUrl + 'teams/' + timesheetID,
         contentType: "application/json"
     });
 

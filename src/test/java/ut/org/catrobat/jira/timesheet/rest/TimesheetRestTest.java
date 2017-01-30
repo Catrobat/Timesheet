@@ -186,7 +186,7 @@ public class TimesheetRestTest {
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
         when(timesheetServiceMock.getTimesheetByID(timesheetID).getUserKey()).thenReturn(userKey);
 
-        response = timesheetRestMock.getTeamsForUser(requestMock);
+        response = timesheetRestMock.getTeamsForLoggedInUser(requestMock);
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertNotNull(responseTeamList);
     }
@@ -252,7 +252,7 @@ public class TimesheetRestTest {
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
-        response = timesheetRestMock.getTeamsForUser(requestMock);
+        response = timesheetRestMock.getTeamsForLoggedInUser(requestMock);
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertNotNull(responseTeamList);
     }
@@ -278,7 +278,7 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
-        response = timesheetRest.getTeamsForUser(requestMock);
+        response = timesheetRest.getTeamsForLoggedInUser(requestMock);
 
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertEquals(responseTeamList, expectedTeams);
@@ -289,7 +289,7 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
         PowerMockito.when(permissionServiceMock.checkIfUserExists()).thenThrow(new PermissionException("User does not exist."));
         //execution & verifying
-        response = timesheetRest.getTeamsForUser(requestMock);
+        response = timesheetRest.getTeamsForTimesheetID(requestMock, 0);
 
         assertEquals(response.getEntity(), "User does not exist.");
     }
