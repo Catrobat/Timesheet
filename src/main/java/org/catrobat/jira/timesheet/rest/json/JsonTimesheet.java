@@ -64,28 +64,6 @@ public final class JsonTimesheet {
     @XmlElement
     private Timesheet.State state;
 
-    /*public JsonTimesheet(int timesheetID, String lectures, String reason, Date latestEntryDate, int targetHourPractice,
-            int targetHourTheory, int targetHours, int targetHoursCompleted, int targetHoursRemoved, boolean isActive,
-            boolean isAutoInactive, boolean isOffline, boolean isAutoOffline, boolean isEnabled, boolean isMTSheet, Timesheet.State state) {
-        this.timesheetID = timesheetID;
-        // TODO: userKey missing
-        this.lectures = lectures;
-        this.reason = reason;
-        this.latestEntryDate = latestEntryDate;
-        this.targetHourPractice = targetHourPractice;
-        this.targetHourTheory = targetHourTheory;
-        this.targetHours = targetHours;
-        this.targetHoursCompleted = targetHoursCompleted;
-        this.targetHoursRemoved = targetHoursRemoved;
-        this.isActive = isActive;
-        this.isAutoInactive = isAutoInactive;
-        this.isOffline = isOffline;
-        this.isAutoOffline = isAutoOffline;
-        this.isEnabled = isEnabled;
-        this.isMTSheet = isMTSheet;
-        this.state = state;
-    }*/
-
     public JsonTimesheet(Timesheet timesheet) {
         this.timesheetID = timesheet.getID();
         this.userKey = timesheet.getUserKey();

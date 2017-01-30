@@ -115,34 +115,9 @@ public class TimesheetRest {
     }
 
     @GET
-    @Path("teams")
-    public Response getTeamsForLoggedInUser(@Context HttpServletRequest request) {
-        // TODO: check whether this method is still needed
-        ApplicationUser user;
-        try {
-            user = permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-        }
-
-        Response response = permissionService.checkUserPermission();
-        if (response != null) {
-            return response;
-        }
-
-        Set<Team> teamsOfUser = teamService.getTeamsOfUser(user.getName());
-        List<Team> sortedTeamsOfUsersList = asSortedList(teamsOfUser);
-        List<JsonTeam> jsonTeams = convertTeamsToJSON(sortedTeamsOfUsersList);
-
-        return Response.ok(jsonTeams).build();
-    }
-
-    @GET
     @Path("teams/{timesheetID}")
     public Response getTeamsForTimesheetID(@Context HttpServletRequest request,
                                             @PathParam("timesheetID") int timesheetID) {
-        // TODO: security
-
         ApplicationUser loggedInUser;
         try {
             loggedInUser = permissionService.checkIfUserExists();
@@ -238,7 +213,14 @@ public class TimesheetRest {
 
                         //all entries of each user
                         TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
-                        addAllJsonTimesheetEntriesAnonymously(jsonTimesheetEntries, entries);
+
+                        // Add entries anonymously
+                        for (TimesheetEntry entry : entries) {
+                            jsonTimesheetEntries.add(new JsonTimesheetEntry(0, entry.getBeginDate(),
+                                    entry.getEndDate(), null, null, entry.getPauseMinutes(),
+                                    null, entry.getTeam().getID(), entry.getCategory().getID(),
+                                    null, null, false, entry.getIsTheory()));
+                        }
                     }
                 } catch (ServiceException e) {
                     return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -247,21 +229,6 @@ public class TimesheetRest {
         }
 
         return Response.ok(jsonTimesheetEntries).build();
-    }
-
-    private void addAllJsonTimesheetEntriesAnonymously(List<JsonTimesheetEntry> jsonTimesheetEntries, TimesheetEntry[] entries) {
-        for (TimesheetEntry entry : entries) {
-            jsonTimesheetEntries.add(new JsonTimesheetEntry(0, entry.getBeginDate(),
-                    entry.getEndDate(), null, null, entry.getPauseMinutes(),
-                    null, entry.getTeam().getID(), entry.getCategory().getID(),
-                    null, null, false, entry.getIsTheory()));
-        }
-    }
-
-    private void addAllJsonTimesheetEntries(List<JsonTimesheetEntry> jsonTimesheetEntries, TimesheetEntry[] entries) {
-        for (TimesheetEntry entry : entries) {
-            jsonTimesheetEntries.add(new JsonTimesheetEntry(entry));
-        }
     }
 
     @GET
@@ -499,7 +466,10 @@ public class TimesheetRest {
 
         List<JsonTimesheetEntry> jsonEntries = new ArrayList<>(entries.length);
 
-        addAllJsonTimesheetEntries(jsonEntries, entries);
+        for (TimesheetEntry entry : entries) {
+            jsonEntries.add(new JsonTimesheetEntry(entry));
+        }
+
         return Response.ok(jsonEntries).build();
     }
 
@@ -513,35 +483,9 @@ public class TimesheetRest {
         }
 
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<>();
-        Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
 
-        TreeSet<ApplicationUser> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
-
-        //FIXME: remove Application user, beware of client side changes
-        for (ApplicationUser user : allSortedUsers) {
-            JsonTimesheet jsonTimesheet = new JsonTimesheet();
-
-            boolean isEnabled = false;
-            Timesheet.State state = Timesheet.State.ACTIVE;
-            Date latestEntryDate = new Date(0);
-            int timesheetID = 0;
-
-            try {
-                if (sheetService.userHasTimesheet(user.getKey(), false)) {
-                    Timesheet timesheet = sheetService.getTimesheetByUser(user.getKey(), false);
-                    state = timesheet.getState();
-                    isEnabled = timesheet.getIsEnabled();
-                    latestEntryDate = timesheet.getLatestEntryBeginDate();
-                    timesheetID = timesheet.getID();
-                }
-            } catch (ServiceException e) {
-                e.printStackTrace();
-            }
-
-            jsonTimesheet.setState(state);
-            jsonTimesheet.setEnabled(isEnabled);
-            jsonTimesheet.setLatestEntryDate(latestEntryDate);
-            jsonTimesheet.setTimesheetID(timesheetID);
+        for (Timesheet timesheet : sheetService.all()) {
+            JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheet);
             jsonTimesheetList.add(jsonTimesheet);
         }
 
@@ -1074,26 +1018,6 @@ public class TimesheetRest {
         sendEmail(emailTo, mailSubject, mailBody);
     }
 
-    private void buildEmailInactive(String emailTo, Timesheet sheet, ApplicationUser user) {
-        Config config = configService.getConfiguration();
-
-        String mailSubject = config.getMailSubjectInactiveState() != null && config.getMailSubjectInactiveState().length() != 0
-                ? config.getMailSubjectInactiveState() : "[Timesheet - Timesheet Inactive Notification]";
-        String mailBody = config.getMailBodyInactiveState() != null && config.getMailBodyInactiveState().length() != 0
-                ? config.getMailBodyInactiveState() : "Hi " + user.getDisplayName() + ",\n" +
-                "we could not see any activity in your timesheet since the last two weeks.\n" +
-                "Information: an inactive entry was created automatically.\n\n" +
-                "Best regards,\n" +
-                "Catrobat-Admins";
-
-        mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getDisplayName());
-        if (sheet.getEntries().length > 0) {
-            mailBody = mailBody.replaceAll("\\{\\{date\\}\\}", sheet.getEntries()[0].getBeginDate().toString());
-        }
-
-        sendEmail(emailTo, mailSubject, mailBody);
-    }
-
     private void buildEmailAdministratorChangedEntry(String emailToAdministrator, String emailToUser, TimesheetEntry oldEntry, JsonTimesheetEntry newEntry) throws ServiceException {
         Config config = configService.getConfiguration();
 
@@ -1161,12 +1085,6 @@ public class TimesheetRest {
 
         SingleMailQueueItem item = new SingleMailQueueItem(email);
         ComponentAccessor.getMailQueue().addItem(item);
-    }
-
-    private boolean dateIsOlderThanTwoWeeks(Date date) {
-        DateTime twoWeeksAgo = new DateTime().minusDays(14);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(twoWeeksAgo) < 0);
     }
 
     // This is a demo API REST method to show you how to use the powerful and wonderful JqlQueryBuilder class

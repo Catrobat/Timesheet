@@ -235,6 +235,7 @@ function updateTimesheetHours(existingTimesheetData) {
         targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
         - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
+        latestEntryDate: existingTimesheetData.latestEntryDate,
         isActive: existingTimesheetData.isActive,
         isAutoInactive: existingTimesheetData.isAutoInactive,
         isOffline: existingTimesheetData.isOffline,

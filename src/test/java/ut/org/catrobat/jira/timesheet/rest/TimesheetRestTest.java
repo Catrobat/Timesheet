@@ -59,7 +59,6 @@ public class TimesheetRestTest {
     private TimesheetService timesheetService;
     private TimesheetEntryService timesheetEntryService;
     private TeamService teamService;
-    private PermissionService permissionService;
 
     private TimesheetService timesheetServiceMock;
     private TeamService teamServiceMock;
@@ -150,6 +149,8 @@ public class TimesheetRestTest {
 
     @Test
     public void testGetTeamsForTimesheetOk() throws Exception {
+        Timesheet timesheet = createTimesheetMock();
+
         int timesheetID = 1;
         String userName = "test";
         String userKey = "USER_KEY_1";
@@ -186,7 +187,11 @@ public class TimesheetRestTest {
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
         when(timesheetServiceMock.getTimesheetByID(timesheetID).getUserKey()).thenReturn(userKey);
 
-        response = timesheetRestMock.getTeamsForLoggedInUser(requestMock);
+        when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheet);
+        when(permissionServiceMock.userCanViewTimesheet(user1, timesheet)).thenReturn(true);
+        when(permissionServiceMock.checkIfUserExists()).thenReturn(user1);
+
+        response = timesheetRestMock.getTeamsForTimesheetID(requestMock, 1);
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertNotNull(responseTeamList);
     }
@@ -233,6 +238,7 @@ public class TimesheetRestTest {
 
     @Test
     public void testGetTeamsForUserOk() throws Exception {
+        Timesheet timesheet = createTimesheetMock();
         Category[] categories = {categoryMock};
 
         Team team1 = Mockito.mock(Team.class);
@@ -249,16 +255,21 @@ public class TimesheetRestTest {
         teams.add(team1);
         teams.add(team2);
 
-        when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
+        ApplicationUser user1 = mock(ApplicationUser.class);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
-        response = timesheetRestMock.getTeamsForLoggedInUser(requestMock);
+        when(timesheetServiceMock.getTimesheetByID(1)).thenReturn(timesheet);
+        when(permissionServiceMock.userCanViewTimesheet(user1, timesheet)).thenReturn(true);
+        when(permissionServiceMock.checkIfUserExists()).thenReturn(user1);
+
+        response = timesheetRestMock.getTeamsForTimesheetID(requestMock, 1);
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertNotNull(responseTeamList);
     }
 
     @Test
     public void testGetTeamsForUserReturnNoTeams() throws Exception {
+        Timesheet timesheet = createTimesheetMock();
         String username = "testUser";
         String userKey = "USER_KEY_1";
 
@@ -278,8 +289,13 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
-        response = timesheetRest.getTeamsForLoggedInUser(requestMock);
+        when(permissionServiceMock.checkIfUserExists()).thenReturn(user1);
+        when(timesheetServiceMock.getTimesheetByID(1)).thenReturn(timesheet);
+        when(permissionServiceMock.userCanViewTimesheet(user1, timesheet)).thenReturn(true);
+        when(teamServiceMock.getTeamsOfUser(user1.getKey())).thenReturn(teams);
 
+        response = timesheetRestMock.getTeamsForTimesheetID(requestMock, 1);
+        System.out.println(response.getEntity());
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertEquals(responseTeamList, expectedTeams);
     }
@@ -656,8 +672,6 @@ public class TimesheetRestTest {
         assertNotNull(response.getEntity());
     }
 
-    //TODO: mock the missing stuff - one of the biggest tests
-
     @Test
     public void testPostTimesheetEntriesOk() throws Exception {
         int timesheetID = 1;
@@ -722,7 +736,6 @@ public class TimesheetRestTest {
         assertNotNull(response.getEntity());
     }
 
-    //TODO: mock the missing stuff - one of the biggest tests
     @Test
     public void testPutTimesheetEntryAdminChangedEntry() throws Exception {
         int timesheetID = 1;
