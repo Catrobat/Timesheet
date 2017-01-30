@@ -87,6 +87,14 @@ AJS.toInit(function () {
     }
 });
 
+function replaceJiraTicketLinks() {
+    var tickets = AJS.$(".td.ticket a");
+    for (var i = 0; i < tickets.length; i++) {
+        var ticket = tickets[i];
+        AJS.$(ticket).attr("href", baseUrl + "/browse/" + ticket.text.split(" ")[0]);
+    }
+}
+
 function checkConstrains() {
     return AJS.$.ajax({
         type: 'GET',
@@ -164,6 +172,7 @@ function fetchData(timesheetID) {
         .done(assembleTimesheetVisData)
         .done(populateVisTable)
         .done(assignCategoryDiagramData)
+        .done(replaceJiraTicketLinks)
 
         .fail(function (error) {
             AJS.messages.error({
