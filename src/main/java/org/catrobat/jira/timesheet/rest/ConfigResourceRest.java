@@ -71,7 +71,7 @@ public class ConfigResourceRest {
             return unauthorized;
         }
 
-        List<JsonCategory> categories = new LinkedList<JsonCategory>();
+        List<JsonCategory> categories = new LinkedList<>();
         List<Category> categoryList = categoryService.all();
         Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
 

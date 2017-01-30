@@ -151,26 +151,6 @@ public class TimesheetRest {
     }
 
     @GET
-    @Path("categoryIDs")
-    public Response getCategories(@Context HttpServletRequest request) {
-
-        Response response = permissionService.checkUserPermission();
-        if (response != null) {
-            return response;
-        }
-
-        List<JsonCategory> categories = new LinkedList<>();
-        List<Category> categoryList = categoryService.all();
-        Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
-
-        for (Category category : categoryList) {
-            categories.add(new JsonCategory(category.getID(), category.getName()));
-        }
-
-        return Response.ok(categories).build();
-    }
-
-    @GET
     @Path("timesheet/{timesheetID}/teamEntries")
     public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
@@ -944,9 +924,13 @@ public class TimesheetRest {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
 
+        if (sheet == null) {
+            return Response.status(Response.Status.CONFLICT).entity("Timesheet not found.").build();
+        }
+
         if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
-        } else if (sheet == null || !permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
+        } else if (!permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         }
 
@@ -1114,9 +1098,7 @@ public class TimesheetRest {
                 System.out.println("displayName = " + displayName);
             }
 
-        } catch (SearchException e)
-
-        {
+        } catch (SearchException e) {
             System.out.println("Error running search: " + e);
         }
 

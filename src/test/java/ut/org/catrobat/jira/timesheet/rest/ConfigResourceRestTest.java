@@ -30,6 +30,7 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -145,6 +146,17 @@ public class ConfigResourceRestTest {
         response = configResourceRest.getCategories(request);
         List<JsonCategory> responseTeamList = (List<JsonCategory>) response.getEntity();
         assertNotNull(responseTeamList);
+    }
+
+    @Test
+    public void testGetCategoriesUserDoesNotExist() throws Exception {
+        //preparations
+        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
+        Response userDoesNotExist = Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist.").build();
+        PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(userDoesNotExist);
+        //execution & verifying
+        response = configResourceRest.getCategories(request);
+        assertEquals(response.getEntity(), "User does not exist.");
     }
 
     @Test

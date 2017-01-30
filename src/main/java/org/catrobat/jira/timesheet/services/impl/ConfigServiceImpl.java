@@ -22,7 +22,6 @@ import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -132,7 +131,7 @@ public class ConfigServiceImpl implements ConfigService {
             return;
         }
 
-        Set<CategoryToTeam> addedRelations = new HashSet<CategoryToTeam>();
+        Set<CategoryToTeam> addedRelations = new HashSet<>();
 
         for (String categoryName : categoryList) {
             Category category = cs.getCategoryByName(categoryName);
@@ -197,7 +196,7 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
         //comparison list of TeamToGroups
-        Set<TeamToGroup> addedRelations = new HashSet<TeamToGroup>();
+        Set<TeamToGroup> addedRelations = new HashSet<>();
 
         for (String userName : userList) {
             Group[] groups = ao.find(Group.class, Query.select().where("upper(\"GROUP_NAME\") = upper(?)", userName));
@@ -354,7 +353,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public List<String> getGroupsForRole(String teamName, TeamToGroup.Role role) {
-        List<String> groupList = new ArrayList<String>();
+        List<String> groupList = new ArrayList<>();
         TeamToGroup[] teamToGroupArray = ao.find(TeamToGroup.class, Query.select()
                 .where("\"ROLE\" = ?", role)
         );
@@ -416,7 +415,7 @@ public class ConfigServiceImpl implements ConfigService {
         if (team.length == 0) {
             return null;
         }
-        List<String> categoryList = new ArrayList<String>();
+        List<String> categoryList = new ArrayList<>();
 
         for (Category category : team[0].getCategories()) {
             categoryList.add(category.getName());

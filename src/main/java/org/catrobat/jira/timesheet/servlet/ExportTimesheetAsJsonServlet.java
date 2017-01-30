@@ -48,7 +48,7 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ApplicationUser loggedInUser = null;
+        ApplicationUser loggedInUser;
         try {
             loggedInUser = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
@@ -85,7 +85,7 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
 
         TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
 
-        List<JsonTimesheetEntry> jsonEntries = new ArrayList<JsonTimesheetEntry>();
+        List<JsonTimesheetEntry> jsonEntries = new ArrayList<>();
 
         for (TimesheetEntry entry : entries) {
             jsonEntries.add(new JsonTimesheetEntry(entry));

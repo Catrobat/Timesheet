@@ -13,7 +13,7 @@ public class JsonScheduling {
     @XmlElement
     private int inactiveTime;
     private int offlineTime;
-    public int remainingTime;
+    private int remainingTime;
 
     public JsonScheduling(int inactiveTime, int offlineTime, int remainingTime) {
         this.inactiveTime = inactiveTime;

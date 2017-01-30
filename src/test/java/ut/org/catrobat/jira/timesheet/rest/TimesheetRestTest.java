@@ -311,24 +311,6 @@ public class TimesheetRestTest {
     }
 
     @Test
-    public void testGetCategoriesOk() throws Exception {
-        response = timesheetRest.getCategories(requestMock);
-        List<JsonCategory> responseTeamList = (List<JsonCategory>) response.getEntity();
-        assertNotNull(responseTeamList);
-    }
-
-    @Test
-    public void testGetCategoriesUserDoesNotExist() throws Exception {
-        //preparations
-        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
-        Response userDoesNotExist = Response.status(Response.Status.UNAUTHORIZED).entity("User does not exist.").build();
-        PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(userDoesNotExist);
-        //execution & verifying
-        response = timesheetRest.getCategories(requestMock);
-        assertEquals(response.getEntity(), "User does not exist.");
-    }
-
-    @Test
     public void testGetTimesheetEntriesOfAllTeamMembersOk() throws Exception {
         //preparations
         int timesheetID = 1;

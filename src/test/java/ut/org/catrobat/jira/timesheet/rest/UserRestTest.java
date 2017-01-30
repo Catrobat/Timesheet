@@ -53,7 +53,6 @@ public class UserRestTest {
     private PermissionService permissionServiceMock;
     private TimesheetService timesheetServiceMock;
     private TimesheetEntryService timesheetEntryServiceMock;
-    private TeamService teamServiceMock;
 
     @Before
     public void setUp() throws Exception {
@@ -69,9 +68,8 @@ public class UserRestTest {
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
         timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
         timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
-        teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
 
-        userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock, timesheetEntryServiceMock, teamServiceMock);
+        userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock, timesheetEntryServiceMock);
         spyUserRest = spy(userRest);
 
         PowerMockito.mockStatic(ComponentAccessor.class);

@@ -110,7 +110,7 @@ public class CsvTimesheetExporter {
             sb.append(unescape(duration)).append(CsvConstants.DELIMITER);
             sb.append(unescape(pauseDuration)).append(CsvConstants.DELIMITER);
             sb.append(unescape(timesheetEntry.getCategory().getName())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getDescription().toString())).append(CsvConstants.DELIMITER);
+            sb.append(unescape(timesheetEntry.getDescription())).append(CsvConstants.DELIMITER);
             sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(CsvConstants.DELIMITER);
             sb.append(unescape(timesheetEntry.getTimeSheet().getUserKey())).append(CsvConstants.NEW_LINE);
         }

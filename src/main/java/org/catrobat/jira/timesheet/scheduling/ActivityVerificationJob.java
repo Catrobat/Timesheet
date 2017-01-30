@@ -39,7 +39,7 @@ public class ActivityVerificationJob implements PluginJob {
                 continue;
             }
 
-            String statusFlagMessage = "";
+            String statusFlagMessage;
 
             Date latestEntryDate = entries[0].getBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);

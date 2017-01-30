@@ -108,8 +108,17 @@ public final class JsonTimesheetEntry {
         this.deactivateEndDate = timesheetEntry.getDeactivateEndDate();
         this.pauseMinutes = timesheetEntry.getPauseMinutes();
         this.description = timesheetEntry.getDescription();
-        this.teamID = timesheetEntry.getTeam().getID();
-        this.categoryID = timesheetEntry.getCategory().getID();
+        // FIXME: team and category shall never be null
+        if (timesheetEntry.getTeam() != null) {
+            this.teamID = timesheetEntry.getTeam().getID();
+        } else {
+            this.teamID = -1;
+        }
+        if (timesheetEntry.getCategory() != null) {
+            this.categoryID = timesheetEntry.getCategory().getID();
+        } else {
+            this.categoryID = -1;
+        }
         this.ticketID = timesheetEntry.getJiraTicketID();
         this.partner = timesheetEntry.getPairProgrammingUserName();
         this.isGoogleDocImport = timesheetEntry.getIsGoogleDocImport();

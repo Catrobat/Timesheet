@@ -64,8 +64,8 @@ public class JsonTeam {
 
     public JsonTeam(String name) {
         this.teamName = name;
-        coordinatorGroups = new ArrayList<String>();
-        developerGroups = new ArrayList<String>();
+        coordinatorGroups = new ArrayList<>();
+        developerGroups = new ArrayList<>();
     }
 
     public JsonTeam(Team toCopy, ConfigService configService) {
@@ -117,8 +117,7 @@ public class JsonTeam {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        return hash;
+        return 7;
     }
 
     @Override

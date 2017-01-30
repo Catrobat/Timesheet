@@ -143,7 +143,7 @@ function fetchData(timesheetID) {
 
     var categoriesFetched = AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'categoryIDs',
+        url: restBaseUrl + 'config/getCategories',
         contentType: "application/json"
     });
 

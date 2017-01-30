@@ -16,8 +16,8 @@
 
 package org.catrobat.jira.timesheet.helper;
 
-public class CsvConstants {
+class CsvConstants {
 
-    public static final String DELIMITER = ";";
-    public static final String NEW_LINE = "\n";
+    static final String DELIMITER = ";";
+    static final String NEW_LINE = "\n";
 }

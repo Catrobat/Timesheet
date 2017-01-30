@@ -6,7 +6,6 @@ import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

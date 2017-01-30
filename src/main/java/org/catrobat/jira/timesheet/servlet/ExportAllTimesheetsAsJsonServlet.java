@@ -42,7 +42,7 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        ApplicationUser loggedInUser = null;
+        ApplicationUser loggedInUser;
         try {
             loggedInUser = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
@@ -66,7 +66,7 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
         for (Timesheet timesheet : timesheetList) {
             TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
 
-            List<JsonTimesheetEntry> jsonEntries = new ArrayList<JsonTimesheetEntry>();
+            List<JsonTimesheetEntry> jsonEntries = new ArrayList<>();
 
             for (TimesheetEntry entry : entries) {
                 jsonEntries.add(new JsonTimesheetEntry(entry));

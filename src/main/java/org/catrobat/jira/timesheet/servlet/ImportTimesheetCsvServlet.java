@@ -36,20 +36,17 @@ import java.text.ParseException;
 
 public class ImportTimesheetCsvServlet extends HighPrivilegeServlet {
 
-    private final ConfigService configService;
     private final TimesheetService timesheetService;
     private final TimesheetEntryService timesheetEntryService;
     private final CategoryService categoryService;
     private final TeamService teamService;
     private final ActiveObjects activeObjects;
-    private ApplicationUser user;
 
     public ImportTimesheetCsvServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
             ConfigService configService, TimesheetService timesheetService,
             TimesheetEntryService timesheetEntryService,
             ActiveObjects activeObjects, PermissionService permissionService, CategoryService categoryService, TeamService teamService) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
-        this.configService = configService;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
         this.activeObjects = activeObjects;
@@ -102,14 +99,11 @@ public class ImportTimesheetCsvServlet extends HighPrivilegeServlet {
             dropEntries();
         }
 
-        CsvTimesheetImporter csvTimesheetImporter = new CsvTimesheetImporter(timesheetService, timesheetEntryService, categoryService, teamService, activeObjects);
+        CsvTimesheetImporter csvTimesheetImporter = new CsvTimesheetImporter(timesheetService, timesheetEntryService, categoryService, teamService);
         String errorString;
         try {
             errorString = csvTimesheetImporter.importCsv(csvString);
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            errorString = e.toString();
-        } catch (ParseException e) {
+        } catch (ServiceException | ParseException e) {
             e.printStackTrace();
             errorString = e.toString();
         }

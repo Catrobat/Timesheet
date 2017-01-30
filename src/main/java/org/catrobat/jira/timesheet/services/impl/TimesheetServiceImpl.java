@@ -23,6 +23,7 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
@@ -140,15 +141,15 @@ public class TimesheetServiceImpl implements TimesheetService {
         }
 
         if (isMasterThesisTimesheet) {
-            for (int i = 0; i < found.length; i++) {
-                if (found[i].getIsMasterThesisTimesheet()) {
-                    return found[i];
+            for (Timesheet aFound : found) {
+                if (aFound.getIsMasterThesisTimesheet()) {
+                    return aFound;
                 }
             }
         } else {
-            for (int i = 0; i < found.length; i++) {
-                if (!found[i].getIsMasterThesisTimesheet()) {
-                    return found[i];
+            for (Timesheet aFound : found) {
+                if (!aFound.getIsMasterThesisTimesheet()) {
+                    return aFound;
                 }
             }
         }
@@ -162,21 +163,19 @@ public class TimesheetServiceImpl implements TimesheetService {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         if (found.length > 2) {
-            if (found != null) {
-                ao.delete(found);
-            }
+            ao.delete(found);
             throw new ServiceException("Found more than two Timesheets with the same UserKey. All timesheets will be deleted.");
         }
 
         if (isMasterThesisTimesheet) {
-            for (int i = 0; i < found.length; i++) {
-                if (found[i].getIsMasterThesisTimesheet()) {
+            for (Timesheet aFound : found) {
+                if (aFound.getIsMasterThesisTimesheet()) {
                     return true;
                 }
             }
         } else {
-            for (int i = 0; i < found.length; i++) {
-                if (!found[i].getIsMasterThesisTimesheet()) {
+            for (Timesheet aFound : found) {
+                if (!aFound.getIsMasterThesisTimesheet()) {
                     return true;
                 }
             }

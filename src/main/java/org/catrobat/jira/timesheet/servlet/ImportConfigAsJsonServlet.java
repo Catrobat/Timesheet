@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
-import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
@@ -25,17 +24,14 @@ import java.util.Collection;
 public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
 
     private final ConfigService configService;
-    private final CategoryService categoryService;
     private final TeamService teamService;
     private final ActiveObjects activeObjects;
 
     public ImportConfigAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                     ConfigService configService, CategoryService categoryService,
-                                     TeamService teamService, ActiveObjects activeObjects,
-                                     PermissionService permissionService) {
+                                     ConfigService configService, TeamService teamService,
+                                     ActiveObjects activeObjects, PermissionService permissionService) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
         this.configService = configService;
-        this.categoryService = categoryService;
         this.teamService = teamService;
         this.activeObjects = activeObjects;
     }

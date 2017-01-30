@@ -25,7 +25,6 @@ import org.catrobat.jira.timesheet.helper.CsvConfigImporter;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,18 +36,15 @@ public class ImportConfigCsvServlet extends HighPrivilegeServlet {
 
     private final ConfigService configService;
     private final CategoryService categoryService;
-    private final TeamService teamService;
     private final ActiveObjects activeObjects;
 
     public ImportConfigCsvServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                   ConfigService configService, CategoryService categoryService,
-                                  TeamService teamService, ActiveObjects activeObjects,
-                                  PermissionService permissionService) {
+                                  ActiveObjects activeObjects, PermissionService permissionService) {
 
         super(loginUriProvider, webSudoManager, permissionService, configService);
         this.configService = configService;
         this.categoryService = categoryService;
-        this.teamService = teamService;
         this.activeObjects = activeObjects;
     }
 
@@ -115,7 +111,7 @@ public class ImportConfigCsvServlet extends HighPrivilegeServlet {
             dropEntries();
         }
 
-        CsvConfigImporter csvImporter = new CsvConfigImporter(configService, categoryService, teamService);
+        CsvConfigImporter csvImporter = new CsvConfigImporter(configService, categoryService);
         String errorString;
         try {
             errorString = csvImporter.importCsv(csvString);

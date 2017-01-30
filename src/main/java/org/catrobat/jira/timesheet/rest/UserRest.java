@@ -37,20 +37,18 @@ import java.util.*;
 
 @Path("/user")
 public class UserRest {
-    public static final String DISABLED_GROUP = "Disabled";
+    private static final String DISABLED_GROUP = "Disabled";
     private final ConfigService configService;
     private final PermissionService permissionService;
     private final TimesheetService timesheetService;
     private final TimesheetEntryService timesheetEntryService;
-    private final TeamService teamService;
 
     public UserRest(ConfigService configService, PermissionService permissionService,
-            TimesheetService timesheetService, TimesheetEntryService timesheetEntryService, TeamService teamService) {
+            TimesheetService timesheetService, TimesheetEntryService timesheetEntryService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
-        this.teamService = teamService;
     }
 
     @GET
@@ -64,7 +62,7 @@ public class UserRest {
         }
 
         UserUtil userUtil = ComponentAccessor.getUserUtil();
-        List<JsonUser> jsonUserList = new ArrayList<JsonUser>();
+        List<JsonUser> jsonUserList = new ArrayList<>();
         Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
         TreeSet<ApplicationUser> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
         for (ApplicationUser user : allSortedUsers) {
@@ -153,7 +151,7 @@ public class UserRest {
             return getUsers(request);
         }
 
-        List<String> jsonUserList = new ArrayList<String>();
+        List<String> jsonUserList = new ArrayList<>();
         Collection<ApplicationUser> allUsers = ComponentAccessor.getGroupManager().getUsersInGroup(pairProgrammingGroup);
         for (ApplicationUser user : allUsers) {
             jsonUserList.add(user.getName());
@@ -171,7 +169,7 @@ public class UserRest {
             return response;
         }
 
-        List<String> groupList = new ArrayList<String>();
+        List<String> groupList = new ArrayList<>();
         Collection<Group> allGroups = ComponentAccessor.getGroupManager().getAllGroups();
         for (Group group : allGroups) {
             groupList.add(group.getName());

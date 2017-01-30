@@ -27,7 +27,7 @@ public class TimesheetScheduler implements LifecycleAware {
 
     public TimesheetScheduler(PluginScheduler pluginScheduler, TimesheetService sheetService,
             TimesheetEntryService entryService, TeamService teamService, CategoryService categoryService,
-            ConfigService configService, SchedulingService schedulingService, ActiveObjects ao) {
+            ConfigService configService, SchedulingService schedulingService) {
         this.pluginScheduler = pluginScheduler;
         this.sheetService = sheetService;
         this.entryService = entryService;

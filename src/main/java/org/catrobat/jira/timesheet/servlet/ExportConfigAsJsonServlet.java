@@ -4,7 +4,6 @@ package org.catrobat.jira.timesheet.servlet;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.google.gson.Gson;
-import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;

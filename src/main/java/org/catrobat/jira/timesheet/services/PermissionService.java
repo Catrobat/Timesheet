@@ -69,7 +69,5 @@ public interface PermissionService {
 
     boolean isReadOnlyUser(ApplicationUser user);
 
-    Collection<Group> printALLUserGroups();
-
     Collection<String> getGroupNames(HttpServletRequest request);
 }

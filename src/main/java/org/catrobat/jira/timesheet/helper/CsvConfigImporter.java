@@ -22,31 +22,28 @@ import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.CategoryService;
-import org.catrobat.jira.timesheet.services.TeamService;
 
+import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 
 public class CsvConfigImporter {
 
     private final ConfigService configService;
     private final CategoryService categoryService;
-    private final TeamService teamService;
 
-    public CsvConfigImporter(ConfigService configService, CategoryService categoryService, TeamService teamService) {
+    public CsvConfigImporter(ConfigService configService, CategoryService categoryService) {
 
         this.configService = configService;
         this.categoryService = categoryService;
-        this.teamService = teamService;
     }
 
     public String importCsv(String csvString) throws ServiceException {
         StringBuilder errorStringBuilder = new StringBuilder("<ul>");
         int lineNumber = 0;
-        List<String> assignedCoordinators = new LinkedList<String>();
-        List<String> assignedUsers = new LinkedList<String>();
-        List<String> assignedCategories = new LinkedList<String>();
-        List<String> addedCategories = new LinkedList<String>();
+        LinkedList<String> assignedCoordinators = new LinkedList<>();
+        LinkedList<String> assignedUsers = new LinkedList<>();
+        LinkedList<String> assignedCategories = new LinkedList<>();
+        LinkedList<String> addedCategories = new LinkedList<>();
         String readOnlyUsers = "";
         //create new Config
         Config config = configService.getConfiguration();
@@ -113,13 +110,9 @@ public class CsvConfigImporter {
             }
             //Team Data
             else if (columns[0].equals("Assigned Coordinators")) {
-                for (int i = 1; i < columns.length; i++) {
-                    assignedCoordinators.add(columns[i]);
-                }
+                assignedCoordinators.addAll(Arrays.asList(columns).subList(1, columns.length));
             } else if (columns[0].equals("Assigned Users")) {
-                for (int i = 1; i < columns.length; i++) {
-                    assignedUsers.add(columns[i]);
-                }
+                assignedUsers.addAll(Arrays.asList(columns).subList(1, columns.length));
             } else if (columns[0].equals("Assigned Categories")) {
                 for (int i = 1; i < columns.length; i++) {
                     assignedCategories.add(columns[i]);

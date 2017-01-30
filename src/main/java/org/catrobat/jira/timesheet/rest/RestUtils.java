@@ -65,8 +65,8 @@ public class RestUtils {
         for (Team team : sortedTeamsOfUsersList) {
             Category[] categories = team.getCategories();
             List<Integer> categoryIDs = new ArrayList<>();
-            for (int i = 0; i < categories.length; i++) {
-                categoryIDs.add(categories[i].getID());
+            for (Category category : categories) {
+                categoryIDs.add(category.getID());
             }
             teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
         }

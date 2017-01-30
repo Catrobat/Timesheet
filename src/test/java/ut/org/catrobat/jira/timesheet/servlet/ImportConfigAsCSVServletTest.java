@@ -87,7 +87,7 @@ public class ImportConfigAsCSVServletTest {
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
 
         importConfigCsvServlet = new ImportConfigCsvServlet(loginUriProvider, webSudoManager,
-                configService, categoryService, teamService, ao, permissionService);
+                configService, categoryService, ao, permissionService);
 
         when(user.getUsername()).thenReturn("test");
         when(user.getKey()).thenReturn(test_key);

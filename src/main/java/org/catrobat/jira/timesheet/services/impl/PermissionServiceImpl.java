@@ -167,7 +167,6 @@ public class PermissionServiceImpl implements PermissionService {
         }
         String[] readOnlyUsers = configService.getConfiguration().getReadOnlyUsers().split(",");
         for (String readOnlyUser : readOnlyUsers) {
-            System.out.println("readOnlyUser = " + readOnlyUser);
             if (readOnlyUser.equals(user.getUsername())) {
                 return true;
             }
@@ -311,11 +310,6 @@ public class PermissionServiceImpl implements PermissionService {
         DateTime datetime = new DateTime(date);
 
         return (datetime.compareTo(fiveYearsAgo) < 0);
-    }
-
-    @Override
-    public Collection<com.atlassian.crowd.embedded.api.Group> printALLUserGroups() {
-        return ComponentAccessor.getGroupManager().getAllGroups();
     }
 
     @Override

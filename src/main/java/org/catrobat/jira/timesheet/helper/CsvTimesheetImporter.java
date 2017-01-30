@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.helper;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
@@ -36,16 +35,13 @@ public class CsvTimesheetImporter {
     private final TimesheetEntryService timesheetEntryService;
     private final CategoryService categoryService;
     private final TeamService teamService;
-    private final ActiveObjects ao;
 
     public CsvTimesheetImporter(TimesheetService timesheetService,
-            TimesheetEntryService timesheetEntryService, CategoryService categoryService, TeamService teamService, ActiveObjects ao) {
-
+            TimesheetEntryService timesheetEntryService, CategoryService categoryService, TeamService teamService) {
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
         this.categoryService = categoryService;
         this.teamService = teamService;
-        this.ao = ao;
     }
 
     public String importCsv(String csvString) throws ServiceException, ParseException {
