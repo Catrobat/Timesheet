@@ -278,7 +278,17 @@
                     Shows your target theory hours.
                 </div>
             </div>
+            <div class="field-group">
+                <label for="timesheet-finish-date">Projected Finish Date</label>
+                <input disabled="disabled" class="text" type="text" id="timesheet-finish-date"
+                       name="timesheet-finish-date"
+                       title="timesheet-finish-date">
 
+                <div class="description">
+                    Shows your projected finished date based
+                    of your work in the last 30 days.
+                </div>
+            </div>
             <div class="field-group">
                 <label for="timesheet-hours-text">Target Total Timesheet Hours</label>
                 <input class="text" type="text" id="timesheet-hours-text"
@@ -289,7 +299,6 @@
                     Shows your target total timesheet hours.
                 </div>
             </div>
-
             <div class="field-group">
                 <label for="timesheet-hours-lectures">Lectures</label>
                 <input class="text" type="text" id="timesheet-hours-lectures" name="timesheet-hours-lectures"

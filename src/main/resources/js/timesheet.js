@@ -123,6 +123,35 @@ function checkConstrains() {
     }).responseText;
 }
 
+function projectedFinishDate(timesheetData, entryData) {
+    var timesheet = timesheetData[0];
+    var entries = entryData[0];
+    var rem = timesheet.targetHours - timesheet.targetHoursCompleted + timesheet.targetHoursRemoved;
+    if (rem <= 0) {
+        AJS.$("#timesheet-finish-date").val(new Date().toLocaleDateString("en-US"));
+        return;
+        // already finished...
+    }
+    var sumLast30Days = 0;
+    var days30Past = new Date();
+    days30Past.setDate(days30Past.getDate() - 30);
+    console.log(days30Past);
+    for (var i = 0; i < entries.length; i++) {
+        var entry = entries[i];
+        if (entry.beginDate > days30Past) {
+            sumLast30Days += entry.endDate - entry.beginDate;
+        }
+    }
+    var hoursLast30Days = sumLast30Days / (1000 * 60 * 60);
+    console.log(hoursLast30Days);
+    var remDays = rem * 30 / hoursLast30Days;
+    var finishDate = new Date();
+    finishDate.setDate(finishDate.getDate() + remDays);
+    console.log(remDays);
+    console.log(finishDate);
+    AJS.$("#timesheet-finish-date").val(finishDate.toLocaleDateString("en-US"));
+}
+
 function fetchData(timesheetID) {
 
     clearDiagramSelections();
@@ -169,6 +198,8 @@ function fetchData(timesheetID) {
         contentType: "application/json"
     });
 
+    AJS.$.when(timesheetFetched, entriesFetched)
+        .done(projectedFinishDate);
 
     AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, pairProgrammingFetched)
         .done(assembleTimesheetData)
