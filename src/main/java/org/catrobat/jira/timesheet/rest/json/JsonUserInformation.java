@@ -22,6 +22,16 @@ public class JsonUserInformation {
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
+    @XmlElement
+    @JsonDeserialize(using = DateAndTimeDeserialize.class)
+    private Date inactiveEndDate;
+    @XmlElement
+    private int totalPracticeHours;
+    @XmlElement
+    private int latestEntryHours;
+    @XmlElement
+    private String latestEntryDescription;
+
 
     public String getUserName() {
         return userName;
@@ -61,5 +71,37 @@ public class JsonUserInformation {
 
     public void setLatestEntryDate(Date latestEntryDate) {
         this.latestEntryDate = latestEntryDate;
+    }
+
+    public Date getInactiveEndDate() {
+        return inactiveEndDate;
+    }
+
+    public void setInactiveEndDate(Date inactiveEndDate) {
+        this.inactiveEndDate = inactiveEndDate;
+    }
+
+    public int getTotalPracticeHours() {
+        return totalPracticeHours;
+    }
+
+    public void setTotalPracticeHours(int totalPracticeHours) {
+        this.totalPracticeHours = totalPracticeHours;
+    }
+
+    public int getLatestEntryHours() {
+        return latestEntryHours;
+    }
+
+    public void setLatestEntryHours(int latestEntryHours) {
+        this.latestEntryHours = latestEntryHours;
+    }
+
+    public String getLatestEntryDescription() {
+        return latestEntryDescription;
+    }
+
+    public void setLatestEntryDescription(String latestEntryDescription) {
+        this.latestEntryDescription = latestEntryDescription;
     }
 }

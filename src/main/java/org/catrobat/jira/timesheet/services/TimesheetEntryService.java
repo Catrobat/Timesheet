@@ -40,4 +40,8 @@ public interface TimesheetEntryService {
     void delete(TimesheetEntry entry);
 
     int getHoursOfLastXMonths(Timesheet sheet, int months);
+
+    TimesheetEntry getLatestEntry(Timesheet timesheet);
+
+    TimesheetEntry getLatestInactiveEntry(Timesheet timesheet);
 }

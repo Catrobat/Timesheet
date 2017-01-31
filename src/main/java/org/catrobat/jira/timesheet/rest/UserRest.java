@@ -22,6 +22,7 @@ import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
 import org.catrobat.jira.timesheet.services.*;
@@ -126,6 +127,16 @@ public class UserRest {
                 jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
                 jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
                 jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+                if (timesheet.getState() == Timesheet.State.INACTIVE && timesheetEntryService.getLatestInactiveEntry(timesheet) != null) {
+                    System.out.println(timesheet);
+                    Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
+                    jsonUserInformation.setInactiveEndDate(inactiveEndDate);
+                }
+                jsonUserInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());
+                TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
+                System.out.println(latestEntry);
+                jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes()/60);
+                jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
                 jsonUserInformationList.add(jsonUserInformation);
             }
         }

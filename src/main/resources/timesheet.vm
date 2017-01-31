@@ -171,14 +171,15 @@
                         <tr>
                             <th id="ti-users">User</th>
                             <th id="ti-state">State</th>
-                            <th id="ti-hours-per-month">Hours per Month</th>
-                            <th id="ti-hours-per-half-year">Hours per Half Year</th>
-                            <th id="ti-latest-entry">Latest Entry</th>
-
                             <th id="ti-inactive-end-date">Inactive End Date</th>
 
                             <th id="ti-total-practice-hours">Total Practice Hours</th>
-                            <th id="ti-practice-30-days">Practice Hours in last 30 Days</th>
+                            <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                            <th id="ti-hours-per-month">Hours last Month</th>
+
+                            <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                            <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
+                            <th id="ti-latest-entry-description">Description of the Latest Entry</th>
                         </tr>
                         </thead>
                         <tbody class="list" id="team-information-table-content">

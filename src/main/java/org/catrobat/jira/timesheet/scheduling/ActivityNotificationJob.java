@@ -57,7 +57,7 @@ public class ActivityNotificationJob implements PluginJob {
                 }
             } else if (timesheet.getState() == Timesheet.State.INACTIVE) { // user is inactive
                 //inform coordinators
-                TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
+                TimesheetEntry latestInactiveEntry = entryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null) {
                     if (schedulingService.isOlderThanInactiveTime(latestInactiveEntry.getInactiveEndDate())) {
                         //inform coordinators that he should be active since two weeks
@@ -114,28 +114,6 @@ public class ActivityNotificationJob implements PluginJob {
         }
 
         return coordinatorMailAddressList;
-    }
-
-    private TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {
-        TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
-        for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE)
-                    && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
-    private TimesheetEntry getLatestOfflineEntry(Timesheet timesheet) {
-        TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
-        for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE_OFFLINE)
-                    && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                return entry;
-            }
-        }
-        return null;
     }
 
     private void buildEmailInactive(String emailTo, Timesheet sheet, ApplicationUser user) {

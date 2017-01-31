@@ -8,14 +8,28 @@ function initCoordinatorUserList(userInformation) {
         } else {
             latestEntryDate = (new Date(userInformation[i].latestEntryDate)).toLocaleDateString("en-US");
         }
-        AJS.$("#team-information-table-content").append("<tr>");
-        AJS.$("#team-information-table-content").append("<td>" + userInformation[i].userName +
-            "</td><td>" + userInformation[i].state +
-            "</td><td>" + userInformation[i].hoursPerMonth +
-            "</td><td>" + userInformation[i].hoursPerHalfYear +
-            "</td><td>" + latestEntryDate + "</td>");
-        AJS.$("#team-information-table-content").append("</tr>");
+        var inactiveEndDate;
+        if (userInformation[i].inactiveEndDate == null || new Date(userInformation[i].inactiveEndDate).getTime() == new Date(0).getTime()) {
+            inactiveEndDate = "";
+        } else {
+            inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
+        }
+        var row = "<tr>" +
+            "<td headers='ti-users'>" + userInformation[i].userName +
+            "</td><td headers='ti-state'>" + userInformation[i].state +
+            "</td><td headers='ti-inactive-end-date'>" + inactiveEndDate +
+
+            "</td><td headers='ti-total-practice-hours'>" + userInformation[i].totalPracticeHours +
+            "</td><td headers='ti-hours-per-half-year'>" + userInformation[i].hoursPerHalfYear +
+            "</td><td headers='ti-hours-per-month'>" + userInformation[i].hoursPerMonth +
+
+            "</td><td headers='ti-latest-entry-date'>" + latestEntryDate +
+            "</td><td headers='ti-latest-entry-hours'>" + userInformation[i].latestEntryHours +
+            "</td><td headers='ti-latest-entry-description'>" + userInformation[i].latestEntryDescription +
+            "</td></tr>";
+        AJS.$("#team-information-table-content").append(row);
     }
+    AJS.$("#team-information-table").trigger("update");
 }
 
 function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {

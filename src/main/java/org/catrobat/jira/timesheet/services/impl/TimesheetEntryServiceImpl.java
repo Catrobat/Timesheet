@@ -133,4 +133,22 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         }
         return minutes/60;
     }
+
+    @Override
+    public TimesheetEntry getLatestEntry(Timesheet timesheet) {
+        TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
+        return entries[0];
+    }
+
+    @Override
+    public TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {
+        TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
+        for (TimesheetEntry entry : entries) {
+            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE)
+                    && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
+                return entry;
+            }
+        }
+        return null;
+    }
 }
