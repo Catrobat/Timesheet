@@ -21,15 +21,6 @@ AJS.toInit(function () {
 
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
-    /*var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    if (isFirefox) {
-        AJS.messages.error({
-            title: 'Sorry, Firefox is not supported at the moment!',
-            body: 'Firefox has an critical bug so would you be so kind and take a different browser. We suggest Chrome as perfect search engine.'
-        });
-        return;
-    }*/
-
     // printDomainAttributes();
 
     AJS.$("#timesheet-table").hide();
