@@ -205,6 +205,8 @@
                class="org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl"/>
     <component key="scheduling-service" name="Scheduling Service"
                class="org.catrobat.jira.timesheet.services.impl.SchedulingServiceImpl"/>
+    <component key="timesheet-permission-condition" name="Timesheet Permission"
+               class="org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition"/>
     <!-- end of timesheet-components -->
 
     <!-- administration-components -->

@@ -34,6 +34,7 @@ import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.query.Query;
 import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition;
 import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
@@ -62,15 +63,17 @@ public class TimesheetRest {
     private final TeamService teamService;
     private final PermissionService permissionService;
     private final ConfigService configService;
+    private final TimesheetPermissionCondition permissionCondition;
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
-            final TeamService ts, PermissionService ps, final ConfigService ahcs) {
+            final TeamService ts, PermissionService ps, final ConfigService ahcs, TimesheetPermissionCondition permissionCondition) {
         this.teamService = ts;
         this.entryService = es;
         this.sheetService = ss;
         this.categoryService = cs;
         this.permissionService = ps;
         this.configService = ahcs;
+        this.permissionCondition = permissionCondition;
     }
 
     private void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws InvalidCredentialException {
@@ -86,38 +89,20 @@ public class TimesheetRest {
     @GET
     @Path("checkConstrains")
     public Response checkConstrains(@Context HttpServletRequest request) {
-        ApplicationUser user;
+        boolean shouldDisplay = false;
         try {
-            user = permissionService.checkIfUserExists();
+            shouldDisplay = permissionCondition.shouldDisplay(permissionService.checkIfUserExists(), null);
         } catch (PermissionException e) {
-            return Response.ok(false).build();
+            e.printStackTrace();
         }
 
-        Response response = permissionService.checkUserPermission();
-        if (response != null) {
-            return Response.ok(false).build();
-        }
-
-        String userName = user.getUsername();
-        Set<Team> teams = teamService.getTeamsOfUser(userName);
-        if (teams.isEmpty()) {
-            return Response.ok(false).build();
-        }
-
-        for (Team team : teams) {
-            Category[] categories = team.getCategories();
-            if (categories == null || categories.length == 0) {
-                return Response.ok(false).build();
-            }
-        }
-
-        return Response.ok(true).build();
+        return Response.ok(shouldDisplay).build();
     }
 
     @GET
     @Path("teams/{timesheetID}")
     public Response getTeamsForTimesheetID(@Context HttpServletRequest request,
-                                            @PathParam("timesheetID") int timesheetID) {
+            @PathParam("timesheetID") int timesheetID) {
         ApplicationUser loggedInUser;
         try {
             loggedInUser = permissionService.checkIfUserExists();
@@ -948,7 +933,7 @@ public class TimesheetRest {
         // FIXME: Set Back to Active if it was INACTIVE OR OFFLINE
         if (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) {
             state = Timesheet.State.ACTIVE;
-        } else if(entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0) {
+        } else if (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0) {
             state = Timesheet.State.ACTIVE;
         }
 

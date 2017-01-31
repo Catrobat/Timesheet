@@ -19,26 +19,18 @@ package org.catrobat.jira.timesheet.helper;
 import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.GlobalPermissionManager;
-import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
-import org.catrobat.jira.timesheet.activeobjects.Config;
-import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 
-import java.util.Collection;
+import javax.ws.rs.core.Response;
 import java.util.Map;
 
 public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
 
-    private final ConfigService configurationService;
-    private final GroupManager groupManager;
     private final PermissionService permissionService;
 
-    public PluginPermissionCondition(GlobalPermissionManager permissionManager, ConfigService configurationService,
-            GroupManager groupManager, PermissionService permissionService) {
+    public PluginPermissionCondition(GlobalPermissionManager permissionManager, PermissionService permissionService) {
         super(permissionManager);
-        this.configurationService = configurationService;
-        this.groupManager = groupManager;
         this.permissionService = permissionService;
     }
 
@@ -49,30 +41,12 @@ public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
     }
 
     @Override
-    public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return hasPermission(applicationUser);
-    }
-
-    public boolean hasPermission(ApplicationUser user) {
-        if (user == null)
-            return false;
-
-        Config config = configurationService.getConfiguration();
-        if (config.getTimesheetAdminGroups().length == 0 && config.getTimesheetAdminUsers().length == 0) {
-            if (permissionService.isJiraAdministrator(user)) {
-                return true;
-            }
-        }
-        else if (configurationService.isTimesheetAdmin(user.getKey())) {
+    public boolean shouldDisplay(ApplicationUser user, JiraHelper jiraHelper) {
+        Response response = permissionService.checkRootPermission();
+        if (response == null) {
             return true;
+        } else {
+            return false;
         }
-
-        Collection<String> groupNameCollection = groupManager.getGroupNamesForUser(user);
-        for (String groupName : groupNameCollection) {
-            if (configurationService.isTimesheetAdminGroup(groupName))
-                return true;
-        }
-
-        return false;
     }
 }

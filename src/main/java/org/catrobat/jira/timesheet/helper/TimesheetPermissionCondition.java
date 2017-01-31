@@ -20,17 +20,24 @@ import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCond
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
+import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TeamService;
 
 import javax.ws.rs.core.Response;
 import java.util.Map;
+import java.util.Set;
 
 public class TimesheetPermissionCondition extends JiraGlobalPermissionCondition {
 
     private final PermissionService permissionService;
-    public TimesheetPermissionCondition(GlobalPermissionManager permissionManager, PermissionService permissionService) {
+    private final TeamService teamService;
+
+    public TimesheetPermissionCondition(GlobalPermissionManager permissionManager, PermissionService permissionService, TeamService teamService) {
         super(permissionManager);
         this.permissionService = permissionService;
+        this.teamService = teamService;
     }
 
     @Override
@@ -39,15 +46,25 @@ public class TimesheetPermissionCondition extends JiraGlobalPermissionCondition 
     }
 
     @Override
-    public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return hasPermission();
-    }
-
-    public boolean hasPermission() {
+    public boolean shouldDisplay(ApplicationUser user, JiraHelper jiraHelper) {
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return false;
         }
+
+        String userName = user.getUsername();
+        Set<Team> teams = teamService.getTeamsOfUser(userName);
+        if (teams.isEmpty()) {
+            return false;
+        }
+
+        for (Team team : teams) {
+            Category[] categories = team.getCategories();
+            if (categories == null || categories.length == 0) {
+                return false;
+            }
+        }
+
         return true;
     }
 }

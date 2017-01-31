@@ -21,13 +21,18 @@ import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCond
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
+import org.catrobat.jira.timesheet.services.PermissionService;
 
+import javax.ws.rs.core.Response;
 import java.util.Map;
 
 public class MasterThesisTimesheetPermissionCondition extends JiraGlobalPermissionCondition {
 
-    public MasterThesisTimesheetPermissionCondition(GlobalPermissionManager permissionManager) {
+    private final PermissionService permissionService;
+
+    public MasterThesisTimesheetPermissionCondition(GlobalPermissionManager permissionManager, PermissionService permissionService) {
         super(permissionManager);
+        this.permissionService = permissionService;
     }
 
     @Override
@@ -37,13 +42,12 @@ public class MasterThesisTimesheetPermissionCondition extends JiraGlobalPermissi
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return hasPermission(applicationUser);
-    }
-
-    public boolean hasPermission(ApplicationUser applicationUser) {
-        if (applicationUser == null) {
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
             return false;
-        } else if (ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Master-Students")) {
+        }
+
+        if (ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Master-Students")) {
             return true;
         }
 

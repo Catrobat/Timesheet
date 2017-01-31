@@ -132,10 +132,10 @@ public class ConfigResourceRest {
 
         // add TimesheetAdmin group
         if (jsonConfig.getTimesheetAdminGroups() != null) {
-            for (String approvedGroupName : jsonConfig.getTimesheetAdminGroups()) {
-                configService.addTimesheetAdminGroup(approvedGroupName);
+            for (String timesheetAdminGroup : jsonConfig.getTimesheetAdminGroups()) {
+                configService.addTimesheetAdminGroup(timesheetAdminGroup);
                 // add all users in group
-                Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
+                Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(timesheetAdminGroup);
                 for (ApplicationUser user : usersInGroup) {
                     configService.addTimesheetAdmin(user);
                 }

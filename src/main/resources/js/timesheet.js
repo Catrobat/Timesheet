@@ -21,14 +21,14 @@ AJS.toInit(function () {
 
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    /*var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     if (isFirefox) {
         AJS.messages.error({
             title: 'Sorry, Firefox is not supported at the moment!',
             body: 'Firefox has an critical bug so would you be so kind and take a different browser. We suggest Chrome as perfect search engine.'
         });
         return;
-    }
+    }*/
 
     // printDomainAttributes();
 
@@ -116,7 +116,7 @@ function checkConstrains() {
                 AJS.messages.error({
                     title: 'Sorry, you do not have a timesheet!',
                     body: 'You are not authorized to view this page. Please contact the administrator! </br> ' +
-                    'Probably you are not added to a team or category!'
+                    'Probably you are not added to a team or category or both!'
                 });
             }
         }
