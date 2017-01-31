@@ -14,17 +14,13 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl;
+import org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition;
 import org.catrobat.jira.timesheet.rest.TimesheetRest;
-import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.TimesheetServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -87,6 +83,8 @@ public class TimesheetRestTest {
     private ApplicationUser userMock;
     private JiraAuthenticationContext jiraAuthMock;
 
+    private TimesheetPermissionCondition permissionConditionMock;
+
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
@@ -110,15 +108,18 @@ public class TimesheetRestTest {
         timesheetEntryMock = mock(TimesheetEntry.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
+        permissionConditionMock = mock(TimesheetPermissionCondition.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
         configService = new ConfigServiceImpl(ao, categoryService);
         teamService = new TeamServiceImpl(ao, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
-        timesheetRest = new TimesheetRest(timesheetEntryService, timesheetService, categoryService, teamService, permissionServiceMock, configService);
+        timesheetRest = new TimesheetRest(timesheetEntryService, timesheetService, categoryService, teamService,
+                permissionServiceMock, configService, permissionConditionMock);
 
-        timesheetRestMock = new TimesheetRest(timesheetEntryServiceMock, timesheetServiceMock, categoryServiceMock, teamServiceMock, permissionServiceMock, configServiceMock);
+        timesheetRestMock = new TimesheetRest(timesheetEntryServiceMock, timesheetServiceMock, categoryServiceMock,
+                teamServiceMock, permissionServiceMock, configServiceMock, permissionConditionMock);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
