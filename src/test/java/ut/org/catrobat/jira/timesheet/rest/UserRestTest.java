@@ -11,7 +11,7 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.rest.RestUtils;
+import org.catrobat.jira.timesheet.utility.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
 import org.junit.Assert;
 import org.junit.Before;

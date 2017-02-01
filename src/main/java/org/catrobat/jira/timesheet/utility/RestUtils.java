@@ -1,4 +1,4 @@
-package org.catrobat.jira.timesheet.rest;
+package org.catrobat.jira.timesheet.utility;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;

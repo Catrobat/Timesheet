@@ -26,6 +26,7 @@ import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
 import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.utility.RestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;

@@ -43,7 +43,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.catrobat.jira.timesheet.rest.RestUtils.convertTeamsToJSON;
+import static org.catrobat.jira.timesheet.utility.RestUtils.convertTeamsToJSON;
 
 @Path("/config")
 @Produces({MediaType.APPLICATION_JSON})

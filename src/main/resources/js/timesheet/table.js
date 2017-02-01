@@ -445,39 +445,16 @@ function prepareForm(entry, timesheetData, isModified) {
     });
 
     var baseUrl = AJS.params.baseURL; // we have to reassign it otherwise it would be undefined
-    var currentUser = "";
-    var queryString = "/rest/gadget/1.0/currentUser";
-
-    AJS.$.ajax({
-        type: 'GET',
-        url: baseUrl + queryString,
-        dataType: 'json',
-        success: function (data) {
-            currentUser = data.username;
-        },
-        error: function (jqXHR) {
-            console.log("error message: " + jqXHR.responseText);
-        },
-        async: false
-    });
-
-
     var tickets = [];
-    var queryString = "/rest/api/2/search?jql=assignee=" + currentUser + "+order+by+duedate";
+    var queryString = "/rest/api/2/issue/picker";
     AJS.$.ajax({
         type: 'GET',
         url: baseUrl + queryString,
         dataType: 'json',
         success: function (data) {
-            for (var i = 0; i < data.total; i++) {
-                if (data.issues[i] && data.issues[i].key) {
-                    var key = data.issues[i].key;
-                    var summary = data.issues[i].fields.summary;
-                    tickets.push(key + " : " + summary);
-                }
-            }
-            console.log("Amount of fetched issues: " + i);
-
+            data.sections[0].issues.forEach(function (issue) {
+                tickets.push(issue.key + " : " + issue.summary);
+            });
         },
         error: function (jqXHR) {
             console.log("error message: " + jqXHR.responseText);

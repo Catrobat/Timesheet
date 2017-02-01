@@ -48,8 +48,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
-import static org.catrobat.jira.timesheet.rest.RestUtils.asSortedList;
-import static org.catrobat.jira.timesheet.rest.RestUtils.convertTeamsToJSON;
+import static org.catrobat.jira.timesheet.utility.RestUtils.asSortedList;
+import static org.catrobat.jira.timesheet.utility.RestUtils.convertTeamsToJSON;
 
 //TODO: check if permissions are to loosely, in case adapted it, maybe checkIfUserExists() is not enough
 
