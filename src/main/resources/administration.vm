@@ -306,7 +306,6 @@
     <div class="tabs-pane" id="tabs-teams">
         <p></p>
         <h2>Team</h2>
-        <p>Removing a team just effects the configuration and no member will be modified.</p>
         <form id="modify-team" class="aui">
             <fieldset>
                 <div class="field-group">
@@ -316,6 +315,11 @@
                 <div class="field-group">
                     <input type="submit" value="Create" class="aui-button aui-button-primary">
                     <input type="submit" value="Remove" id="removeTeam" class="aui-button">
+                    <div class="description">
+                        <p>Note on removing a team:</p>
+                        <p>Remove all Users & Categories from the team</p>
+                        <p>All Timesheet Entries with this category will be changed to the default team.</p>
+                    </div>
                 </div>
             </fieldset>
         </form>
@@ -323,7 +327,6 @@
     <div class="tabs-pane" id="tabs-categories">
         <p></p>
         <h2>Categories</h2>
-        <p>Removing a category does not modify any member.</p>
         <form id="modify-categoryList" class="aui">
             <fieldset>
                 <div class="field-group">
@@ -334,6 +337,11 @@
                 <div class="field-group">
                     <input type="submit" value="Create" class="aui-button aui-button-primary">
                     <input type="submit" value="Remove" id="removeCategory" class="aui-button">
+                    <div class="description">
+                        <p>Note on removing a category:</p>
+                        <p>Remove the category from all teams in team configuration.</p>
+                        <p>All Timesheet Entries with this category will be changed to the default category.</p>
+                    </div>
                 </div>
             </fieldset>
         </form>

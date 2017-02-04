@@ -169,7 +169,7 @@
                     <table id="team-information-table" class="aui aui-table-interactive aui-table-sortable">
                         <thead>
                         <tr>
-                            <th id="ti-users">User</th>
+                            <th id="ti-users">Member</th>
                             <th id="ti-state">State</th>
                             <th id="ti-inactive-end-date">Inactive End Date</th>
 

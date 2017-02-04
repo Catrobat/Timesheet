@@ -76,7 +76,7 @@ function appendEntriesToVisTable(timesheetData) {
             dataPoints.push(dataY);
 
             AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"date\">" +
-                "Time Spent: " + referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1) + "</td>" +
+                "Working Time: " + referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1) + "</td>" +
                 "<td headers=\"basic-time\" class=\"time\">" + totalHours + "hours " + totalMinutes + "mins" + "</td>" +
                 "</tr>");
 
@@ -101,7 +101,7 @@ function appendEntriesToVisTable(timesheetData) {
     var totalTime = totalTimeHours * 60 + totalTimeMinutes;
 
     //append total time
-    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Total Time Spent" + "</td>" +
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Total Working Time" + "</td>" +
         "<td headers=\"basic-time\" class=\"time\">" + totalTimeHours + "hours " + totalTimeMinutes + "mins" + "</td>" +
         "</tr>");
 
