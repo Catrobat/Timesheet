@@ -31,9 +31,11 @@ AJS.toInit(function () {
         fetchUsers();
         AJS.$("#coord_private").show();
         AJS.$("#coord_private_table").show();
+        AJS.$("#timesheet-owner").show();
     } else {
         AJS.$("#coord_private").hide();
         AJS.$("#coord_private_table").hide();
+        AJS.$("#timesheet-owner").hide();
     }
 
     if (isMasterThesisTimesheet) {
@@ -143,6 +145,10 @@ function projectedFinishDate(timesheetData, entryData) {
     AJS.$("#timesheet-finish-date").val(finishDate.toLocaleDateString("en-US"));
 }
 
+function setOwnerLabel(timesheet) {
+    AJS.$("#timesheet-owner").append(timesheet.userKey);
+}
+
 function fetchData(timesheetID) {
 
     clearDiagramSelections();
@@ -188,6 +194,9 @@ function fetchData(timesheetID) {
         url: restBaseUrl + 'user/getPairProgrammingUsers',
         contentType: "application/json"
     });
+
+    AJS.$.when(timesheetFetched)
+        .done(setOwnerLabel);
 
     AJS.$.when(timesheetFetched, entriesFetched)
         .done(projectedFinishDate);
