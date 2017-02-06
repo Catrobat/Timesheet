@@ -101,8 +101,8 @@ function appendEntriesToVisTable(timesheetData) {
     var totalTime = totalTimeHours * 60 + totalTimeMinutes;
 
     //append total time
-    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Total Working Time" + "</td>" +
-        "<td headers=\"basic-time\" class=\"time\">" + totalTimeHours + "hours " + totalTimeMinutes + "mins" + "</td>" +
+    AJS.$("#visualization-table-content tr:first").before("<tr><td headers=\"basic-date\" class=\"total-time\"><strong>" + "Total Working Time" + "</strong></td>" +
+        "<td headers=\"basic-time\" class=\"time\"><strong>" + totalTimeHours + "hours " + totalTimeMinutes + "mins" + "</strong></td>" +
         "</tr>");
 
     //entry for average time
@@ -117,14 +117,16 @@ function appendEntriesToVisTable(timesheetData) {
     }
 
     //append avg time
-    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"avg-time\">" + "Time / Month" + "</td>" +
-        "<td headers=\"basic-time\" class=\"time\">" + averageTimeHours + "hours " + Math.floor(averageTimeMinutes) + "mins" + "</td>" +
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"avg-time\"><strong>" + "Time / Month" + "</strong></td>" +
+        "<td headers=\"basic-time\" class=\"time\"><strong>" + averageTimeHours + "hours " + Math.floor(averageTimeMinutes) + "mins" + "</strong></td>" +
         "</tr>");
 
     //append time last 6 month
-    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\">" + "Overall Time Last 6 Month" + "</td>" +
-        "<td headers=\"basic-time\" class=\"time\">" + timeLastSixMonthHours + "hours " + timeLastSixMonthMinutes + "mins" + "</td>" +
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\"><strong>" + "Overall Time Last 6 Month" + "</strong></td>" +
+        "<td headers=\"basic-time\" class=\"time\"><strong>" + timeLastSixMonthHours + "hours " + timeLastSixMonthMinutes + "mins" + "</strong></td>" +
         "</tr>");
+
+    AJS.$("#visualization-table-content").trigger("update");
 
     appendTimeToPiChart(theoryHours, totalTime - theoryHours, totalTime);
     //assign JSON data for line graph
