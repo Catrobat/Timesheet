@@ -74,7 +74,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
             }
 
             if (sheet == null) {
-                sheet = sheetService.add(userKey, 0, 0, 900, 0, 0, "Master Thesis",
+                sheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 900, 0, 0, "Master Thesis",
                         "Hint: Good Luck & Have Fun.", true, true, Timesheet.State.ACTIVE);
             }
 

@@ -17,13 +17,14 @@
 package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
@@ -43,19 +44,20 @@ public class TimesheetServiceImpl implements TimesheetService {
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures, String reason, Date latestEntryDate,
             boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) throws ServiceException {
-        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
+        ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
+        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
         if (found.length > 2) {
             throw new ServiceException("Found more than two Timesheets with the same UserKey.");
         } else if (found.length == 0) {
-            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
+            throw new ServiceException("No 'Timesheet' found for this user.");
         }
 
         for (Timesheet aFound : found) {
             if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
                 Timesheet sheet = aFound;
 
-                sheet.setUserKey(userKey);
+                sheet.setDisplayName(user.getDisplayName());
                 sheet.setTargetHoursPractice(targetHoursPractice);
                 sheet.setTargetHoursTheory(targetHoursTheory);
                 sheet.setTargetHours(targetHours);
@@ -76,12 +78,14 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @NotNull
     @Override
-    public Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
+    public Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved,
             String lectures, String reason,
             boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) {
+
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
+        sheet.setDisplayName(displayName);
         sheet.setTargetHoursPractice(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);
         sheet.setTargetHours(targetHours);

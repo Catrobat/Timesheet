@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
 public class TimesheetServiceImplTest {
 
     final String userKey = "USER_001";
+    private String displayName = "Test User";
     final int targetHoursPractice = 150;
     final int targetHoursTheory = 0;
     final int targeHours = 300;
@@ -47,7 +48,7 @@ public class TimesheetServiceImplTest {
     @Test
     public void testAdd() throws Exception {
         //Act
-        service.add(userKey, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted,
+        service.add(userKey, displayName, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted,
                 targetHoursRemoved, lectures, reason, false, true, Timesheet.State.ACTIVE);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 

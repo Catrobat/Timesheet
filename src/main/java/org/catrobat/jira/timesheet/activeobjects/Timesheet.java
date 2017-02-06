@@ -30,6 +30,10 @@ public interface Timesheet extends Entity {
 
     void setUserKey(String key);
 
+    String getDisplayName();
+
+    void setDisplayName(String name);
+
     int getTargetHoursPractice();
 
     void setTargetHoursPractice(int hours);

@@ -21,7 +21,6 @@ import com.atlassian.jira.service.ServiceException;
 import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +35,7 @@ public interface TimesheetService {
      * @param targetHoursTheory   specifies the amount of hours the user has to
 *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
-     * @param isMasterThesisTimesheet @return the new Timesheet, or null */
+     * @param isMasterThesisTimesheet @return the new Timesheet, or null       */
     @Nullable
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
@@ -46,14 +45,15 @@ public interface TimesheetService {
     /**
      * Adds a new Timesheet
      * @param userKey             identifies the user
+     * @param displayName
      * @param targetHoursPractice specifies the amount of hours the user has to
      *                            solve in practical work
      * @param targetHoursTheory   specifies the amount of hours the user has to
 *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
-     * @param isMasterThesisTimesheet @return the new Timesheet */
+     * @param isMasterThesisTimesheet @return the new Timesheet    */
     @NotNull
-    Timesheet add(String userKey, int targetHoursPractice, int targetHoursTheory,
+    Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
             String reason, boolean isMasterThesisTimesheet, boolean isEnabled,
             Timesheet.State state);

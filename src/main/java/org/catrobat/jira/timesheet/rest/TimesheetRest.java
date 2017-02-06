@@ -496,7 +496,6 @@ public class TimesheetRest {
         ApplicationUser user;
         Category category;
         Team team;
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         try {
             user = permissionService.checkIfUserExists();
@@ -507,7 +506,7 @@ public class TimesheetRest {
             if (error != "") {
                 return Response.status(Response.Status.FORBIDDEN).entity(error).build();
             }
-            permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
+            permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         } catch (com.atlassian.jira.exception.PermissionException e) {

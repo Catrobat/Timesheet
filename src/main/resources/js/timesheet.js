@@ -138,7 +138,7 @@ function projectedFinishDate(timesheetData, entryData) {
 }
 
 function setOwnerLabel(timesheet) {
-    AJS.$("#timesheet-owner").append(timesheet.userKey);
+    AJS.$("#timesheet-owner").append(timesheet.displayName);
 }
 
 function fetchData(timesheetID) {

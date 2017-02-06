@@ -73,7 +73,7 @@ public class TimesheetServlet extends HttpServlet {
                 timesheet = sheetService.getTimesheetByUser(userKey, false);
             }
             if (timesheet == null) {
-                timesheet = sheetService.add(userKey, 0, 0, 150, 0, 0, "Bachelor Thesis",
+                timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 150, 0, 0, "Bachelor Thesis",
                         "", false, true, Timesheet.State.ACTIVE);
             }
 

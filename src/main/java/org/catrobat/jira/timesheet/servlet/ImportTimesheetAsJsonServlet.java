@@ -1,7 +1,9 @@
 package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.google.gson.Gson;
@@ -68,17 +70,11 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
         writer.close();
     }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
 
-        // Dangerous servlet - should be forbidden in production use
-        /*if (!timesheetService.all().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Importing Timesheets is not possible if timesheets exist");
-            return;
-        }*/
-
         String jsonString = request.getParameter("json");
-
         if (request.getParameter("drop") != null && request.getParameter("drop").equals("drop")) {
             dropEntries();
         }
@@ -97,12 +93,13 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             JsonTimesheet jsonTimesheet = timesheetAndEntries.getJsonTimesheet();
             List<JsonTimesheetEntry> timesheetEntryList = timesheetAndEntries.getJsonTimesheetEntryList();
 
-            Timesheet sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
-                    jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(), jsonTimesheet.getTargetHoursRemoved(),
-                    jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
+            ApplicationUser jsonUser = ComponentAccessor.getUserManager().getUserByKey(jsonTimesheet.getUserKey());
+            Timesheet sheet = timesheetService.add(jsonUser.getKey(), jsonUser.getDisplayName(),
+                    jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
+                    jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
+                    jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
                     jsonTimesheet.isMTSheet(), jsonTimesheet.isEnabled(), jsonTimesheet.getState());
 
-            System.out.println("sheetid: " + sheet.getID());
             for (JsonTimesheetEntry entry : timesheetEntryList) {
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team;

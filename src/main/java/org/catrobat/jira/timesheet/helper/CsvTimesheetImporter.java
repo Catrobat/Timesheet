@@ -86,6 +86,7 @@ public class CsvTimesheetImporter {
                 } else {
                     timesheetService.add(
                             columns[0],                     //userkey
+                            columns[0],                    // displayName same as userkey
                             Integer.parseInt(columns[1]),   //practical
                             Integer.parseInt(columns[2]),   //theory
                             Integer.parseInt(columns[5]),   //total

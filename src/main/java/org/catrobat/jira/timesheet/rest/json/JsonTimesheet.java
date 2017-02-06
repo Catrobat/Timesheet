@@ -45,7 +45,7 @@ public final class JsonTimesheet {
     @XmlElement
     private String reason;
     @XmlElement
-    @JsonDeserialize(using=DateAndTimeDeserialize.class)
+    @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
     private int targetHourPractice;
@@ -63,6 +63,8 @@ public final class JsonTimesheet {
     private boolean isMTSheet;
     @XmlElement
     private Timesheet.State state;
+    @XmlElement
+    private String displayName;
 
     public JsonTimesheet(Timesheet timesheet) {
         this.timesheetID = timesheet.getID();
@@ -78,6 +80,7 @@ public final class JsonTimesheet {
         this.isEnabled = timesheet.getIsEnabled();
         this.isMTSheet = timesheet.getIsMasterThesisTimesheet();
         this.state = timesheet.getState();
+        this.displayName = timesheet.getDisplayName();
     }
 
     public JsonTimesheet() {
@@ -183,21 +186,48 @@ public final class JsonTimesheet {
         this.state = state;
     }
 
+    public String getDisplayName() {return displayName;}
+
+    public void setDisplayName(String displayName) { this.displayName = displayName;}
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         JsonTimesheet that = (JsonTimesheet) o;
 
-        if (timesheetID != that.timesheetID) { return false; }
-        if (latestEntryDate != that.latestEntryDate) { return false; }
-        if (targetHourPractice != that.targetHourPractice) { return false; }
-        if (targetHourTheory != that.targetHourTheory) { return false; }
-        if (targetHours != that.targetHours) { return false; }
-        if (targetHoursCompleted != that.targetHoursCompleted) { return false; }
-        if (targetHoursRemoved != that.targetHoursRemoved) { return false; }
-        if (isEnabled != that.isEnabled) { return false; }
+        if (timesheetID != that.timesheetID) {
+            return false;
+        }
+        if (latestEntryDate != that.latestEntryDate) {
+            return false;
+        }
+        if (targetHourPractice != that.targetHourPractice) {
+            return false;
+        }
+        if (targetHourTheory != that.targetHourTheory) {
+            return false;
+        }
+        if (targetHours != that.targetHours) {
+            return false;
+        }
+        if (targetHoursCompleted != that.targetHoursCompleted) {
+            return false;
+        }
+        if (targetHoursRemoved != that.targetHoursRemoved) {
+            return false;
+        }
+        if (isEnabled != that.isEnabled) {
+            return false;
+        }
+        if (displayName != that.displayName) {
+            return false;
+        }
 
         return lectures.equals(that.lectures);
     }
