@@ -20,7 +20,8 @@ function appendEntriesToVisTable(timesheetData) {
     var theoryHours = 0;
 
     //spent time within the last six months
-    var sixMonthAgo = new Date().getMonth() - 6;
+    var sixMonthAgo = new Date();
+    sixMonthAgo.setMonth(sixMonthAgo.getMonth() - 6);
 
     while (i < availableEntries.length) {
         var referenceEntryDate = new Date(availableEntries[pos].beginDate);
@@ -52,8 +53,7 @@ function appendEntriesToVisTable(timesheetData) {
                 theoryHours = theoryHours + calculatedTime;
 
             //date within the last six months
-            var compareEntryMonth = compareToDate.getMonth() - 6;
-            if (compareEntryMonth <= sixMonthAgo) {
+            if (compareToDate.getTime() >= sixMonthAgo.getTime()) {
                 timeLastSixMonthHours = timeLastSixMonthHours + hours;
                 timeLastSixMonthMinutes = timeLastSixMonthMinutes + minutes;
 
