@@ -100,6 +100,12 @@ function initSelectTimesheetButton() {
             location.reload()
         }, 4000);
     });
+    AJS.$("#reset-timesheet-settings").submit(function (e) {
+        e.preventDefault();
+
+        sessionStorage.removeItem('timesheetID');
+        location.reload();
+    });
 }
 
 function toFixed(value, precision) {

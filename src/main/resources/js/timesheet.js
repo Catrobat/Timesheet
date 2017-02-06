@@ -69,14 +69,10 @@ AJS.toInit(function () {
         var url_csv = AJS.$("#download-csv").attr("href");
         AJS.$("#download-json").attr("href", url_json + param);
         AJS.$("#download-csv").attr("href", url_csv + param);
-
-        //defining behaviour: after double refresh original data are shown
-        sessionStorage.removeItem('selectedUser');
-        sessionStorage.removeItem('isMTSheetSelected');
-        sessionStorage.removeItem('timesheetID');
     }
     else {
         fetchData(timesheetID);
+        AJS.$("#reset-timesheet-settings").hide();
     }
 });
 

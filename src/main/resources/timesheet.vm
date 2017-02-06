@@ -161,6 +161,9 @@
             <div id="coordinatorTimesheetSelect"></div>
             <div id="approvedUserTimesheetSelect"></div>
         </form>
+        <form id="reset-timesheet-settings" class="aui">
+            <input type="submit" value="View Own Timesheet" class="aui-button aui-button-primary">
+        </form>
     </div>
 
 #*   content of the tab "Team Information"*#
