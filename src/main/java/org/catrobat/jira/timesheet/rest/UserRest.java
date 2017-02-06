@@ -25,7 +25,10 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
-import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.utility.RestUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,6 +104,7 @@ public class UserRest {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsersForCoordinator(@Context HttpServletRequest request) {
         ApplicationUser user;
+        boolean isAdmin = false;
         try {
             user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
@@ -112,8 +116,15 @@ public class UserRest {
             return response;
         }
 
-        if (!(permissionService.isUserTeamCoordinator(user) || permissionService.isReadOnlyUser(user))) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not a team coordinator.").build();
+        if (permissionService.timesheetAdminExists() && permissionService.isTimesheetAdmin(user)) {
+            isAdmin = true;
+        } else if (!permissionService.timesheetAdminExists() && permissionService.isJiraAdministrator(user)) {
+            isAdmin = true;
+        }
+
+        if (!(permissionService.isUserTeamCoordinator(user) || permissionService.isReadOnlyUser(user) || isAdmin)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Access Forbidden: You are neither a team " +
+                    "coordinator nor a read only user nor a administrator!").build();
         }
 
         List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();

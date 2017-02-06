@@ -27,7 +27,7 @@ AJS.toInit(function () {
     AJS.$("#table-header").hide();
     checkConstrains();
 
-    if (isCoordinator || isSupervisor) {
+    if (isCoordinator || isSupervisor || isAdmin) {
         fetchUsers();
         AJS.$("#coord_private").show();
         AJS.$("#coord_private_table").show();

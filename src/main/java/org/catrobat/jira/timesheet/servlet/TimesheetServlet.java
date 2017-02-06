@@ -77,7 +77,12 @@ public class TimesheetServlet extends HttpServlet {
                         "", false, true, Timesheet.State.ACTIVE);
             }
 
-            paramMap.put("isAdmin", permissionService.isJiraAdministrator(user) || permissionService.isTimesheetAdmin(user));
+            if (permissionService.timesheetAdminExists()) {
+                paramMap.put("isAdmin", permissionService.isTimesheetAdmin(user));
+            } else {
+                paramMap.put("isAdmin", permissionService.isJiraAdministrator(user));
+            }
+
             paramMap.put("isCoordinator", permissionService.isUserTeamCoordinator(user));
             paramMap.put("isReadOnlyUser", permissionService.isReadOnlyUser(user));
 
