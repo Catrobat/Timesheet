@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.rest;
 
-import com.atlassian.crowd.exception.InvalidCredentialException;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
@@ -76,14 +75,16 @@ public class TimesheetRest {
         this.permissionCondition = permissionCondition;
     }
 
-    private void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws InvalidCredentialException {
+    private String checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) {
+        // TODO: this code is ugly, improve it
         if (team == null) {
-            throw new InvalidCredentialException("Team not found.");
+            return "Team not found.";
         } else if (category == null) {
-            throw new InvalidCredentialException("Category not found.");
+            return "Category not found.";
         } else if (!Arrays.asList(team.getCategories()).contains(category)) {
-            throw new InvalidCredentialException("Category is not associated with Team.");
+            return "Category is not associated with Team.";
         }
+        return "";
     }
 
     @GET
@@ -463,7 +464,7 @@ public class TimesheetRest {
     public Response postTimesheetEntry(@Context HttpServletRequest request,
             final JsonTimesheetEntry entry,
             @PathParam("timesheetID") int timesheetID,
-            @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
+            @PathParam("isMTSheet") Boolean isMTSheet) {
 
         Response response = permissionService.checkUserPermission();
         if (response != null) {
@@ -501,7 +502,10 @@ public class TimesheetRest {
             sheet = sheetService.getTimesheetByID(timesheetID);
             category = categoryService.getCategoryByID(entry.getCategoryID());
             team = teamService.getTeamByID(entry.getTeamID());
-            checkIfCategoryIsAssociatedWithTeam(team, category);
+            String error = checkIfCategoryIsAssociatedWithTeam(team, category);
+            if (error != "") {
+                return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            }
             permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
@@ -585,7 +589,7 @@ public class TimesheetRest {
     public Response postTimesheetEntries(@Context HttpServletRequest request,
             final JsonTimesheetEntry[] entries,
             @PathParam("timesheetID") int timesheetID,
-            @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException, PermissionException {
+            @PathParam("isMTSheet") Boolean isMTSheet) throws PermissionException {
 
         ApplicationUser user;
         try {
@@ -633,7 +637,10 @@ public class TimesheetRest {
                 permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
-                checkIfCategoryIsAssociatedWithTeam(team, category);
+                String error = checkIfCategoryIsAssociatedWithTeam(team, category);
+                if (error != "") {
+                    return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+                }
 
                 if (!entry.getPairProgrammingUserName().isEmpty()) {
                     programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName()).getUsername();
@@ -784,7 +791,7 @@ public class TimesheetRest {
     public Response putTimesheetEntry(@Context HttpServletRequest request,
             final JsonTimesheetEntry jsonEntry,
             @PathParam("entryID") int entryID,
-            @PathParam("isMTSheet") Boolean isMTSheet) throws InvalidCredentialException {
+            @PathParam("isMTSheet") Boolean isMTSheet) {
 
         Response response = permissionService.checkUserPermission();
         if (response != null) {
@@ -809,7 +816,10 @@ public class TimesheetRest {
             category = categoryService.getCategoryByID(jsonEntry.getCategoryID());
             team = teamService.getTeamByID(jsonEntry.getTeamID());
             sheet = entry.getTimeSheet();
-            checkIfCategoryIsAssociatedWithTeam(team, category);
+            String error = checkIfCategoryIsAssociatedWithTeam(team, category);
+            if (error != "") {
+                return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            }
             permissionService.userCanEditTimesheetEntry(loggedInUser, entry.getTimeSheet(), entry);
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
