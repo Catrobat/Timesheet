@@ -135,9 +135,13 @@ public class UserRest {
                 }
                 jsonUserInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());
                 TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
-                System.out.println(latestEntry);
-                jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes()/60);
-                jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
+                if (latestEntry != null) {
+                    jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
+                    jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
+                } else {
+                    jsonUserInformation.setLatestEntryHours(0);
+                    jsonUserInformation.setLatestEntryDescription("");
+                }
                 jsonUserInformationList.add(jsonUserInformation);
             }
         }
