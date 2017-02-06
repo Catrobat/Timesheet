@@ -2,14 +2,13 @@ package org.catrobat.jira.timesheet.scheduling;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.mail.Email;
-import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.SchedulingService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.utility.EmailUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +23,7 @@ public class OutOfTimeJob implements PluginJob {
         TimesheetService sheetService = (TimesheetService)map.get("sheetService");
         ConfigService configService = (ConfigService)map.get("configService");
         SchedulingService schedulingService = (SchedulingService)map.get("schedulingService");
+        EmailUtil emailUtil = new EmailUtil(configService);
 
         List<Timesheet> timesheetList = sheetService.all();
         Config config = configService.getConfiguration();
@@ -33,11 +33,7 @@ public class OutOfTimeJob implements PluginJob {
             String userKey = timesheet.getUserKey();
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
             if ((timesheet.getTargetHours() - timesheet.getTargetHoursCompleted()) <= schedulingService.getScheduling().getOutOfTime()) {
-                Email email = new Email(user.getEmailAddress());
-                email.setSubject(config.getMailSubjectTime());
-                email.setBody(config.getMailBodyTime());
-                SingleMailQueueItem item = new SingleMailQueueItem(email);
-                ComponentAccessor.getMailQueue().addItem(item);
+                emailUtil.sendEmail(user.getEmailAddress(), config.getMailSubjectTime(), config.getMailBodyTime());
             }
         }
     }

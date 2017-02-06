@@ -28,8 +28,6 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.jira.web.bean.PagerFilter;
-import com.atlassian.mail.Email;
-import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.query.Query;
 import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.activeobjects.*;
@@ -37,6 +35,7 @@ import org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition;
 import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
+import org.catrobat.jira.timesheet.utility.EmailUtil;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
@@ -63,6 +62,7 @@ public class TimesheetRest {
     private final PermissionService permissionService;
     private final ConfigService configService;
     private final TimesheetPermissionCondition permissionCondition;
+    private final EmailUtil emailUtil;
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
             final TeamService ts, PermissionService ps, final ConfigService ahcs, TimesheetPermissionCondition permissionCondition) {
@@ -73,6 +73,7 @@ public class TimesheetRest {
         this.permissionService = ps;
         this.configService = ahcs;
         this.permissionCondition = permissionCondition;
+        emailUtil = new EmailUtil(configService);
     }
 
     private String checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) {
@@ -398,7 +399,7 @@ public class TimesheetRest {
 
         // FIXME: i dont think here is the right place for that check
         if ((targetTime - completeTime) <= 80) {
-            buildEmailOutOfTime(user.getEmailAddress(), sheet, user);
+            emailUtil.buildEmailOutOfTime(user.getEmailAddress(), sheet, user);
         }
 
         JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
@@ -854,7 +855,7 @@ public class TimesheetRest {
             try {
                 if (permissionService.isJiraAdministrator(user)) {
                     String userEmail = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress();
-                    buildEmailAdministratorChangedEntry(user.getEmailAddress(), userEmail, entry, jsonEntry);
+                    emailUtil.buildEmailAdministratorChangedEntry(user.getEmailAddress(), userEmail, entry, jsonEntry);
                 }
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -932,7 +933,7 @@ public class TimesheetRest {
 
         try {
             if (permissionService.isJiraAdministrator(user)) {
-                buildEmailAdministratorDeletedEntry(user.getEmailAddress(), ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress(), entry);
+                emailUtil.buildEmailAdministratorDeletedEntry(user.getEmailAddress(), ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress(), entry);
             }
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -974,94 +975,6 @@ public class TimesheetRest {
             }
         }
         return Response.ok().build();
-    }
-
-    private void buildEmailOutOfTime(String emailTo, Timesheet sheet, ApplicationUser user) {
-        Config config = configService.getConfiguration();
-
-        String mailSubject = config.getMailSubjectTime() != null && config.getMailSubjectTime().length() != 0
-                ? config.getMailSubjectTime() : "[Timesheet - Timesheet Out Of Time Notification]";
-        String mailBody = config.getMailBodyTime() != null && config.getMailBodyTime().length() != 0
-                ? config.getMailBodyTime() : "Hi " + user.getDisplayName() + ",\n" +
-                "you have only" + sheet.getTargetHoursTheory() + " hours left! \n" +
-                "Please contact you coordinator, or one of the administrators\n\n" +
-                "Best regards,\n" +
-                "Catrobat-Admins";
-
-
-        mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getDisplayName());
-        mailBody = mailBody.replaceAll("\\{\\{time\\}\\}", Integer.toString(sheet.getTargetHoursTheory()));
-
-        sendEmail(emailTo, mailSubject, mailBody);
-    }
-
-    private void buildEmailAdministratorChangedEntry(String emailToAdministrator, String emailToUser, TimesheetEntry oldEntry, JsonTimesheetEntry newEntry) throws ServiceException {
-        Config config = configService.getConfiguration();
-
-        String oldEntryData = "Begin Date : " + oldEntry.getBeginDate() + "\n" +
-                "End Date : " + oldEntry.getEndDate() + "\n" +
-                "Pause [Minutes] : " + oldEntry.getPauseMinutes() + "\n" +
-                "Team Name : " + oldEntry.getTeam().getTeamName() + "\n" +
-                "Category Name : " + oldEntry.getCategory().getName() + "\n" +
-                "Description : " + oldEntry.getDescription() + "\n";
-
-        String newEntryData = "Begin Date : " + newEntry.getBeginDate() + "\n" +
-                "End Date : " + newEntry.getEndDate() + "\n" +
-                "Pause [Minutes] : " + newEntry.getPauseMinutes() + "\n" +
-                "Team Name : " + teamService.getTeamByID(newEntry.getTeamID()).getTeamName() + "\n" +
-                "Category Name : " + categoryService.getCategoryByID(newEntry.getCategoryID()).getName() + "\n" +
-                "Description : " + newEntry.getDescription() + "\n";
-
-        String mailSubject = config.getMailSubjectEntry() != null &&
-                config.getMailSubjectEntry().length() != 0
-                ? config.getMailSubjectEntry() : "[Timesheet - Timesheet Entry Changed Notification]";
-
-        String mailBody = config.getMailBodyEntry() != null &&
-                config.getMailBodyEntry().length() != 0
-                ? config.getMailBodyEntry() : "'Timesheet - Timesheet' Entry Changed Information \n\n" +
-                "Your Timesheet-Entry: \n" +
-                oldEntryData +
-                "\n was modyfied by an Administrator to \n" +
-                newEntryData +
-                "If you are not willing to accept those changes, please contact your 'Team-Coordinator', or an 'Administrator'.\n\n" +
-                "Best regards,\n" +
-                "Catrobat-Admins";
-
-        mailBody = mailBody.replaceAll("\\{\\{original\\}\\}", oldEntryData);
-        mailBody = mailBody.replaceAll("\\{\\{actual\\}\\}", newEntryData);
-
-        //send Emails
-        sendEmail(emailToAdministrator, mailSubject, mailBody);
-        sendEmail(emailToUser, mailSubject, mailBody);
-    }
-
-    private void buildEmailAdministratorDeletedEntry(String emailToAdministrator, String emailToUser, TimesheetEntry entry) throws ServiceException {
-        String mailSubject = "[Timesheet - Timesheet Entry Deleted Notification]";
-
-        String mailBody = "'Timesheet - Timesheet' Entry Deleted Information \n\n" +
-                "Your Timesheet-Entry: \n" +
-                entry.getBeginDate() +
-                entry.getEndDate() +
-                entry.getPauseMinutes() +
-                entry.getTeam().getTeamName() +
-                entry.getCategory().getName() +
-                entry.getDescription() +
-                "\n was deleted by an Administrator.\n" +
-                "If you are not willing to accept those changes, please contact your 'Team-Coordinator', or an 'Administrator'.\n\n" +
-                "Best regards,\n" +
-                "Catrobat-Admins";
-
-        sendEmail(emailToAdministrator, mailSubject, mailBody);
-        sendEmail(emailToUser, mailSubject, mailBody);
-    }
-
-    private void sendEmail(String emailTo, String mailSubject, String mailBody) {
-        Email email = new Email(emailTo);
-        email.setSubject(mailSubject);
-        email.setBody(mailBody);
-
-        SingleMailQueueItem item = new SingleMailQueueItem(email);
-        ComponentAccessor.getMailQueue().addItem(item);
     }
 
     // This is a demo API REST method to show you how to use the powerful and wonderful JqlQueryBuilder class
