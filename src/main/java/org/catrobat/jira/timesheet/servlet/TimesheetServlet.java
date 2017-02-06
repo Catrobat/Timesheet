@@ -56,6 +56,7 @@ public class TimesheetServlet extends HttpServlet {
         Response unauthorized = permissionService.checkUserPermission();
         if (unauthorized != null) {
             redirectToLogin(request, response);
+            return;
         }
         super.service(request, response);
     }

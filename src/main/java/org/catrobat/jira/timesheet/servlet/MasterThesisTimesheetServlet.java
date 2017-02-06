@@ -59,6 +59,7 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
             }
         } catch (PermissionException e) {
             redirectToLogin(request, response);
+            return;
         }
         super.service(request, response);
     }
