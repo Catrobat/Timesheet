@@ -124,7 +124,6 @@ function projectedFinishDate(timesheetData, entryData) {
     var sumLast30Days = 0;
     var days30Past = new Date();
     days30Past.setDate(days30Past.getDate() - 30);
-    console.log(days30Past);
     for (var i = 0; i < entries.length; i++) {
         var entry = entries[i];
         if (entry.beginDate > days30Past) {
@@ -132,12 +131,9 @@ function projectedFinishDate(timesheetData, entryData) {
         }
     }
     var hoursLast30Days = sumLast30Days / (1000 * 60 * 60);
-    console.log(hoursLast30Days);
     var remDays = rem * 30 / hoursLast30Days;
     var finishDate = new Date();
     finishDate.setDate(finishDate.getDate() + remDays);
-    console.log(remDays);
-    console.log(finishDate);
     AJS.$("#timesheet-finish-date").val(finishDate.toLocaleDateString("en-US"));
 }
 
