@@ -41,7 +41,7 @@ public class ActivityVerificationJob implements PluginJob {
 
             String statusFlagMessage;
 
-            Date latestEntryDate = entries[0].getBeginDate();
+            Date latestEntryDate = timesheet.getLatestEntryBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
             TimesheetEntry latestDeactivatedEntry = getLatestDeactivatedEntry(timesheet);
             if (latestDeactivatedEntry != null && latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0) {
@@ -87,7 +87,7 @@ public class ActivityVerificationJob implements PluginJob {
                     schedulingService.isOlderThanOfflineTime(latestEntryDate)) {
                 timesheet.setIsEnabled(false);
                 timesheet.save();
-                statusFlagMessage = "user is still inactive since the specified deactivated/offline limit";
+                statusFlagMessage = "user is still inactive since the specified disabled limit";
             }
             else if (timesheet.getState() != Timesheet.State.ACTIVE && !schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 timesheet.setState(Timesheet.State.ACTIVE);
