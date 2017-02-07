@@ -149,6 +149,29 @@ public class TimesheetRestTest {
         return sheet;
     }
 
+    private TimesheetEntry createTimesheetEntryMock() {
+        Team team = mock(Team.class);
+        when(team.getID()).thenReturn(1);
+        Category category = mock(Category.class);
+        when(category.getID()).thenReturn(1);
+
+        TimesheetEntry entry = mock(TimesheetEntry.class);
+        when(entry.getID()).thenReturn(1);
+        when(entry.getBeginDate()).thenReturn(new Date());
+        when(entry.getEndDate()).thenReturn(new Date());
+        when(entry.getInactiveEndDate()).thenReturn(new Date());
+        when(entry.getDeactivateEndDate()).thenReturn(new Date());
+        when(entry.getPauseMinutes()).thenReturn(0);
+        when(entry.getDescription()).thenReturn("Description");
+        when(entry.getTeam()).thenReturn(team);
+        when(entry.getCategory()).thenReturn(category);
+        when(entry.getJiraTicketID()).thenReturn("CAT-1530");
+        when(entry.getPairProgrammingUserName()).thenReturn("Partner");
+        when(entry.getIsGoogleDocImport()).thenReturn(false);
+        when(entry.getIsTheory()).thenReturn(false);
+        return entry;
+    }
+
     @Test
     public void testGetTeamsForTimesheetOk() throws Exception {
         Timesheet timesheet = createTimesheetMock();
@@ -645,10 +668,8 @@ public class TimesheetRestTest {
     public void testPostTimesheetEntryOk() throws Exception {
         int timesheetID = 1;
         Boolean isMTSheet = false;
-        JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
-                new Date(), new Date(), new Date(), new Date()
-                , 0, "Description", 1, 1,
-                "CAT-1530", "Partner", false, false);
+        TimesheetEntry timesheetEntryMock = createTimesheetEntryMock();
+        JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(timesheetEntryMock);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
@@ -660,10 +681,9 @@ public class TimesheetRestTest {
     public void testPostTimesheetEntriesOk() throws Exception {
         int timesheetID = 1;
         Boolean isMTSheet = false;
-        JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
-                new Date(), new Date(), new Date(), new Date()
-                , 0, "Description", 1, 1,
-                "CAT-1530", "Partner", false, false);
+
+        TimesheetEntry timesheetEntryMock = createTimesheetEntryMock();
+        JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(timesheetEntryMock);
 
         JsonTimesheetEntry[] jsonTimesheetEntries = {jsonTimesheetEntry};
 
@@ -726,10 +746,9 @@ public class TimesheetRestTest {
         int entryID = 1;
         Boolean isMTSheet = false;
         String userKey = "USER_KEY";
-        JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(1,
-                new Date(), new Date(), new Date(), new Date()
-                , 0, "Description", 1, 1,
-                "CAT-1530", "Partner", false, false);
+
+        TimesheetEntry timesheetEntryMock = createTimesheetEntryMock();
+        JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(timesheetEntryMock);
 
         Date today = new Date();
         TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
@@ -738,9 +757,9 @@ public class TimesheetRestTest {
 
 
         Category[] categories = {categoryMock};
-        Set<Team> teams = new LinkedHashSet<Team>();
+        Set<Team> teams = new LinkedHashSet<>();
         teams.add(teamMock);
-        Collection<String> userGroups = new LinkedList<String>();
+        Collection<String> userGroups = new LinkedList<>();
         userGroups.add(PermissionService.JIRA_ADMINISTRATORS);
 
         when(teamMock.getCategories()).thenReturn(categories);

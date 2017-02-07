@@ -38,76 +38,43 @@ public final class JsonTimesheetEntry {
 
     @XmlElement
     private int entryID;
-
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date beginDate;
-
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date endDate;
-
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date inactiveEndDate;
-
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date deactivateEndDate;
-
     @XmlElement
     private int pauseMinutes;
-
     @XmlElement
     private String description;
-
     @XmlElement
     private int teamID;
-
     @XmlElement
     private int categoryID;
-
     @XmlElement
     private String ticketID;
-
     @XmlElement
     private String partner;
-
     @XmlElement
     private boolean isGoogleDocImport;
-
     @XmlElement
     private boolean isTheory;
 
-    public JsonTimesheetEntry() {
-    }
-
-    public JsonTimesheetEntry(int entryID, Date beginDate, Date endDate, Date inactiveEndDate, Date deactivateEndDate,
-            int pauseMinutes, String description, int teamID, int categoryID, String ticketID, String partner,
-            boolean isGoogleDocImport, boolean isTheory) {
-        this.entryID = entryID;
-        this.beginDate = beginDate;
-        this.endDate = endDate;
-        this.inactiveEndDate = inactiveEndDate;
-        this.deactivateEndDate = deactivateEndDate;
-        this.pauseMinutes = pauseMinutes;
-        this.description = description;
-        this.teamID = teamID;
-        this.categoryID = categoryID;
-        this.ticketID = ticketID;
-        this.partner = partner;
-        this.isGoogleDocImport = isGoogleDocImport;
-        this.isTheory = isTheory;
-    }
-
     public JsonTimesheetEntry(TimesheetEntry timesheetEntry) {
-        this.entryID = timesheetEntry.getID();
+        this(timesheetEntry, false);
+    }
+
+    public JsonTimesheetEntry(TimesheetEntry timesheetEntry, boolean anonymously) {
         this.beginDate = timesheetEntry.getBeginDate();
         this.endDate = timesheetEntry.getEndDate();
-        this.inactiveEndDate = timesheetEntry.getInactiveEndDate();
-        this.deactivateEndDate = timesheetEntry.getDeactivateEndDate();
         this.pauseMinutes = timesheetEntry.getPauseMinutes();
-        this.description = timesheetEntry.getDescription();
         // FIXME: team and category shall never be null
         if (timesheetEntry.getTeam() != null) {
             this.teamID = timesheetEntry.getTeam().getID();
@@ -119,10 +86,25 @@ public final class JsonTimesheetEntry {
         } else {
             this.categoryID = -1;
         }
-        this.ticketID = timesheetEntry.getJiraTicketID();
-        this.partner = timesheetEntry.getPairProgrammingUserName();
-        this.isGoogleDocImport = timesheetEntry.getIsGoogleDocImport();
         this.isTheory = timesheetEntry.getIsTheory();
+
+        if (!anonymously) {
+            this.entryID = timesheetEntry.getID();
+            this.inactiveEndDate = timesheetEntry.getInactiveEndDate();
+            this.deactivateEndDate = timesheetEntry.getDeactivateEndDate();
+            this.description = timesheetEntry.getDescription();
+            this.ticketID = timesheetEntry.getJiraTicketID();
+            this.partner = timesheetEntry.getPairProgrammingUserName();
+            this.isGoogleDocImport = timesheetEntry.getIsGoogleDocImport();
+        } else {
+            this.entryID = 0;
+            this.inactiveEndDate = null;
+            this.deactivateEndDate = null;
+            this.description = null;
+            this.ticketID = null;
+            this.partner = null;
+            this.isGoogleDocImport = false;
+        }
     }
 
     public int getEntryID() {

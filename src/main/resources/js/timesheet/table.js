@@ -16,7 +16,7 @@ function populateTable(timesheetDataReply) {
                 closeable: true,
                 body: '<p> Congratulations you sucessfully created your own ' +
                 'Timesheet. The Timesheet add-on provides tracking your time ' +
-                'data in a comfortable way and offers several visualizations' +
+                'data in a comfortable way and offers several visualizations ' +
                 'for your data. An Import-function for existing timesheet entries ' +
                 'from CSV / Google Doc Timesheets is provided in addition. ' +
                 'The required import steps are shown within the ' +
@@ -678,8 +678,9 @@ function getFormRow(viewRow) {
  */
 function augmentEntry(timesheetData, entry) {
 
-    if (timesheetData.teams[entry.teamID] == null) {
-        return null;
+    var teamName = "Default";
+    if (timesheetData.teams[entry.teamID] != null) {
+        teamName = timesheetData.teams[entry.teamID].teamName;
     }
 
     var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
@@ -691,7 +692,7 @@ function augmentEntry(timesheetData, entry) {
         pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
         duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
         category: timesheetData.categoryIDs[entry.categoryID].categoryName,
-        team: timesheetData.teams[entry.teamID].teamName,
+        team: teamName,
         entryID: entry.entryID,
         beginDate: entry.beginDate,
         endDate: entry.endDate,

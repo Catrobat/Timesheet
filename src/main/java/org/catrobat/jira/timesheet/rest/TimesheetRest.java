@@ -183,10 +183,7 @@ public class TimesheetRest {
 
                         // Add entries anonymously
                         for (TimesheetEntry entry : entries) {
-                            jsonTimesheetEntries.add(new JsonTimesheetEntry(0, entry.getBeginDate(),
-                                    entry.getEndDate(), null, null, entry.getPauseMinutes(),
-                                    null, entry.getTeam().getID(), entry.getCategory().getID(),
-                                    null, null, false, entry.getIsTheory()));
+                            jsonTimesheetEntries.add(new JsonTimesheetEntry(entry, true));
                         }
                     }
                 } catch (ServiceException e) {
@@ -250,12 +247,7 @@ public class TimesheetRest {
 
             for (TimesheetEntry entry : timesheetEntries) {
                 if (entry.getTeam().getTeamName().equals(teamName)) {
-                    jsonTimesheetEntries.add(new JsonTimesheetEntry(entry.getID(),
-                            entry.getBeginDate(), entry.getEndDate(),
-                            entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getPauseMinutes(),
-                            entry.getDescription(), entry.getTeam().getID(),
-                            entry.getCategory().getID(), entry.getJiraTicketID(),
-                            entry.getPairProgrammingUserName(), entry.getIsGoogleDocImport(), entry.getIsTheory()));
+                    jsonTimesheetEntries.add(new JsonTimesheetEntry(entry));
                 }
             }
         }
