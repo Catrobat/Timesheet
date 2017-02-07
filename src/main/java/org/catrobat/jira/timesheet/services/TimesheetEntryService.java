@@ -44,4 +44,6 @@ public interface TimesheetEntryService {
     TimesheetEntry getLatestEntry(Timesheet timesheet);
 
     TimesheetEntry getLatestInactiveEntry(Timesheet timesheet);
+
+    void replaceTeamInEntries(Team oldTeam, Team newTeam);
 }

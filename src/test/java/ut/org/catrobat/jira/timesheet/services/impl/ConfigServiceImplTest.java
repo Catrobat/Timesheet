@@ -26,10 +26,10 @@ import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl;
+import org.catrobat.jira.timesheet.services.TeamService;
+import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.catrobat.jira.timesheet.services.impl.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
-import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +49,8 @@ public class ConfigServiceImplTest {
     private EntityManager entityManager;
     private ActiveObjects ao;
     private CategoryService cs;
+    private TimesheetEntryService entryService;
+    private TeamService teamService;
     private ConfigService configurationService;
 
     @Before
@@ -56,7 +58,9 @@ public class ConfigServiceImplTest {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
         cs = new CategoryServiceImpl(ao);
-        configurationService = new ConfigServiceImpl(ao, cs);
+        entryService = new TimesheetEntryServiceImpl(ao);
+        teamService = new TeamServiceImpl(ao, entryService);
+        configurationService = new ConfigServiceImpl(ao, cs, teamService);
     }
 
     @Test

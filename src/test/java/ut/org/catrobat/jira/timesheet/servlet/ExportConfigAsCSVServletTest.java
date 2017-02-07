@@ -9,10 +9,8 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
-import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl;
-import org.catrobat.jira.timesheet.services.CategoryService;
-import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.servlet.ExportConfigAsCSVServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,13 +46,14 @@ public class ExportConfigAsCSVServletTest {
     private ApplicationUser user;
     private ServletOutputStream outputStream;
     private CategoryService cs;
+    private TeamService teamService;
 
     @Before
     public void setUp() throws Exception {
 
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        configService = new ConfigServiceImpl(ao, cs);
+        configService = new ConfigServiceImpl(ao, cs, teamService);
 
         loginUriProvider = mock(LoginUriProvider.class);
         webSudoManager = mock(WebSudoManager.class);

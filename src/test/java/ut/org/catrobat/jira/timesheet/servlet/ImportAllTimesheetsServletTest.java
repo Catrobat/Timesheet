@@ -67,7 +67,7 @@ public class ImportAllTimesheetsServletTest {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
 
-        configService = new ConfigServiceImpl(ao, cs);
+        configService = new ConfigServiceImpl(ao, cs, teamService);
 
         loginUriProvider = mock(LoginUriProvider.class);
         webSudoManager = mock(WebSudoManager.class);

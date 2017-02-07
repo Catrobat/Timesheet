@@ -19,6 +19,7 @@ import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,8 +47,9 @@ public class ConfigResourceRestTest {
     private UserManager userManagerJiraMock;
 
     private CategoryService categoryService;
-    private ConfigService configService;
+    private TimesheetEntryService entryService;
     private TeamService teamService;
+    private ConfigService configService;
 
     private TeamService teamServiceMock;
     private CategoryService categoryServiceMock;
@@ -87,8 +89,9 @@ public class ConfigResourceRestTest {
         groupManagerMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService);
-        teamService = new TeamServiceImpl(ao, configService);
+        entryService = new TimesheetEntryServiceImpl(ao);
+        teamService = new TeamServiceImpl(ao, entryService);
+        configService = new ConfigServiceImpl(ao, categoryService, teamService);
         configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock, ao);
 
         configResourceRestMock = new ConfigResourceRest(configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock, ao);

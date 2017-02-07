@@ -111,10 +111,11 @@ public class TimesheetRestTest {
         permissionConditionMock = mock(TimesheetPermissionCondition.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService);
-        teamService = new TeamServiceImpl(ao, configService);
-        timesheetEntryService = new TimesheetEntryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
+        teamService = new TeamServiceImpl(ao, timesheetEntryService);
+        configService = new ConfigServiceImpl(ao, categoryService, teamService);
+        timesheetEntryService = new TimesheetEntryServiceImpl(ao);
+
         timesheetRest = new TimesheetRest(timesheetEntryService, timesheetService, categoryService, teamService,
                 permissionServiceMock, configService, permissionConditionMock);
 

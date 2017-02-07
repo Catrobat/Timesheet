@@ -110,6 +110,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category[] defaultCategory = ao.find(Category.class, "NAME = ?", SpecialCategories.DEFAULT);
 
+        // TODO: inject TimesheetEntryService and do it there
         for (TimesheetEntry entry : ao.find(TimesheetEntry.class)) {
             if (entry.getCategory() != null && entry.getCategory().equals(found[0])) {
                 entry.setCategory(defaultCategory[0]);

@@ -80,11 +80,10 @@ public class SchedulingRestTest {
         schedulingService = mock(SchedulingService.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService);
-        teamService = new TeamServiceImpl(ao, configService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao);
+        teamService = new TeamServiceImpl(ao, timesheetEntryService);
+        configService = new ConfigServiceImpl(ao, categoryService, teamService);
         timesheetService = new TimesheetServiceImpl(ao);
-
 
         // For some tests we need a mock...
         schedulingRestMock = new SchedulingRest(configServiceMock, permissionServiceMock, timesheetEntryServiceMock,

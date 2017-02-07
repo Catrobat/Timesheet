@@ -10,11 +10,11 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl;
-import org.catrobat.jira.timesheet.services.CategoryService;
-import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
 import org.catrobat.jira.timesheet.servlet.AdminServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +44,8 @@ public class AdminServletTest {
     private WebSudoManager webSudoManagerMock;
     private ConfigService configService;
     private CategoryService categoryService;
+    private TimesheetEntryService entryService;
+    private TeamService teamService;
     private TestActiveObjects ao;
     private EntityManager entityManager;
     private HttpServletResponse response;
@@ -68,7 +70,9 @@ public class AdminServletTest {
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        configService = new ConfigServiceImpl(ao, categoryService);
+        entryService = new TimesheetEntryServiceImpl(ao);
+        teamService = new TeamServiceImpl(ao, entryService);
+        configService = new ConfigServiceImpl(ao, categoryService, teamService);
 
         adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock, configService);
 

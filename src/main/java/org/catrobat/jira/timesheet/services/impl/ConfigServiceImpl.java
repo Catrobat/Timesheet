@@ -17,11 +17,13 @@
 package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.TeamService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,10 +34,12 @@ public class ConfigServiceImpl implements ConfigService {
 
     private final ActiveObjects ao;
     private final CategoryService cs;
+    private final TeamService teamService;
 
-    public ConfigServiceImpl(ActiveObjects ao, CategoryService cs) {
+    public ConfigServiceImpl(ActiveObjects ao, CategoryService cs, TeamService teamService) {
         this.ao = ao;
         this.cs = cs;
+        this.teamService = teamService;
     }
 
     @Override
@@ -302,33 +306,38 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Config removeTeam(String teamName) {
-        Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
-        if (teamArray.length == 0) {
-            return null;
-        }
-        Team team = teamArray[0];
-        Group[] groupArray = team.getGroups();
-        TeamToGroup[] teamToGroupArray = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
-        for (TeamToGroup teamToGroup : teamToGroupArray) {
-            ao.delete(teamToGroup);
-        }
-
-        for (Group group : groupArray) {
-            if (group.getTeams().length == 0) {
-                ao.delete(group);
-            }
-        }
-
-        CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
-        for (CategoryToTeam categoryToTeam : categoryToTeamArray)
-            if (categoryToTeam.getTeam() != null) {
-                ao.delete(categoryToTeam);
-            }
-
-        ao.delete(team);
-
+    public Config removeTeam(String teamName) throws ServiceException {
+        teamService.removeTeam(teamName);
         return getConfiguration();
+
+        // TODO: remove from here and move to teamService
+
+//        Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
+//        if (teamArray.length == 0) {
+//            return null;
+//        }
+//        Team team = teamArray[0];
+//        Group[] groupArray = team.getGroups();
+//        TeamToGroup[] teamToGroupArray = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
+//        for (TeamToGroup teamToGroup : teamToGroupArray) {
+//            ao.delete(teamToGroup);
+//        }
+//
+//        for (Group group : groupArray) {
+//            if (group.getTeams().length == 0) {
+//                ao.delete(group);
+//            }
+//        }
+//
+//        CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
+//        for (CategoryToTeam categoryToTeam : categoryToTeamArray)
+//            if (categoryToTeam.getTeam() != null) {
+//                ao.delete(categoryToTeam);
+//            }
+//
+//        ao.delete(team);
+//
+//        return getConfiguration();
     }
 
     @Override
@@ -353,6 +362,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public List<String> getGroupsForRole(String teamName, TeamToGroup.Role role) {
+        // TODO: move to teamService
         List<String> groupList = new ArrayList<>();
         TeamToGroup[] teamToGroupArray = ao.find(TeamToGroup.class, Query.select()
                 .where("\"ROLE\" = ?", role)

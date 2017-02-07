@@ -279,7 +279,7 @@ public class ConfigResourceRest {
     @PUT
     @Path("/removeTeamPermission")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeTeamPermission(final String teamName, @Context HttpServletRequest request) {
+    public Response removeTeamPermission(final String teamName, @Context HttpServletRequest request) throws ServiceException{
         Response unauthorized = checkParam(teamName);
         if (unauthorized != null) {
             return unauthorized;

@@ -154,4 +154,14 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         }
         return null;
     }
+
+    @Override
+    public void replaceTeamInEntries(Team oldTeam, Team newTeam) {
+        for (TimesheetEntry entry : ao.find(TimesheetEntry.class)) {
+            if (entry.getTeam() != null && entry.getTeam().equals(oldTeam)) {
+                entry.setTeam(newTeam);
+                entry.save();
+            }
+        }
+    }
 }

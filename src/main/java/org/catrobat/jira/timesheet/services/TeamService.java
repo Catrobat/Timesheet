@@ -19,6 +19,7 @@ package org.catrobat.jira.timesheet.services;
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.service.ServiceException;
 import org.catrobat.jira.timesheet.activeobjects.Team;
+import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -43,4 +44,5 @@ public interface TeamService {
 
     Set<Team> getTeamsOfCoordinator(String userName);
 
+    List<String> getGroupsForRole(String teamName, TeamToGroup.Role role);
 }
