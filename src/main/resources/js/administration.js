@@ -207,11 +207,11 @@ AJS.toInit(function () {
                 }
 
                 //build category list
+                var specialCategories = ["Inactive", "Inactive & Offline", "GoogleDocsImport", "Theory", "Research",
+                    "Default Category (original cateogry got deleted)"];
                 AJS.$("#categories").empty();
                 for (var i = 0; i < categoryList.length; i++) {
-                    if (categoryList[i] === "Inactive" || categoryList[i] === "Inactive & Offline"
-                        || categoryList[i] === "GoogleDocsImport" || categoryList[i] === "Theory"
-                        || categoryList[i] === "Default Category (original cateogry got deleted)") {
+                    if (specialCategories.indexOf(categoryList[i]) != -1) {
                         AJS.$("#categories").append("<h3>" + categoryList[i] +
                             "<button class=\"aui-button aui-button-subtle\" disabled>" +
                             "<span>This category cannot be renamed or deleted</span></button></h3><fieldset>");
