@@ -2,7 +2,6 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -102,14 +101,12 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
 
             for (JsonTimesheetEntry entry : timesheetEntryList) {
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
-                Team team;
-                System.out.println(entry.getEntryID());
-                try {
-                    // TODO: check service exception
-                    team = teamService.getTeamByID(entry.getTeamID());
-                } catch (ServiceException e) {
+                if (category == null) {
+                    errorString += "Category with ID " + entry.getCategoryID() + " not found. Entry #" + entry.getEntryID() + " not ignored.";
+                }
+                Team team = teamService.getTeamByID(entry.getTeamID());
+                if (team == null) {
                     errorString += "Team with ID " + entry.getTeamID() + " not found. Entry #" + entry.getEntryID() + " not ignored.";
-                    continue;
                 }
                 // FIXME: verify that team and entry is not null
                 timesheetEntryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category, entry.getDescription(),

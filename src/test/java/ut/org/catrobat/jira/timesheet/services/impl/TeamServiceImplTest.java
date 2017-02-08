@@ -68,79 +68,26 @@ public class TeamServiceImplTest {
 
     @Test
     public void testGetTeamByIDIsNull() throws IllegalAccessException, ServiceException {
-        ActiveObjects ao = Mockito.mock(ActiveObjects.class);
-
-        // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
-
-        Mockito.doReturn(null).when(ao).find(Team.class, "ID = ?", 0);
-
         Team receivedTeam = service.getTeamByID(0);
         Assert.assertEquals(null, receivedTeam);
-
-        Mockito.verify(ao).find(Team.class, "ID = ?", 0);
     }
 
     @Test
     public void testGetTeamByNameIsNull() throws IllegalAccessException, ServiceException {
-        ActiveObjects ao = Mockito.mock(ActiveObjects.class);
-
-        // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
-
-        Mockito.doReturn(null).when(ao).find(Team.class, "TEAM_NAME = ?", "Test");
-
-        Team[] defaultTeam = {Mockito.mock(Team.class)};
-        Mockito.when(ao.find(Team.class, "TEAM_NAME = ?", "Default")).thenReturn(defaultTeam);
-
         Team receivedTeam = service.getTeamByName("Test");
         Assert.assertEquals(null, receivedTeam);
-
-        Mockito.verify(ao).find(Team.class, "TEAM_NAME = ?", "Test");
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testGetTeamByIDLengthCheck() throws IllegalAccessException, ServiceException {
-        ActiveObjects ao = Mockito.mock(ActiveObjects.class);
-
-        // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
-
-        Team team1 = Mockito.mock(Team.class);
-        Team team2 = Mockito.mock(Team.class);
-
-        Team[] teams = {team1, team2};
-
-        Mockito.doReturn(teams).when(ao).find(Team.class, "ID = ?", 0);
-
-        service.getTeamByID(0);
     }
 
     @Test(expected = ServiceException.class)
     public void testGetTeamBNameLengthCheck() throws IllegalAccessException, ServiceException {
-        ActiveObjects ao = Mockito.mock(ActiveObjects.class);
-
-        // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
-
-        Team team1 = Mockito.mock(Team.class);
-        Team team2 = Mockito.mock(Team.class);
-
-        Team[] teams = {team1, team2};
-
-        Mockito.doReturn(teams).when(ao).find(Team.class, "TEAM_NAME = ?", "Test");
-
-        Team[] defaultTeam = {Mockito.mock(Team.class)};
-        Mockito.when(ao.find(Team.class, "TEAM_NAME = ?", "Default")).thenReturn(defaultTeam);
-
-        service.getTeamByName("Test");
+        Team duplicate = ao.create(Team.class);
+        duplicate.setTeamName("Drone");
+        duplicate.save();
+        service.getTeamByName("Drone");
     }
 
     @Test
     public void testRemoveTeam() throws IllegalAccessException, ServiceException {
-        // mock private field/variable
-        MemberModifier.field(TeamServiceImpl.class, "ao").set(service, ao);
-
         boolean result = service.removeTeam(emptyTeam.getTeamName());
         assertEquals(true, result);
         assertEquals(0, ao.find(Team.class, "TEAM_NAME = ?", emptyTeam.getTeamName()).length);

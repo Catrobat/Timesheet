@@ -51,9 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryByID(int id) {
-        Category[] found = ao.find(Category.class, "ID = ?", id);
-        assert (found.length <= 1);
-        return (found.length > 0) ? found[0] : null;
+        return ao.get(Category.class, id);
     }
 
     @Override

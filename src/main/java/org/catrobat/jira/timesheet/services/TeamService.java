@@ -35,7 +35,7 @@ public interface TeamService {
     List<Team> all();
 
     @Nullable
-    Team getTeamByID(int id) throws ServiceException;
+    Team getTeamByID(int id);
 
     @Nullable
     Team getTeamByName(String name) throws ServiceException;

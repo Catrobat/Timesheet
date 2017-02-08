@@ -96,18 +96,8 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Team getTeamByID(int id) throws ServiceException {
-        Team[] found = ao.find(Team.class, "ID = ?", id);
-
-        if(found == null){
-            return null;
-        }
-
-        if (found.length > 1) {
-            throw new ServiceException("Multiple Teams with the same ID");
-        }
-
-        return (found.length > 0) ? found[0] : null;
+    public Team getTeamByID(int id) {
+        return ao.get(Team.class, id);
     }
 
     @Override
