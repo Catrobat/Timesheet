@@ -67,6 +67,9 @@ public final class JsonTimesheetEntry {
     @XmlElement
     private boolean isTheory;
 
+    public JsonTimesheetEntry() {
+    }
+
     public JsonTimesheetEntry(TimesheetEntry timesheetEntry) {
         this(timesheetEntry, false);
     }
