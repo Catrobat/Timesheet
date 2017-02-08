@@ -19,15 +19,14 @@ package org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
 import net.java.ao.Query;
+import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.annotation.Nullable;
+import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -168,5 +167,16 @@ public class TeamServiceImpl implements TeamService {
         }
 
         return groupList;
+    }
+
+    @Override
+    public void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws ServiceException {
+        if (team == null) {
+            throw new ServiceException("Team not found.");
+        } else if (category == null) {
+            throw new ServiceException("Category not found.");
+        } else if (!Arrays.asList(team.getCategories()).contains(category)) {
+            throw new ServiceException("Category is not associated with Team.");
+        }
     }
 }

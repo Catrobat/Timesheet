@@ -2,11 +2,15 @@ package org.catrobat.jira.timesheet.utility;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.ParseException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.mysema.commons.lang.Assert;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
+import org.catrobat.jira.timesheet.services.CategoryService;
+import org.joda.time.DateTime;
 
 import java.util.*;
 
@@ -71,5 +75,24 @@ public class RestUtils {
             teams.add(new JsonTeam(team.getID(), team.getTeamName(), categoryIDs));
         }
         return teams;
+    }
+
+    public static void checkJsonTimesheetEntry(JsonTimesheetEntry entry, CategoryService categoryService) throws ParseException{
+        Date twoMonthsAhead = new DateTime().plusMonths(2).toDate();
+
+        if (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0) {
+            throw new ParseException("The 'Inactive End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
+                    " but your inactive end date is " + entry.getInactiveEndDate());
+        } else if (entry.getInactiveEndDate().compareTo(twoMonthsAhead) > 0) {
+            throw new ParseException("The 'Inactive End Date' is more than 2 months ahead. This is too far away.");
+        } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
+                (!categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive"))) {
+            throw new ParseException("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.");
+        } else if (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) < 0) {
+            throw new ParseException("The 'Inactive & Offline End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
+                    " but your inactive end date is " + entry.getDeactivateEndDate());
+        } else if (entry.getDescription().isEmpty()) {
+            throw new ParseException("The 'Task Description' field must not be empty.");
+        }
     }
 }

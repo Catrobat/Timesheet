@@ -209,12 +209,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public Timesheet getTimesheetByID(int id) throws ServiceException {
-        Timesheet[] found = ao.find(Timesheet.class, "ID = ?", id);
-
-        if (found.length > 1) {
-            throw new ServiceException("Multiple Timesheets with the same ID.");
-        }
-        return (found.length > 0) ? found[0] : null;
+    public Timesheet getTimesheetByID(int id) {
+        return ao.get(Timesheet.class, id);
     }
 }

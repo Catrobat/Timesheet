@@ -91,7 +91,7 @@ public interface TimesheetService {
     Timesheet getTimesheetImport(String userKey) throws ServiceException;
 
     @Nullable
-    Timesheet getTimesheetByID(int id) throws ServiceException;
+    Timesheet getTimesheetByID(int id);
 
     void remove(Timesheet timesheet) throws ServiceException;
 }

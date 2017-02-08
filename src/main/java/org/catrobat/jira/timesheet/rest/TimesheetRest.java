@@ -18,6 +18,7 @@ package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.exception.ParseException;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.search.SearchException;
@@ -36,9 +37,8 @@ import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.catrobat.jira.timesheet.utility.EmailUtil;
-import org.joda.time.DateTime;
+import org.catrobat.jira.timesheet.utility.RestUtils;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -76,18 +76,6 @@ public class TimesheetRest {
         emailUtil = new EmailUtil(configService);
     }
 
-    private String checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) {
-        // TODO: this code is ugly, improve it
-        if (team == null) {
-            return "Team not found.";
-        } else if (category == null) {
-            return "Category not found.";
-        } else if (!Arrays.asList(team.getCategories()).contains(category)) {
-            return "Category is not associated with Team.";
-        }
-        return "";
-    }
-
     @GET
     @Path("checkConstrains")
     public Response checkConstrains(@Context HttpServletRequest request) {
@@ -117,12 +105,7 @@ public class TimesheetRest {
             return response;
         }
 
-        Timesheet sheet;
-        try {
-            sheet = sheetService.getTimesheetByID(timesheetID);
-        } catch (ServiceException e) {
-            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-        }
+        Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
 
         if (!permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
@@ -154,13 +137,9 @@ public class TimesheetRest {
         }
 
         Timesheet ownerSheet;
-        try {
-            ownerSheet = sheetService.getTimesheetByID(timesheetID);
-            if (!permissionService.userCanViewTimesheet(loggedInUser, ownerSheet)) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
-            }
-        } catch (ServiceException e) {
-            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        ownerSheet = sheetService.getTimesheetByID(timesheetID);
+        if (!permissionService.userCanViewTimesheet(loggedInUser, ownerSheet)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
@@ -298,12 +277,7 @@ public class TimesheetRest {
             return response;
         }
 
-        Timesheet sheet;
-        try {
-            sheet = sheetService.getTimesheetByID(timesheetID);
-        } catch (ServiceException e) {
-            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
-        }
+        Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
 
         if (sheet == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
@@ -355,7 +329,6 @@ public class TimesheetRest {
     public Response getTimesheet(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
 
-        Timesheet sheet;
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -368,11 +341,7 @@ public class TimesheetRest {
             return response;
         }
 
-        try {
-            sheet = sheetService.getTimesheetByID(timesheetID);
-        } catch (ServiceException e) {
-            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
-        }
+        Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
 
         if (sheet == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
@@ -410,12 +379,7 @@ public class TimesheetRest {
             return response;
         }
 
-        Timesheet sheet;
-        try {
-            sheet = sheetService.getTimesheetByID(timesheetID);
-        } catch (ServiceException e) {
-            return Response.serverError().entity("No Timesheet available with this ID: " + timesheetID + ".").build();
-        }
+        Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
 
         //check permissions for each sheet
         if (!permissionService.userCanViewTimesheet(user, sheet)) {
@@ -464,24 +428,10 @@ public class TimesheetRest {
             return response;
         }
 
-        Date twoMonthsAhead = new DateTime().plusMonths(2).toDate();
-
-        if (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0) {
-            String message = "The 'Inactive End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
-                    " but your inactive end date is " + entry.getInactiveEndDate();
-            return Response.status(Response.Status.FORBIDDEN).entity(message).build();
-        } else if (entry.getInactiveEndDate().compareTo(twoMonthsAhead) > 0) {
-            String message = "The 'Inactive End Date' is more than 2 months ahead. This is too far away.";
-            return Response.status(Response.Status.FORBIDDEN).entity(message).build();
-        } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
-                (!categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive"))) {
-            return Response.status(Response.Status.FORBIDDEN).entity("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.").build();
-        } else if (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) < 0) {
-            String message = "The 'Inactive & Offline End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
-                    " but your inactive end date is " + entry.getDeactivateEndDate();
-            return Response.status(Response.Status.FORBIDDEN).entity(message).build();
-        } else if (entry.getDescription().isEmpty()) {
-            return Response.status(Response.Status.FORBIDDEN).entity("The 'Task Description' field must not be empty.").build();
+        try {
+            RestUtils.checkJsonTimesheetEntry(entry, categoryService);
+        } catch (ParseException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
 
         Timesheet sheet;
@@ -494,15 +444,15 @@ public class TimesheetRest {
             sheet = sheetService.getTimesheetByID(timesheetID);
             category = categoryService.getCategoryByID(entry.getCategoryID());
             team = teamService.getTeamByID(entry.getTeamID());
-            String error = checkIfCategoryIsAssociatedWithTeam(team, category);
-            if (error != "") {
-                return Response.status(Response.Status.FORBIDDEN).entity(error).build();
-            }
             permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
-        } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         } catch (com.atlassian.jira.exception.PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        try {
+            teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
 
         String programmingPartnerName = "";
@@ -596,16 +546,11 @@ public class TimesheetRest {
         }
 
         Timesheet sheet;
-        try {
-            sheet = sheetService.getTimesheetByID(timesheetID);
-        } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' does not exist.").build();
-        }
+        sheet = sheetService.getTimesheetByID(timesheetID);
 
         if (sheet == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("The Timesheet your are looking for is NULL.").build();
         }
-
         if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
         }
@@ -629,9 +574,10 @@ public class TimesheetRest {
                 permissionService.userCanAddTimesheetEntry(loggedInUser, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
-                String error = checkIfCategoryIsAssociatedWithTeam(team, category);
-                if (error != "") {
-                    return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+                try {
+                    teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
+                } catch (ServiceException e) {
+                    return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
                 }
 
                 if (!entry.getPairProgrammingUserName().isEmpty()) {
@@ -693,7 +639,6 @@ public class TimesheetRest {
             @PathParam("timesheetID") int timesheetID,
             @PathParam("isMTSheet") Boolean isMTSheet) {
 
-        Timesheet sheet;
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -706,11 +651,7 @@ public class TimesheetRest {
             return response;
         }
 
-        try {
-            sheet = sheetService.getTimesheetByID(timesheetID);
-        } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
-        }
+        Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
 
         if (!permissionService.userCanEditTimesheet(user, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to edit the timesheet.").build();
@@ -808,13 +749,12 @@ public class TimesheetRest {
             category = categoryService.getCategoryByID(jsonEntry.getCategoryID());
             team = teamService.getTeamByID(jsonEntry.getTeamID());
             sheet = entry.getTimeSheet();
-            String error = checkIfCategoryIsAssociatedWithTeam(team, category);
-            if (error != "") {
-                return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            try {
+                teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
+            } catch (ServiceException e) {
+                return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
             permissionService.userCanEditTimesheetEntry(loggedInUser, entry.getTimeSheet(), entry);
-        } catch (ServiceException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -877,7 +817,6 @@ public class TimesheetRest {
             @PathParam("entryID") int entryID,
             @PathParam("isMTSheet") Boolean isMTSheet) {
         ApplicationUser user;
-        TimesheetEntry entry;
         Timesheet sheet;
 
         try {
@@ -891,11 +830,8 @@ public class TimesheetRest {
             return response;
         }
 
-        try {
-            entry = entryService.getEntryByID(entryID);
-        } catch (ServiceException e) {
-            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-        }
+        TimesheetEntry entry = entryService.getEntryByID(entryID);
+
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         try {

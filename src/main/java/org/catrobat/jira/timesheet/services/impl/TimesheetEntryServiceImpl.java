@@ -64,14 +64,8 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     @Override
     @Nullable
-    public TimesheetEntry getEntryByID(int entryID) throws ServiceException {
-        TimesheetEntry[] found = ao.find(TimesheetEntry.class, "ID = ?", entryID);
-
-        if (found.length > 1) {
-            throw new ServiceException("Multiple Timesheet Entries with the same ID.");
-        }
-
-        return (found.length > 0) ? found[0] : null;
+    public TimesheetEntry getEntryByID(int entryID) {
+        return ao.get(TimesheetEntry.class, entryID);
     }
 
     @Override
