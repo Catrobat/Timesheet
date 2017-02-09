@@ -67,11 +67,9 @@ public class TimesheetRestTest {
     private Timesheet timesheetMock;
     private Category categoryMock;
     private Team teamMock;
-    private TimesheetEntry timesheetEntryMock;
 
     private TimesheetRest timesheetRest;
     private TimesheetRest timesheetRestMock;
-    private TimesheetRest spyTimesheetRest;
 
     private javax.ws.rs.core.Response response;
     private HttpServletRequest requestMock;
@@ -105,7 +103,6 @@ public class TimesheetRestTest {
         timesheetMock = mock(Timesheet.class, RETURNS_DEEP_STUBS);
         categoryMock = mock(Category.class, RETURNS_DEEP_STUBS);
         teamMock = mock(Team.class, RETURNS_DEEP_STUBS);
-        timesheetEntryMock = mock(TimesheetEntry.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
         permissionConditionMock = mock(TimesheetPermissionCondition.class, RETURNS_DEEP_STUBS);
@@ -114,7 +111,7 @@ public class TimesheetRestTest {
         timesheetService = new TimesheetServiceImpl(ao);
         teamService = new TeamServiceImpl(ao, timesheetEntryService);
         configService = new ConfigServiceImpl(ao, categoryService, teamService);
-        timesheetEntryService = new TimesheetEntryServiceImpl(ao);
+        timesheetEntryService = new TimesheetEntryServiceImpl(ao, timesheetService);
 
         timesheetRest = new TimesheetRest(timesheetEntryService, timesheetService, categoryService, teamService,
                 permissionServiceMock, configService, permissionConditionMock);

@@ -27,7 +27,9 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TimesheetServiceImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +45,7 @@ import static org.junit.Assert.*;
 public class TimesheetEntryServiceImplTest {
 
     private EntityManager entityManager;
+    private TimesheetService timesheetService;
     private TimesheetEntryService service;
     private ActiveObjects ao;
 
@@ -52,7 +55,8 @@ public class TimesheetEntryServiceImplTest {
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        service = new TimesheetEntryServiceImpl(ao);
+        timesheetService = new TimesheetServiceImpl(ao);
+        service = new TimesheetEntryServiceImpl(ao, timesheetService);
     }
 
     @Test

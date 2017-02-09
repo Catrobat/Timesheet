@@ -48,13 +48,11 @@ public class SchedulingRestTest {
     private UserUtil userUtilMock;
     private MailQueue mailQueueMock;
     private HttpServletRequest httpRequest;
-    private Response response;
     private TestActiveObjects ao;
     private EntityManager entityManager;
     private CategoryServiceImpl categoryService;
     private ConfigServiceImpl configService;
     private TeamServiceImpl teamService;
-    private PermissionServiceImpl permissionService;
     private TimesheetEntryServiceImpl timesheetEntryService;
     private TimesheetServiceImpl timesheetService;
     private SchedulingRest schedulingRest;
@@ -75,15 +73,14 @@ public class SchedulingRestTest {
         userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
         mailQueueMock = mock(MailQueue.class, RETURNS_DEEP_STUBS);
         httpRequest = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
-        response = mock(Response.class, RETURNS_DEEP_STUBS);
         timesheetScheduler = mock(TimesheetScheduler.class, RETURNS_DEEP_STUBS);
         schedulingService = mock(SchedulingService.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        timesheetEntryService = new TimesheetEntryServiceImpl(ao);
+        timesheetService = new TimesheetServiceImpl(ao);
+        timesheetEntryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         teamService = new TeamServiceImpl(ao, timesheetEntryService);
         configService = new ConfigServiceImpl(ao, categoryService, teamService);
-        timesheetService = new TimesheetServiceImpl(ao);
 
         // For some tests we need a mock...
         schedulingRestMock = new SchedulingRest(configServiceMock, permissionServiceMock, timesheetEntryServiceMock,
@@ -114,9 +111,6 @@ public class SchedulingRestTest {
 
     @Test
     public void testActivityNotification_TimesheetEntryIsEmpty() throws Exception {
-        SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
-                timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
-
         timesheetService.add("key 1", "user 1", 450, 450, 900, 200, 0, "master thesis", "", true, true, Timesheet.State.ACTIVE); // master thesis
         timesheetService.add("key 2", "user 2", 450, 0, 450, 450, 0, "bachelor thesis", "", false, false, Timesheet.State.ACTIVE); // disabled
         timesheetService.add("key 3", "user 3", 450, 0, 450, 200, 20, "seminar paper", "", false, true, Timesheet.State.INACTIVE); // inactive
@@ -139,9 +133,6 @@ public class SchedulingRestTest {
 
     @Test
     public void testActivityNotification_differentKindsOfTimesheets() throws Exception {
-        SchedulingRest schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
-                timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
-
         Timesheet timesheet1 = timesheetService.add("key 1", "user 1", 450, 450, 900, 200, 0, "master thesis", "", true, true, Timesheet.State.ACTIVE);
 
         Calendar cal = Calendar.getInstance();
