@@ -277,7 +277,7 @@ public class ConfigResourceRest {
     }
 
     @PUT
-    @Path("/removeTeamPermission")
+    @Path("/removeTeam")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeTeamPermission(final String teamName, @Context HttpServletRequest request) throws ServiceException{
         Response unauthorized = checkParam(teamName);
@@ -285,7 +285,7 @@ public class ConfigResourceRest {
             return unauthorized;
         }
 
-        boolean successful = configService.removeTeam(teamName) != null;
+        boolean successful = teamService.removeTeam(teamName);
 
         if (successful) {
             return Response.noContent().build();

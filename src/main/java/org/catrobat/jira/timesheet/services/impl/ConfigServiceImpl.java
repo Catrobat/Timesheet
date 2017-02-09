@@ -306,41 +306,6 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Config removeTeam(String teamName) throws ServiceException {
-        teamService.removeTeam(teamName);
-        return getConfiguration();
-
-        // TODO: remove from here and move to teamService
-
-//        Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
-//        if (teamArray.length == 0) {
-//            return null;
-//        }
-//        Team team = teamArray[0];
-//        Group[] groupArray = team.getGroups();
-//        TeamToGroup[] teamToGroupArray = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
-//        for (TeamToGroup teamToGroup : teamToGroupArray) {
-//            ao.delete(teamToGroup);
-//        }
-//
-//        for (Group group : groupArray) {
-//            if (group.getTeams().length == 0) {
-//                ao.delete(group);
-//            }
-//        }
-//
-//        CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
-//        for (CategoryToTeam categoryToTeam : categoryToTeamArray)
-//            if (categoryToTeam.getTeam() != null) {
-//                ao.delete(categoryToTeam);
-//            }
-//
-//        ao.delete(team);
-//
-//        return getConfiguration();
-    }
-
-    @Override
     public Config editCategoryName(String oldCategoryName, String newCategoryName) {
         if (oldCategoryName == null || newCategoryName == null) {
             return null;

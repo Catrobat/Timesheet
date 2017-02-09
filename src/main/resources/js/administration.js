@@ -541,7 +541,7 @@ AJS.toInit(function () {
     function removeTeam() {
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
-            url: restBaseUrl + 'config/removeTeamPermission',
+            url: restBaseUrl + 'config/removeTeam',
             type: "PUT",
             contentType: "application/json",
             data: AJS.$("#team-name").attr("value"),

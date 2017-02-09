@@ -36,8 +36,6 @@ public interface ConfigService {
 
     Team editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups, List<String> teamCategoryNames);
 
-    Config removeTeam(String teamName) throws ServiceException;
-
     Config editMail(String mailFromName, String mailFrom, String mailSubjectTime,
             String mailSubjectInactive, String mailSubjectOffline, String mailSubjectActive, String mailSubjectEntry,
             String mailBodyTime, String mailBodyInactive, String mailBodyOffline, String mailBodyActive, String mailBodyEntry);

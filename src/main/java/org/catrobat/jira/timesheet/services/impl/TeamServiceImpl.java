@@ -86,6 +86,34 @@ public class TeamServiceImpl implements TeamService {
 
         ao.delete(found);
         return true;
+
+        // TODO: insert some of the code below, so you dont have to remove the TeamToGroup & TeamToCategory manually
+        // Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
+        // if (teamArray.length == 0) {
+        //     return null;
+        // }
+        // Team team = teamArray[0];
+        // Group[] groupArray = team.getGroups();
+        // TeamToGroup[] teamToGroupArray = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
+        // for (TeamToGroup teamToGroup : teamToGroupArray) {
+        //     ao.delete(teamToGroup);
+        // }
+        //
+        // for (Group group : groupArray) {
+        //     if (group.getTeams().length == 0) {
+        //         ao.delete(group);
+        //     }
+        // }
+        //
+        // CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
+        // for (CategoryToTeam categoryToTeam : categoryToTeamArray)
+        //     if (categoryToTeam.getTeam() != null) {
+        //         ao.delete(categoryToTeam);
+        //     }
+        //
+        // ao.delete(team);
+        //
+        // return getConfiguration();
     }
 
     @Override
