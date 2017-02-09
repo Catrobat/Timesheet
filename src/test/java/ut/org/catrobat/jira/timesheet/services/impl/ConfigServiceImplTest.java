@@ -24,12 +24,9 @@ import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.Config;
-import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.catrobat.jira.timesheet.services.TeamService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.impl.*;
-import org.catrobat.jira.timesheet.services.CategoryService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +48,7 @@ public class ConfigServiceImplTest {
     private CategoryService cs;
     private TimesheetEntryService entryService;
     private TeamService teamService;
+    private TimesheetService timesheetService;
     private ConfigService configurationService;
 
     @Before
@@ -58,7 +56,8 @@ public class ConfigServiceImplTest {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
         cs = new CategoryServiceImpl(ao);
-        entryService = new TimesheetEntryServiceImpl(ao);
+        timesheetService = new TimesheetServiceImpl(ao);
+        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         teamService = new TeamServiceImpl(ao, entryService);
         configurationService = new ConfigServiceImpl(ao, cs, teamService);
     }

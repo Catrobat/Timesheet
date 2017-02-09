@@ -11,15 +11,12 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.*;
 import org.catrobat.jira.timesheet.rest.ConfigResourceRest;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +50,7 @@ public class ConfigResourceRestTest {
 
     private TeamService teamServiceMock;
     private CategoryService categoryServiceMock;
+    private TimesheetService timesheetService;
     private PermissionService permissionServiceMock;
     private ConfigService configServiceMock;
 
@@ -89,7 +87,8 @@ public class ConfigResourceRestTest {
         groupManagerMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        entryService = new TimesheetEntryServiceImpl(ao);
+        timesheetService = new TimesheetServiceImpl(ao);
+        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         teamService = new TeamServiceImpl(ao, entryService);
         configService = new ConfigServiceImpl(ao, categoryService, teamService);
         configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock, ao);

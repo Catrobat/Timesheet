@@ -486,41 +486,6 @@ public class TimesheetRest {
                 entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
                 entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), programmingPartnerName);
 
-        Timesheet.State state = sheet.getState();
-
-        if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-            state = Timesheet.State.INACTIVE;
-        } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
-            state = Timesheet.State.INACTIVE_OFFLINE;
-        }
-
-        //update latest timesheet entry date if latest entry date is < new latest entry in the table
-        if (sheet.getEntries().length == 1) {
-            try {
-                sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
-                        sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
-                        sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
-                        sheet.getReason(), entryService.getEntriesBySheet(sheet)[0].
-                                getBeginDate(), isMTSheet, sheet.getIsEnabled(), state);
-            } catch (ServiceException e) {
-                return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-            }
-        } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
-            try {
-                sheetService.editTimesheet(ComponentAccessor.getUserKeyService().getKeyForUsername(user.getUsername()),
-                        sheet.getTargetHoursPractice(), sheet.getTargetHoursTheory(), sheet.getTargetHours(),
-                        sheet.getTargetHoursCompleted(), sheet.getTargetHoursRemoved(), sheet.getLectures(),
-                        sheet.getReason(), entry.getBeginDate(), isMTSheet, sheet.getIsEnabled(), state);
-            } catch (ServiceException e) {
-                return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-            }
-        } else {
-            System.out.println(entryService.getEntriesBySheet(sheet)[0]);
-            System.out.println(entry.getBeginDate());
-            System.out.println(entryService.getEntriesBySheet(sheet)[0].getBeginDate());
-            System.out.println((entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate())));
-        }
-
         entry.setEntryID(newEntry.getID());
 
         return Response.ok(entry).build();
@@ -567,7 +532,6 @@ public class TimesheetRest {
             }
 
             String programmingPartnerName = "";
-            Timesheet.State state = sheet.getState();
             ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
             try {
@@ -582,10 +546,6 @@ public class TimesheetRest {
 
                 if (!entry.getPairProgrammingUserName().isEmpty()) {
                     programmingPartnerName = ComponentAccessor.getUserManager().getUserByName(entry.getPairProgrammingUserName()).getUsername();
-                } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                    state = Timesheet.State.INACTIVE;
-                } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                    state = Timesheet.State.INACTIVE_OFFLINE;
                 }
 
                 if (entry.isTheory()) {
@@ -598,28 +558,9 @@ public class TimesheetRest {
                         entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
                         entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), programmingPartnerName);
 
-                //update latest timesheet entry date if latest entry date is < new latest entry in the table
-                if (sheet.getEntries().length == 1) {
-                    sheetService.editTimesheet(ComponentAccessor.
-                                    getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
-                            sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                            sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(),
-                            isMTSheet, sheet.getIsEnabled(), state);
-                } else if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0) {
-                    sheetService.editTimesheet(ComponentAccessor.
-                                    getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
-                            sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                            sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(),
-                            isMTSheet, sheet.getIsEnabled(), state);
-                }
-
                 entry.setEntryID(newEntry.getID());
                 newEntries.add(entry);
 
-            } catch (ServiceException e) {
-                return Response.status(Response.Status.FORBIDDEN).entity("'Timesheet' not found.").build();
             } catch (PermissionException e) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
             }
@@ -759,13 +700,15 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        if (sheet.getIsEnabled()) {
-            if (categoryService.isPairProgrammingCategory(category)) {
-                if (jsonEntry.getPairProgrammingUserName().isEmpty()) {
-                    return Response.status(Response.Status.CONFLICT).entity("Pair Programming Partner is missing!").build();
-                }
-                programmingPartnerName = jsonEntry.getPairProgrammingUserName();
+        if (!sheet.getIsEnabled()) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
+        }
+        if (categoryService.isPairProgrammingCategory(category)) {
+            if (jsonEntry.getPairProgrammingUserName().isEmpty()) {
+                return Response.status(Response.Status.CONFLICT).entity("Pair Programming Partner is missing!").build();
             }
+            programmingPartnerName = jsonEntry.getPairProgrammingUserName();
+        }
 
 //            if (!entry.getPairProgrammingUserName().isEmpty()) {
 //                if (!jsonEntry.getPairProgrammingUserName().isEmpty()) {
@@ -774,41 +717,25 @@ public class TimesheetRest {
 //                    programmingPartnerName = "";
 //                }
 //            }
-            try {
-                entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
-                        jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.IsGoogleDocImport(),
-                        jsonEntry.getInactiveEndDate(), jsonEntry.getDeactivateEndDate(), programmingPartnerName, jsonEntry.getTicketID());
-            } catch (ServiceException e) {
-                return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-            }
-
-            //inform user about Administrator changes
-            try {
-                if (permissionService.isJiraAdministrator(user)) {
-                    String userEmail = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress();
-                    emailUtil.buildEmailAdministratorChangedEntry(user.getEmailAddress(), userEmail, entry, jsonEntry);
-                }
-            } catch (ServiceException e) {
-                return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-            }
-
-            if ((sheet.getEntries().length == 1) ||
-                    (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) >= 0)) {
-                try {
-                    sheetService.editTimesheet(ComponentAccessor.
-                                    getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
-                            sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                            sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(),
-                            isMTSheet, sheet.getIsEnabled(), sheet.getState());
-                } catch (ServiceException e) {
-                    return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-                }
-            }
-
-            return Response.ok(jsonEntry).build();
+        try {
+            entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
+                    jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.IsGoogleDocImport(),
+                    jsonEntry.getInactiveEndDate(), jsonEntry.getDeactivateEndDate(), programmingPartnerName, jsonEntry.getTicketID());
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
-        return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
+
+        //inform user about Administrator changes
+        try {
+            if (permissionService.isJiraAdministrator(user)) {
+                String userEmail = ComponentAccessor.getUserManager().getUserByKey(sheet.getUserKey()).getEmailAddress();
+                emailUtil.buildEmailAdministratorChangedEntry(user.getEmailAddress(), userEmail, entry, jsonEntry);
+            }
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
+
+        return Response.ok(jsonEntry).build();
     }
 
     @DELETE

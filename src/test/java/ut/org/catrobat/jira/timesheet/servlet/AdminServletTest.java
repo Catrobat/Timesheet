@@ -11,10 +11,7 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
-import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.*;
 import org.catrobat.jira.timesheet.servlet.AdminServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +43,7 @@ public class AdminServletTest {
     private CategoryService categoryService;
     private TimesheetEntryService entryService;
     private TeamService teamService;
+    private TimesheetService timesheetService;
     private TestActiveObjects ao;
     private EntityManager entityManager;
     private HttpServletResponse response;
@@ -70,7 +68,8 @@ public class AdminServletTest {
         jiraAuthenticationContext = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
-        entryService = new TimesheetEntryServiceImpl(ao);
+        timesheetService = new TimesheetServiceImpl(ao);
+        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         teamService = new TeamServiceImpl(ao, entryService);
         configService = new ConfigServiceImpl(ao, categoryService, teamService);
 

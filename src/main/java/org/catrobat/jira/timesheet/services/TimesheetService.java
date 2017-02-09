@@ -42,6 +42,8 @@ public interface TimesheetService {
             String reason, Date latestEntryDate, boolean isMasterThesisTimesheet, boolean isEnabled,
             Timesheet.State state) throws ServiceException;
 
+    Timesheet updateTimesheet(int id, int targetHoursCompleted, int targetHoursPractice, Date latestEntryDate, Timesheet.State state);
+
     /**
      * Adds a new Timesheet
      * @param userKey             identifies the user

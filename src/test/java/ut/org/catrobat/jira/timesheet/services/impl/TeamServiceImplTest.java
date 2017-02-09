@@ -13,8 +13,10 @@ import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
+import org.catrobat.jira.timesheet.services.impl.TimesheetServiceImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -41,6 +43,7 @@ public class TeamServiceImplTest {
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private EntityManager entityManager;
     private TeamService service;
+    private TimesheetService timesheetService;
     private TimesheetEntryService entryService;
     private ActiveObjects ao;
 
@@ -48,7 +51,8 @@ public class TeamServiceImplTest {
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        entryService = new TimesheetEntryServiceImpl(ao);
+        timesheetService = new TimesheetServiceImpl(ao);
+        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         service = new TeamServiceImpl(ao, entryService);
     }
 

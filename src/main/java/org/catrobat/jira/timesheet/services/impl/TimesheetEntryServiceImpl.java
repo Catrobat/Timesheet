@@ -24,6 +24,7 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
@@ -32,9 +33,11 @@ import java.util.Date;
 public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     private final ActiveObjects ao;
+    private final TimesheetService timesheetService;
 
-    public TimesheetEntryServiceImpl(ActiveObjects ao) {
+    public TimesheetEntryServiceImpl(ActiveObjects ao, TimesheetService timesheetService) {
         this.ao = ao;
+        this.timesheetService = timesheetService;
     }
 
     @Override
@@ -59,7 +62,48 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
         entry.save();
 
+        updateTimesheet(sheet, entry);
+
         return entry;
+    }
+
+    private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) {
+        int completedHours = getHoursOfTimesheet(sheet);
+        int completedPracticeHours = getPracticeHoursOfTimesheet(sheet);
+        Date latestEntryDate = getLatestEntry(sheet).getBeginDate();
+
+        Timesheet.State state = sheet.getState();
+        if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
+            state = Timesheet.State.INACTIVE;
+        } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
+            state = Timesheet.State.INACTIVE_OFFLINE;
+        }
+
+        timesheetService.updateTimesheet(sheet.getID(), completedHours, completedPracticeHours, latestEntryDate, state);
+    }
+
+    private int getHoursOfTimesheet(Timesheet sheet) {
+        if (sheet == null)
+            return 0;
+        TimesheetEntry[] entries = ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ?", sheet.getID());
+        int minutes = 0;
+        for (TimesheetEntry entry : entries) {
+            minutes += entry.getDurationMinutes();
+        }
+        return minutes/60;
+    }
+
+    private int getPracticeHoursOfTimesheet(Timesheet sheet) {
+        if (sheet == null)
+            return 0;
+        TimesheetEntry[] entries = ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ?", sheet.getID());
+        int minutes = 0;
+        for (TimesheetEntry entry : entries) {
+            if (!entry.getIsTheory()) {
+                minutes += entry.getDurationMinutes();
+            }
+        }
+        return minutes/60;
     }
 
     @Override
@@ -94,6 +138,8 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         entry.setPairProgrammingUserName(userName);
 
         entry.save();
+
+        updateTimesheet(sheet, entry);
 
         return entry;
     }

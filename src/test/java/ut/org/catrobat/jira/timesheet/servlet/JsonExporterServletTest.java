@@ -72,7 +72,7 @@ public class JsonExporterServletTest {
 
         permissionService = mock(PermissionService.class);
         timesheetService = new TimesheetServiceImpl(ao);
-        entryService = new TimesheetEntryServiceImpl(ao);
+        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
 
         user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);

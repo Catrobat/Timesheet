@@ -76,6 +76,17 @@ public class TimesheetServiceImpl implements TimesheetService {
         return null;
     }
 
+    @Override
+    public Timesheet updateTimesheet(int id, int targetHoursCompleted, int targetHoursPractice,  Date latestEntryDate, Timesheet.State state) {
+        Timesheet timesheet = ao.get(Timesheet.class, id);
+        timesheet.setTargetHoursCompleted(targetHoursCompleted);
+        timesheet.setTargetHoursPractice(targetHoursPractice);
+        timesheet.setLatestEntryBeginDate(latestEntryDate);
+        timesheet.setState(state);
+        timesheet.save();
+        return timesheet;
+    }
+
     @NotNull
     @Override
     public Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
