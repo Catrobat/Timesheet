@@ -25,14 +25,6 @@ function populateTable(timesheetDataReply) {
                 'contact one of the project "Coordinators", or an "Administrator".</p>'
             });
         else if (timesheetData.state != "ACTIVE") {
-            // TODO: do we really need both (banner and warning)?
-
-            AJS.messages.warning({
-                title: 'Timesheet Warning.',
-                closeable: true,
-                body: '<p> Your Timesheet is marked as <em>' + timesheetData.state + '</em>.</p>'
-            });
-
             require(['aui/banner'], function (banner) {
                 banner({
                     body: 'Your Timesheet is marked as <strong>' + timesheetData.state + '</strong>.'
@@ -447,6 +439,8 @@ function prepareForm(entry, timesheetData, isModified) {
     var baseUrl = AJS.params.baseURL; // we have to reassign it otherwise it would be undefined
     var tickets = [];
     var queryString = "/rest/api/2/issue/picker";
+    var text="";
+
     AJS.$.ajax({
         type: 'GET',
         url: baseUrl + queryString,
@@ -455,6 +449,9 @@ function prepareForm(entry, timesheetData, isModified) {
             data.sections[0].issues.forEach(function (issue) {
                 tickets.push(issue.key + " : " + issue.summary);
             });
+            var reg = /\d/g;
+            var number = data.sections[0].sub;
+            text = number.match(reg)[0] + " issues";
         },
         error: function (jqXHR) {
             console.log("error message: " + jqXHR.responseText);
@@ -465,7 +462,10 @@ function prepareForm(entry, timesheetData, isModified) {
 
     form.ticketSelect.auiSelect2({
         tags: tickets,
-        width: 'resolve'
+        width: 'resolve',
+        placeholder: text,
+        tooltiptext: "hekkkkk",
+        placement: "auto"
     });
 
     return form;
@@ -563,7 +563,6 @@ function getSuitableCatIndex(categoriesPerTeam) {
 }
 
 function updateTimeField(form) {
-    //todo: fix duration update without setTimeout
     setTimeout(function () {
         var duration = calculateDuration(
             form.beginTimeField.timepicker('getTime'),

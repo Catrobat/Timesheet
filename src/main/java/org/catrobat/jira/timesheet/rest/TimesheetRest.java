@@ -49,8 +49,6 @@ import java.util.*;
 import static org.catrobat.jira.timesheet.utility.RestUtils.asSortedList;
 import static org.catrobat.jira.timesheet.utility.RestUtils.convertTeamsToJSON;
 
-//TODO: check if permissions are to loosely, in case adapted it, maybe checkIfUserExists() is not enough
-
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON})
 public class TimesheetRest {
@@ -178,13 +176,6 @@ public class TimesheetRest {
     @Path("timesheet/{teamName}/entries")
     public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
             @PathParam("teamName") String teamName) {
-        //TODO: maybe coordinator private access is enouph - we will see
-        // chess if user is coordinator of team
-       /* Response unauthorized = permissionService.checkRootPermission(request);
-        if (unauthorized != null) {
-            return unauthorized;
-        }*/
-
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -359,6 +350,7 @@ public class TimesheetRest {
         int targetTime = sheet.getTargetHours();
 
         // FIXME: i dont think here is the right place for that check
+        // Todo: should be moved to service class
         if ((targetTime - completeTime) <= 80) {
             emailUtil.buildEmailOutOfTime(user.getEmailAddress(), sheet, user);
         }
@@ -660,7 +652,7 @@ public class TimesheetRest {
         ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         if (sheet == null || !permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not allowed to access the timesheet.").build();
         } else if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
         }
