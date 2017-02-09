@@ -260,19 +260,11 @@
             <p>Download 'All Timesheets' as <a href="download/timesheets">CSV</a> or as
                 <a href="download/timesheets/json">Json</a>.
             </p>
-            <p>Download 'Config' as <a href="download/config">CSV</a> or as
-                <a href="download/config/json">Json</a>.
-            </p>
+            <p>Download 'Config' as <a href="download/config/json">Json</a>.</p>
 
             <h2><font color="red">Import</font></h2>
-            <p>Upload existing 'Timesheets' from <a href="upload/timesheets">CSV</a> or from
-                <a href="upload/timesheets/json">Json</a>.
-            </p>
-            <p>Upload an existing 'Timesheet - Configuration' from <a href="upload/config">CSV</a> or from
-                <a href="upload/config/json">Json</a>.
-            </p>
-
-            <!-- moved the team & category configuration to other tabs -->
+            <p>Upload existing 'Timesheets' from <a href="upload/timesheets/json">Json</a>.</p>
+            <p>Upload an existing 'Timesheet - Configuration' from  <a href="upload/config/json">Json</a>.</p>
 
             <div class="field-group">
                 <input type="submit" value="Save" class="aui-button aui-button-primary">

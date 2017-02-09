@@ -23,6 +23,9 @@ import java.util.List;
 
 public class CsvTimesheetExporter {
 
+    private static final String DELIMITER = ";";
+    private static final String NEW_LINE = "\n";
+
     public CsvTimesheetExporter() {
     }
 
@@ -37,39 +40,39 @@ public class CsvTimesheetExporter {
     public String getTimesheetCsvData(Timesheet timesheet) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Username" + CsvConstants.DELIMITER +
-                "Practical Hours" + CsvConstants.DELIMITER +
-                "Theory Hours" + CsvConstants.DELIMITER +
-                "Hours Done" + CsvConstants.DELIMITER +
-                "Substracted Hours" + CsvConstants.DELIMITER +
-                "Total Hours" + CsvConstants.DELIMITER +
-                "Remaining Hours" + CsvConstants.DELIMITER +
-                "Penalty Text" + CsvConstants.DELIMITER +
-                "ECTS" + CsvConstants.DELIMITER +
-                "Lecture" + CsvConstants.DELIMITER +
-                "isMTSheet" + CsvConstants.NEW_LINE);
+        sb.append("Username" + DELIMITER +
+                "Practical Hours" + DELIMITER +
+                "Theory Hours" + DELIMITER +
+                "Hours Done" + DELIMITER +
+                "Substracted Hours" + DELIMITER +
+                "Total Hours" + DELIMITER +
+                "Remaining Hours" + DELIMITER +
+                "Penalty Text" + DELIMITER +
+                "ECTS" + DELIMITER +
+                "Lecture" + DELIMITER +
+                "isMTSheet" + NEW_LINE);
 
-        sb.append(timesheet.getUserKey()).append(CsvConstants.DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHoursPractice())).append(CsvConstants.DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHoursTheory())).append(CsvConstants.DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHoursCompleted())).append(CsvConstants.DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHoursRemoved())).append(CsvConstants.DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHours())).append(CsvConstants.DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getTargetHoursCompleted())).append(CsvConstants.DELIMITER);
-        sb.append(timesheet.getReason()).append(CsvConstants.DELIMITER);
-        sb.append(timesheet.getLectures()).append(CsvConstants.DELIMITER);
-        sb.append(timesheet.getIsMasterThesisTimesheet()).append(CsvConstants.NEW_LINE);
+        sb.append(timesheet.getUserKey()).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getTargetHoursPractice())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getTargetHoursTheory())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getTargetHoursCompleted())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getTargetHoursRemoved())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getTargetHours())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getTargetHoursCompleted())).append(DELIMITER);
+        sb.append(timesheet.getReason()).append(DELIMITER);
+        sb.append(timesheet.getLectures()).append(DELIMITER);
+        sb.append(timesheet.getIsMasterThesisTimesheet()).append(NEW_LINE);
 
-        sb.append("Inactive Date" + CsvConstants.DELIMITER +
-                "Date" + CsvConstants.DELIMITER +
-                "Begin" + CsvConstants.DELIMITER +
-                "End" + CsvConstants.DELIMITER +
-                "Duration Minutes" + CsvConstants.DELIMITER +
-                "Pause Minutes" + CsvConstants.DELIMITER +
-                "Category" + CsvConstants.DELIMITER +
-                "Description" + CsvConstants.DELIMITER +
-                "Team" + CsvConstants.DELIMITER +
-                "UserKey" + CsvConstants.NEW_LINE);
+        sb.append("Inactive Date" + DELIMITER +
+                "Date" + DELIMITER +
+                "Begin" + DELIMITER +
+                "End" + DELIMITER +
+                "Duration Minutes" + DELIMITER +
+                "Pause Minutes" + DELIMITER +
+                "Category" + DELIMITER +
+                "Description" + DELIMITER +
+                "Team" + DELIMITER +
+                "UserKey" + NEW_LINE);
 
         for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
             Integer hours = 0;
@@ -97,24 +100,24 @@ public class CsvTimesheetExporter {
             }
             Integer remainingPauseMinutes = timesheetEntry.getPauseMinutes() % 60;
             String pauseDuration = Integer.toString(pauseHours) + ":" + Integer.toString(remainingPauseMinutes);
-            sb.append(unescape(timesheetEntry.getInactiveEndDate().toString())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getEndDate().toString())).append(CsvConstants.DELIMITER);
+            sb.append(unescape(timesheetEntry.getInactiveEndDate().toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getEndDate().toString())).append(DELIMITER);
             //works with google doc import
             /*
-             sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(0, 10).toString())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(11, 16).toString())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getEndDate().toString().subSequence(11, 16).toString())).append(CsvConstants.DELIMITER);
+             sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(0, 10).toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(11, 16).toString())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getEndDate().toString().subSequence(11, 16).toString())).append(DELIMITER);
              */
-            sb.append(unescape(duration)).append(CsvConstants.DELIMITER);
-            sb.append(unescape(pauseDuration)).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getCategory().getName())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getDescription())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(CsvConstants.DELIMITER);
-            sb.append(unescape(timesheetEntry.getTimeSheet().getUserKey())).append(CsvConstants.NEW_LINE);
+            sb.append(unescape(duration)).append(DELIMITER);
+            sb.append(unescape(pauseDuration)).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getCategory().getName())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getDescription())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(DELIMITER);
+            sb.append(unescape(timesheetEntry.getTimeSheet().getUserKey())).append(NEW_LINE);
         }
-        sb.append(CsvConstants.NEW_LINE);
+        sb.append(NEW_LINE);
 
         return sb.toString();
     }
