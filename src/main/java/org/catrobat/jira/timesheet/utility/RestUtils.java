@@ -1,15 +1,15 @@
 package org.catrobat.jira.timesheet.utility;
 
-import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.ParseException;
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
-import com.mysema.commons.lang.Assert;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
+import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.CategoryService;
+import org.catrobat.jira.timesheet.services.PermissionService;
 import org.joda.time.DateTime;
 
 import java.util.*;
@@ -31,33 +31,6 @@ public class RestUtils {
         return users;
     }
 
-    public void printAllUsers(TreeSet<User> allUsers) {
-        for (User user : allUsers) {
-            System.out.println(user.getName());
-        }
-    }
-
-    public void printUserInformation(String username, ApplicationUser user) {
-        ApplicationUser userByName = ComponentAccessor.getUserManager().getUserByName(username);
-        Assert.isTrue(userByName.equals(user),"Users not equal!");
-
-        System.out.println();
-        System.out.println("user.getEmailAddress()       = " + user.getEmailAddress());
-        System.out.println("userByName.getEmailAddress() = " + userByName.getEmailAddress());
-
-        System.out.println("userByName.getName()         = " + userByName.getName());
-        System.out.println("userByName.getUsername()     = " + userByName.getUsername());
-        System.out.println("user.getUsername()           = " + user.getUsername());
-        System.out.println("username()           = " + username);
-
-        System.out.println("userByName.getDisplayName()  = " + userByName.getDisplayName());
-        System.out.println("user.getDisplayName()        = " + user.getDisplayName());
-
-        System.out.println("-------------------------------------------------------------------------");
-        System.out.println("userByName.getKey()          = " + userByName.getKey());
-        System.out.println("########################################################################");
-    }
-
     public static List<Team> asSortedList(Collection<Team> c) {
         List<Team> list = new ArrayList<>(c);
         Collections.sort(list, ((o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName())));
@@ -77,13 +50,37 @@ public class RestUtils {
         return teams;
     }
 
-    public static void checkJsonTimesheetEntry(JsonTimesheetEntry entry, CategoryService categoryService) throws ParseException{
-        Date twoMonthsAhead = new DateTime().plusMonths(2).toDate();
+    public static void checkTimesheetIsEnabled(Timesheet sheet) throws PermissionException {
+        if (sheet == null) {
+            throw new PermissionException("Timesheet not found.");
+        } else if (!sheet.getIsEnabled()) {
+            throw new PermissionException("Your timesheet has been disabled.");
+        }
+    }
 
-        if (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0) {
+    public static void checkTimesheetIsEditableByUser(ApplicationUser user, Timesheet sheet, PermissionService permissionService) throws PermissionException {
+        RestUtils.checkTimesheetIsEnabled(sheet);
+        if (!permissionService.userCanEditTimesheet(user, sheet)) {
+            throw new PermissionException("You are not allowed to edit the timesheet.");
+        }
+    }
+
+    public static void checkJsonTimesheetEntry(JsonTimesheetEntry entry) throws ParseException{
+        if (entry == null) {
+            throw new ParseException("The entry must not be null");
+        } else if (entry.getDescription().isEmpty()) {
+            throw new ParseException("The 'Task Description' field must not be empty.");
+        } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) < 0)) {
             throw new ParseException("The 'Inactive End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
                     " but your inactive end date is " + entry.getInactiveEndDate());
-        } else if (entry.getInactiveEndDate().compareTo(twoMonthsAhead) > 0) {
+        }
+    }
+
+    public static void checkJsonTimesheetEntryAndCategory(JsonTimesheetEntry entry, CategoryService categoryService) throws ParseException{
+        Date twoMonthsAhead = new DateTime().plusMonths(2).toDate();
+
+        RestUtils.checkJsonTimesheetEntry(entry);
+        if (entry.getInactiveEndDate().compareTo(twoMonthsAhead) > 0) {
             throw new ParseException("The 'Inactive End Date' is more than 2 months ahead. This is too far away.");
         } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
                 (!categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive"))) {
@@ -91,8 +88,6 @@ public class RestUtils {
         } else if (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) < 0) {
             throw new ParseException("The 'Inactive & Offline End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
                     " but your inactive end date is " + entry.getDeactivateEndDate());
-        } else if (entry.getDescription().isEmpty()) {
-            throw new ParseException("The 'Task Description' field must not be empty.");
         }
     }
 }

@@ -121,7 +121,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         TimesheetEntry entry = getEntryByID(entryId);
 
         if (entry == null) {
-            return null;
+            throw new ServiceException("Entry not found");
         }
 
         entry.setTimeSheet(sheet);

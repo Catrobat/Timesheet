@@ -137,15 +137,14 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Nullable
     @Override
     public Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException {
-        Timesheet[] found = ao.find(Timesheet.class, "ID = ?", timesheetID);
-        if ((found.length == 1)) {
-            Timesheet sheet = found[0];
-            sheet.setIsEnabled(isEnabled);
-            sheet.save();
-            return sheet;
-        } else {
-            throw new ServiceException("Access denied. No 'Timesheet' found for this user.");
+        Timesheet sheet = ao.get(Timesheet.class, timesheetID);
+        if (sheet == null) {
+            throw new ServiceException("No Timesheet found for this user.");
         }
+
+        sheet.setIsEnabled(isEnabled);
+        sheet.save();
+        return sheet;
     }
 
     @Override
