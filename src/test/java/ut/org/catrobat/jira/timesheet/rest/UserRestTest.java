@@ -2,6 +2,9 @@ package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.crowd.embedded.api.Group;
+import com.atlassian.jira.bc.JiraServiceContext;
+import com.atlassian.jira.bc.group.search.GroupPickerSearchService;
+import com.atlassian.jira.bc.user.search.UserSearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
@@ -11,8 +14,8 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.utility.RestUtils;
 import org.catrobat.jira.timesheet.rest.UserRest;
+import org.mockito.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +29,7 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -54,6 +54,9 @@ public class UserRestTest {
     private TimesheetService timesheetServiceMock;
     private TimesheetEntryService timesheetEntryServiceMock;
 
+    private UserSearchService userSearchService;
+    private GroupPickerSearchService groupPickerSearchService;
+
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
@@ -68,8 +71,11 @@ public class UserRestTest {
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
         timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
         timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
+        userSearchService = mock(UserSearchService.class, RETURNS_DEEP_STUBS);
+        groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
 
-        userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock, timesheetEntryServiceMock);
+        userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock,
+                timesheetEntryServiceMock, userSearchService, groupPickerSearchService);
         spyUserRest = spy(userRest);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
@@ -100,9 +106,9 @@ public class UserRestTest {
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
+        List<ApplicationUser> usersSet = new ArrayList<>(Arrays.asList(user1, user2));
 
-        PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
+        when(userSearchService.findUsersAllowEmptyQuery(Matchers.any(JiraServiceContext.class), Matchers.eq(""))).thenReturn(usersSet);
 
         PowerMockito.when(user1.getDisplayName()).thenReturn("User 1");
         PowerMockito.when(user2.getDisplayName()).thenReturn("User 2");
@@ -125,9 +131,9 @@ public class UserRestTest {
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
+        List<ApplicationUser> usersSet = new ArrayList<>(Arrays.asList(user1, user2));
 
-        PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
+        when(userSearchService.findUsersAllowEmptyQuery(Matchers.any(JiraServiceContext.class), Matchers.eq(""))).thenReturn(usersSet);
 
         PowerMockito.when(user1.getDisplayName()).thenReturn("User 1");
         PowerMockito.when(user2.getDisplayName()).thenReturn("User 2");
@@ -144,7 +150,6 @@ public class UserRestTest {
         verify(user1, times(1)).getDisplayName();
         verify(user2, times(1)).getDisplayName();
 
-        TreeSet<ApplicationUser> sortedUsers = RestUtils.getInstance().getSortedUsers(usersSet);
-        Assert.assertEquals(2, sortedUsers.size());
+        Assert.assertEquals(2, usersSet.size());
     }
 }

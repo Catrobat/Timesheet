@@ -17,6 +17,10 @@
 package org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.crowd.embedded.api.Group;
+import com.atlassian.jira.bc.JiraServiceContext;
+import com.atlassian.jira.bc.JiraServiceContextImpl;
+import com.atlassian.jira.bc.group.search.GroupPickerSearchService;
+import com.atlassian.jira.bc.user.search.UserSearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
@@ -29,7 +33,6 @@ import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
-import org.catrobat.jira.timesheet.utility.RestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -48,12 +51,18 @@ public class UserRest {
     private final TimesheetService timesheetService;
     private final TimesheetEntryService timesheetEntryService;
 
+    private final UserSearchService userSearchService;
+    private final GroupPickerSearchService groupPickerSearchService;
+
     public UserRest(ConfigService configService, PermissionService permissionService,
-            TimesheetService timesheetService, TimesheetEntryService timesheetEntryService) {
+                    TimesheetService timesheetService, TimesheetEntryService timesheetEntryService,
+                    UserSearchService userSearchService, GroupPickerSearchService groupPickerSearchService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
+        this.userSearchService = userSearchService;
+        this.groupPickerSearchService = groupPickerSearchService;
     }
 
     @GET
@@ -68,9 +77,9 @@ public class UserRest {
 
         UserUtil userUtil = ComponentAccessor.getUserUtil();
         List<JsonUser> jsonUserList = new ArrayList<>();
-        Set<ApplicationUser> allUsers = ComponentAccessor.getUserManager().getAllUsers();
-        TreeSet<ApplicationUser> allSortedUsers = RestUtils.getInstance().getSortedUsers(allUsers);
-        for (ApplicationUser user : allSortedUsers) {
+        JiraServiceContext jiraServiceContext = new JiraServiceContextImpl(permissionService.getLoggedInUser());
+        List<ApplicationUser> allUsers = userSearchService.findUsersAllowEmptyQuery(jiraServiceContext, "");
+        for (ApplicationUser user : allUsers) {
             JsonUser jsonUser = new JsonUser();
             jsonUser.setEmail(user.getEmailAddress());
             jsonUser.setUserName(user.getName());
@@ -197,7 +206,7 @@ public class UserRest {
         }
 
         List<String> groupList = new ArrayList<>();
-        Collection<Group> allGroups = ComponentAccessor.getGroupManager().getAllGroups();
+        List<Group> allGroups = groupPickerSearchService.findGroups("");
         for (Group group : allGroups) {
             groupList.add(group.getName());
         }

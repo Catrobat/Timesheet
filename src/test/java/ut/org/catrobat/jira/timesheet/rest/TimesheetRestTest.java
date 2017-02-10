@@ -197,7 +197,6 @@ public class TimesheetRestTest {
         ApplicationUser user2 = mock(ApplicationUser.class);
 
         Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);
@@ -238,7 +237,6 @@ public class TimesheetRestTest {
         when(user1.getName()).thenReturn(username);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
-        PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
 //        response = timesheetRestMock.getTeamsForUser(requestMock);
@@ -308,7 +306,6 @@ public class TimesheetRestTest {
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
 
-        PowerMockito.when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(user1);
@@ -364,7 +361,6 @@ public class TimesheetRestTest {
         when(user1.getName()).thenReturn(username);
         when(timesheetServiceMock.getTimesheetByID(timesheetID).getUserKey()).thenReturn(userKey);
 
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
@@ -427,7 +423,6 @@ public class TimesheetRestTest {
         when(user1.getName()).thenReturn(username);
         when(timesheetServiceMock.getTimesheetByID(timesheetID).getUserKey()).thenReturn(userKey);
 
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
@@ -647,7 +642,6 @@ public class TimesheetRestTest {
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);
 
-        when(ComponentAccessor.getUserManager().getAllUsers()).thenReturn(usersSet);
         when(ComponentAccessor.getUserManager().getUserByName(userName).getKey()).thenReturn(userKey);
 
         when(timesheetServiceMock.all()).thenReturn(timesheets);

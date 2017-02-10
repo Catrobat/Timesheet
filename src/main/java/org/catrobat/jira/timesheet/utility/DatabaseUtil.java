@@ -42,19 +42,22 @@ public class DatabaseUtil {
         } else {
             query = "ID = " + query;
         }
-        List jsonList = new ArrayList();
         switch (tableName) {
             case "Timesheet":
+                List<JsonTimesheet> timesheetList = new ArrayList<>();
                 Timesheet[] timesheets = ao.find(Timesheet.class, query);
                 for (Timesheet timesheet : timesheets) {
-                    jsonList.add(new JsonTimesheet(timesheet));
-                } break;
+                    timesheetList.add(new JsonTimesheet(timesheet));
+                }
+                return timesheetList;
             case "TimesheetEntry":
+                List<JsonTimesheetEntry> jsonTimesheetEntryList = new ArrayList<>();
                 TimesheetEntry[] timesheetEntries = ao.find(TimesheetEntry.class, query);
                 for (TimesheetEntry timesheetEntry : timesheetEntries) {
-                    jsonList.add(new JsonTimesheetEntry(timesheetEntry));
-                } break;
+                    jsonTimesheetEntryList.add(new JsonTimesheetEntry(timesheetEntry));
+                }
+                return  jsonTimesheetEntryList;
         }
-        return jsonList;
+        return new ArrayList();
     }
 }

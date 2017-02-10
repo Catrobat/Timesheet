@@ -16,21 +16,6 @@ import java.util.*;
 
 public class RestUtils {
 
-    private static class InstanceHolder {
-        private static final RestUtils instance = new RestUtils();
-    }
-
-    public static RestUtils getInstance() {
-        return InstanceHolder.instance;
-    }
-
-    public TreeSet<ApplicationUser> getSortedUsers(Set<ApplicationUser> allUsers) {
-        Comparator<ApplicationUser> userComparator = (o1, o2) -> o1.getName().compareTo(o2.getName());
-        TreeSet<ApplicationUser> users = new TreeSet<>(userComparator);
-        users.addAll(allUsers);
-        return users;
-    }
-
     public static List<Team> asSortedList(Collection<Team> c) {
         List<Team> list = new ArrayList<>(c);
         Collections.sort(list, ((o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName())));
