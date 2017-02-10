@@ -43,16 +43,14 @@ public class TeamServiceImplTest {
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private EntityManager entityManager;
     private TeamService service;
-    private TimesheetService timesheetService;
-    private TimesheetEntryService entryService;
     private ActiveObjects ao;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        timesheetService = new TimesheetServiceImpl(ao);
-        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
+        TimesheetService timesheetService = new TimesheetServiceImpl(ao);
+        TimesheetEntryService entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         service = new TeamServiceImpl(ao, entryService);
     }
 
@@ -132,16 +130,6 @@ public class TeamServiceImplTest {
         Mockito.doReturn("teamB").when(teamB).getTeamName();
         Mockito.doReturn("teamC").when(teamC).getTeamName();
 
-        List<String> developerListA = new ArrayList<String>();
-        developerListA.add("MarkusHobisch");
-        developerListA.add("AdrianSchnedlitz");
-        List<String> developerListB = new ArrayList<String>();
-        developerListB.add("PatrickRadkohl");
-        developerListB.add("GeraldWagner");
-        List<String> developerListC = new ArrayList<String>();
-        developerListC.add("ThomasGrossman");
-        developerListC.add("MarkusHobisch");
-
         Set<Team> teamsOfUser = service.getTeamsOfUser(developer1.getGroupName());
         assertEquals(2, teamsOfUser.size());
         assertTrue(teamsOfUser.contains(catroid));
@@ -157,16 +145,6 @@ public class TeamServiceImplTest {
         Mockito.doReturn("teamA").when(teamA).getTeamName();
         Mockito.doReturn("teamB").when(teamB).getTeamName();
         Mockito.doReturn("teamC").when(teamC).getTeamName();
-
-        List<String> coordinatorListA = new ArrayList<>();
-        coordinatorListA.add("MarkusHobisch");
-        coordinatorListA.add("AdrianSchnedlitz");
-        List<String> coordinatorListB = new ArrayList<>();
-        coordinatorListB.add("PatrickRadkohl");
-        coordinatorListB.add("GeraldWagner");
-        List<String> coordinatorListC = new ArrayList<>();
-        coordinatorListC.add("ThomasGrossman");
-        coordinatorListC.add("MarkusHobisch");
 
         Set<Team> teamsOfCoords = service.getTeamsOfCoordinator(coordinator1.getGroupName());
         assertEquals(2, teamsOfCoords.size());

@@ -125,7 +125,7 @@ public class ConfigResourceRestTest {
         when(team2.getTeamName()).thenReturn("IRC");
         when(team2.getCategories()).thenReturn(new Category[0]);
 
-        Set<Team> teams = new HashSet<Team>();
+        Set<Team> teams = new HashSet<>();
         teams.add(team1);
         teams.add(team2);
 
@@ -270,7 +270,7 @@ public class ConfigResourceRestTest {
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
 
-        Collection<ApplicationUser> usersInGroup = new ArrayList();
+        Collection<ApplicationUser> usersInGroup = new ArrayList<>();
         usersInGroup.add(user1);
         usersInGroup.add(user2);
 

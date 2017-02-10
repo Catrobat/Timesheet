@@ -24,16 +24,13 @@ import static org.junit.Assert.*;
 
 public class TimesheetServiceImplTest {
 
-    final String userKey = "USER_001";
-    private String displayName = "Test User";
-    final int targetHoursPractice = 150;
-    final int targetHoursTheory = 0;
-    final int targeHours = 300;
-    final int targetHoursCompleted = 150;
-    final int targetHoursRemoved = 0;
-    final Date latestEntryDate = new Date();
-    final String lectures = "Mobile Applications (705.881)";
-    final String reason = "Agathe Bauer";
+    private final String userKey = "USER_001";
+    private final int targetHoursPractice = 150;
+    private final int targetHoursTheory = 0;
+    private final int targetHours = 300;
+    private final int targetHoursCompleted = 150;
+    private final Date latestEntryDate = new Date();
+    private final String lectures = "Mobile Applications (705.881)";
     private EntityManager entityManager;
     private TimesheetService service;
     private ActiveObjects ao;
@@ -48,7 +45,10 @@ public class TimesheetServiceImplTest {
     @Test
     public void testAdd() throws Exception {
         //Act
-        service.add(userKey, displayName, targetHoursPractice, targetHoursTheory, targeHours, targetHoursCompleted,
+        String displayName = "Test User";
+        int targetHoursRemoved = 0;
+        String reason = "Agathe Bauer";
+        service.add(userKey, displayName, targetHoursPractice, targetHoursTheory, targetHours, targetHoursCompleted,
                 targetHoursRemoved, lectures, reason, false, true, Timesheet.State.ACTIVE);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
@@ -57,7 +57,7 @@ public class TimesheetServiceImplTest {
         assertEquals(userKey, timesheet[0].getUserKey());
         assertEquals(targetHoursPractice, timesheet[0].getTargetHoursPractice());
         assertEquals(targetHoursTheory, timesheet[0].getTargetHoursTheory());
-        assertEquals(targeHours, timesheet[0].getTargetHours());
+        assertEquals(targetHours, timesheet[0].getTargetHours());
         assertEquals(targetHoursCompleted, timesheet[0].getTargetHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
         assertTrue(latestEntryDate.getTime() - timesheet[0].getLatestEntryBeginDate().getTime() < 1000);
@@ -72,7 +72,7 @@ public class TimesheetServiceImplTest {
         sheet.setUserKey(userKey);
         sheet.setTargetHoursPractice(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);
-        sheet.setTargetHoursTheory(targeHours);
+        sheet.setTargetHoursTheory(targetHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
         sheet.setState(Timesheet.State.ACTIVE);
@@ -94,7 +94,7 @@ public class TimesheetServiceImplTest {
         sheet.setUserKey(userKey);
         sheet.setTargetHoursPractice(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);
-        sheet.setTargetHoursTheory(targeHours);
+        sheet.setTargetHoursTheory(targetHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
         sheet.setState(Timesheet.State.ACTIVE);

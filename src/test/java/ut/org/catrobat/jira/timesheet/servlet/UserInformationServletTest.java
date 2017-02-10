@@ -28,37 +28,29 @@ import static org.mockito.Mockito.*;
 @PrepareForTest(ComponentAccessor.class)
 public class UserInformationServletTest {
 
-    String test_key = "test_key";
     private UserInformationServlet userInformationServlet;
-    private LoginUriProvider loginUriProvider;
-    private TemplateRenderer templateRenderer;
-    private PermissionService permissionService;
-    private WebSudoManager webSudoManager;
-    private ConfigService configService;
     private HttpServletResponse response;
     private HttpServletRequest request;
-    private ApplicationUser user;
-    private Config config;
-    private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Before
     public void setUp() throws Exception {
 
-        loginUriProvider = mock(LoginUriProvider.class);
-        templateRenderer = mock(TemplateRenderer.class);
-        webSudoManager = mock(WebSudoManager.class);
-        permissionService = mock(PermissionService.class);
+        LoginUriProvider loginUriProvider = mock(LoginUriProvider.class);
+        TemplateRenderer templateRenderer = mock(TemplateRenderer.class);
+        WebSudoManager webSudoManager = mock(WebSudoManager.class);
+        PermissionService permissionService = mock(PermissionService.class);
         PowerMockito.mockStatic(ComponentAccessor.class);
-        user = mock(ApplicationUser.class);
+        ApplicationUser user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        configService = Mockito.mock(ConfigService.class);
-        config = Mockito.mock(Config.class);
-        jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
+        ConfigService configService = Mockito.mock(ConfigService.class);
+        Config config = Mockito.mock(Config.class);
+        JiraAuthenticationContext jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
 
         userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, webSudoManager, permissionService, configService);
 
         when(user.getUsername()).thenReturn("test");
+        String test_key = "test_key";
         when(user.getKey()).thenReturn(test_key);
         when(permissionService.checkIfUserExists()).thenReturn(user);
         when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);

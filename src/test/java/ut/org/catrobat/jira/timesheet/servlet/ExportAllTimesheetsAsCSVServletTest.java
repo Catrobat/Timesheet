@@ -34,24 +34,12 @@ import static org.mockito.Mockito.*;
 @PrepareForTest(ComponentAccessor.class)
 public class ExportAllTimesheetsAsCSVServletTest {
 
-    String test_key = "test_key";
     private ExportAllTimesheetsAsCSVServlet exportAllTimesheetsAsCSVServlet;
-    private LoginUriProvider loginUriProvider;
-    private PermissionService permissionService;
-    private WebSudoManager webSudoManager;
-    private ConfigService configService;
     private TimesheetService timesheetService;
     private Timesheet timesheet;
     private HttpServletResponse response;
     private HttpServletRequest request;
     private ApplicationUser user;
-    private ServletOutputStream outputStream;
-    private JiraAuthenticationContext jiraAuthenticationContext;
-    private Config config;
-
-    private UserKeyService userKeyService;
-
-    private String userKey = "UserKey";
 
     @Before
     public void setUp() throws Exception {
@@ -60,19 +48,19 @@ public class ExportAllTimesheetsAsCSVServletTest {
 
         PowerMockito.mockStatic(ComponentAccessor.class);
 
-        loginUriProvider = mock(LoginUriProvider.class);
-        webSudoManager = Mockito.mock(WebSudoManager.class);
-        permissionService = Mockito.mock(PermissionService.class);
+        LoginUriProvider loginUriProvider = mock(LoginUriProvider.class);
+        WebSudoManager webSudoManager = Mockito.mock(WebSudoManager.class);
+        PermissionService permissionService = Mockito.mock(PermissionService.class);
         timesheetService = Mockito.mock(TimesheetService.class);
         user = Mockito.mock(ApplicationUser.class);
         request = Mockito.mock(HttpServletRequest.class);
         response = Mockito.mock(HttpServletResponse.class);
         timesheet = Mockito.mock(Timesheet.class);
-        outputStream = Mockito.mock(ServletOutputStream.class);
-        configService = Mockito.mock(ConfigService.class);
-        config = Mockito.mock(Config.class);
-        jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
-        userKeyService = Mockito.mock(UserKeyService.class);
+        ServletOutputStream outputStream = Mockito.mock(ServletOutputStream.class);
+        ConfigService configService = Mockito.mock(ConfigService.class);
+        Config config = Mockito.mock(Config.class);
+        JiraAuthenticationContext jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
+        UserKeyService userKeyService = Mockito.mock(UserKeyService.class);
 
         exportAllTimesheetsAsCSVServlet = new ExportAllTimesheetsAsCSVServlet(loginUriProvider, webSudoManager, timesheetService,
                 configService, permissionService);
@@ -80,6 +68,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         PowerMockito.mockStatic(ComponentAccessor.class);
 
         when(user.getUsername()).thenReturn("test");
+        String test_key = "test_key";
         when(user.getKey()).thenReturn(test_key);
         when(permissionService.checkIfUserExists()).thenReturn(user);
 
@@ -106,6 +95,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthenticationContext);
         PowerMockito.when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(user);
         PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyService);
+        String userKey = "UserKey";
         PowerMockito.when(userKeyService.getKeyForUsername(user.getUsername())).thenReturn(userKey);
 
     }

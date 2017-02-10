@@ -32,42 +32,33 @@ import static org.mockito.Mockito.*;
 @PrepareForTest(ComponentAccessor.class)
 public class ExportMTTimesheetAsCSVServletTest {
 
-    String test_key = "test_key";
     private ExportMasterThesisTimesheetAsCSVServlet exportMasterThesisTimesheetAsCSVServlet;
-    private LoginUriProvider loginUriProvider;
-    private PermissionService permissionService;
-    private WebSudoManager webSudoManager;
-    private ConfigService configService;
     private TimesheetService timesheetService;
     private Timesheet timesheet;
     private HttpServletResponse response;
     private HttpServletRequest request;
     private ApplicationUser user;
-    private ServletOutputStream outputStream;
-    private JiraAuthenticationContext jiraAuthenticationContext;
-    private Config config;
 
     @Before
     public void setUp() throws Exception {
 
         PowerMockito.mockStatic(ComponentAccessor.class);
 
-        loginUriProvider = mock(LoginUriProvider.class);
-        webSudoManager = mock(WebSudoManager.class);
-        permissionService = mock(PermissionService.class);
+        PermissionService permissionService = mock(PermissionService.class);
         timesheetService = mock(TimesheetService.class);
         user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         timesheet = mock(Timesheet.class);
-        outputStream = mock(ServletOutputStream.class);
-        jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
-        configService = Mockito.mock(ConfigService.class);
-        config = Mockito.mock(Config.class);
+        ServletOutputStream outputStream = mock(ServletOutputStream.class);
+        JiraAuthenticationContext jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
+        ConfigService configService = Mockito.mock(ConfigService.class);
+        Config config = Mockito.mock(Config.class);
 
         exportMasterThesisTimesheetAsCSVServlet = new ExportMasterThesisTimesheetAsCSVServlet(timesheetService);
 
         when(user.getUsername()).thenReturn("test");
+        String test_key = "test_key";
         when(user.getKey()).thenReturn(test_key);
 
         when(permissionService.checkIfUserExists()).thenReturn(user);

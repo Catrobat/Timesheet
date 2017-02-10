@@ -44,8 +44,6 @@ import static org.mockito.Mockito.*;
 public class PermissionServiceImplTest {
 
     private static Team catroid, html5, drone;
-    private static TimesheetAdmin timesheetAdmin;
-    private static TSAdminGroup timesheetAdminGroup;
     @Rule
     public org.mockito.junit.MockitoRule mockitoRule = MockitoJUnit.rule();
     private PermissionServiceImpl permissionService, permissionServiceException;
@@ -53,35 +51,27 @@ public class PermissionServiceImplTest {
     private ApplicationUser coord;
     private ApplicationUser owner;
     private ApplicationUser eve;
-    private ApplicationUser test;
     private ApplicationUser jiraAdmin;
-    private ApplicationUser tsAdmin;
     private Timesheet sheet;
     private TimesheetEntry timeSheetEntry;
-    private HttpServletRequest request;
     private Team team;
     private TimesheetService sheetService;
     private TimesheetEntryService entryService;
     private SimpleDateFormat sdf;
-    private ConfigService configService;
-    private GroupManager groupManager;
     private EntityManager entityManager;
-    private UserManager jiraUserManager;
-    private JiraAuthenticationContext jiraAuthenticationContext;
-    private TestActiveObjects ao;
     private static Config config;
 
     @Before
     public void setUp() throws Exception {
         PowerMockito.mockStatic(ComponentAccessor.class);
 
-        ao = new TestActiveObjects(entityManager);
+        TestActiveObjects ao = new TestActiveObjects(entityManager);
 
         teamService = mock(TeamService.class);
-        configService = mock(ConfigService.class);
-        groupManager = mock(GroupManager.class);
-        jiraUserManager = mock(UserManager.class);
-        jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
+        ConfigService configService = mock(ConfigService.class);
+        GroupManager groupManager = mock(GroupManager.class);
+        UserManager jiraUserManager = mock(UserManager.class);
+        JiraAuthenticationContext jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
 
         assertNotNull(entityManager);
 
@@ -95,16 +85,15 @@ public class PermissionServiceImplTest {
         coord = mock(ApplicationUser.class);
         owner = mock(ApplicationUser.class);
         eve = mock(ApplicationUser.class);
-        test = mock(ApplicationUser.class);
+        ApplicationUser test = mock(ApplicationUser.class);
         jiraAdmin = mock(ApplicationUser.class);
-        tsAdmin = mock(ApplicationUser.class);
+        ApplicationUser tsAdmin = mock(ApplicationUser.class);
 
         sheet = mock(Timesheet.class);
         sheetService = mock(TimesheetService.class);
         entryService = mock(TimesheetEntryService.class);
         timeSheetEntry = mock(TimesheetEntry.class);
         team = mock(Team.class);
-        request = mock(HttpServletRequest.class);
         permissionServiceException = mock(PermissionServiceImpl.class);
 
         //real world objects
@@ -360,13 +349,13 @@ public class PermissionServiceImplTest {
             drone.save();
 
             em.migrate(TimesheetAdmin.class);
-            timesheetAdmin = em.create(TimesheetAdmin.class);
+            TimesheetAdmin timesheetAdmin = em.create(TimesheetAdmin.class);
             timesheetAdmin.setConfiguration(config);
             timesheetAdmin.setUserKey("APPROVED_KEY");
             timesheetAdmin.setUserName("TimesheetAdmin");
 
             em.migrate(TSAdminGroup.class);
-            timesheetAdminGroup = em.create(TSAdminGroup.class);
+            TSAdminGroup timesheetAdminGroup = em.create(TSAdminGroup.class);
             timesheetAdminGroup.setConfiguration(config);
             timesheetAdminGroup.setGroupName("TSAdminGroup");
         }

@@ -33,49 +33,37 @@ import static org.mockito.Mockito.*;
 @Data(MySampleDatabaseUpdater.class)
 @PrepareForTest(ComponentAccessor.class)
 public class AdminServletTest {
-    String test_key = "test_key";
     private AdminServlet adminServlet;
-    private LoginUriProvider loginUriProviderMock;
-    private TemplateRenderer templateRendererMock;
-    private PermissionService permissionServiceMock;
-    private WebSudoManager webSudoManagerMock;
-    private ConfigService configService;
-    private CategoryService categoryService;
-    private TimesheetEntryService entryService;
-    private TeamService teamService;
-    private TimesheetService timesheetService;
-    private TestActiveObjects ao;
     private EntityManager entityManager;
     private HttpServletResponse response;
     private HttpServletRequest request;
-    private ApplicationUser userMock;
-    private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
-        ao = new TestActiveObjects(entityManager);
+        TestActiveObjects ao = new TestActiveObjects(entityManager);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
 
-        loginUriProviderMock = mock(LoginUriProvider.class, RETURNS_DEEP_STUBS);
-        templateRendererMock = mock(TemplateRenderer.class, RETURNS_DEEP_STUBS);
-        webSudoManagerMock = mock(WebSudoManager.class, RETURNS_DEEP_STUBS);
-        permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
-        userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
+        LoginUriProvider loginUriProviderMock = mock(LoginUriProvider.class, RETURNS_DEEP_STUBS);
+        TemplateRenderer templateRendererMock = mock(TemplateRenderer.class, RETURNS_DEEP_STUBS);
+        WebSudoManager webSudoManagerMock = mock(WebSudoManager.class, RETURNS_DEEP_STUBS);
+        PermissionService permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
+        ApplicationUser userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         request = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         response = mock(HttpServletResponse.class, RETURNS_DEEP_STUBS);
-        jiraAuthenticationContext = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
+        JiraAuthenticationContext jiraAuthenticationContext = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
 
-        categoryService = new CategoryServiceImpl(ao);
-        timesheetService = new TimesheetServiceImpl(ao);
-        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
-        teamService = new TeamServiceImpl(ao, entryService);
-        configService = new ConfigServiceImpl(ao, categoryService, teamService);
+        CategoryService categoryService = new CategoryServiceImpl(ao);
+        TimesheetService timesheetService = new TimesheetServiceImpl(ao);
+        TimesheetEntryService entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
+        TeamService teamService = new TeamServiceImpl(ao, entryService);
+        ConfigService configService = new ConfigServiceImpl(ao, categoryService, teamService);
 
         adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock, configService);
 
         when(userMock.getUsername()).thenReturn("test");
+        String test_key = "test_key";
         when(userMock.getKey()).thenReturn(test_key);
 
         when(permissionServiceMock.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);

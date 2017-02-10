@@ -18,22 +18,9 @@ import static org.mockito.Mockito.*;
 
 public class TimesheetServletTest {
 
-    final String userKey = "USER_001";
-    final int targetHoursPractice = 150;
-    final int targetHoursTheory = 0;
-    final int targeHours = 300;
-    final int targetHoursCompleted = 150;
-    final int targetHoursRemoved = 0;
-    final int ects = 10;
-    final String latestEntryDate = "Not Available";
-    final String lectures = "Mobile Applications (705.881)";
-    final String reason = "Agathe Bauer";
     private TimesheetServlet timesheetServlet;
-    private LoginUriProvider loginUriProvider;
-    private TemplateRenderer templateRenderer;
     private TimesheetService sheetService;
     private PermissionService permissionService;
-    private Timesheet timeSheet;
     private HttpServletResponse response;
     private HttpServletRequest request;
     private ApplicationUser admin;
@@ -42,12 +29,12 @@ public class TimesheetServletTest {
     public void setUp() throws Exception {
         new MockComponentWorker().init();
 
-        loginUriProvider = mock(LoginUriProvider.class);
-        templateRenderer = mock(TemplateRenderer.class);
+        LoginUriProvider loginUriProvider = mock(LoginUriProvider.class);
+        TemplateRenderer templateRenderer = mock(TemplateRenderer.class);
         sheetService = mock(TimesheetService.class);
         permissionService = mock(PermissionService.class);
 
-        timeSheet = mock(Timesheet.class);
+        Timesheet timeSheet = mock(Timesheet.class);
         sheetService = mock(TimesheetService.class);
 
         request = mock(HttpServletRequest.class);

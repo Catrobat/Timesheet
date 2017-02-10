@@ -41,21 +41,15 @@ import static org.mockito.Mockito.*;
 public class UserRestTest {
 
     private UserManager userManagerJiraMock;
-    private ConfigService configServiceMock;
     private UserRest spyUserRest;
     private HttpServletRequest httpRequestMock;
-    private UserRest userRest;
     private UserUtil userUtilMock;
     private ApplicationUser userMock;
     private EntityManager entityManager;
     private TestActiveObjects ao;
-    private JiraAuthenticationContext jiraAuthMock;
     private PermissionService permissionServiceMock;
-    private TimesheetService timesheetServiceMock;
-    private TimesheetEntryService timesheetEntryServiceMock;
 
     private UserSearchService userSearchService;
-    private GroupPickerSearchService groupPickerSearchService;
 
     @Before
     public void setUp() throws Exception {
@@ -64,17 +58,17 @@ public class UserRestTest {
 
         userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
-        configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
+        ConfigService configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         httpRequestMock = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
-        jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
+        JiraAuthenticationContext jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
-        timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
-        timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
+        TimesheetService timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
+        TimesheetEntryService timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
         userSearchService = mock(UserSearchService.class, RETURNS_DEEP_STUBS);
-        groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
+        GroupPickerSearchService groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
 
-        userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock,
+        UserRest userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock,
                 timesheetEntryServiceMock, userSearchService, groupPickerSearchService);
         spyUserRest = spy(userRest);
 

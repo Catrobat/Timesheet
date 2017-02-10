@@ -39,48 +39,39 @@ import static org.mockito.Mockito.*;
 public class SchedulingRestTest {
 
     private SchedulingRest schedulingRestMock;
-    private UserManager userManagerJiraMock;
     private ConfigService configServiceMock;
     private PermissionService permissionServiceMock;
-    private TimesheetEntryService timesheetEntryServiceMock;
     private TimesheetService timesheetServiceMock;
-    private TeamService teamServiceMock;
-    private UserUtil userUtilMock;
-    private MailQueue mailQueueMock;
     private HttpServletRequest httpRequest;
-    private TestActiveObjects ao;
     private EntityManager entityManager;
     private CategoryServiceImpl categoryService;
-    private ConfigServiceImpl configService;
     private TeamServiceImpl teamService;
     private TimesheetEntryServiceImpl timesheetEntryService;
     private TimesheetServiceImpl timesheetService;
     private SchedulingRest schedulingRest;
-    private TimesheetScheduler timesheetScheduler;
-    private SchedulingService schedulingService;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
-        ao = new TestActiveObjects(entityManager);
+        TestActiveObjects ao = new TestActiveObjects(entityManager);
 
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
-        timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
+        TimesheetEntryService timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
         timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
-        teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
-        userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
-        userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
-        mailQueueMock = mock(MailQueue.class, RETURNS_DEEP_STUBS);
+        TeamService teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
+        UserManager userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
+        UserUtil userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
+        MailQueue mailQueueMock = mock(MailQueue.class, RETURNS_DEEP_STUBS);
         httpRequest = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
-        timesheetScheduler = mock(TimesheetScheduler.class, RETURNS_DEEP_STUBS);
-        schedulingService = mock(SchedulingService.class, RETURNS_DEEP_STUBS);
+        TimesheetScheduler timesheetScheduler = mock(TimesheetScheduler.class, RETURNS_DEEP_STUBS);
+        SchedulingService schedulingService = mock(SchedulingService.class, RETURNS_DEEP_STUBS);
 
         categoryService = new CategoryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         teamService = new TeamServiceImpl(ao, timesheetEntryService);
-        configService = new ConfigServiceImpl(ao, categoryService, teamService);
+        ConfigServiceImpl configService = new ConfigServiceImpl(ao, categoryService, teamService);
 
         // For some tests we need a mock...
         schedulingRestMock = new SchedulingRest(configServiceMock, permissionServiceMock, timesheetEntryServiceMock,

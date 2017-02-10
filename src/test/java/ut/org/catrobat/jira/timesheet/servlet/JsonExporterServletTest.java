@@ -45,36 +45,32 @@ public class JsonExporterServletTest {
     private WebSudoManager webSudoManager;
 
     private ConfigService configService;
-    private Config config;
 
     private PermissionService permissionService;
     private TimesheetService timesheetService;
     private TimesheetEntryService entryService;
 
-    private ApplicationUser user;
-
     private HttpServletRequest request;
     private HttpServletResponse response;
 
     private EntityManager entityManager;
-    private ActiveObjects ao;
 
     @Before
     public void setup() throws IOException, PermissionException{
         assertNotNull(entityManager);
-        ao = new TestActiveObjects(entityManager);
+        ActiveObjects ao = new TestActiveObjects(entityManager);
 
         loginUriProvider = mock(LoginUriProvider.class);
         webSudoManager = mock(WebSudoManager.class);
 
         configService = mock(ConfigService.class);
-        config = mock(Config.class);
+        Config config = mock(Config.class);
 
         permissionService = mock(PermissionService.class);
         timesheetService = new TimesheetServiceImpl(ao);
         entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
 
-        user = mock(ApplicationUser.class);
+        ApplicationUser user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
 
@@ -105,7 +101,12 @@ public class JsonExporterServletTest {
     }
 
     class TestServletOutputStream extends ServletOutputStream {
-        public ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos;
+
+        TestServletOutputStream() {
+            baos = new ByteArrayOutputStream();
+        }
+
         public void write(int i) throws IOException {
             baos.write(i);
         }

@@ -45,7 +45,6 @@ import static org.junit.Assert.*;
 public class TimesheetEntryServiceImplTest {
 
     private EntityManager entityManager;
-    private TimesheetService timesheetService;
     private TimesheetEntryService service;
     private ActiveObjects ao;
 
@@ -55,7 +54,7 @@ public class TimesheetEntryServiceImplTest {
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        timesheetService = new TimesheetServiceImpl(ao);
+        TimesheetService timesheetService = new TimesheetServiceImpl(ao);
         service = new TimesheetEntryServiceImpl(ao, timesheetService);
     }
 

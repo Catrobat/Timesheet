@@ -21,6 +21,7 @@ import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.*;
+import org.catrobat.jira.timesheet.utility.RestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,14 +48,9 @@ import static org.mockito.Mockito.*;
 public class TimesheetRestTest {
 
     private UserManager userManagerJiraMock;
-    private UserKeyService userKeyServiceMock;
     private GroupManager groupManagerJiraMock;
 
-    private CategoryService categoryService;
-    private ConfigService configService;
-    private TimesheetService timesheetService;
     private TimesheetEntryService timesheetEntryService;
-    private TeamService teamService;
 
     private TimesheetService timesheetServiceMock;
     private TeamService teamServiceMock;
@@ -63,7 +59,6 @@ public class TimesheetRestTest {
     private PermissionService permissionServiceMock;
     private ConfigService configServiceMock;
 
-    private UserUtil userUtilMock;
     private Timesheet timesheetMock;
     private Category categoryMock;
     private Team teamMock;
@@ -79,9 +74,6 @@ public class TimesheetRestTest {
     private TestActiveObjects ao;
     private EntityManager entityManager;
     private ApplicationUser userMock;
-    private JiraAuthenticationContext jiraAuthMock;
-
-    private TimesheetPermissionCondition permissionConditionMock;
 
     @Before
     public void setUp() throws Exception {
@@ -90,8 +82,8 @@ public class TimesheetRestTest {
 
         userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         groupManagerJiraMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
-        userKeyServiceMock = mock(UserKeyService.class, RETURNS_DEEP_STUBS);
-        userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
+        UserKeyService userKeyServiceMock = mock(UserKeyService.class, RETURNS_DEEP_STUBS);
+        UserUtil userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         categoryServiceMock = mock(CategoryService.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
@@ -104,13 +96,13 @@ public class TimesheetRestTest {
         categoryMock = mock(Category.class, RETURNS_DEEP_STUBS);
         teamMock = mock(Team.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
-        jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
-        permissionConditionMock = mock(TimesheetPermissionCondition.class, RETURNS_DEEP_STUBS);
+        JiraAuthenticationContext jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
+        TimesheetPermissionCondition permissionConditionMock = mock(TimesheetPermissionCondition.class, RETURNS_DEEP_STUBS);
 
-        categoryService = new CategoryServiceImpl(ao);
-        timesheetService = new TimesheetServiceImpl(ao);
-        teamService = new TeamServiceImpl(ao, timesheetEntryService);
-        configService = new ConfigServiceImpl(ao, categoryService, teamService);
+        CategoryService categoryService = new CategoryServiceImpl(ao);
+        TimesheetService timesheetService = new TimesheetServiceImpl(ao);
+        TeamService teamService = new TeamServiceImpl(ao, timesheetEntryService);
+        ConfigService configService = new ConfigServiceImpl(ao, categoryService, teamService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao, timesheetService);
 
         timesheetRest = new TimesheetRest(timesheetEntryService, timesheetService, categoryService, teamService,
@@ -189,14 +181,11 @@ public class TimesheetRestTest {
         when(team2.getTeamName()).thenReturn("IRC");
         when(team2.getCategories()).thenReturn(new Category[0]);
 
-        Set<Team> teams = new HashSet<Team>();
+        Set<Team> teams = new HashSet<>();
         teams.add(team1);
         teams.add(team2);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
-        ApplicationUser user2 = mock(ApplicationUser.class);
-
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);
@@ -223,26 +212,26 @@ public class TimesheetRestTest {
         String username = "testUser";
         String userKey = "USER_KEY_1";
 
-        List<JsonTeam> expectedTeams = new LinkedList<JsonTeam>();
-        Set<Team> teams = new HashSet<Team>();
+        List<JsonTeam> expectedTeams = new LinkedList<>();
+        Set<Team> teams = new HashSet<>();
 
         when(teamServiceMock.getTeamsOfUser(username)).thenReturn(teams);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
-        ApplicationUser user2 = mock(ApplicationUser.class);
-
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByName(username).getKey()).thenReturn(userKey);
+        when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
+        when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
+        when(teamServiceMock.getTeamsOfUser(userMock.getName())).thenReturn(teams);
 
-//        response = timesheetRestMock.getTeamsForUser(requestMock);
+        response = timesheetRestMock.getTeamsForTimesheetID(requestMock, timesheetID);
 
-//        List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
-//        assertEquals(responseTeamList, expectedTeams);
+        List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
+        assertEquals(responseTeamList, expectedTeams);
     }
 
     @Test
@@ -252,8 +241,8 @@ public class TimesheetRestTest {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
 
         //execution & verifying
-//        response = timesheetRestMock.getTeamsForUser(requestMock);
-//        assertEquals(response.getEntity(), "User does not exist.");
+        response = timesheetRestMock.getTeamsForTimesheetID(requestMock, timesheetID);
+        assertEquals(response.getEntity(), "You are not allowed to see the timesheet.");
     }
 
     @Test
@@ -271,7 +260,7 @@ public class TimesheetRestTest {
         when(team2.getTeamName()).thenReturn("IRC");
         when(team2.getCategories()).thenReturn(new Category[0]);
 
-        Set<Team> teams = new HashSet<Team>();
+        Set<Team> teams = new HashSet<>();
         teams.add(team1);
         teams.add(team2);
 
@@ -293,15 +282,12 @@ public class TimesheetRestTest {
         String username = "testUser";
         String userKey = "USER_KEY_1";
 
-        List<JsonTeam> expectedTeams = new LinkedList<JsonTeam>();
-        Set<Team> teams = new HashSet<Team>();
+        List<JsonTeam> expectedTeams = new LinkedList<>();
+        Set<Team> teams = new HashSet<>();
 
         when(teamServiceMock.getTeamsOfUser(username)).thenReturn(teams);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
-        ApplicationUser user2 = mock(ApplicationUser.class);
-
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
@@ -348,14 +334,11 @@ public class TimesheetRestTest {
         when(team2.getTeamName()).thenReturn("IRC");
         when(team2.getCategories()).thenReturn(new Category[0]);
 
-        Set<Team> teams = new HashSet<Team>();
+        Set<Team> teams = new HashSet<>();
         teams.add(team1);
         teams.add(team2);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
-        ApplicationUser user2 = mock(ApplicationUser.class);
-
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
@@ -366,7 +349,7 @@ public class TimesheetRestTest {
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
-        List<String> developerList = new LinkedList<String>();
+        List<String> developerList = new LinkedList<>();
         developerList.add(username);
         developerList.add("asdf");
         developerList.add("jklö");
@@ -383,12 +366,14 @@ public class TimesheetRestTest {
 
         when(timesheetServiceMock.getTimesheetByUser(userKey, false)).thenReturn(timesheetMock);
         when(timesheetEntryServiceMock.getEntriesBySheet(timesheetMock)).thenReturn(timesheetEntries);
+        when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
+        when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
 
         //execution & verifying
         response = timesheetRestMock.getTimesheetEntriesOfAllTeamMembers(requestMock, timesheetID);
 
-//        List<JsonTimesheetEntry> responseTimesheetEntries = (List<JsonTimesheetEntry>) response.getEntity();
-//        assertNotNull(responseTimesheetEntries);
+        List<JsonTimesheetEntry> responseTimesheetEntries = (List<JsonTimesheetEntry>) response.getEntity();
+        assertNotNull(responseTimesheetEntries);
     }
 
     @Test
@@ -410,14 +395,11 @@ public class TimesheetRestTest {
         when(team2.getTeamName()).thenReturn("IRC");
         when(team2.getCategories()).thenReturn(new Category[0]);
 
-        Set<Team> teams = new HashSet<Team>();
+        Set<Team> teams = new HashSet<>();
         teams.add(team1);
         teams.add(team2);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
-        ApplicationUser user2 = mock(ApplicationUser.class);
-
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1, user2));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(username);
@@ -428,20 +410,22 @@ public class TimesheetRestTest {
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
-        List<String> developerList = new LinkedList<String>();
+        List<String> developerList = new LinkedList<>();
         developerList.add("asdf");
         developerList.add("jklö");
 
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
         when(configServiceMock.getGroupsForRole(team1.getTeamName(), TeamToGroup.Role.DEVELOPER)).thenReturn(developerList);
+        when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
+        when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
 
         //execution & verifying
         response = timesheetRestMock.getTimesheetEntriesOfAllTeamMembers(requestMock, timesheetID);
 
-        List<JsonTimesheetEntry> expectedList = new LinkedList<JsonTimesheetEntry>();
-//        List<JsonTimesheetEntry> responseTimesheetEntries = (List<JsonTimesheetEntry>) response.getEntity();
-//        assertEquals(responseTimesheetEntries, expectedList);
+        List<JsonTimesheetEntry> expectedList = new LinkedList<>();
+        List<JsonTimesheetEntry> responseTimesheetEntries = (List<JsonTimesheetEntry>) response.getEntity();
+        assertEquals(responseTimesheetEntries, expectedList);
     }
 
     @Test
@@ -471,7 +455,7 @@ public class TimesheetRestTest {
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
-        List<String> developerList = new LinkedList<String>();
+        List<String> developerList = new LinkedList<>();
         developerList.add(userName);
         Date today = new Date();
 
@@ -522,7 +506,6 @@ public class TimesheetRestTest {
     public void testGetOwnerOfTimesheetOk() throws Exception {
         //preparations
         int timesheetID = 1;
-        String userName = "test";
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
 
@@ -537,7 +520,6 @@ public class TimesheetRestTest {
     public void testGetOwnerOfTimesheetAccessDenied() throws Exception {
         //preparations
         int timesheetID = 1;
-        String userName = "test";
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
         when(permissionServiceMock.userCanViewTimesheet(Matchers.any(), Matchers.any())).thenReturn(false);
@@ -632,12 +614,11 @@ public class TimesheetRestTest {
         String userName = "test";
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
-        List<Timesheet> timesheets = new LinkedList<Timesheet>();
+        List<Timesheet> timesheets = new LinkedList<>();
         timesheets.add(timesheetMock);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         when(user1.getName()).thenReturn(userName);
-        Set<ApplicationUser> usersSet = new HashSet<>(Arrays.asList(user1));
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);
@@ -654,7 +635,6 @@ public class TimesheetRestTest {
     }
 
     //TODO: mock the missing stuff - one of the biggest tests
-
     @Test
     public void testPostTimesheetEntryOk() throws Exception {
         int timesheetID = 1;
@@ -693,19 +673,6 @@ public class TimesheetRestTest {
         Timesheet sheet = createTimesheetMock();
         JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
 
-        Date begin = new Date();
-        Date end = new Date(begin.getTime());
-        String desc = "Debugged this thingy...";
-        int pause = 0;
-        boolean isGoogleDocImport = false;
-        String jiraTicketID = "CAT-1530";
-        String pairProgrammingUserName = "TestUser";
-        Date today = new Date();
-
-        //Act
-        TimesheetEntry newEntry = timesheetEntryServiceMock.add(timesheetMock, begin, end, categoryMock, desc, pause, teamMock, isGoogleDocImport,
-                today, today, jiraTicketID, pairProgrammingUserName);
-
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
         when(timesheetMock.getUserKey()).thenReturn(userKey);
@@ -715,7 +682,7 @@ public class TimesheetRestTest {
 
 
         response = timesheetRest.postTimesheetHours(requestMock, jsonTimesheet, timesheetID, isMTSheet);
-        //assertNotNull(response.getEntity());
+        assertNotNull(response.getEntity());
     }
 
     @Test
