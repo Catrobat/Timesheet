@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.catrobat.jira</groupId>
     <artifactId>timesheet</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
 
     <organization>
         <name>Catrobat</name>
@@ -73,8 +73,8 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.0</version>
+            <scope>compile</scope>
         </dependency>
-
 
         <!-- add active object dependency -->
         <dependency>
@@ -173,12 +173,6 @@
         </dependency>
         <!-- end of powermock test dep-->
 
-        <dependency>
-            <groupId>com.atlassian.activeobjects</groupId>
-            <artifactId>activeobjects-test</artifactId>
-            <version>1.1.5</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-tests</artifactId>
