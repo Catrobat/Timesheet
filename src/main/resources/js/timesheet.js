@@ -27,14 +27,18 @@ AJS.toInit(function () {
     AJS.$("#table-header").hide();
     checkConstrains();
 
+    if (isCoordinator) {
+        AJS.$("#coord_private_table").show();
+    } else {
+        AJS.$("#coord_private_table").hide();
+    }
+
     if (isCoordinator || isSupervisor || isAdmin) {
         fetchUsers();
         AJS.$("#coord_private").show();
-        AJS.$("#coord_private_table").show();
         AJS.$("#timesheet-owner").show();
     } else {
         AJS.$("#coord_private").hide();
-        AJS.$("#coord_private_table").hide();
         AJS.$("#timesheet-owner").hide();
     }
 
