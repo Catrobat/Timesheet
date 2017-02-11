@@ -203,6 +203,10 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
                     && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
                 return entry;
             }
+            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE_OFFLINE)
+                    && (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
+                return entry;
+            }
         }
         return null;
     }

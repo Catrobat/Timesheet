@@ -148,9 +148,14 @@ public class UserRest {
                 jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
                 jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
                 jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-                if (timesheet.getState() == Timesheet.State.INACTIVE && timesheetEntryService.getLatestInactiveEntry(timesheet) != null) {
-                    System.out.println(timesheet);
+
+                TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
+                if (latestInactiveEntry != null && timesheet.getState() == Timesheet.State.INACTIVE) {
                     Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
+                    jsonUserInformation.setInactiveEndDate(inactiveEndDate);
+                }
+                if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
+                    Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getDeactivateEndDate();
                     jsonUserInformation.setInactiveEndDate(inactiveEndDate);
                 }
                 jsonUserInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());
