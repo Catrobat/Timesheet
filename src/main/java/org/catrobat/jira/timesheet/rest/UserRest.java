@@ -150,12 +150,9 @@ public class UserRest {
                 jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
 
                 TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
-                if (latestInactiveEntry != null && timesheet.getState() == Timesheet.State.INACTIVE) {
+                if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
+                        || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
                     Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
-                    jsonUserInformation.setInactiveEndDate(inactiveEndDate);
-                }
-                if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
-                    Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getDeactivateEndDate();
                     jsonUserInformation.setInactiveEndDate(inactiveEndDate);
                 }
                 jsonUserInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());

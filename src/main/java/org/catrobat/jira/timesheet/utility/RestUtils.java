@@ -68,11 +68,9 @@ public class RestUtils {
         if (entry.getInactiveEndDate().compareTo(twoMonthsAhead) > 0) {
             throw new ParseException("The 'Inactive End Date' is more than 2 months ahead. This is too far away.");
         } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
-                (!categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive"))) {
+                !(categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive") ||
+                        categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive & Offline") )) {
             throw new ParseException("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.");
-        } else if (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) < 0) {
-            throw new ParseException("The 'Inactive & Offline End Date' is before your 'Entry Date'. That is not possible. The begin date is " + entry.getBeginDate() +
-                    " but your inactive end date is " + entry.getDeactivateEndDate());
         }
     }
 }

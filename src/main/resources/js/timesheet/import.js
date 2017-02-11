@@ -123,7 +123,6 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         ticketID: "",
         partner: "",
         inactiveEndDate: new Date(pieces[0] + " " + pieces[1]),
-        deactivateEndDate: new Date(),
         isTheory: isTheory
     };
 }

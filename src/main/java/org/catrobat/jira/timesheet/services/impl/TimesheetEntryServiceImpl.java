@@ -28,6 +28,7 @@ import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
+import javax.servlet.ServletException;
 import java.util.Date;
 
 public class TimesheetEntryServiceImpl implements TimesheetEntryService {
@@ -42,7 +43,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     @Override
     public TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
-            Team team, boolean isGoogleDocImport, Date inactiveEndDate, Date deactivateEndDate, String jiraTicketID,
+            Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
             String userName) throws ServiceException{
         if (team == null) {
             throw new ServiceException("TimesheetEntry is not allowed with null Team.");
@@ -62,7 +63,6 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         entry.setTeam(team);
         entry.setIsGoogleDocImport(isGoogleDocImport);
         entry.setInactiveEndDate(inactiveEndDate);
-        entry.setDeactivateEndDate(deactivateEndDate);
         entry.setJiraTicketID(jiraTicketID);
         entry.setPairProgrammingUserName(userName);
 
@@ -73,16 +73,20 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         return entry;
     }
 
-    private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) {
+    private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) throws ServiceException{
         int completedHours = getHoursOfTimesheet(sheet);
         int completedPracticeHours = getPracticeHoursOfTimesheet(sheet);
         Date latestEntryDate = getLatestEntry(sheet).getBeginDate();
 
         Timesheet.State state = sheet.getState();
         if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-            state = Timesheet.State.INACTIVE;
-        } else if ((entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
-            state = Timesheet.State.INACTIVE_OFFLINE;
+            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE)) {
+                state = Timesheet.State.INACTIVE;
+            } else if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE_OFFLINE)) {
+                state = Timesheet.State.INACTIVE_OFFLINE;
+            } else {
+                throw new ServiceException("Inactive Date set, without selecting an Inactive Category.");
+            }
         }
 
         timesheetService.updateTimesheet(sheet.getID(), completedHours, completedPracticeHours, latestEntryDate, state);
@@ -122,7 +126,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Nullable
     public TimesheetEntry edit(int entryId, Timesheet sheet, Date begin, Date end, Category category,
             String description, int pause, Team team, boolean isGoogleDocImport,
-            Date inactiveEndDate, Date deactivatedEndDate, String userName, String jiraTicketID) throws ServiceException {
+            Date inactiveEndDate, String userName, String jiraTicketID) throws ServiceException {
 
         TimesheetEntry entry = getEntryByID(entryId);
 
@@ -145,7 +149,6 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         entry.setTeam(team);
         entry.setIsGoogleDocImport(isGoogleDocImport);
         entry.setInactiveEndDate(inactiveEndDate);
-        entry.setDeactivateEndDate(deactivatedEndDate);
         entry.setJiraTicketID(jiraTicketID);
         entry.setPairProgrammingUserName(userName);
 
@@ -199,12 +202,9 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     public TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {
         TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
         for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE)
+            String categoryName = entry.getCategory().getName();
+            if ((categoryName.equals(SpecialCategories.INACTIVE) || categoryName.equals(SpecialCategories.INACTIVE_OFFLINE))
                     && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                return entry;
-            }
-            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE_OFFLINE)
-                    && (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
                 return entry;
             }
         }

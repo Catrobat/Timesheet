@@ -11,7 +11,6 @@
     {/if}
     <span class="th category">Category</span>
     <span class="th inactive" style="display:none">Inactive Until</span>
-    <span class="th deactivate" style="display:none">Inactive & Offline Until</span>
     <span class="th start">Start</span>
     <span class="th end">End</span>
     <span class="th pause">Pause</span>
@@ -37,7 +36,6 @@
     <span class="td category">{$entry.category}</span>
 
     <span class="td inactive" style="display:none">{$entry.inactiveEndDate}</span>
-    <span class="td deactivate" style="display:none">{$entry.deactivateEndDate}</span>
 
     <span class="td start">{$entry.begin}</span>
     <span class="td end">{$entry.end}</span>
@@ -86,9 +84,6 @@
     </span>
     <span class="td inactive" style="display:none">
           <input class="inactive_ aui-date-picker text" type="date" value="{$entry.inactiveEndDate}">
-    </span>
-    <span class="td deactivate" style="display:none">
-          <input class="deactivate_ aui-date-picker text" type="date" value="{$entry.deactivateEndDate}">
     </span>
     <span class="td time-picker start">
       <input class="time start text" type="text" value="{$entry.begin}">

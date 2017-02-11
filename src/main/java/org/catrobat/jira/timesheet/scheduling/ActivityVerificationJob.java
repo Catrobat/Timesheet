@@ -44,14 +44,8 @@ public class ActivityVerificationJob implements PluginJob {
 
             Date latestEntryDate = timesheet.getLatestEntryBeginDate();
             TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
-            TimesheetEntry latestDeactivatedEntry = getLatestDeactivatedEntry(timesheet);
-            if (latestDeactivatedEntry != null && latestDeactivatedEntry.getDeactivateEndDate().compareTo(today) > 0) {
-                timesheet.setState(Timesheet.State.INACTIVE_OFFLINE);
-                timesheet.save();
-                statusFlagMessage = "user has set himself to inactive & offline";
-            }
-            else if (latestInactiveEntry != null && latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) {
-                timesheet.setState(Timesheet.State.INACTIVE);
+            if (latestInactiveEntry != null && latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) {
+                timesheet.setState(Timesheet.State.INACTIVE); // FIXME: should already be set
                 timesheet.save();
                 statusFlagMessage = "user has set himself to inactive";
             }
@@ -78,7 +72,6 @@ public class ActivityVerificationJob implements PluginJob {
                             0,
                             team,
                             false,
-                            end,
                             end,
                             "",
                             ""
@@ -115,17 +108,6 @@ public class ActivityVerificationJob implements PluginJob {
             }
             printStatusFlags(timesheet, statusFlagMessage);
         }
-    }
-
-    private TimesheetEntry getLatestDeactivatedEntry(Timesheet timesheet) {
-        TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
-        for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE_OFFLINE)
-                    && (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                return entry;
-            }
-        }
-        return null;
     }
 
     private TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {

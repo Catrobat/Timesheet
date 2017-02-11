@@ -149,7 +149,6 @@ public class TimesheetRestTest {
         when(entry.getBeginDate()).thenReturn(new Date());
         when(entry.getEndDate()).thenReturn(new Date());
         when(entry.getInactiveEndDate()).thenReturn(new Date());
-        when(entry.getDeactivateEndDate()).thenReturn(new Date());
         when(entry.getPauseMinutes()).thenReturn(0);
         when(entry.getDescription()).thenReturn("Description");
         when(entry.getTeam()).thenReturn(team);
@@ -361,7 +360,7 @@ public class TimesheetRestTest {
         Date today = new Date();
 
         TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
-                "Test Entry", 0, team1, false, today, today, "CAT-1530", "Partner");
+                "Test Entry", 0, team1, false, today, "CAT-1530", "Partner");
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
         when(timesheetServiceMock.getTimesheetByUser(userKey, false)).thenReturn(timesheetMock);
@@ -460,7 +459,7 @@ public class TimesheetRestTest {
         Date today = new Date();
 
         TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
-                "Test Entry", 0, team1, false, today, today, "CAT-1530", "Partner");
+                "Test Entry", 0, team1, false, today, "CAT-1530", "Partner");
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
         Config config = mock(Config.class);
@@ -710,7 +709,7 @@ public class TimesheetRestTest {
 
         Date today = new Date();
         TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
-                "Test Entry", 0, teamMock, false, today, today, "CAT-1530", "Partner");
+                "Test Entry", 0, teamMock, false, today, "CAT-1530", "Partner");
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
 

@@ -53,8 +53,7 @@
 }
 
 #timesheet-table .date,
-#timesheet-table .inactive,
-#timesheet-table .deactivate {
+#timesheet-table .inactive {
     min-width: 87px;
     width: 100px;
 }

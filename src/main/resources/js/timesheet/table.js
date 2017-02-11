@@ -125,7 +125,6 @@ function populateTable(timesheetDataReply) {
         begin: hours + ":" + minutes,
         end: (parseInt(hours) + 1) + ":" + minutes,
         inactiveEndDate: "",
-        deactivateEndDate: "",
         pause: "00:00",
         description: "",
         duration: "",
@@ -265,7 +264,6 @@ function prepareForm(entry, timesheetData, isModified) {
         saveButton: row.find('button.save'),
         dateField: row.find('input.date'),
         inactiveEndDateField: row.find('input.inactive_'),
-        deactivateEndDateField: row.find('input.deactivate_'),
         beginTimeField: row.find('input.time.start'),
         endTimeField: row.find('input.time.end'),
         pauseTimeField: row.find('input.time.pause'),
@@ -288,23 +286,6 @@ function prepareForm(entry, timesheetData, isModified) {
         .datePicker(
             {overrideBrowserDefault: true, languageCode: 'en'}
         );
-
-    form.deactivateEndDateField
-        .datePicker(
-            {overrideBrowserDefault: true, languageCode: 'en'}
-        );
-
-    form.inactiveEndDateField.change(function () {
-        var index = getIDFromCategoryName("inactive", timesheetData);
-        form.categorySelect.auiSelect2("val", index);
-        form.categorySelect.trigger("change");
-    });
-
-    form.deactivateEndDateField.change(function () {
-        var index = getIDFromCategoryName("inactive & offline", timesheetData);
-        form.categorySelect.auiSelect2("val", index);
-        form.categorySelect.trigger("change");
-    });
 
     form.categorySelect.change(function () {
         form.saveButton.prop('disabled', false);
@@ -335,31 +316,17 @@ function prepareForm(entry, timesheetData, isModified) {
             AJS.$(".end").fadeOut(2000);
             AJS.$(".start").fadeOut(2000);
 
-            if (categoryIndex == indexOfInactive) {
-                var date = form.inactiveEndDateField.val();
-                checkIfDateIsInRange(date, form);
-                form.descriptionField.attr("placeholder", "Reason for your inactivity");
-                form.deactivateEndDateField.val("");
-                AJS.$(".inactive").fadeIn(2000);
-                AJS.$(".deactivate").fadeOut(2000);
-            }
-            else {
-                var date = form.deactivateEndDateField.val();
-                checkIfDateIsInRange(date, form);
-                form.descriptionField.attr("placeholder", "Reason(s) for your deactivation");
-                form.inactiveEndDateField.val("");
-                AJS.$(".deactivate").fadeIn(2000);
-                AJS.$(".inactive").fadeOut(2000);
-            }
+            var date = form.inactiveEndDateField.val();
+            checkIfDateIsInRange(date, form);
+            form.descriptionField.attr("placeholder", "Reason for your inactivity");
+            AJS.$(".inactive").fadeIn(2000);
         }
         else {
             form.descriptionField.attr("placeholder", "a short task description");
 
             form.inactiveEndDateField.val(""); // clear inactive field input
-            form.deactivateEndDateField.val(""); // clear deactivated field input
 
             AJS.$(".inactive").fadeOut(2000);
-            AJS.$(".deactivate").fadeOut(2000);
 
             form.pauseTimeField.show();
             form.durationField.show();
@@ -480,7 +447,6 @@ function checkIfDateIsInRange(date, form) {
             body: 'The date is more than 2 months in advance. This is not allowed.'
         });
         form.inactiveEndDateField.val("");
-        form.deactivateEndDateField.val("");
     }
 
     if (compareTime(date, today) == -1) {
@@ -490,7 +456,6 @@ function checkIfDateIsInRange(date, form) {
             body: 'The date is behind or equal the current date.'
         });
         form.inactiveEndDateField.val("");
-        form.deactivateEndDateField.val("");
     }
 }
 
@@ -701,7 +666,6 @@ function augmentEntry(timesheetData, entry) {
         categoryID: entry.categoryID,
         isGoogleDocImport: entry.isGoogleDocImport,
         inactiveEndDate: toDateString(new Date(entry.inactiveEndDate)),
-        deactivateEndDate: toDateString(new Date(entry.deactivateEndDate)),
         ticketID: entry.ticketID,
         partner: entry.partner
     };
@@ -765,23 +729,12 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     var inactiveEndDate = form.inactiveEndDateField.val();
     var validInactiveDateFormat = new Date(inactiveEndDate);
 
-    var deactivateEndDate = form.deactivateEndDateField.val();
-    var validDeactivateDateFormat = new Date(deactivateEndDate);
-
     if ((inactiveEndDate == "") || (!isValidDate(validInactiveDateFormat))) {
         inactiveEndDate = beginDate;
     }
     else {
         inactiveEndDate = inactiveEndDate.replace(/-/g, "/");
         inactiveEndDate = new Date(inactiveEndDate + " " + toTimeString(beginTime));
-    }
-
-    if ((deactivateEndDate == "") || (!isValidDate(validDeactivateDateFormat))) {
-        deactivateEndDate = beginDate;
-    }
-    else {
-        deactivateEndDate = deactivateEndDate.replace(/-/g, "/");
-        deactivateEndDate = new Date(deactivateEndDate + " " + toTimeString(beginTime));
     }
 
     if (categoryIndex == getIDFromCategoryName("inactive", timesheetData) && form.inactiveEndDateField.val() == "") {
@@ -795,11 +748,11 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         return;
     }
 
-    if (categoryIndex == getIDFromCategoryName("inactive & offline", timesheetData) && form.deactivateEndDateField.val() == "") {
+    if (categoryIndex == getIDFromCategoryName("inactive & offline", timesheetData) && form.inactiveEndDateField.val() == "") {
 
         require('aui/flag')({
             type: 'info',
-            title: 'Attention: No deactivate end date ',
+            title: 'Attention: No inactive end date ',
             body: 'You may have forgotten to set the end date.',
             close: 'auto'
         });
@@ -841,7 +794,6 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         beginDate: beginDate,
         endDate: endDate,
         inactiveEndDate: inactiveEndDate,
-        deactivateEndDate: deactivateEndDate,
         description: form.descriptionField.val(),
         pauseMinutes: pauseMin,
         teamID: form.teamSelect.val(),

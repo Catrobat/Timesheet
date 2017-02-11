@@ -75,7 +75,7 @@ public class TimesheetEntryServiceImplTest {
         
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         TimesheetEntry[] entries = ao.find(TimesheetEntry.class);
 
@@ -107,7 +107,7 @@ public class TimesheetEntryServiceImplTest {
         
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         TimesheetEntry[] entries = service.getEntriesBySheet(sheet);
 
@@ -140,13 +140,13 @@ public class TimesheetEntryServiceImplTest {
 
         //Act
         TimesheetEntry newEntry = service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport,
-                TODAY, TODAY, jiraTicketID, pairProgrammingUserName);
+                TODAY, jiraTicketID, pairProgrammingUserName);
 
         String newDesc = "Changed Entry Content";
         int newPause = 30;
 
         TimesheetEntry changedEntry = service.edit(newEntry.getID(), sheet, begin, end, category,
-                newDesc, newPause, team, isGoogleDocImport, TODAY, TODAY,
+                newDesc, newPause, team, isGoogleDocImport, TODAY,
                 pairProgrammingUserName, jiraTicketID);
 
         //Assert
@@ -171,7 +171,7 @@ public class TimesheetEntryServiceImplTest {
         
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         TimesheetEntry[] entriesBeforeDelete = ao.find(TimesheetEntry.class);
 
@@ -198,7 +198,7 @@ public class TimesheetEntryServiceImplTest {
         
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         Assert.assertNotNull(service.getEntriesBySheet(sheet));
 
@@ -238,7 +238,7 @@ public class TimesheetEntryServiceImplTest {
         String pairProgrammingUserName = "TestUser";
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, TODAY, jiraTicketID,
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName);
         TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
         TimesheetEntry receivedEntry = service.getEntryByID(sheet.getID());

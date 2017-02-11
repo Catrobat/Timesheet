@@ -464,7 +464,7 @@ public class TimesheetRest {
         try {
             newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
                     entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
-                    entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
+                    entry.getInactiveEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
@@ -531,7 +531,7 @@ public class TimesheetRest {
             try {
                 newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
                         entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
-                        entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
+                        entry.getInactiveEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
             }
@@ -675,7 +675,7 @@ public class TimesheetRest {
         try {
             entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
                     jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.IsGoogleDocImport(),
-                    jsonEntry.getInactiveEndDate(), jsonEntry.getDeactivateEndDate(), jsonEntry.getPairProgrammingUserName(), jsonEntry.getTicketID());
+                    jsonEntry.getInactiveEndDate(), jsonEntry.getPairProgrammingUserName(), jsonEntry.getTicketID());
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
@@ -750,10 +750,7 @@ public class TimesheetRest {
 
         Timesheet.State state = sheet.getState();
 
-        // FIXME: Set Back to Active if it was INACTIVE OR OFFLINE
         if (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) {
-            state = Timesheet.State.ACTIVE;
-        } else if (entry.getDeactivateEndDate().compareTo(entry.getBeginDate()) > 0) {
             state = Timesheet.State.ACTIVE;
         }
 

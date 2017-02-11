@@ -48,9 +48,6 @@ public final class JsonTimesheetEntry {
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date inactiveEndDate;
     @XmlElement
-    @JsonDeserialize(using = DateAndTimeDeserialize.class)
-    private Date deactivateEndDate;
-    @XmlElement
     private int pauseMinutes;
     @XmlElement
     private String description;
@@ -94,7 +91,6 @@ public final class JsonTimesheetEntry {
         if (!anonymously) {
             this.entryID = timesheetEntry.getID();
             this.inactiveEndDate = timesheetEntry.getInactiveEndDate();
-            this.deactivateEndDate = timesheetEntry.getDeactivateEndDate();
             this.description = timesheetEntry.getDescription();
             this.ticketID = timesheetEntry.getJiraTicketID();
             this.partner = timesheetEntry.getPairProgrammingUserName();
@@ -102,7 +98,6 @@ public final class JsonTimesheetEntry {
         } else {
             this.entryID = 0;
             this.inactiveEndDate = null;
-            this.deactivateEndDate = null;
             this.description = null;
             this.ticketID = null;
             this.partner = null;
@@ -174,10 +169,6 @@ public final class JsonTimesheetEntry {
         this.inactiveEndDate = inactiveEndDate;
     }
 
-    public Date getDeactivateEndDate() { return deactivateEndDate; }
-
-    public void setDeactivateEndDate(Date deactivateEndDate) { this.deactivateEndDate = deactivateEndDate; }
-
     public String getTicketID() {
         return ticketID;
     }
@@ -220,7 +211,6 @@ public final class JsonTimesheetEntry {
         if (!beginDate.equals(that.beginDate)) return false;
         if (!endDate.equals(that.endDate)) return false;
         if (!inactiveEndDate.equals(that.inactiveEndDate)) return false;
-        if (!deactivateEndDate.equals(that.deactivateEndDate)) return false;
         if (!partner.equals(that.partner)) return false;
         if (!ticketID.equals(that.ticketID)) return false;
         if (!description.equals(that.description)) return false;
@@ -240,7 +230,6 @@ public final class JsonTimesheetEntry {
         result = 31 * result + ticketID.hashCode();
         result = 31 * result + partner.hashCode();
         result = 31 * result + inactiveEndDate.hashCode();
-        result = 31 * result + deactivateEndDate.hashCode();
 
         return result;
     }
