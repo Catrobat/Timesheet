@@ -16,6 +16,7 @@
 
 package org.catrobat.jira.timesheet.servlet;
 
+import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -49,21 +50,25 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        enforceLoggedIn(request, response);
         checkPermission(request, response);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        enforceLoggedIn(request, response);
         checkPermission(request, response);
     }
 
-    protected void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void checkPermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
 
         TimesheetAdmin[] timesheetAdmins = configService.getConfiguration().getTimesheetAdminUsers();
-        ApplicationUser user = permissionService.getLoggedInUser();
+        ApplicationUser user;
+        try {
+            user = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            response.sendRedirect(JIRA_LOGIN_JSP);
+            return;
+        }
 
         if (timesheetAdmins.length > 0) {
             for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
@@ -83,13 +88,6 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
     private void enforceWebSudoProtection(HttpServletRequest request, HttpServletResponse response) {
         if (!webSudoManager.canExecuteRequest(request)) {
             webSudoManager.enforceWebSudoProtection(request, response);
-        }
-    }
-
-    private void enforceLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        if (permissionService.getLoggedInUser() == null)  // (3)
-        {
-            res.sendRedirect(req.getContextPath() + "/plugins/servlet/login");
         }
     }
 }
