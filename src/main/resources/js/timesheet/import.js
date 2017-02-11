@@ -34,7 +34,7 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
         .then(function (response) {
             showImportMessage(response);
             AJS.dialog2(importDialog).hide();
-            timesheetData.entries = response.entries;
+            timesheetData.entries = response;
             appendEntriesToTable(timesheetData);
         })
         .fail(function (error) {
@@ -46,34 +46,13 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
 }
 
 function showImportMessage(response) {
-    var successfulEntries = response.entries.length;
-    /*var errorEntries = response.errorMessages.length;
+    var successfulEntries = response.length;
 
-    if (errorEntries > 0) {
-
-        var begin = (successfulEntries === 0)
-            ? "Entries could not be imported"
-            : "Some entries could not be imported";
-
-        var message = begin + ". Reason: <br /> "
-            + "<ul><li>"
-            + response.errorMessages.join("</li><li>")
-            + "</li></ul>"
-            + "Successfully imported entries: " + successfulEntries + "<br />"
-            + "Failed imports: " + errorEntries + "<br />";
-
-        if (successfulEntries === 0)
-            AJS.messages.error({title: 'Import Error', body: message});
-        else
-            AJS.messages.warning({title: 'Import Error', body: message});
-
-    } else {*/
-        var message = "Imported " + successfulEntries + " entries.";
-        AJS.messages.success({
-            title: 'Import was successful!',
-            body: message
-        });
-    //}
+    var message = "Imported " + successfulEntries + " entries.";
+    AJS.messages.success({
+        title: 'Import was successful!',
+        body: message
+    });
 }
 
 function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {

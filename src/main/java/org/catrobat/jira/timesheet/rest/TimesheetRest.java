@@ -546,8 +546,7 @@ public class TimesheetRest {
             entry.setEntryID(newEntry.getID());
         }
 
-        JsonTimesheetEntries jsonNewEntries = new JsonTimesheetEntries(entries);
-        return Response.ok(jsonNewEntries).build();
+        return Response.ok(entries).build();
     }
 
     @POST
