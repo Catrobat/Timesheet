@@ -69,6 +69,7 @@ public class JsonTeam {
     }
 
     public JsonTeam(Team toCopy, ConfigService configService) {
+        this.teamID = toCopy.getID();
         this.teamName = toCopy.getTeamName();
         this.coordinatorGroups = configService.getGroupsForRole(this.teamName, TeamToGroup.Role.COORDINATOR);
         this.developerGroups = configService.getGroupsForRole(this.teamName, TeamToGroup.Role.DEVELOPER);

@@ -2,6 +2,7 @@ package org.catrobat.jira.timesheet.servlet;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
@@ -93,7 +94,12 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             List<JsonTimesheetEntry> timesheetEntryList = timesheetAndEntries.getJsonTimesheetEntryList();
 
             ApplicationUser jsonUser = ComponentAccessor.getUserManager().getUserByKey(jsonTimesheet.getUserKey());
-            Timesheet sheet = timesheetService.add(jsonUser.getKey(), jsonUser.getDisplayName(),
+            if (jsonUser == null) {
+                // TODO: do we even need to check whether the user exists?
+                errorString += "User with Key: " + jsonTimesheet.getUserKey() + " does not exists. Timesheet ignored.\n";
+                continue;
+            }
+            Timesheet sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getDisplayName(),
                     jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
                     jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
@@ -102,16 +108,22 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             for (JsonTimesheetEntry entry : timesheetEntryList) {
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 if (category == null) {
-                    errorString += "Category with ID " + entry.getCategoryID() + " not found. Entry #" + entry.getEntryID() + " not ignored.";
+                    errorString += "Category with ID " + entry.getCategoryID() + " not found. Entry #" + entry.getEntryID() + " not ignored.\n";
+                    continue;
                 }
                 Team team = teamService.getTeamByID(entry.getTeamID());
                 if (team == null) {
-                    errorString += "Team with ID " + entry.getTeamID() + " not found. Entry #" + entry.getEntryID() + " not ignored.";
+                    errorString += "Team with ID " + entry.getTeamID() + " not found. Entry #" + entry.getEntryID() + " not ignored.\n";
+                    continue;
                 }
-                // FIXME: verify that team and entry is not null
-                timesheetEntryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category, entry.getDescription(),
-                        entry.getPauseMinutes(), team, entry.IsGoogleDocImport(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(),
-                        entry.getTicketID(), entry.getPairProgrammingUserName());
+                try {
+                    timesheetEntryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category, entry.getDescription(),
+                            entry.getPauseMinutes(), team, entry.IsGoogleDocImport(), entry.getInactiveEndDate(), entry.getDeactivateEndDate(),
+                            entry.getTicketID(), entry.getPairProgrammingUserName());
+                } catch (ServiceException e) {
+                    errorString += e.getMessage() + " Entry ignored.\n";
+                    continue;
+                }
             }
         }
 

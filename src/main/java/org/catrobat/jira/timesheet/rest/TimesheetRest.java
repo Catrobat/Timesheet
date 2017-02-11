@@ -467,9 +467,14 @@ public class TimesheetRest {
             }
         }
 
-        TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
-                entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
-                entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
+        TimesheetEntry newEntry;
+        try {
+            newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
+                    entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
+                    entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+        }
 
         entry.setEntryID(newEntry.getID());
 
@@ -529,9 +534,14 @@ public class TimesheetRest {
                 category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
             }
 
-            TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
-                    entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
-                    entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
+            TimesheetEntry newEntry;
+            try {
+                newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
+                        entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
+                        entry.getInactiveEndDate(), entry.getDeactivateEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
+            } catch (ServiceException e) {
+                return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+            }
 
             entry.setEntryID(newEntry.getID());
         }

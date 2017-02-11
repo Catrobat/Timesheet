@@ -1,5 +1,6 @@
 package org.catrobat.jira.timesheet.servlet;
 
+import com.atlassian.jira.exception.ParseException;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;

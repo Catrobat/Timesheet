@@ -1,5 +1,6 @@
 package org.catrobat.jira.timesheet.scheduling;
 
+import com.atlassian.jira.service.ServiceException;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
@@ -67,20 +68,24 @@ public class ActivityVerificationJob implements PluginJob {
                 if(teamArray.length == 0) return; // very rare case
                 Team team = teamArray[0];
 
-                entryService.add(
-                        timesheet,
-                        begin,
-                        begin,
-                        categoryService.getCategoryByName("Inactive"),
-                        "Auto generated inactivity entry",
-                        0,
-                        team,
-                        false,
-                        end,
-                        end,
-                        "",
-                        ""
-                );
+                try {
+                    entryService.add(
+                            timesheet,
+                            begin,
+                            begin,
+                            categoryService.getCategoryByName("Inactive"),
+                            "Auto generated inactivity entry",
+                            0,
+                            team,
+                            false,
+                            end,
+                            end,
+                            "",
+                            ""
+                    );
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
                 statusFlagMessage = "user is active, but latest entry is older than the specified inactive limit";
             }
             else if (timesheet.getState() == Timesheet.State.AUTO_INACTIVE &&

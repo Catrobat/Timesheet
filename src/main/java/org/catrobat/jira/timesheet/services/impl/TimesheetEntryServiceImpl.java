@@ -43,7 +43,13 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Override
     public TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
             Team team, boolean isGoogleDocImport, Date inactiveEndDate, Date deactivateEndDate, String jiraTicketID,
-            String userName) {
+            String userName) throws ServiceException{
+        if (team == null) {
+            throw new ServiceException("TimesheetEntry is not allowed with null Team.");
+        }
+        if (category == null) {
+            throw new ServiceException("TimesheetEntry is not allowed with null Category.");
+        }
 
         TimesheetEntry entry = ao.create(TimesheetEntry.class);
 
@@ -122,6 +128,12 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
         if (entry == null) {
             throw new ServiceException("Entry not found");
+        }
+        if (team == null) {
+            throw new ServiceException("TimesheetEntry is not allowed with null Team.");
+        }
+        if (category == null) {
+            throw new ServiceException("TimesheetEntry is not allowed with null Category.");
         }
 
         entry.setTimeSheet(sheet);
