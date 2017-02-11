@@ -278,7 +278,6 @@ public class TimesheetRest {
 
         JsonUser jsonUser = new JsonUser();
         jsonUser.setUserName(user.getUsername());
-
         return Response.ok(jsonUser).build();
     }
 
@@ -304,13 +303,9 @@ public class TimesheetRest {
         if (sheet == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User Timesheet has not been initialized.").build();
         } else if (!permissionService.userCanViewTimesheet(user, sheet)) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Timesheet Access denied.").build();
-        }
-
-        //check permissions for each sheet
-        if (!permissionService.userCanViewTimesheet(user, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
+
         JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
         return Response.ok(jsonTimesheet).build();
     }
@@ -345,7 +340,6 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
-
         int completeTime = sheet.getTargetHoursCompleted();
         int targetTime = sheet.getTargetHours();
 
@@ -356,7 +350,6 @@ public class TimesheetRest {
         }
 
         JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
-
         return Response.ok(jsonTimesheet).build();
     }
 
