@@ -7,13 +7,13 @@ import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.joda.time.DateTime;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.time.ZonedDateTime;
 
 public class ExportConfigAsJsonServlet extends HighPrivilegeServlet {
 
@@ -29,8 +29,8 @@ public class ExportConfigAsJsonServlet extends HighPrivilegeServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        DateTime today = new DateTime();
-        String dateString = today.getYear() + "-" + today.getMonthOfYear() + "-" + today.getDayOfMonth();
+        ZonedDateTime today = ZonedDateTime.now();
+        String dateString = today.getYear() + "-" + today.getMonth() + "-" + today.getDayOfMonth();
         System.out.println(today.toString());
         String filename = "attachment; filename=\"" +
                 dateString + "_Timesheet_Config.json\"";

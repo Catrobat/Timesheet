@@ -3,8 +3,10 @@ package org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import org.catrobat.jira.timesheet.activeobjects.Scheduling;
 import org.catrobat.jira.timesheet.services.SchedulingService;
-import org.joda.time.DateTime;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class SchedulingServiceImpl implements SchedulingService {
@@ -107,8 +109,10 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     @Override
     public boolean isDateOlderThanXWeeks(Date date, int weeks) {
-        DateTime xDaysAgo = new DateTime().minusWeeks(weeks);
-        DateTime datetime = new DateTime(date);
-        return (datetime.compareTo(xDaysAgo) < 0);
+        Instant instant = date.toInstant();
+        ZonedDateTime dataTime = instant.atZone(ZoneId.systemDefault());
+        ZonedDateTime xWeeksAgo = ZonedDateTime.now().minusWeeks(weeks);
+
+        return dataTime.isBefore(xWeeksAgo);
     }
 }

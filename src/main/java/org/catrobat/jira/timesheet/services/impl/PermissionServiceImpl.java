@@ -24,10 +24,12 @@ import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
-import org.joda.time.DateTime;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
@@ -301,17 +303,19 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     private boolean dateIsOlderThanAMonth(Date date) {
-        DateTime aMonthAgo = new DateTime().minusDays(30);
-        DateTime datetime = new DateTime(date);
+        Instant instant = date.toInstant();
+        ZonedDateTime dataTime = instant.atZone(ZoneId.systemDefault());
+        ZonedDateTime aMonthAgo = ZonedDateTime.now().minusDays(30);
 
-        return (datetime.compareTo(aMonthAgo) < 0);
+        return dataTime.isBefore(aMonthAgo);
     }
 
     private boolean dateIsOlderThanFiveYears(Date date) {
-        DateTime fiveYearsAgo = new DateTime().minusYears(5);
-        DateTime datetime = new DateTime(date);
+        Instant instant = date.toInstant();
+        ZonedDateTime dataTime = instant.atZone(ZoneId.systemDefault());
+        ZonedDateTime fiveYearsAgo = ZonedDateTime.now().minusYears(5);
 
-        return (datetime.compareTo(fiveYearsAgo) < 0);
+        return dataTime.isBefore(fiveYearsAgo);
     }
 
     @Override

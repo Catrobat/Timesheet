@@ -1,12 +1,14 @@
 package org.catrobat.jira.timesheet.scheduling;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.*;
-import org.joda.time.DateTime;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,8 +72,8 @@ public class TimesheetScheduler implements LifecycleAware {
     }
 
     private Date jobStartDate() {
-        DateTime start = new DateTime().withTimeAtStartOfDay().plusDays(1);
-        return start.toDate(); //TODO: make it during night
+        LocalDateTime start = LocalDate.now().atStartOfDay().plusDays(1);
+        return Date.from(start.atZone(ZoneId.systemDefault()).toInstant()); //TODO: make it during night
     }
 
     private long jobInterval() {

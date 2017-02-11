@@ -5,11 +5,11 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.scheduling.ActivityVerificationJob;
 import org.catrobat.jira.timesheet.services.*;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public class ActivityVerificationJobTest {
@@ -84,9 +84,10 @@ public class ActivityVerificationJobTest {
     @Test
     public void testAutoInactive() {
         Mockito.when(timesheet1.getState()).thenReturn(Timesheet.State.ACTIVE);
-        DateTime tooOld = DateTime.now().minusDays(15);
-        Mockito.when(timesheet1.getLatestEntryBeginDate()).thenReturn(tooOld.toDate());
-        Mockito.when(schedulingService.isOlderThanInactiveTime(tooOld.toDate())).thenReturn(true);
+        ZonedDateTime tooOldDateTime = ZonedDateTime.now().minusDays(15);
+        Date tooOld = Date.from(tooOldDateTime.toInstant());
+        Mockito.when(timesheet1.getLatestEntryBeginDate()).thenReturn(tooOld);
+        Mockito.when(schedulingService.isOlderThanInactiveTime(tooOld)).thenReturn(true);
 
         activityVerificationJob.execute(params);
 

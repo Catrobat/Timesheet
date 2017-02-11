@@ -10,8 +10,10 @@ import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.PermissionService;
-import org.joda.time.DateTime;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public class RestUtils {
@@ -62,10 +64,12 @@ public class RestUtils {
     }
 
     public static void checkJsonTimesheetEntryAndCategory(JsonTimesheetEntry entry, CategoryService categoryService) throws ParseException{
-        Date twoMonthsAhead = new DateTime().plusMonths(2).toDate();
+        Instant instant = entry.getInactiveEndDate().toInstant();
+        ZonedDateTime dataTime = instant.atZone(ZoneId.systemDefault());
+        ZonedDateTime twoMonthsAhead = ZonedDateTime.now().plusMonths(2);
 
         RestUtils.checkJsonTimesheetEntry(entry);
-        if (entry.getInactiveEndDate().compareTo(twoMonthsAhead) > 0) {
+        if (dataTime.isAfter(twoMonthsAhead)) {
             throw new ParseException("The 'Inactive End Date' is more than 2 months ahead. This is too far away.");
         } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
                 !(categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive") ||

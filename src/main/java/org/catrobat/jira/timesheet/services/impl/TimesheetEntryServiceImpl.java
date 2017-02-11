@@ -25,10 +25,11 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
-import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
-import javax.servlet.ServletException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class TimesheetEntryServiceImpl implements TimesheetEntryService {
@@ -178,11 +179,12 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     @Override
     public int getHoursOfLastXMonths(Timesheet sheet, int months) {
-        DateTime now = DateTime.now();
+        ZonedDateTime xMonthsAgo = ZonedDateTime.now().minusMonths(months);
         int minutes = 0;
         for (TimesheetEntry entry : getEntriesBySheet(sheet)) {
-            DateTime beginDate = new DateTime(entry.getBeginDate());
-            if (beginDate.plusMonths(months).compareTo(now) >= 0) {
+            Instant instant = entry.getBeginDate().toInstant();
+            ZonedDateTime beginDate = instant.atZone(ZoneId.systemDefault());
+            if (beginDate.isAfter(xMonthsAgo)) {
                 minutes += entry.getDurationMinutes();
             }
         }
