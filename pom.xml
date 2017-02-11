@@ -129,7 +129,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <!-- add some dependencies for junit testing -->
         <dependency>
             <groupId>hsqldb</groupId>
