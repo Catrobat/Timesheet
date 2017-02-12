@@ -50,18 +50,27 @@
                                style="float: right;">
                     </form>
                 </div>
-                <table id="user-table" class="aui aui-table-interactive aui-table-sortable">
+                <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
                     <thead>
                     <tr>
-                        <th id="basic-username">Username</th>
-                        <th id="basic-email">E-Mail</th>
-                        <th id="basic-state">Account</th>
-                        <th id="basic-timesheet-state">Timesheet</th>
-                        <th id="basic-timesheet-latest-entry">Last Entry</th>
-                        <th id="basic-timesheet-disable">Timesheet Enabled</th>
+                        <th id="ti-users">User</th>
+                        <th id="ti-email">E-Mail</th>
+                        <th id="ti-team">Team</th>
+                        <th id="ti-state">State</th>
+                        <th id="ti-inactive-end-date">Inactive End Date</th>
+
+                        <th id="ti-total-practice-hours">Total Practice Hours</th>
+                        <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                        <th id="ti-hours-per-month">Hours last Month</th>
+
+                        <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                        <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
+                        <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+
+                        <th id="ti-enabled">Timesheet Enabled</th>
                     </tr>
                     </thead>
-                    <tbody class="list" id="user-body">
+                    <tbody class="list" id="user-information-table-content">
                     #* will be filled out by JavaScript *#
                     </tbody>
                 </table>

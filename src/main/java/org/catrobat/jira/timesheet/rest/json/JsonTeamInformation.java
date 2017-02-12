@@ -10,7 +10,7 @@ import java.util.Date;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JsonUserInformation {
+public class JsonTeamInformation {
     @XmlElement
     private String userName;
     @XmlElement
@@ -31,15 +31,6 @@ public class JsonUserInformation {
     private int latestEntryHours;
     @XmlElement
     private String latestEntryDescription;
-
-    @XmlElement
-    private String email;
-    @XmlElement
-    private String teams;
-    @XmlElement
-    private int timesheetID;
-    @XmlElement
-    private boolean isEnabled;
 
 
     public String getUserName() {
@@ -112,37 +103,5 @@ public class JsonUserInformation {
 
     public void setLatestEntryDescription(String latestEntryDescription) {
         this.latestEntryDescription = latestEntryDescription;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTeams() {
-        return teams;
-    }
-
-    public void setTeams(String teams) {
-        this.teams = teams;
-    }
-
-    public int getTimesheetID() {
-        return timesheetID;
-    }
-
-    public void setTimesheetID(int timesheetID) {
-        this.timesheetID = timesheetID;
-    }
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
     }
 }

@@ -22,59 +22,53 @@ AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
-    var config;
     var timesheet = [];
     var users = [];
-    getConfigAndCallback(baseUrl, function (ajaxConfig) {
-        config = ajaxConfig;
-    });
 
-    function populateTable(allUsers, allTimesheets) {
-        users = allUsers[0];
-        timesheet = allTimesheets[0];
+    function populateTable(userInformation) {
+
+        users = userInformation;
 
         AJS.$(".loadingDiv").show();
-        AJS.$("#user-body").empty();
-        for (var i = 0; i < users.length; i++) {
-            var obj = users[i];
-            var username = obj['active'] ? obj['userName'] : "<del>" + obj['userName'] + "</del>";
-            var state = obj['active'] ? "active" : "inactive";
-
-            var timesheetState = "no timesheet";
-            var latestEntryDate = "";
-            var isEnabled = false;
-
-            for (var j = 0; j < timesheet.length; j++) {
-                if (users[i].userName.toLowerCase() == timesheet[j].userKey.toLowerCase()) {
-                    timesheetState = timesheet[j].state;
-                    if (new Date(timesheet[j]['latestEntryDate']).getTime() == new Date(0).getTime()) {
-                        latestEntryDate = "none";
-                    } else {
-                        latestEntryDate = (new Date(timesheet[j]['latestEntryDate'])).toLocaleDateString("en-US");
-                    }
-                    isEnabled = timesheet[j]['isEnabled'];
-                    break;
-                }
+        AJS.$("#user-information-table-content").empty();
+        for (var i = 0; i < userInformation.length; i++) {
+            var latestEntryDate;
+            if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
+                latestEntryDate = "none";
+            } else {
+                latestEntryDate = (new Date(userInformation[i].latestEntryDate)).toLocaleDateString("en-US");
+            }
+            var inactiveEndDate;
+            if (userInformation[i].inactiveEndDate == null || new Date(userInformation[i].inactiveEndDate).getTime() == new Date(0).getTime()) {
+                inactiveEndDate = "";
+            } else {
+                inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
             }
 
-            if (obj['active']) {
-                var row = "<tr><td headers=\"basic-username\" class=\"username\">" + username + "</td>" +
-                    "<td headers=\"basic-email\" class=\"email\">" + obj['email'] + "</td>" +
-                    "<td headers=\"basic-state\" class=\"account\">" + state + "</td>" +
-                    "<td headers=\"basic-timesheet-state\" class=\"timesheet\">" + timesheetState + "</td>" +
-                    "<td headers=\"basic-timesheet-latest-entry\" class=\"entry\">" + latestEntryDate + "</td>" +
-                    "<td headers=\"basic-timesheet-disable\" class=\"disable\">";
-
-                if (isEnabled) {
-                    row += "<input class=\"checkbox\" type=\"checkbox\" name=\"" + username + "checkBox\" id=\"" + username + "checkBox\" checked></td></tr>";
-                } else {
-                    row += "<input class=\"checkbox\" type=\"checkbox\" name=\"" + username + "checkBox\" id=\"" + username + "checkBox\"></td></tr>";
-                }
-                AJS.$("#user-body").append(row);
+            var enabledColumn = "</td><td headers='ti-enabled'><input class=\"checkbox\" type=\"checkbox\" id='checkBox"+ userInformation[i].timesheetID + "'>";
+            if (userInformation[i].isEnabled) {
+                enabledColumn = "</td><td headers='ti-enabled'><input class=\"checkbox\" type=\"checkbox\" id='checkBox"+ userInformation[i].timesheetID + "' checked>";
             }
+            var row = "<tr>" +
+                "<td headers='ti-users'>" + userInformation[i].userName +
+                "</td><td headers='ti-email'>" + userInformation[i].email + // TODO:
+                "</td><td headers='ti-team'>" + userInformation[i].teams + // TODO:
+                "</td><td headers='ti-state'>" + userInformation[i].state +
+                "</td><td headers='ti-inactive-end-date'>" + inactiveEndDate +
+
+                "</td><td headers='ti-total-practice-hours'>" + userInformation[i].totalPracticeHours +
+                "</td><td headers='ti-hours-per-half-year'>" + userInformation[i].hoursPerHalfYear +
+                "</td><td headers='ti-hours-per-month'>" + userInformation[i].hoursPerMonth +
+
+                "</td><td headers='ti-latest-entry-date'>" + latestEntryDate +
+                "</td><td headers='ti-latest-entry-hours'>" + userInformation[i].latestEntryHours +
+                "</td><td headers='ti-latest-entry-description'>" + userInformation[i].latestEntryDescription +
+                enabledColumn +
+                "</td></tr>";
+            AJS.$("#user-information-table-content").append(row);
         }
 
-        AJS.$("#user-table").trigger("update");
+        AJS.$("#user-information-table").trigger("update");
         var userList = new List("modify-user", {
             page: Number.MAX_VALUE,
             valueNames: ["username", "email", "account", "timesheet", "entry"]
@@ -86,7 +80,7 @@ AJS.toInit(function () {
             } else {
                 AJS.$("#update-timesheet-button").hide();
             }
-            AJS.$("#user-table").trigger("update");
+            AJS.$("#user-information-table").trigger("update");
         });
         AJS.$(".loadingDiv").hide();
     }
@@ -94,21 +88,14 @@ AJS.toInit(function () {
     function updateTimesheetStatus() {
 
         var data = [];
-        var tmpCheckBox;
 
         for (var i = 0; i < users.length; i++) {
-            for (var j = 0; j < timesheet.length; j++) {
-                if (users[i].userName.toLowerCase() == timesheet[j].userKey.toLowerCase()) {
-                    if (users[i]['active']) {
-                        var tempData = {};
-                        tempData.timesheetID = timesheet[j]['timesheetID'];
-                        tempData.isActive = timesheet[j]['isActive'];
-                        tmpCheckBox = AJS.$("#" + users[i]['userName'] + "checkBox");
-                        tempData.isEnabled = tmpCheckBox.prop("checked");
-                        data.push(tempData);
-                    }
-                }
-            }
+            var tempData = {};
+            tempData.timesheetID = users[i].timesheetID;
+            var tmpCheckBox = AJS.$("#checkBox" + users[i].timesheetID);
+            tempData.isEnabled = tmpCheckBox.prop("checked");
+            console.log(tempData);
+            data.push(tempData);
         }
 
         AJS.$(".loadingDiv").show();
@@ -136,20 +123,13 @@ AJS.toInit(function () {
     }
 
     function fetchData() {
-
-        var allUserFetched = AJS.$.ajax({
+        var userInformationFetched = AJS.$.ajax({
             type: 'GET',
-            url: restBaseUrl + 'user/getUsers',
+            url: restBaseUrl + 'user/getUserInformation',
             contentType: "application/json"
         });
 
-        var allTimesheetsFetched = AJS.$.ajax({
-            type: 'GET',
-            url: restBaseUrl + 'timesheets/getTimesheets',
-            contentType: "application/json"
-        });
-
-        AJS.$.when(allUserFetched, allTimesheetsFetched)
+        AJS.$.when(userInformationFetched)
             .done(populateTable)
             .fail(function (error) {
                 AJS.messages.error({
@@ -158,25 +138,6 @@ AJS.toInit(function () {
                 });
                 console.log(error);
             });
-    }
-
-    function getConfigAndCallback(baseUrl, callback) {
-        AJS.$(".loadingDiv").show();
-        AJS.$.ajax({
-            url: restBaseUrl + 'config/getConfig',
-            dataType: "json",
-            success: function (config) {
-                AJS.$(".loadingDiv").hide();
-                callback(config);
-            },
-            error: function (error) {
-                AJS.messages.error({
-                    title: "Error!",
-                    body: "Could not load 'config'.<br />" + error.responseText
-                });
-                AJS.$(".loadingDiv").hide();
-            }
-        });
     }
 
     fetchData();

@@ -65,11 +65,12 @@ public class UserRestTest {
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
         TimesheetService timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
         TimesheetEntryService timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
+        TeamService teamService = mock(TeamService.class, RETURNS_DEEP_STUBS);
         userSearchService = mock(UserSearchService.class, RETURNS_DEEP_STUBS);
         GroupPickerSearchService groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
 
         UserRest userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock,
-                timesheetEntryServiceMock, userSearchService, groupPickerSearchService);
+                timesheetEntryServiceMock, teamService, userSearchService, groupPickerSearchService);
         spyUserRest = spy(userRest);
 
         PowerMockito.mockStatic(ComponentAccessor.class);

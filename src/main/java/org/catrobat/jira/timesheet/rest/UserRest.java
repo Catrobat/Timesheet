@@ -25,14 +25,13 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
+import org.catrobat.jira.timesheet.rest.json.JsonTeamInformation;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
-import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -50,17 +49,19 @@ public class UserRest {
     private final PermissionService permissionService;
     private final TimesheetService timesheetService;
     private final TimesheetEntryService timesheetEntryService;
+    private final TeamService teamService;
 
     private final UserSearchService userSearchService;
     private final GroupPickerSearchService groupPickerSearchService;
 
     public UserRest(ConfigService configService, PermissionService permissionService,
-                    TimesheetService timesheetService, TimesheetEntryService timesheetEntryService,
+                    TimesheetService timesheetService, TimesheetEntryService timesheetEntryService, TeamService teamService,
                     UserSearchService userSearchService, GroupPickerSearchService groupPickerSearchService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
+        this.teamService = teamService;
         this.userSearchService = userSearchService;
         this.groupPickerSearchService = groupPickerSearchService;
     }
@@ -109,6 +110,66 @@ public class UserRest {
     }
 
     @GET
+    @Path("/getUserInformation")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserInformation(@Context HttpServletRequest request) {
+        Response response = permissionService.checkRootPermission();
+        if (response != null) {
+            return response;
+        }
+
+        List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
+
+        for (Timesheet timesheet : timesheetService.all()) {
+            JsonUserInformation jsonUserInformation = new JsonUserInformation();
+            // TODO: check whether user key == name
+            jsonUserInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
+            // TODO: change state from String to enum
+            jsonUserInformation.setState(timesheet.getState().toString());
+            jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
+            jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
+            jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+
+            TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
+            if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
+                    || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
+                Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
+                jsonUserInformation.setInactiveEndDate(inactiveEndDate);
+            }
+            jsonUserInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());
+            TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
+            if (latestEntry != null) {
+                jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
+                jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
+            } else {
+                jsonUserInformation.setLatestEntryHours(0);
+                jsonUserInformation.setLatestEntryDescription("");
+            }
+
+            jsonUserInformation.setEmail(getEmailOfUserKey(timesheet.getUserKey()));
+            String teamString = "";
+            Set<Team> developerSet = teamService.getTeamsOfUser(getUserNameOfUserKey(timesheet.getUserKey()));
+            Set<Team> coordinatorSet = teamService.getTeamsOfCoordinator(getUserNameOfUserKey(timesheet.getUserKey()));
+            Set<Team> allTeams = new HashSet<>();
+            allTeams.addAll(developerSet);
+            allTeams.addAll(coordinatorSet);
+            for (Team team : allTeams) {
+                if (!teamString.equals("")) {
+                    teamString += ", ";
+                }
+                teamString += team.getTeamName();
+            }
+            jsonUserInformation.setTeams(teamString);
+            jsonUserInformation.setTimesheetID(timesheet.getID());
+            jsonUserInformation.setEnabled(timesheet.getIsEnabled());
+
+            jsonUserInformationList.add(jsonUserInformation);
+        }
+
+        return Response.ok(jsonUserInformationList).build();
+    }
+
+    @GET
     @Path("/getUsersForCoordinator")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsersForCoordinator(@Context HttpServletRequest request) {
@@ -136,43 +197,47 @@ public class UserRest {
                     "coordinator nor a read only user nor a administrator!").build();
         }
 
-        List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
+        List<JsonTeamInformation> jsonTeamInformationList = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetService.all()) {
             if (permissionService.isUserCoordinatorOfTimesheet(user, timesheet)) {
-                JsonUserInformation jsonUserInformation = new JsonUserInformation();
+                JsonTeamInformation jsonTeamInformation = new JsonTeamInformation();
                 // TODO: check whether user key == name
-                jsonUserInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
+                jsonTeamInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
                 // TODO: change state from String to enum
-                jsonUserInformation.setState(timesheet.getState().toString());
-                jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
-                jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
-                jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+                jsonTeamInformation.setState(timesheet.getState().toString());
+                jsonTeamInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
+                jsonTeamInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
+                jsonTeamInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
 
                 TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                         || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
                     Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
-                    jsonUserInformation.setInactiveEndDate(inactiveEndDate);
+                    jsonTeamInformation.setInactiveEndDate(inactiveEndDate);
                 }
-                jsonUserInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());
+                jsonTeamInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());
                 TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
                 if (latestEntry != null) {
-                    jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
-                    jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
+                    jsonTeamInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
+                    jsonTeamInformation.setLatestEntryDescription(latestEntry.getDescription());
                 } else {
-                    jsonUserInformation.setLatestEntryHours(0);
-                    jsonUserInformation.setLatestEntryDescription("");
+                    jsonTeamInformation.setLatestEntryHours(0);
+                    jsonTeamInformation.setLatestEntryDescription("");
                 }
-                jsonUserInformationList.add(jsonUserInformation);
+                jsonTeamInformationList.add(jsonTeamInformation);
             }
         }
 
-        return Response.ok(jsonUserInformationList).build();
+        return Response.ok(jsonTeamInformationList).build();
     }
 
     private String getUserNameOfUserKey(String userKey) {
         return ComponentAccessor.getUserManager().getUserByKey(userKey).getName();
+    }
+
+    private String getEmailOfUserKey(String userKey) {
+        return ComponentAccessor.getUserManager().getUserByKey(userKey).getEmailAddress();
     }
 
     @GET
