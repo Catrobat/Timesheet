@@ -69,7 +69,7 @@ public class UserRest {
     @Path("/getUsers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@Context HttpServletRequest request) {
-        // TODO: check whether user permission is still needed
+        // TODO: only Admins & Read Only Users should have permission to this, change JavaScript accordingly
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;

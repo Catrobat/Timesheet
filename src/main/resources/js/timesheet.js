@@ -4,10 +4,6 @@ var restBaseUrl;
 var hostname = location.hostname;
 var baseUrl;
 var timesheetData_;
-var categoryData_;
-var teamData_;
-var entryData_;
-var userData_;
 
 var timesheetIDOfUser;
 
@@ -179,12 +175,6 @@ function fetchData(timesheetID) {
         contentType: "application/json"
     });
 
-    var usersFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'user/getUsers',
-        contentType: "application/json"
-    });
-
     var pairProgrammingFetched = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'user/getPairProgrammingUsers',
@@ -197,7 +187,7 @@ function fetchData(timesheetID) {
     AJS.$.when(timesheetFetched, entriesFetched)
         .done(projectedFinishDate);
 
-    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, usersFetched, pairProgrammingFetched)
+    AJS.$.when(timesheetFetched, categoriesFetched, teamsFetched, entriesFetched, pairProgrammingFetched)
         .done(assembleTimesheetData)
         .done(populateTable, prepareImportDialog)
         .done(assembleTimesheetVisData)
@@ -345,24 +335,13 @@ function fetchUsers() {
         });
 }
 
-function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, usersReply, pairProgrammingReply) {
+function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, pairProgrammingReply) {
     timesheetData_ = timesheetReply[0];
-    categoryData_ = categoriesReply[0];
-    teamData_ = teamsReply[0];
-    entryData_ = entriesReply[0];
-    userData_ = usersReply[0];
 
     timesheetData_.entries = entriesReply[0];
     timesheetData_.categoryIDs = [];
     timesheetData_.teams = [];
-    timesheetData_['users'] = [];
     timesheetData_.pairProgrammingGroup = pairProgrammingReply[0];
-
-    //fill user names
-    for (var i = 0; i < usersReply[0].length; i++) {
-        if (usersReply[0][i]['active'])
-            timesheetData_['users'].push(usersReply[0][i]['userName']);
-    }
 
     categoriesReply[0].map(function (category) {
         timesheetData_.categoryIDs[category.categoryID] = {
