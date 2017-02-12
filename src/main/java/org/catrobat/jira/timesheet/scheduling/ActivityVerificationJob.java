@@ -122,12 +122,13 @@ public class ActivityVerificationJob implements PluginJob {
     }
 
     private String printStatusFlags(Timesheet timesheet, String statusString) {
-        String header = "Status: " + statusString + "  -----------------------------------------------------------------------";
+        String header = "Timesheet from: " + timesheet.getDisplayName() + "-------------------------------------\n";
+        header += "Transition: " + statusString;
         System.out.println(header);
         String message = "state: " + timesheet.getState();
         System.out.println(message);
         System.out.println("latest Entry: " + timesheet.getLatestEntryBeginDate().toString());
-        System.out.println("END Status: -----------------------------------------------------------------------");
+        System.out.println("END Status: -------------------------------------");
         return message;
     }
 }

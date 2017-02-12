@@ -10,7 +10,7 @@ function populateTable(timesheetDataReply) {
         //activate html banner
         AJS.$("#inactive-header").show();
         //Information at the first use
-        if (timesheetData.entries.length == 0)
+        if (timesheetData.entries.length == 0) {
             AJS.messages.generic({
                 title: 'Timesheet Information.',
                 closeable: true,
@@ -24,55 +24,19 @@ function populateTable(timesheetDataReply) {
                 '<p> If you notice any uncommon plugin behaviour, or need support feel free to ' +
                 'contact one of the project "Coordinators", or an "Administrator".</p>'
             });
-        else if (timesheetData.state != "ACTIVE") {
+        } else if (timesheetData.state == "AUTO_INACTIVE") {
             require(['aui/banner'], function (banner) {
                 banner({
                     body: 'Your Timesheet is marked as <strong>' + timesheetData.state + '</strong>.'
                 });
             });
-        }
-        /*else if (timesheetData.isOffline) {
-         AJS.messages.warning({
-         title: 'Timesheet Warning.',
-         closeable: true,
-         body: '<p> Your Timesheet is marked as <em>offline</em>, because you weren\'t active for a very long time.</p>'
-         });
-
-         require(['aui/banner'], function (banner) {
-         banner({
-         body: 'Your Timesheet is marked as <strong>offline</strong>.'
-         });
-         });
-         }
-         else if (timesheetData.isAutoInactive) {
-         AJS.messages.warning({
-         title: 'Timesheet Warning.',
-         closeable: true,
-         body: '<p> Your Timesheet was marked as <em>inactive</em> by the system, ' +
-         'because you wasn\'t active for a longer period in the past.</p>'
-         });
-
-         require(['aui/banner'], function (banner) {
-         banner({
-         body: 'Your Timesheet is marked as <strong>inactive</strong>.'
-         });
-         });
-         }
-         //Banner Informations for the User
-         else if (!timesheetData.isActive) {
-         AJS.messages.warning({
-         title: 'Timesheet Warning.',
-         closeable: true,
-         body: '<p> Your Timesheet is marked as <em>inactive</em>, because you made an inactive entry.</p>'
-         });
-
-         require(['aui/banner'], function (banner) {
-         banner({
-         body: 'Your Timesheet is marked as <strong>inactive</strong>.'
-         });
-         });
-         } */
-        else if (!timesheetData.isEnabled) {
+        } else if (timesheetData.state != "ACTIVE") {
+            AJS.messages.warning({
+                title: 'Timesheet Warning.',
+                closeable: true,
+                body: '<p>Your Timesheet is marked as <em>' + timesheetData.state + '</em>.</p>'
+            });
+        } else if (!timesheetData.isEnabled) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
