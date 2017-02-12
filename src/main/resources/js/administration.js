@@ -354,8 +354,8 @@ AJS.toInit(function () {
     function addTeam() {
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
-            url: restBaseUrl + 'config/addTeamPermission',
-            type: "PUT",
+            url: restBaseUrl + 'config/addTeam',
+            type: "POST",
             contentType: "application/json",
             data: AJS.$("#team-name").attr("value"),
             processData: false,
@@ -542,7 +542,7 @@ AJS.toInit(function () {
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
             url: restBaseUrl + 'config/removeTeam',
-            type: "PUT",
+            type: "DELETE",
             contentType: "application/json",
             data: AJS.$("#team-name").attr("value"),
             processData: false,
