@@ -555,10 +555,10 @@ AJS.toInit(function () {
                 AJS.$("#team-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
-            error: function () {
+            error: function (error) {
                 AJS.messages.error({
                     title: "Error!",
-                    body: "Could not delete 'Team'."
+                    body: error.responseText
                 });
                 AJS.$(".loadingDiv").hide();
             }

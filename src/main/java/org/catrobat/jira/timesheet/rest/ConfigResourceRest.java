@@ -279,19 +279,19 @@ public class ConfigResourceRest {
     @DELETE
     @Path("/removeTeam")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeTeam(final String teamName, @Context HttpServletRequest request) throws ServiceException{
+    public Response removeTeam(final String teamName, @Context HttpServletRequest request) {
         Response unauthorized = checkParam(teamName);
         if (unauthorized != null) {
             return unauthorized;
         }
 
-        boolean successful = teamService.removeTeam(teamName);
-
-        if (successful) {
-            return Response.noContent().build();
+        try {
+            teamService.removeTeam(teamName);
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
 
-        return Response.serverError().build();
+        return Response.noContent().build();
     }
 
     @PUT

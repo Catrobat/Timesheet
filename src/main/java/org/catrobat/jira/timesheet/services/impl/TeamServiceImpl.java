@@ -20,6 +20,7 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
 import org.catrobat.jira.timesheet.services.TeamService;
@@ -65,7 +66,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean removeTeam(String name) throws ServiceException {
+    public void removeTeam(String name) throws ServiceException {
         initIfNotAlready();
         if (name.equals(DEFAULT_TEAM)) {
             throw new ServiceException("This is the default team that cannot be deleted!");
@@ -73,47 +74,29 @@ public class TeamServiceImpl implements TeamService {
         Team[] found = ao.find(Team.class, "TEAM_NAME = ?", name);
 
         if(found.length == 0){
-            return false;
+            throw new ServiceException("Team not found.");
         }
 
         if (found.length > 1) {
             throw new ServiceException("Multiple Teams with the same Name");
         }
 
-        Team[] defaultTeam = ao.find(Team.class, "TEAM_NAME = ?", DEFAULT_TEAM);
+        Team team = found[0];
+        if (team.getGroups().length > 0) {
+            throw new ServiceException("Team still has Users belonging to it.");
+        }
 
-        entryService.replaceTeamInEntries(found[0], defaultTeam[0]);
+        CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
+        for (CategoryToTeam categoryToTeam : categoryToTeamArray) {
+            if (categoryToTeam.getTeam() != null) {
+                ao.delete(categoryToTeam);
+            }
+        }
+
+        Team[] defaultTeam = ao.find(Team.class, "TEAM_NAME = ?", DEFAULT_TEAM);
+        entryService.replaceTeamInEntries(team, defaultTeam[0]);
 
         ao.delete(found);
-        return true;
-
-        // TODO: insert some of the code below, so you dont have to remove the TeamToGroup & TeamToCategory manually
-        // Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
-        // if (teamArray.length == 0) {
-        //     return null;
-        // }
-        // Team team = teamArray[0];
-        // Group[] groupArray = team.getGroups();
-        // TeamToGroup[] teamToGroupArray = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
-        // for (TeamToGroup teamToGroup : teamToGroupArray) {
-        //     ao.delete(teamToGroup);
-        // }
-        //
-        // for (Group group : groupArray) {
-        //     if (group.getTeams().length == 0) {
-        //         ao.delete(group);
-        //     }
-        // }
-        //
-        // CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
-        // for (CategoryToTeam categoryToTeam : categoryToTeamArray)
-        //     if (categoryToTeam.getTeam() != null) {
-        //         ao.delete(categoryToTeam);
-        //     }
-        //
-        // ao.delete(team);
-        //
-        // return getConfiguration();
     }
 
     @Override

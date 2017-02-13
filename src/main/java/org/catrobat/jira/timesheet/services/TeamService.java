@@ -31,7 +31,7 @@ public interface TeamService {
 
     Team add(String name);
 
-    boolean removeTeam(String teamName) throws ServiceException;
+    void removeTeam(String teamName) throws ServiceException;
 
     List<Team> all();
 

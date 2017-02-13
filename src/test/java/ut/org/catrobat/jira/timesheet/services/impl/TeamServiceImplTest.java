@@ -7,10 +7,7 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.catrobat.jira.timesheet.activeobjects.Group;
-import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
@@ -90,17 +87,15 @@ public class TeamServiceImplTest {
 
     @Test
     public void testRemoveTeam() throws IllegalAccessException, ServiceException {
-        boolean result = service.removeTeam(emptyTeam.getTeamName());
-        assertEquals(true, result);
+        service.removeTeam(emptyTeam.getTeamName());
         assertEquals(0, ao.find(Team.class, "TEAM_NAME = ?", emptyTeam.getTeamName()).length);
     }
 
-    @Test
+    @Test(expected = ServiceException.class)
     public void testRemoveTeamIsNull() throws IllegalAccessException, ServiceException {
         String notExistent = "notExistent";
-        boolean result = service.removeTeam(notExistent);
+        service.removeTeam(notExistent);
 
-        assertEquals(false, result);
         assertEquals(0, ao.find(Team.class, "TEAM_NAME = ?", notExistent).length);
     }
 
@@ -159,6 +154,7 @@ public class TeamServiceImplTest {
             em.migrate(Team.class);
             em.migrate(TimesheetEntry.class);
             em.migrate(TeamToGroup.class);
+            em.migrate(CategoryToTeam.class);
 
             catroid = em.create(Team.class);
             catroid.setTeamName("Catroid");
