@@ -41,20 +41,10 @@ import static org.mockito.Mockito.*;
         TimesheetEntryService.class})
 public class ConfigResourceRestTest {
 
-    private UserManager userManagerJiraMock;
-
-    private CategoryService categoryService;
-    private TimesheetEntryService entryService;
-    private TeamService teamService;
-    private ConfigService configService;
-
     private TeamService teamServiceMock;
-    private CategoryService categoryServiceMock;
-    private TimesheetService timesheetService;
     private PermissionService permissionServiceMock;
     private ConfigService configServiceMock;
 
-    private UserUtil userUtilMock;
     private Category categoryMock;
 
     private ConfigResourceRest configResourceRest;
@@ -63,43 +53,36 @@ public class ConfigResourceRestTest {
     private javax.ws.rs.core.Response response;
     private HttpServletRequest request;
 
-    private TestActiveObjects ao;
     private EntityManager entityManager;
-    private ApplicationUser userMock;
-    private JiraAuthenticationContext jiraAuthMock;
-    private GroupManager groupManagerMock;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
-        ao = new TestActiveObjects(entityManager);
+        TestActiveObjects ao = new TestActiveObjects(entityManager);
 
-        userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
-        userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
+        UserManager userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
-        categoryServiceMock = mock(CategoryService.class, RETURNS_DEEP_STUBS);
+        CategoryService categoryServiceMock = mock(CategoryService.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
         teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         request = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         categoryMock = mock(Category.class, RETURNS_DEEP_STUBS);
-        userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
-        jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
-        groupManagerMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
+        ApplicationUser userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
+        JiraAuthenticationContext jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
+        GroupManager groupManagerMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
 
-        categoryService = new CategoryServiceImpl(ao);
-        timesheetService = new TimesheetServiceImpl(ao);
-        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
-        teamService = new TeamServiceImpl(ao, entryService);
-        configService = new ConfigServiceImpl(ao, categoryService, teamService);
+        CategoryService categoryService = new CategoryServiceImpl(ao);
+        TimesheetService timesheetService = new TimesheetServiceImpl(ao);
+        TimesheetEntryService entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
+        TeamService teamService = new TeamServiceImpl(ao, entryService);
+        ConfigService configService = new ConfigServiceImpl(ao, categoryService, teamService);
         configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock, ao);
 
         configResourceRestMock = new ConfigResourceRest(configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock, ao);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
-        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
         PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManagerMock);
 
         //additional mocks

@@ -71,19 +71,17 @@ public class TimesheetRestTest {
 
     private MailQueue mailQueueMock;
 
-    private TestActiveObjects ao;
     private EntityManager entityManager;
     private ApplicationUser userMock;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
-        ao = new TestActiveObjects(entityManager);
+        TestActiveObjects ao = new TestActiveObjects(entityManager);
 
         userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         groupManagerJiraMock = mock(GroupManager.class, RETURNS_DEEP_STUBS);
         UserKeyService userKeyServiceMock = mock(UserKeyService.class, RETURNS_DEEP_STUBS);
-        UserUtil userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         categoryServiceMock = mock(CategoryService.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
@@ -113,11 +111,8 @@ public class TimesheetRestTest {
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
         PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyServiceMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
-        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
-        PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManagerJiraMock);
         PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
     }
 

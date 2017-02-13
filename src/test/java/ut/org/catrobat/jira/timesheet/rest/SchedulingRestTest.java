@@ -61,8 +61,6 @@ public class SchedulingRestTest {
         timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
         TeamService teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         UserManager userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
-        UserUtil userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);
-        MailQueue mailQueueMock = mock(MailQueue.class, RETURNS_DEEP_STUBS);
         httpRequest = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         TimesheetScheduler timesheetScheduler = mock(TimesheetScheduler.class, RETURNS_DEEP_STUBS);
         SchedulingService schedulingService = mock(SchedulingService.class, RETURNS_DEEP_STUBS);
@@ -86,8 +84,6 @@ public class SchedulingRestTest {
         // info: mock static method
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
-        PowerMockito.when(ComponentAccessor.getMailQueue()).thenReturn(mailQueueMock);
     }
 
     @Test

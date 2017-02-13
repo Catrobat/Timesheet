@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -61,7 +62,6 @@ public class UserRestTest {
         ConfigService configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         httpRequestMock = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
-        JiraAuthenticationContext jiraAuthMock = mock(JiraAuthenticationContext.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
         TimesheetService timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
         TimesheetEntryService timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
@@ -74,11 +74,7 @@ public class UserRestTest {
         spyUserRest = spy(userRest);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
-        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
-        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
-        PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(userMock);
-        PowerMockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
+        Mockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
     }
 
     @Test
@@ -95,8 +91,8 @@ public class UserRestTest {
     public void testGetUsersOnlyUsersInList() {
         doReturn(true).when(permissionServiceMock).isTimesheetAdmin(userMock);
 
-        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
+        Mockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
+        Mockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
@@ -105,10 +101,10 @@ public class UserRestTest {
 
         when(userSearchService.findUsersAllowEmptyQuery(Matchers.any(JiraServiceContext.class), Matchers.eq(""))).thenReturn(usersSet);
 
-        PowerMockito.when(user1.getDisplayName()).thenReturn("User 1");
-        PowerMockito.when(user2.getDisplayName()).thenReturn("User 2");
-        PowerMockito.when(user1.getName()).thenReturn("User 1");
-        PowerMockito.when(user2.getName()).thenReturn("User 2");
+        Mockito.when(user1.getDisplayName()).thenReturn("User 1");
+        Mockito.when(user2.getDisplayName()).thenReturn("User 2");
+        Mockito.when(user1.getName()).thenReturn("User 1");
+        Mockito.when(user2.getName()).thenReturn("User 2");
 
         spyUserRest.getUsers(httpRequestMock);
 
@@ -120,8 +116,8 @@ public class UserRestTest {
     public void testGetUsersUnusualCases() {
         doReturn(true).when(permissionServiceMock).isTimesheetAdmin(userMock);
 
-        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
-        PowerMockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
+        Mockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
+        Mockito.when(ComponentAccessor.getUserUtil()).thenReturn(userUtilMock);
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
@@ -130,15 +126,13 @@ public class UserRestTest {
 
         when(userSearchService.findUsersAllowEmptyQuery(Matchers.any(JiraServiceContext.class), Matchers.eq(""))).thenReturn(usersSet);
 
-        PowerMockito.when(user1.getDisplayName()).thenReturn("User 1");
-        PowerMockito.when(user2.getDisplayName()).thenReturn("User 2");
-        PowerMockito.when(user1.getName()).thenReturn("User 1");
-        PowerMockito.when(user2.getName()).thenReturn("User 2");
+        Mockito.when(user1.getDisplayName()).thenReturn("User 1");
+        Mockito.when(user2.getDisplayName()).thenReturn("User 2");
+        Mockito.when(user1.getName()).thenReturn("User 1");
+        Mockito.when(user2.getName()).thenReturn("User 2");
 
         Group group = mock(Group.class);
-        TreeSet<Group> treeSet = new TreeSet(Arrays.asList(group));
-        PowerMockito.when(group.getName()).thenReturn("DISABLED");
-        PowerMockito.when(userUtilMock.getGroupsForUser(anyString())).thenReturn(treeSet);
+        Mockito.when(group.getName()).thenReturn("DISABLED");
 
         spyUserRest.getUsers(httpRequestMock);
 
