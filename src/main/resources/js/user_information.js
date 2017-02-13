@@ -50,19 +50,19 @@ AJS.toInit(function () {
                 enabledColumn = "</td><td headers='ti-enabled'><input class=\"checkbox\" type=\"checkbox\" id='checkBox"+ userInformation[i].timesheetID + "' checked>";
             }
             var row = "<tr>" +
-                "<td headers='ti-users'>" + userInformation[i].userName +
-                "</td><td headers='ti-email'>" + userInformation[i].email + // TODO:
-                "</td><td headers='ti-team'>" + userInformation[i].teams + // TODO:
-                "</td><td headers='ti-state'>" + userInformation[i].state +
-                "</td><td headers='ti-inactive-end-date'>" + inactiveEndDate +
+                "<td headers='ti-users' class='users'>" + userInformation[i].userName +
+                "</td><td headers='ti-email' class='email'>" + userInformation[i].email +
+                "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
+                "</td><td headers='ti-state' class='state'>" + userInformation[i].state +
+                "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
 
-                "</td><td headers='ti-total-practice-hours'>" + userInformation[i].totalPracticeHours +
-                "</td><td headers='ti-hours-per-half-year'>" + userInformation[i].hoursPerHalfYear +
-                "</td><td headers='ti-hours-per-month'>" + userInformation[i].hoursPerMonth +
+                "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
+                "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
+                "</td><td headers='ti-hours-per-month' class='hours-month'>" + userInformation[i].hoursPerMonth +
 
-                "</td><td headers='ti-latest-entry-date'>" + latestEntryDate +
-                "</td><td headers='ti-latest-entry-hours'>" + userInformation[i].latestEntryHours +
-                "</td><td headers='ti-latest-entry-description'>" + userInformation[i].latestEntryDescription +
+                "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
+                "</td><td headers='ti-latest-entry-hours' class='latest-hours'>" + userInformation[i].latestEntryHours +
+                "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
                 enabledColumn +
                 "</td></tr>";
             AJS.$("#user-information-table-content").append(row);
@@ -71,7 +71,8 @@ AJS.toInit(function () {
         AJS.$("#user-information-table").trigger("update");
         var userList = new List("modify-user", {
             page: Number.MAX_VALUE,
-            valueNames: ["username", "email", "account", "timesheet", "entry"]
+            valueNames: ["users", "email", "team", "state", "inactive-end", "total-practice", "hours-half-year",
+            "hours-month", "latest-date", "latest-hours", "latest-description"]
         });
 
         userList.on('updated', function () {
