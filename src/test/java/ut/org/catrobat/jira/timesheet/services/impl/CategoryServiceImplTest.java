@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
 @Data(CategoryServiceImplTest.MyDatabaseUpdater.class)
@@ -35,6 +35,36 @@ public class CategoryServiceImplTest {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
         categoryService = new CategoryServiceImpl(ao);
+    }
+
+    @Test
+    public void testGetCategoryByIDOk() {
+        Category category = ao.create(Category.class);
+        Category retrievedCategory = categoryService.getCategoryByID(category.getID());
+        assertEquals(category, retrievedCategory);
+    }
+
+    @Test
+    public void testGetCategoryByIDNull() {
+        Category retrievedCategory = categoryService.getCategoryByID(-1);
+        assertEquals(null, retrievedCategory);
+    }
+
+    @Test
+    public void testIsPairProgrammingCategory() {
+        Category pairProg = ao.create(Category.class);
+        pairProg.setName("Pair Programming");
+        pairProg.save();
+        Category refactorPP = ao.create(Category.class);
+        refactorPP.setName("Refactoring (PP)");
+        refactorPP.save();
+        Category notPair = ao.create(Category.class);
+        notPair.setName("Some Category");
+        notPair.save();
+
+        assertTrue(categoryService.isPairProgrammingCategory(pairProg));
+        assertTrue(categoryService.isPairProgrammingCategory(refactorPP));
+        assertFalse(categoryService.isPairProgrammingCategory(notPair));
     }
 
     @Test

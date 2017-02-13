@@ -145,6 +145,40 @@ public class ConfigResourceRestTest {
     }
 
     @Test
+    public void testAddTeamOk() {
+        response = configResourceRest.addTeam("NewTeam", request);
+        assertNull(response.getEntity());
+    }
+
+    @Test
+    public void testRemoveTeamNotFound() {
+        response = configResourceRest.removeTeam("ToDelete", request);
+        assertEquals("Team not found.", response.getEntity());
+    }
+
+    @Test
+    public void testRemoveTeamOk() {
+        configResourceRest.addTeam("ToDelete", request);
+        response = configResourceRest.removeTeam("ToDelete", request);
+        assertNull(response.getEntity());
+    }
+
+    @Test
+    public void testEditTeamNameNotFound() {
+        String[] renameTeam = {"NotFound", "NewName"};
+        response = configResourceRest.editTeamPermission(renameTeam, request);
+        assertEquals(500, response.getStatus()); // TODO: change to entity
+    }
+
+    @Test
+    public void testEditTeamNameOk() {
+        configResourceRest.addTeam("ToRename", request);
+        String[] renameTeam = {"ToRename", "NewName"};
+        response = configResourceRest.editTeamPermission(renameTeam, request);
+        assertNull(response.getEntity());
+    }
+
+    @Test
     public void testRemoveCategoryOk() throws Exception {
         String userName = "test";
         String userKey = "USER_KEY_1";

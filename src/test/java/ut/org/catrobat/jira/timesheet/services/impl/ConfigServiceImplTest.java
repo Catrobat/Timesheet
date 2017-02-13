@@ -90,4 +90,44 @@ public class ConfigServiceImplTest {
             Assert.assertFalse(categoryToTeamList.contains(specialCategory));
         }
     }
+
+    @Test
+    public void testEditReadOnlyUsers() {
+        String editedReadOnlyUsers = "EditedReadOnlyUsers";
+        Config config = configurationService.editReadOnlyUsers(editedReadOnlyUsers);
+        assertEquals(editedReadOnlyUsers, config.getReadOnlyUsers());
+    }
+
+    @Test
+    public void testEditMail() {
+        String mailFromName = "mailFrom";
+        String mailFrom = "mailFrom";
+        String mailSubjectTime = "mailSubjectTime";
+        String mailSubjectInactive = "mailSubjectInactive";
+        String mailSubjectOffline = "mailSubjectOffline";
+        String mailSubjectActive = "mailSubjectActive";
+        String mailSubjectEntry = "mailSubjectEntry";
+        String mailBodyTime = "mailBodyTime";
+        String mailBodyInactive = "mailBodyInactive";
+        String mailBodyOffline = "mailBodyOffline";
+        String mailBodyActive = "mailBodyActive";
+        String mailBodyEntry = "mailBodyEntry";
+
+        Config config = configurationService.editMail(mailFromName, mailFrom, mailSubjectTime,
+                mailSubjectInactive, mailSubjectOffline, mailSubjectActive, mailSubjectEntry,
+                mailBodyTime, mailBodyInactive, mailBodyOffline, mailBodyActive, mailBodyEntry);
+
+        assertEquals(mailFromName, config.getMailFromName());
+        assertEquals(mailFrom, config.getMailFrom());
+        assertEquals(mailSubjectTime, config.getMailSubjectTime());
+        assertEquals(mailSubjectInactive, config.getMailSubjectInactiveState());
+        assertEquals(mailSubjectOffline, config.getMailSubjectOfflineState());
+        assertEquals(mailSubjectActive, config.getMailSubjectActiveState());
+        assertEquals(mailSubjectEntry, config.getMailSubjectEntry());
+        assertEquals(mailBodyTime, config.getMailBodyTime());
+        assertEquals(mailBodyInactive, config.getMailBodyInactiveState());
+        assertEquals(mailBodyOffline, config.getMailBodyOfflineState());
+        assertEquals(mailBodyActive, config.getMailBodyActiveState());
+        assertEquals(mailBodyEntry, config.getMailBodyEntry());
+    }
 }

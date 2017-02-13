@@ -8,7 +8,6 @@ import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.mail.queue.MailQueue;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
@@ -21,7 +20,6 @@ import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.*;
-import org.catrobat.jira.timesheet.utility.RestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -742,7 +740,7 @@ public class TimesheetRestTest {
     }
 
     @Test
-    public void testDeleteTimesheetEntryOk() throws Exception {
+    public void testDeleteTimesheetEntryNotFound() throws Exception {
         int entryID = 1;
         Boolean isMTSheet = false;
 

@@ -51,6 +51,7 @@ public class UserRestTest {
     private PermissionService permissionServiceMock;
 
     private UserSearchService userSearchService;
+    private GroupPickerSearchService groupPickerSearchService;
 
     @Before
     public void setUp() throws Exception {
@@ -67,7 +68,7 @@ public class UserRestTest {
         TimesheetEntryService timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
         TeamService teamService = mock(TeamService.class, RETURNS_DEEP_STUBS);
         userSearchService = mock(UserSearchService.class, RETURNS_DEEP_STUBS);
-        GroupPickerSearchService groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
+        groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
 
         UserRest userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock,
                 timesheetEntryServiceMock, teamService, userSearchService, groupPickerSearchService);
@@ -140,5 +141,17 @@ public class UserRestTest {
         verify(user2, times(1)).getDisplayName();
 
         Assert.assertEquals(2, usersSet.size());
+    }
+
+    @Test
+    public void testGetGroupsOk() {
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+        List<Group> groupList = new ArrayList<>();
+        groupList.add(mock(Group.class));
+        groupList.add(mock(Group.class));
+        when(groupPickerSearchService.findGroups("")).thenReturn(groupList);
+
+        Response response = spyUserRest.getGroups(httpRequestMock);
+        assertEquals(2, ((List<Group>)response.getEntity()).size());
     }
 }

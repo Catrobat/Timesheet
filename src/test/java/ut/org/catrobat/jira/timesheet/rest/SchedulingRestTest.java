@@ -10,6 +10,7 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.rest.json.JsonScheduling;
 import org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl;
 import org.catrobat.jira.timesheet.rest.SchedulingRest;
 import org.catrobat.jira.timesheet.scheduling.TimesheetScheduler;
@@ -84,6 +85,21 @@ public class SchedulingRestTest {
         // info: mock static method
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
+    }
+
+    @Test
+    public void testSaveAndRetrieveScheduling() {
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+        Scheduling scheduling = mock(Scheduling.class);
+        JsonScheduling jsonScheduling = new JsonScheduling(scheduling);
+        schedulingRest.setScheduling(jsonScheduling, httpRequest);
+        Response response = schedulingRest.getScheduling(httpRequest);
+
+        JsonScheduling responseJson = (JsonScheduling)response.getEntity();
+        assertEquals(jsonScheduling.getInactiveTime(), responseJson.getInactiveTime());
+        assertEquals(jsonScheduling.getOfflineTime(), responseJson.getInactiveTime());
+        assertEquals(jsonScheduling.getOutOfTime(), responseJson.getOutOfTime());
+        assertEquals(jsonScheduling.getRemainingTime(), responseJson.getRemainingTime());
     }
 
     @Test

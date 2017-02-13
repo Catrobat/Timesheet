@@ -160,6 +160,56 @@ public class TimesheetServiceImplTest {
         assertTrue(refSheet.getTargetHoursPractice() == 300);
     }
 
+    @Test
+    public void testUpdateTimesheet() {
+        Timesheet timesheet = ao.create(Timesheet.class);
+
+        int targetHoursCompletedOld = 100;
+        int targetHoursPracticeOld = 150;
+        Date latestEntryDateOld = new Date(100);
+        Timesheet.State stateOld = Timesheet.State.AUTO_INACTIVE;
+
+        timesheet.setTargetHoursCompleted(targetHoursCompletedOld);
+        timesheet.setTargetHoursPractice(targetHoursPracticeOld);
+        timesheet.setLatestEntryBeginDate(latestEntryDateOld);
+        timesheet.setState(stateOld);
+        timesheet.save();
+
+        int targetHoursCompletedNew = 110;
+        int targetHoursPracticeNew = 170;
+        Date latestEntryDateNew = new Date(200);
+        Timesheet.State stateNew = Timesheet.State.ACTIVE;
+
+        Timesheet updatedTimesheet = service.updateTimesheet(timesheet.getID(), targetHoursCompletedNew,
+                targetHoursPracticeNew, latestEntryDateNew, stateNew);
+
+        assertEquals(targetHoursCompletedNew, updatedTimesheet.getTargetHoursCompleted());
+        assertEquals(targetHoursPracticeNew, updatedTimesheet.getTargetHoursPractice());
+        assertEquals(latestEntryDateNew, updatedTimesheet.getLatestEntryBeginDate());
+        assertEquals(stateNew, updatedTimesheet.getState());
+    }
+
+    @Test
+    public void testUpdateTimesheetEnableStateOk() throws ServiceException{
+        Timesheet timesheet = ao.create(Timesheet.class);
+        timesheet.setIsEnabled(true);
+
+        Timesheet stillEnabled = service.updateTimesheetEnableState(timesheet.getID(), true);
+        assertEquals(true, stillEnabled.getIsEnabled());
+        Timesheet nowDisabled = service.updateTimesheetEnableState(timesheet.getID(), false);
+        assertEquals(false, nowDisabled.getIsEnabled());
+        Timesheet stillDisabled = service.updateTimesheetEnableState(timesheet.getID(), false);
+        assertEquals(false, stillDisabled.getIsEnabled());
+        Timesheet enabledAgain = service.updateTimesheetEnableState(timesheet.getID(), true);
+        assertEquals(true, enabledAgain.getIsEnabled());
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testUpdateTimesheetEnableStateNotFound() throws ServiceException {
+        Timesheet unusedTimesheet = ao.create(Timesheet.class);
+        service.updateTimesheetEnableState(unusedTimesheet.getID()+1, false);
+    }
+
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 
         @Override
