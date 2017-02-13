@@ -44,11 +44,10 @@ public class CsvTimesheetExporter {
                 "Practical Hours" + DELIMITER +
                 "Theory Hours" + DELIMITER +
                 "Hours Done" + DELIMITER +
-                "Substracted Hours" + DELIMITER +
+                "Subtracted Hours" + DELIMITER +
                 "Total Hours" + DELIMITER +
                 "Remaining Hours" + DELIMITER +
                 "Penalty Text" + DELIMITER +
-                "ECTS" + DELIMITER +
                 "Lecture" + DELIMITER +
                 "isMTSheet" + NEW_LINE);
 

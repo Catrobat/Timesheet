@@ -43,10 +43,6 @@ public class PluginPermissionCondition extends JiraGlobalPermissionCondition {
     @Override
     public boolean shouldDisplay(ApplicationUser user, JiraHelper jiraHelper) {
         Response response = permissionService.checkRootPermission();
-        if (response == null) {
-            return true;
-        } else {
-            return false;
-        }
+        return response == null;
     }
 }

@@ -41,7 +41,7 @@ public interface TeamToGroup extends Entity {
 
     void setGroup(Group group);
 
-    //further informations about the relationship
+    //further information about the relationship
     Role getRole();
 
     void setRole(Role role);
