@@ -96,6 +96,7 @@ function assignCategoryDiagramData(timesheetData) {
     }
 
     categoryDiagram(sortedDataArray, categories.length, false);
+    appendTimeToPiChart(sortedDataArray, categories.length);
 }
 
 function categoryDiagram(sortedDataArray, numberOfCategories, isTeamDiagram) {

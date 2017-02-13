@@ -1,20 +1,19 @@
 "use strict";
 
-function appendTimeToPiChart(theoryTime, practicalTime, totalTime) {
-    var piChartDataPoints = [];
-
-    //practice hours
-    piChartDataPoints.push("Practice");
-    piChartDataPoints.push(((practicalTime * 100) / totalTime).toString().slice(0, 5));
-    //theory hours
-    piChartDataPoints.push("Theory");
-    piChartDataPoints.push(((theoryTime * 100) / totalTime).toString().slice(0, 5));
-
+function appendTimeToPiChart(sortedDataArray, numberOfCategories) {
     var data = [];
-    for (var i = 0; i < piChartDataPoints.length; i = i + 2) {
+    for (var i = 0; i < numberOfCategories; i++) {
+        if (sortedDataArray[i][0] == "Inactive" || sortedDataArray[i][0] == "Inactive & Offline") {
+            continue;
+        }
+        var sum = 0;
+        for (var k = 2; k < sortedDataArray[i].length; k+=2) {
+            sum += sortedDataArray[i][k];
+        }
+
         data.push({
-            label: piChartDataPoints[i],
-            value: piChartDataPoints[i + 1]
+            label: sortedDataArray[i][0],
+            value: toFixed(sum, 2)
         });
     }
 

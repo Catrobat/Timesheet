@@ -128,7 +128,6 @@ function appendEntriesToVisTable(timesheetData) {
 
     AJS.$("#visualization-table-content").trigger("update");
 
-    appendTimeToPiChart(theoryHours, totalTime - theoryHours, totalTime);
     //assign JSON data for line graph
     lineDiagram(dataPoints);
 }
