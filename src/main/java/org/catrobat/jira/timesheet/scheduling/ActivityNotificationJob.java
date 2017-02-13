@@ -19,6 +19,7 @@ public class ActivityNotificationJob implements PluginJob {
     private TeamService teamService;
     private ConfigService configService;
     private SchedulingService schedulingService;
+    private EmailUtil emailUtil;
 
     @Override
     public void execute(Map<String, Object> map) {
@@ -29,7 +30,7 @@ public class ActivityNotificationJob implements PluginJob {
         teamService = (TeamService) map.get("teamService");
         configService = (ConfigService) map.get("configService");
         schedulingService = (SchedulingService) map.get("schedulingService");
-        EmailUtil emailUtil = new EmailUtil(configService);
+        emailUtil = new EmailUtil(configService);
 
         List<Timesheet> timesheetList = sheetService.all();
         Config config = configService.getConfiguration();
@@ -40,57 +41,40 @@ public class ActivityNotificationJob implements PluginJob {
                 continue;
             }
             if (timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE) {  // user is offline
-                //inform coordinators
-                for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
-                    emailUtil.sendEmail(coordinatorMailAddress, config.getMailSubjectOfflineState(),
-                            config.getMailBodyOfflineState());
-                    System.out.println("Coordinator-email: " + coordinatorMailAddress);
-                }
-
-                //inform timesheet admins
-                TimesheetAdmin[] timesheetAdmins = config.getTimesheetAdminUsers();
-                for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
-                    System.out.println("timesheetAdmin: = " + timesheetAdmin.getUserName());
-                    emailUtil.sendEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectOfflineState(),
-                            config.getMailBodyOfflineState());
-                }
+                informCoordinatorsOffline(user, config);
+                informTimesheetAdminsOffline(config);
             } else if (timesheet.getState() == Timesheet.State.INACTIVE) { // user is inactive
-                //inform coordinators
+                // FIXME: check is not needed if state is correct
                 TimesheetEntry latestInactiveEntry = entryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null) {
                     if (schedulingService.isOlderThanInactiveTime(latestInactiveEntry.getInactiveEndDate())) {
-                        //inform coordinators that he should be active since two weeks
-                        for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
-                            emailUtil.sendEmail(coordinatorMailAddress, config.getMailSubjectInactiveState(),
-                                    config.getMailBodyInactiveState());
-                            System.out.println("Coordinator-email: " + coordinatorMailAddress);
-                        }
+                        informCoordinatorsInactive(user, config);
                     }
                 }
-            } /*else if (timesheet.getIsReactivated()) {
-                // user is active again
-                //inform coordinators that the user is back and active now
-                for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
-                    sendMail(createEmail(coordinatorMailAddress, config.getMailSubjectActiveState(),
-                            config.getMailBodyActiveState()));
-                }
-
-                // user was offline
-                TimesheetEntry latestOfflineEntry = getLatestOfflineEntry(timesheet);
-                if (schedulingService.isOlderThanOfflineTime(latestOfflineEntry.getDeactivateEndDate())) {
-                    //inform timesheet admins
-                    TimesheetAdmin[] timesheetAdmins = config.getTimesheetAdminUsers();
-                    for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
-                        System.out.println("timesheetAdmin: = " + timesheetAdmin.getUserName());
-                        sendMail(createEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectActiveState(),
-                                config.getMailBodyActiveState()));
-                    }
-                }
-            } */else {
-                System.out.println("User is still active and no reaction is necessary.");
             }
         }
+    }
 
+    private void informCoordinatorsInactive(ApplicationUser user, Config config) {
+        for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+            emailUtil.sendEmail(coordinatorMailAddress, config.getMailSubjectInactiveState(),
+                    config.getMailBodyInactiveState());
+        }
+    }
+
+    private void informCoordinatorsOffline(ApplicationUser user, Config config) {
+        for (String coordinatorMailAddress : getCoordinatorsMailAddress(user)) {
+            emailUtil.sendEmail(coordinatorMailAddress, config.getMailSubjectOfflineState(),
+                    config.getMailBodyOfflineState());
+        }
+    }
+
+    private void informTimesheetAdminsOffline(Config config) {
+        TimesheetAdmin[] timesheetAdmins = config.getTimesheetAdminUsers();
+        for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
+            emailUtil.sendEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectOfflineState(),
+                    config.getMailBodyOfflineState());
+        }
     }
 
     private List<String> getCoordinatorsMailAddress(ApplicationUser user) {

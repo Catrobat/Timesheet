@@ -50,35 +50,7 @@ public class ActivityVerificationJob implements PluginJob {
                 statusFlagMessage = "user has set himself to inactive";
             }
             else if (timesheet.getState() == Timesheet.State.ACTIVE && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
-                timesheet.setState(Timesheet.State.AUTO_INACTIVE);
-                timesheet.save();
-                Date begin = timesheet.getLatestEntryBeginDate();
-                if (begin == null) begin = new Date();
-                Date end = new Date();
-
-                Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());
-                Team[] teamArray = new Team[teamsOfUser.size()];
-                teamArray = teamsOfUser.toArray(teamArray);
-                if(teamArray.length == 0) return; // very rare case
-                Team team = teamArray[0];
-
-                try {
-                    entryService.add(
-                            timesheet,
-                            begin,
-                            begin,
-                            categoryService.getCategoryByName("Inactive"),
-                            "Auto generated inactivity entry",
-                            0,
-                            team,
-                            false,
-                            end,
-                            "",
-                            ""
-                    );
-                } catch (ServiceException e) {
-                    e.printStackTrace();
-                }
+                setAutoInactive(timesheet);
                 statusFlagMessage = "user is active, but latest entry is older than the specified inactive limit";
             }
             else if (timesheet.getState() == Timesheet.State.AUTO_INACTIVE &&
@@ -107,6 +79,38 @@ public class ActivityVerificationJob implements PluginJob {
                 statusFlagMessage = "nothing changed";
             }
             printStatusFlags(timesheet, statusFlagMessage);
+        }
+    }
+
+    private void setAutoInactive(Timesheet timesheet) {
+        timesheet.setState(Timesheet.State.AUTO_INACTIVE);
+        timesheet.save();
+        Date begin = timesheet.getLatestEntryBeginDate();
+        if (begin == null) begin = new Date();
+        Date end = new Date();
+
+        Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());
+        Team[] teamArray = new Team[teamsOfUser.size()];
+        teamArray = teamsOfUser.toArray(teamArray);
+        if(teamArray.length == 0) return; // very rare case
+        Team team = teamArray[0];
+
+        try {
+            entryService.add(
+                    timesheet,
+                    begin,
+                    begin,
+                    categoryService.getCategoryByName("Inactive"),
+                    "Auto generated inactivity entry",
+                    0,
+                    team,
+                    false,
+                    end,
+                    "",
+                    ""
+            );
+        } catch (ServiceException e) {
+            e.printStackTrace();
         }
     }
 
