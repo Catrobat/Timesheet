@@ -262,9 +262,15 @@
             </p>
             <p>Download 'Config' as <a href="download/config/json">Json</a>.</p>
 
-            <h2><font color="red">Import</font></h2>
+            <h2><font color="blue">Import</font></h2>
             <p>Upload existing 'Timesheets' from <a href="upload/timesheets/json">Json</a>.</p>
             <p>Upload an existing 'Timesheet - Configuration' from  <a href="upload/config/json">Json</a>.</p>
+
+            <h2><font color="red">Reset</font></h2>
+            <input type="button" class="aui-button-primary aui-button" value="Delete Timesheet Data" id="reset-timesheets" style="background: red">
+            <div class="description">
+                Deletes all Timesheet and Entries, but does not change the config (this action cannot be undone).
+            </div>
 
             <div class="field-group">
                 <input type="submit" value="Save" class="aui-button aui-button-primary">

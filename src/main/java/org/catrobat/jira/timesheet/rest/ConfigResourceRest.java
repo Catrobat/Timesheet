@@ -164,6 +164,20 @@ public class ConfigResourceRest {
         return Response.noContent().build();
     }
 
+
+    @DELETE
+    @Path("/resetTimesheets")
+    public Response deleteAllTimesheetAndEntries(@Context HttpServletRequest request) {
+        Response response = permissionService.checkRootPermission();
+        if (response != null) {
+            return response;
+        }
+
+        DatabaseUtil db = new DatabaseUtil(ao);
+        db.resetTimesheets();
+        return Response.ok().build();
+    }
+
     @GET
     @Path("/dropTables")
     @Produces(MediaType.APPLICATION_JSON)

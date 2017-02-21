@@ -670,6 +670,60 @@ AJS.toInit(function () {
         }
     });
 
+    AJS.$("#reset-timesheets").click(function (e) {
+        e.preventDefault();
+        showTimesheetsDeletionDialog();
+    });
+
+    function showTimesheetsDeletionDialog() {
+        var dialog = new AJS.Dialog({
+            width: 520,
+            height: 390,
+            id: "timesheets-deletion-dialog",
+            closeOnOutsideClick: true
+        });
+
+        var content = "<h1>You are about to Delete all Timesheet & Entries</h1> <br>" +
+            "<h2>This action cannot be undone, only proceed, if you know what you are doing!</h2>" +
+            "<h2 style='color: red'><strong>Please confirm your action!<strong></strong></h2>";
+
+        dialog.addHeader("Timesheet Deletion");
+        dialog.addPanel("Confirm", content, "panel-body");
+
+        dialog.addButton("Cancel", function () {
+            dialog.remove();
+        });
+
+        dialog.addButton("Confirm", function () {
+            resetTimesheets();
+            dialog.remove();
+        });
+
+        dialog.gotoPage(0);
+        dialog.gotoPanel(0);
+
+        dialog.show();
+    }
+
+    function resetTimesheets() {
+        AJS.$.ajax({
+            type:"DELETE",
+            url: restBaseUrl + "config/resetTimesheets",
+            success:function () {
+                AJS.messages.success({
+                    title:"Success",
+                    body:"All Timesheets & Entries have been deleted!"
+                    })
+            },
+            error:function () {
+               AJS.messages.error({
+                   title:"Error",
+                   body:"There was an Error while processing your request!"
+               })
+           }
+        })
+    }
+
     function updateScheduling() {
         var scheduling = {};
 
