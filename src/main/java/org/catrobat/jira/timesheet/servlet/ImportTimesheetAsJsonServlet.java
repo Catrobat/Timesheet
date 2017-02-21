@@ -172,7 +172,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
         }
 
         response.getWriter().print("Successfully executed following string:<br />" +
-                "<br /><br />" +
+                "<br /><br />" +gson.toJson(timesheetAndEntriesList)+
                 "Following errors occurred:<br />" + errorString);
     }
 
