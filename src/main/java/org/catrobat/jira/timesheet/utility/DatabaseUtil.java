@@ -19,6 +19,13 @@ public class DatabaseUtil {
         this.ao = ao;
     }
 
+    public void resetTimesheets() {
+        ao.deleteWithSQL(TimesheetEntry.class, "ID > ?", 0);
+        ao.deleteWithSQL(Timesheet.class, "ID > ?", 0);
+
+        System.out.println("All timesheets & entries have been deleted!");
+    }
+
     public void clearAllTimesheetTables() {
         ao.deleteWithSQL(TimesheetEntry.class, "ID > ?", 0);
         ao.deleteWithSQL(Timesheet.class, "ID > ?", 0);
