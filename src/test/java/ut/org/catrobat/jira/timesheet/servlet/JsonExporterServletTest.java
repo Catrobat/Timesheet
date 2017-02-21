@@ -14,10 +14,7 @@ import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.TSAdminGroup;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
-import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TimesheetServiceImpl;
 import org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsJsonServlet;
@@ -57,6 +54,8 @@ public class JsonExporterServletTest {
     private HttpServletResponse response;
 
     private EntityManager entityManager;
+    private CategoryService categoryService;
+    private TeamService teamService;
 
     @Before
     public void setup() throws IOException, PermissionException{
@@ -76,6 +75,9 @@ public class JsonExporterServletTest {
         ApplicationUser user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+
+        teamService = mock(TeamService.class);
+        categoryService = mock(CategoryService.class);
 
         when(user.getUsername()).thenReturn("chris");
         when(user.getKey()).thenReturn("chris");
@@ -100,7 +102,7 @@ public class JsonExporterServletTest {
     @Test
     public void testDoGetAllTimesheets() throws IOException, ServletException {
         ExportAllTimesheetsAsJsonServlet exportAllTimesheetsAsJsonServlet = new ExportAllTimesheetsAsJsonServlet(
-                loginUriProvider, webSudoManager, permissionService, configService, timesheetService, entryService);
+                loginUriProvider, webSudoManager, permissionService, configService, timesheetService, entryService, categoryService, teamService);
 
         exportAllTimesheetsAsJsonServlet.doGet(request, response);
     }

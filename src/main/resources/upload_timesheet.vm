@@ -2,8 +2,34 @@
     <head>
         <title>Upload Backup Servlet</title>
         <meta name="decorator" content="atl.admin"/>
+        <script type="application/javascript">
+            AJS.toInit(function () {
+                var file = undefined;
+                AJS.$("#post-inputs").click(function () {
+                    file = document.getElementById("upload-field").value;
+                    if(file === undefined) {
+                        AJS.messages.error({
+                            title: "Error !",
+                            body: "Select a Timesheet Json Backup file to proceed!"
+                        })
+                    }
+                    else {
+                        if(!file.toLowerCase().includes(".json")){
+                            AJS.messages.error({
+                                title: "Error !",
+                                body: "The Datatype of the Backup must be .json!"
+                            })
+                        }
+                        else {
+                            AJS.$("#upload-form").submit();
+                        }
+                    }
+                })
+            });
+        </script>
     </head>
     <body>
+        <div id="aui-message-bar"/>
         <h1>This is the Upload Section</h1>
         <br>
         <h2>Select the Timesheet Json you want to import!</h2><br>

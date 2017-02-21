@@ -37,6 +37,10 @@ import java.util.Date;
 public final class JsonTimesheetEntry {
 
     @XmlElement
+    private String categoryName;
+    @XmlElement
+    private String teamName;
+    @XmlElement
     private int entryID;
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
@@ -194,6 +198,14 @@ public final class JsonTimesheetEntry {
     public boolean isTheory() {return isTheory;}
 
     public void setIsTheory(boolean theory) {isTheory = theory; }
+
+    public String getCategoryName() {return categoryName;}
+
+    public void setCategoryName(String categoryName) {this.categoryName = categoryName;}
+
+    public String getTeamName() {return teamName;}
+
+    public void setTeamName(String teamName) {this.teamName = teamName;}
 
     @Override
     public boolean equals(Object o) {

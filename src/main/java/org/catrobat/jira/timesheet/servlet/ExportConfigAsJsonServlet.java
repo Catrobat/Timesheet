@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 public class ExportConfigAsJsonServlet extends HighPrivilegeServlet {
 
@@ -33,7 +34,8 @@ public class ExportConfigAsJsonServlet extends HighPrivilegeServlet {
         String dateString = today.getYear() + "-" + today.getMonth() + "-" + today.getDayOfMonth();
         System.out.println(today.toString());
         String filename = "attachment; filename=\"" +
-                dateString + "_Timesheet_Config.json\"";
+                "Timesheet_Config_"+new Date() +".json\"";
+
 
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);

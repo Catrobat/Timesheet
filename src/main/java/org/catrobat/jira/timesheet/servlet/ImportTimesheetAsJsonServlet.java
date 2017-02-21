@@ -111,11 +111,10 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                 return;
             }
             FileItem fileItem = it.next();
-            /*if (!(fileItem.getContentType().equals("application/json") ||
-                    fileItem.getContentType().equals("application/octet-stream"))) {
-                response.sendError(500, "An error occurred: you may only upload Zip files");
+            if (!(fileItem.getContentType().equals("application/json"))){
+                response.sendError(500, "An error occurred: you may only upload Json files");
                 return;
-            }*/
+            }
             fileItem.write(temp);
         }
         catch (Exception e)
