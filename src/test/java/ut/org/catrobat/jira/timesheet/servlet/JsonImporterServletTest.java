@@ -6,6 +6,7 @@ import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
+import com.atlassian.templaterenderer.TemplateRenderer;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -55,6 +56,7 @@ public class JsonImporterServletTest {
 
     private EntityManager entityManager;
     private ActiveObjects ao;
+    private TemplateRenderer renderer;
 
     @Before
     public void setup() throws IOException, PermissionException {
@@ -76,6 +78,7 @@ public class JsonImporterServletTest {
         ApplicationUser user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+        renderer = mock(TemplateRenderer.class);
 
         when(user.getUsername()).thenReturn("chris");
         when(user.getKey()).thenReturn("chris");
@@ -93,7 +96,8 @@ public class JsonImporterServletTest {
     @Test
     public void testDoGetTimesheet() throws IOException, ServletException {
         ImportTimesheetAsJsonServlet importTimesheetAsJsonServlet = new ImportTimesheetAsJsonServlet(loginUriProvider,
-                webSudoManager, permissionService, configService, ao, timesheetService, entryService, categoryService, teamService);
+                webSudoManager, permissionService, configService, ao, timesheetService, entryService, categoryService, teamService,
+                renderer);
 
         importTimesheetAsJsonServlet.doGet(request, response);
     }
@@ -101,7 +105,7 @@ public class JsonImporterServletTest {
     @Test
     public void testDoGetConfig() throws IOException, ServletException {
         ImportConfigAsJsonServlet importConfigAsJsonServlet = new ImportConfigAsJsonServlet(loginUriProvider,
-                webSudoManager, configService, teamService, ao, permissionService);
+                webSudoManager, configService, teamService, ao, permissionService, renderer);
 
         importConfigAsJsonServlet.doGet(request, response);
     }

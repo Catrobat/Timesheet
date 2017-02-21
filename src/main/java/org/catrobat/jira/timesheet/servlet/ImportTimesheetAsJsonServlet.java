@@ -6,7 +6,13 @@ import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
+import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
@@ -19,9 +25,13 @@ import org.catrobat.jira.timesheet.services.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
 
@@ -30,17 +40,19 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
     private final TimesheetEntryService timesheetEntryService;
     private final CategoryService categoryService;
     private final TeamService teamService;
+    private final TemplateRenderer renderer;
 
     public ImportTimesheetAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
             PermissionService permissionService, ConfigService configService, ActiveObjects activeObjects,
             TimesheetService timesheetService, TimesheetEntryService timesheetEntryService,
-            CategoryService categoryService, TeamService teamService) {
+            CategoryService categoryService, TeamService teamService, TemplateRenderer renderer) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
         this.activeObjects = activeObjects;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
         this.categoryService = categoryService;
         this.teamService = teamService;
+        this.renderer = renderer;
     }
 
     @Override
@@ -53,7 +65,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             return;
         }*/
 
-        PrintWriter writer = response.getWriter();
+       /* PrintWriter writer = response.getWriter();
         writer.print("<html>" +
                 "<body>" +
                 "<h1>Dangerzone!</h1>" +
@@ -67,20 +79,53 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                 "</body>" +
                 "</html>");
         writer.flush();
-        writer.close();
+        writer.close();*/
+        renderer.render("upload_timesheet.vm", response.getWriter());
     }
+
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
 
-        String jsonString = request.getParameter("json");
-        if (request.getParameter("drop") != null && request.getParameter("drop").equals("drop")) {
-            dropEntries();
+        System.out.println("new Import");
+        boolean isMultipartContent = ServletFileUpload.isMultipartContent(request);
+        if (!isMultipartContent) {
+            response.sendError(500, "An error occurred: no files were given!");
+            return;
         }
 
+        FileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+
+        File temp = File.createTempFile("backup", ".json");
+
+        try {
+            List<FileItem> fields = upload.parseRequest(request);
+            Iterator<FileItem> it = fields.iterator();
+            if (!it.hasNext()) {
+                return;
+            }
+            if (fields.size() != 1) {
+                response.sendError(500, "An error occurred: Only one File is allowed");
+                return;
+            }
+            FileItem fileItem = it.next();
+            /*if (!(fileItem.getContentType().equals("application/json") ||
+                    fileItem.getContentType().equals("application/octet-stream"))) {
+                response.sendError(500, "An error occurred: you may only upload Zip files");
+                return;
+            }*/
+            fileItem.write(temp);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         Gson gson = new Gson();
-        JsonTimesheetAndEntries[] timesheetAndEntriesList = gson.fromJson(jsonString, JsonTimesheetAndEntries[].class);
+
+        JsonReader jsonReader = new JsonReader(new FileReader(new File(temp.getAbsolutePath())));
+        JsonTimesheetAndEntries[] timesheetAndEntriesList = gson.fromJson(jsonReader, JsonTimesheetAndEntries[].class);
 
         if (timesheetAndEntriesList == null) {
             response.getWriter().print("No Json given");
@@ -128,7 +173,6 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
         }
 
         response.getWriter().print("Successfully executed following string:<br />" +
-                "<textarea rows=\"20\" cols=\"200\" wrap=\"off\" disabled>" + jsonString + "</textarea>" +
                 "<br /><br />" +
                 "Following errors occurred:<br />" + errorString);
     }

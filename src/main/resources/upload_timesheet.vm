@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>Upload Backup Servlet</title>
+        <meta name="decorator" content="atl.admin"/>
+    </head>
+    <body>
+        <h1>This is the Upload Section</h1>
+        <br>
+        <h2>Select the Timesheet Json you want to import!</h2><br>
+        <h2>This Action will delete all current entries and will replace them with the the data given in the backup file!</h2>
+
+        <form class="aui" method="POST" enctype="multipart/form-data" id="upload-form">
+            <div class="field-group">
+                <input class="upfile" type="file" name="upload-field" id="upload-field"/>
+            </div>
+            <div class="field-group">
+                <input type="button" value="Submit" class="aui-button aui-button-primary" id="post-inputs">
+            </div>
+        </form>
+    </body>
+</html>

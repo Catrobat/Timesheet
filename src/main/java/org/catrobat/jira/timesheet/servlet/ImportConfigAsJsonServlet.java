@@ -6,6 +6,7 @@ import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
+import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
@@ -26,14 +27,16 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
     private final ConfigService configService;
     private final TeamService teamService;
     private final ActiveObjects activeObjects;
+    private final TemplateRenderer renderer;
 
     public ImportConfigAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                      ConfigService configService, TeamService teamService,
-                                     ActiveObjects activeObjects, PermissionService permissionService) {
+                                     ActiveObjects activeObjects, PermissionService permissionService, TemplateRenderer renderer) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
         this.configService = configService;
         this.teamService = teamService;
         this.activeObjects = activeObjects;
+        this.renderer = renderer;
     }
 
     @Override
@@ -62,6 +65,7 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
                 "</html>");
         writer.flush();
         writer.close();
+        //renderer.render("upload_timesheet.vm", response.getWriter());
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
