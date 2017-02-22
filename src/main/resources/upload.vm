@@ -29,10 +29,10 @@
         </script>
     </head>
     <body>
-        <div id="aui-message-bar"/>
+        <div id="aui-message-bar"></div>
         <h1>This is the Upload Section</h1>
         <br>
-        <h2>Select the Timesheet Json you want to import!</h2><br>
+        <h2>Select a Timesheet or Config Json you want to import!</h2><br>
         <h2>This Action will delete all current entries and will replace them with the the data given in the backup file!</h2>
 
         <form class="aui" method="POST" enctype="multipart/form-data" id="upload-form">

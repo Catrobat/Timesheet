@@ -8,9 +8,15 @@ import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheetAndEntries;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
@@ -18,9 +24,13 @@ import org.catrobat.jira.timesheet.services.TeamService;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
 
@@ -50,7 +60,7 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
             return;
         }*/
 
-        PrintWriter writer = response.getWriter();
+/*        PrintWriter writer = response.getWriter();
         writer.print("<html>" +
                 "<body>" +
                 "<h1>Dangerzone!</h1>" +
@@ -64,37 +74,63 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
                 "</body>" +
                 "</html>");
         writer.flush();
-        writer.close();
-        //renderer.render("upload_timesheet.vm", response.getWriter());
+        writer.close();*/
+
+        renderer.render("upload.vm", response.getWriter());
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
 
-        // Dangerous servlet - should be forbidden in production use
-        /*
-        if (configService.getConfiguration().getTeams().length != 0) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Configuration - Import is not possible if teams exist");
+        boolean isMultipartContent = ServletFileUpload.isMultipartContent(request);
+        if (!isMultipartContent) {
+            response.sendError(500, "An error occurred: no files were given!");
             return;
         }
-        */
 
-        String jsonString = request.getParameter("json");
+        FileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+
+        File temp = File.createTempFile("backup_config", ".json");
+
+        try {
+            List<FileItem> fields = upload.parseRequest(request);
+            Iterator<FileItem> it = fields.iterator();
+            if (!it.hasNext()) {
+                return;
+            }
+            if (fields.size() != 1) {
+                response.sendError(500, "An error occurred: You may only upload one file!");
+                return;
+            }
+            FileItem fileItem = it.next();
+            if (!(fileItem.getContentType().equals("application/json"))){
+                response.sendError(500, "An error occurred: you may only upload Json files");
+                return;
+            }
+            fileItem.write(temp);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
 
         if (request.getParameter("drop") != null && request.getParameter("drop").equals("drop")) {
             // FIXME: do we even need dropping here???
             dropEntries();
         }
 
-        String errorString = "";
-
         Gson gson = new Gson();
-        JsonConfig jsonConfig = gson.fromJson(jsonString, JsonConfig.class);
+
+        JsonReader jsonReader = new JsonReader(new FileReader(new File(temp.getAbsolutePath())));
+        JsonConfig jsonConfig = gson.fromJson(jsonReader, JsonConfig.class);
+        String errorString = "";
 
         jsonToConfig(jsonConfig, configService);
 
         response.getWriter().print("Successfully executed following string:<br />" +
-                "<textarea rows=\"20\" cols=\"200\" wrap=\"off\" disabled>" + jsonString + "</textarea>" +
+                "<textarea rows=\"20\" cols=\"200\" wrap=\"off\" disabled>" + gson.toJson(jsonConfig) + "</textarea>" +
                 "<br /><br />" +
                 "Following errors occurred:<br />" + errorString);
     }

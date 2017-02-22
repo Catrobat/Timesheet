@@ -95,6 +95,7 @@
         <resource type="download" name="administration.css" location="/css/administration.css"/>
         <context>modify</context>
     </web-resource>
+
     <!-- end of web-resources -->
     <!-- end of project specified -->
 
