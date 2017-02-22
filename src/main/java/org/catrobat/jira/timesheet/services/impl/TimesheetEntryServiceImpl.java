@@ -52,6 +52,9 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         if (category == null) {
             throw new ServiceException("TimesheetEntry is not allowed with null Category.");
         }
+        if (ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ? AND BEGIN_DATE < ? AND END_DATE > ?", sheet.getID(), end, begin).length != 0) {
+            throw new ServiceException("TimesheetEntries are not allowed to overlap.");
+        }
 
         TimesheetEntry entry = ao.create(TimesheetEntry.class);
 
