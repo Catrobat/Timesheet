@@ -4,9 +4,11 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.web.pagebuilder.PageBuilder;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.atlassian.webresource.api.assembler.PageBuilderService;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -57,6 +59,7 @@ public class JsonImporterServletTest {
     private EntityManager entityManager;
     private ActiveObjects ao;
     private TemplateRenderer renderer;
+    private PageBuilderService pageBuilderService;
 
     @Before
     public void setup() throws IOException, PermissionException {
@@ -79,6 +82,7 @@ public class JsonImporterServletTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         renderer = mock(TemplateRenderer.class);
+        pageBuilderService = mock(PageBuilderService.class);
 
         when(user.getUsername()).thenReturn("chris");
         when(user.getKey()).thenReturn("chris");
@@ -97,7 +101,7 @@ public class JsonImporterServletTest {
     public void testDoGetTimesheet() throws IOException, ServletException {
         ImportTimesheetAsJsonServlet importTimesheetAsJsonServlet = new ImportTimesheetAsJsonServlet(loginUriProvider,
                 webSudoManager, permissionService, configService, ao, timesheetService, entryService, categoryService, teamService,
-                renderer);
+                renderer, pageBuilderService);
 
         importTimesheetAsJsonServlet.doGet(request, response);
     }

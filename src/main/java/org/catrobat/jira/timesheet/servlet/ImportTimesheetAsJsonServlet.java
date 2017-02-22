@@ -22,6 +22,7 @@ import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetAndEntries;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,8 +44,6 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
     private final PageBuilderService pageBuilderService;
     private enum Result{Success, Failure, Errors}
     private Result importResult;
-
-    private final String DEFAULT_CATEGORIE = "Default Category (original cateogry got deleted)";
 
     public ImportTimesheetAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
             PermissionService permissionService, ConfigService configService, ActiveObjects activeObjects,
@@ -143,7 +142,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                     Category category = categoryService.getCategoryByName(entry.getCategoryName());
                     if (category == null) {
                         System.out.println("Category in import does not exist, need to set Default Category");
-                        category = categoryService.getCategoryByName(DEFAULT_CATEGORIE);
+                        category = categoryService.getCategoryByName(SpecialCategories.DEFAULT);
                     }
                     Team team = teamService.getTeamByName(entry.getTeamName());
                     List<Team> teams = teamService.all();
@@ -152,20 +151,19 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                     }
                     if (team == null) {
                         importResult = Result.Errors;
-                        System.out.println("Team given in import does not exist, need to make a decision here, will not import this entries");
-                        String faulty_entry = "ID: "+ entry.getEntryID() + " Entry: " + entry.getBeginDate() + "-"
-                                + entry.getEndDate() + " Purpose " + entry.getDescription();
-                        if(faulty_teams.containsKey(entry.getTeamName())) {
-                            Map<String, String> map = new HashMap<>();
-                            map.put("ID" , Integer.toString(entry.getEntryID()));
-                            map.put("Entry", entry.getBeginDate() + "-" + entry.getEndDate());
-                            map.put("Team", entry.getTeamName());
-                            map.put("Purpose", entry.getDescription());
-                            faulty_teams.get(entry.getTeamName()).add(map);
-                        }
-                        else{
+                        System.out.println("Team given in import does not exist");
+
+                        Map<String, String> map = new HashMap<>();
+                        map.put("ID" , Integer.toString(entry.getEntryID()));
+                        map.put("Entry", entry.getBeginDate() + "-" + entry.getEndDate());
+                        map.put("Team", entry.getTeamName());
+                        map.put("Purpose", entry.getDescription());
+
+                        if(!faulty_teams.containsKey(entry.getTeamName())) {
                             faulty_teams.put(entry.getTeamName(), new ArrayList<>());
                         }
+                        faulty_teams.get(entry.getTeamName()).add(map);
+
                         continue;
                     }
                     timesheetEntryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category, entry.getDescription(),

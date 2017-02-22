@@ -9,6 +9,9 @@
                         title:"Success",
                         body:"The timesheet import was Successfull"
                     });
+                    document.getElementById("status-des").innerHTML = "All Timesheet Entries were successfully imported!";
+                    document.getElementById("status-des").style.color = 0;
+
                     document.getElementById("status-header").innerHTML = "Success";
                 }
                 else if("$status" === "Failure") {

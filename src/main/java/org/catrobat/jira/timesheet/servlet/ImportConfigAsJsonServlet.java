@@ -53,29 +53,6 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        // Dangerous servlet - should be forbidden in production use
-        /*
-        if (configService.getConfiguration().getTeams().length != 0) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "The Configuration - Import is not possible if teams exist");
-            return;
-        }*/
-
-/*        PrintWriter writer = response.getWriter();
-        writer.print("<html>" +
-                "<body>" +
-                "<h1>Dangerzone!</h1>" +
-                "Just upload files when you know what you're doing - this upload will manipulate the database!<br />" +
-                "<form action=\"json\" method=\"post\"><br />" +
-                "<textarea name=\"json\" rows=\"20\" cols=\"175\" wrap=\"off\">" +
-                "</textarea><br />\n" +
-                "<input type=\"checkbox\" name=\"drop\" value=\"drop\">Drop existing config settings and ALL timesheet entries<br /><br />\n" +
-                "<input type=\"submit\" />" +
-                "</form>" +
-                "</body>" +
-                "</html>");
-        writer.flush();
-        writer.close();*/
-
         renderer.render("upload.vm", response.getWriter());
     }
 
