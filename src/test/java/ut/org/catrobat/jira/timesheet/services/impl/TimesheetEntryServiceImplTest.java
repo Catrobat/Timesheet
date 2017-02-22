@@ -18,6 +18,7 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
+import com.atlassian.jira.service.ServiceException;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -88,6 +89,26 @@ public class TimesheetEntryServiceImplTest {
         assertEquals(end, entries[0].getEndDate());
         assertEquals(desc, entries[0].getDescription());
         assertEquals(pause, entries[0].getPauseMinutes());
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testAddOverlapThrowsException() throws Exception {
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = ao.create(Timesheet.class);
+        Category category = ao.create(Category.class);
+        Team team = ao.create(Team.class);
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName);
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName);
     }
 
     @Test

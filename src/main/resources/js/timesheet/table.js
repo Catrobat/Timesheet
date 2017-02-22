@@ -370,7 +370,7 @@ function prepareForm(entry, timesheetData, isModified) {
     var baseUrl = AJS.params.baseURL; // we have to reassign it otherwise it would be undefined
     var tickets = [];
     var queryString = "/rest/api/2/issue/picker";
-    var text="";
+    var text="0 issues";
 
     AJS.$.ajax({
         type: 'GET',
@@ -382,14 +382,15 @@ function prepareForm(entry, timesheetData, isModified) {
             });
             var reg = /\d/g;
             var number = data.sections[0].sub;
-            text = number.match(reg)[0] + " issues";
+            if (number) {
+                text = number.match(reg)[0] + " issues";
+            }
         },
         error: function (jqXHR) {
             console.log("error message: " + jqXHR.responseText);
         },
         async: false
     });
-
 
     form.ticketSelect.auiSelect2({
         tags: tickets,
