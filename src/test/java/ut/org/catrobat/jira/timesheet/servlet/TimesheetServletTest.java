@@ -19,11 +19,8 @@ import static org.mockito.Mockito.*;
 public class TimesheetServletTest {
 
     private TimesheetServlet timesheetServlet;
-    private TimesheetService sheetService;
-    private PermissionService permissionService;
     private HttpServletResponse response;
     private HttpServletRequest request;
-    private ApplicationUser admin;
 
     @Before
     public void setUp() throws Exception {
@@ -31,18 +28,17 @@ public class TimesheetServletTest {
 
         LoginUriProvider loginUriProvider = mock(LoginUriProvider.class);
         TemplateRenderer templateRenderer = mock(TemplateRenderer.class);
-        sheetService = mock(TimesheetService.class);
-        permissionService = mock(PermissionService.class);
+        TimesheetService sheetService = mock(TimesheetService.class);
+        PermissionService permissionService = mock(PermissionService.class);
 
         Timesheet timeSheet = mock(Timesheet.class);
-        sheetService = mock(TimesheetService.class);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
 
         timesheetServlet = new TimesheetServlet(loginUriProvider, templateRenderer, sheetService, permissionService);
 
-        admin = mock(ApplicationUser.class);
+        ApplicationUser admin = mock(ApplicationUser.class);
         String admin_key = "admin_key";
         when(admin.getKey()).thenReturn(admin_key);
         when(admin.getUsername()).thenReturn("admin");
@@ -57,11 +53,8 @@ public class TimesheetServletTest {
         when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(true);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testDoGetNullPointerException() throws Exception {
-        when(permissionService.checkIfUserExists()).thenReturn(admin);
-        when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(null);
-
         timesheetServlet.doGet(request, response);
     }
 }

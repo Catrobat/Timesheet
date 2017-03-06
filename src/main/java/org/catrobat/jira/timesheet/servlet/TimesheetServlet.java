@@ -65,6 +65,10 @@ public class TimesheetServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             ApplicationUser user = permissionService.checkIfUserExists();
+            if (!permissionService.isUserEligibleForTimesheet(user)) {
+                // Maybe send Error here, do not redirect to login since the user is already logged in.
+                return;
+            }
             String userKey = user.getKey();
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet = null;

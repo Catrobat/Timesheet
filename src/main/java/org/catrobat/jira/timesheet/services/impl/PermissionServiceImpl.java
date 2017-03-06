@@ -328,4 +328,27 @@ public class PermissionServiceImpl implements PermissionService {
         String username = loggedInUser.getUsername();
         return ComponentAccessor.getGroupManager().getGroupNamesForUser(username);
     }
+
+    @Override
+    public boolean isUserEligibleForTimesheet(ApplicationUser user) {
+        Response response = checkUserPermission();
+        if (response != null) {
+            return false;
+        }
+
+        String userName = user.getUsername();
+        Set<Team> teams = teamService.getTeamsOfUser(userName);
+        if (teams.isEmpty()) {
+            return false;
+        }
+
+        for (Team team : teams) {
+            Category[] categories = team.getCategories();
+            if (categories == null || categories.length == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

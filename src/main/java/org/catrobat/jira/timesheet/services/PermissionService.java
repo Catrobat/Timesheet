@@ -17,7 +17,6 @@
 package org.catrobat.jira.timesheet.services;
 
 import com.atlassian.activeobjects.tx.Transactional;
-import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Team;
@@ -70,4 +69,6 @@ public interface PermissionService {
     boolean isReadOnlyUser(ApplicationUser user);
 
     Collection<String> getGroupNames(HttpServletRequest request);
+
+    boolean isUserEligibleForTimesheet(ApplicationUser user);
 }
