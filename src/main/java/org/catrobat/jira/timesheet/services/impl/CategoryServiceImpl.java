@@ -23,11 +23,13 @@ import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.CategoryService;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+@Component
 public class CategoryServiceImpl implements CategoryService {
 
     private final ActiveObjects ao;

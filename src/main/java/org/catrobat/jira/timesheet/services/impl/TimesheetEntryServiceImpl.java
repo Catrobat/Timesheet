@@ -25,6 +25,7 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
@@ -32,6 +33,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+@Component
 public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     private final ActiveObjects ao;

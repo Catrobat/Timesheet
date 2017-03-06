@@ -24,12 +24,14 @@ import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.TeamService;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Component
 public class ConfigServiceImpl implements ConfigService {
 
     private final ActiveObjects ao;

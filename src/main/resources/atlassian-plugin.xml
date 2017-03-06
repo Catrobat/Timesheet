@@ -180,28 +180,6 @@
     </component>
     <!-- end of import from the product container -->
 
-    <!-- additional components for administration -->
-    <component key="team-service" name="Team Service"
-               class="org.catrobat.jira.timesheet.services.impl.TeamServiceImpl"/>
-    <component key="timesheet-service" name="Timesheet Service"
-               class="org.catrobat.jira.timesheet.services.impl.TimesheetServiceImpl"/>
-    <component key="timesheetentry-service" name="Timesheet Entry Service"
-               class="org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl"/>
-    <component key="category-service" name="Category Service"
-               class="org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl"/>
-    <component key="permission-service" name="Permission Service"
-               class="org.catrobat.jira.timesheet.services.impl.PermissionServiceImpl"/>
-    <component key="scheduling-service" name="Scheduling Service"
-               class="org.catrobat.jira.timesheet.services.impl.SchedulingServiceImpl"/>
-    <component key="timesheet-permission-condition" name="Timesheet Permission"
-               class="org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition"/>
-    <!-- end of timesheet-components -->
-
-    <!-- administration-components -->
-    <component key="configuration" name="Config Service"
-               class="org.catrobat.jira.timesheet.services.impl.ConfigServiceImpl"/>
-    <!-- end of administration-components -->
-
     <!-- scheduling-components -->
     <component key="timesheet-scheduler" name="Timesheet Scheduler" public="true"
                class="org.catrobat.jira.timesheet.scheduling.TimesheetScheduler">

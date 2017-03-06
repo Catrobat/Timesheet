@@ -25,12 +25,14 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+@Component
 public class TeamServiceImpl implements TeamService {
 
     private final ActiveObjects ao;
