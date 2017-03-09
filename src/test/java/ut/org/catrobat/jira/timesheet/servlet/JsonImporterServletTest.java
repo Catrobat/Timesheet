@@ -109,7 +109,7 @@ public class JsonImporterServletTest {
     @Test
     public void testDoGetConfig() throws IOException, ServletException {
         ImportConfigAsJsonServlet importConfigAsJsonServlet = new ImportConfigAsJsonServlet(loginUriProvider,
-                webSudoManager, configService, teamService, ao, permissionService, renderer);
+                webSudoManager, configService, teamService, ao, permissionService, renderer, categoryService);
 
         importConfigAsJsonServlet.doGet(request, response);
     }

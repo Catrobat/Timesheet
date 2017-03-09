@@ -64,8 +64,8 @@
                 }
                 AJS.$("#faulty-entries-body").html(tbody);
                 AJS.$("#faulty-entries-body").trigger("update");
-                document.getElementById("faulty-entries").style.visibility = "visible";
 
+                document.getElementById("faulty-entries").style.visibility = "visible";
                 document.getElementById("faulty-teams").innerHTML = team_entry;
                 document.getElementById("team-des").style.visibility = "visible";
             }

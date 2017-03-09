@@ -17,9 +17,11 @@ import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetAndEntries;
+import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
+import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,15 +40,18 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
     private final TeamService teamService;
     private final ActiveObjects activeObjects;
     private final TemplateRenderer renderer;
+    private final CategoryService categoryService;
 
     public ImportConfigAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                      ConfigService configService, TeamService teamService,
-                                     ActiveObjects activeObjects, PermissionService permissionService, TemplateRenderer renderer) {
+                                     ActiveObjects activeObjects, PermissionService permissionService, TemplateRenderer renderer,
+                                     CategoryService categoryService) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
         this.configService = configService;
         this.teamService = teamService;
         this.activeObjects = activeObjects;
         this.renderer = renderer;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -114,6 +119,9 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
 
     private void jsonToConfig(JsonConfig jsonConfig, ConfigService configService) throws ServletException {
         // TODO: copy paste from Config REST, remove at one place
+        System.out.println("in json to config");
+
+        dropEntries();
 
         configService.editMail(jsonConfig.getMailFromName(), jsonConfig.getMailFrom(),
                 jsonConfig.getMailSubjectTime(), jsonConfig.getMailSubjectInactive(),
@@ -150,21 +158,25 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
             }
         }
 
-        if (jsonConfig.getTeams() != null) {
-            for (JsonTeam jsonTeam : jsonConfig.getTeams()) {
-                try {
-                    if (teamService.getTeamByName(jsonTeam.getTeamName()) != null) {
-                        configService.editTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
-                                jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
-                    } else {
-                        configService.addTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
-                                jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
+        for(JsonTeam jsonTeam : jsonConfig.getTeams())
+        {
+            for(String cat : jsonTeam.getTeamCategoryNames())
+            {
+                if(!SpecialCategories.AllSpecialCategories.contains(cat) && categoryService.getCategoryByName(cat) == null)
+                {
+                    System.out.println("category does not exist, creating");
+                    try{
+                        categoryService.add(cat);
                     }
-                } catch (ServiceException e) {
-                    throw new ServletException(e);
+                    catch (ServiceException e) {
+                      e.printStackTrace();
+                    }
                 }
             }
+            configService.addTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(), jsonTeam.getDeveloperGroups(),
+                    jsonTeam.getTeamCategoryNames());
         }
+
     }
 
     private void dropEntries() {
