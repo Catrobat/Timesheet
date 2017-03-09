@@ -169,6 +169,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                     timesheetEntryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category, entry.getDescription(),
                             entry.getPauseMinutes(), team, entry.IsGoogleDocImport(), entry.getInactiveEndDate(),
                             entry.getTicketID(), entry.getPairProgrammingUserName());
+
                 } catch (ServiceException e) {
                     errorString += e.getMessage() + " Entry ignored.\n";
                     continue;

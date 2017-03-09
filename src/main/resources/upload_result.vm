@@ -39,6 +39,7 @@
                             "Please check your configuration and Reimport these Entries!";
                 }
             });
+
             function redirectToTimesheet() {
                 window.open("$applicationProperties.getBaseUrl()/plugins/servlet/timesheet","_self");
             }
@@ -65,9 +66,9 @@
                 AJS.$("#faulty-entries-body").html(tbody);
                 AJS.$("#faulty-entries-body").trigger("update");
 
-                document.getElementById("faulty-entries").style.visibility = "visible";
+                document.getElementById("faulty-entries").style.display= "inline";
                 document.getElementById("faulty-teams").innerHTML = team_entry;
-                document.getElementById("team-des").style.visibility = "visible";
+                document.getElementById("team-des").style.display = "inline";
             }
 
         </script>
@@ -77,10 +78,10 @@
         <h1 id="status-header"></h1>
 
         <h3 id="status-des" style="color: red;"></h3>
-        <h2 id="team-des" style="visibility: hidden">Teams which could not be imported</h2>
+        <h2 id="team-des" style="display: none">Teams which could not be imported</h2>
         <ul id="faulty-teams"></ul>
 
-        <table id="faulty-entries" style="visibility: hidden;" class="aui aui-table-interactive ">
+        <table id="faulty-entries" style="display: none;" class="aui aui-table-interactive ">
             <thead>
             <tr>
                 <th>ID</th>
@@ -91,6 +92,7 @@
             </thead>
             <tbody id="faulty-entries-body"></tbody>
         </table>
+
         <br><br>
         <div class ="field-group">
             <input type="button" value="redirect to Timesheet" class="aui-button aui-button-primary"
