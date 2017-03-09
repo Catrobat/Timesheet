@@ -73,16 +73,25 @@ public class ConfigResourceRest {
 
         List<JsonCategory> categories = new LinkedList<>();
         List<Category> categoryList = categoryService.all();
+
+        for(Category cat : categoryList){
+            if (SpecialCategories.AllSpecialCategories.contains(cat.getName())){
+                categories.add(new JsonCategory(cat.getID(), cat.getName()));
+            }
+        }
+        Collections.sort(categories, (o1, o2) -> o1.getCategoryName().compareTo(o2.getCategoryName()));
+
         Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
 
         for (Category category : categoryList) {
-            categories.add(new JsonCategory(category.getID(), category.getName()));
+            if(!SpecialCategories.AllSpecialCategories.contains(category.getName())) {
+                categories.add(new JsonCategory(category.getID(), category.getName()));
+            }
         }
 
         return Response.ok(categories).build();
     }
 
-    //unused
     @GET
     @Path("/getTeams")
     public Response getTeams(@Context HttpServletRequest request) {
