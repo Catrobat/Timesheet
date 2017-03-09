@@ -74,7 +74,10 @@ public class TimesheetServlet extends HttpServlet {
             Timesheet timesheet = null;
 
             if (sheetService.userHasTimesheet(userKey, false)) {
+                System.out.println("current user has an active timesheet");
+                System.out.println("user key is:" + userKey);
                 timesheet = sheetService.getTimesheetByUser(userKey, false);
+                System.out.println("Timesheet Id is:"  + timesheet.getID());
             }
             if (timesheet == null) {
                 timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 150, 0, 0, "Bachelor Thesis",

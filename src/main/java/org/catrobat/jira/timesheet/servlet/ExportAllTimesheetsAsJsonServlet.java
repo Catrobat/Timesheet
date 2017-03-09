@@ -5,15 +5,14 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.google.gson.Gson;
+import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetAndEntries;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
-import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,13 +28,18 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
 
     private final TimesheetService sheetService;
     private final TimesheetEntryService entryService;
+    private final TeamService teamService;
+    private final CategoryService categoryService;
 
     public ExportAllTimesheetsAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                             PermissionService permissionService, ConfigService configService,
-                                            TimesheetService timesheetService, TimesheetEntryService entryService) {
+                                            TimesheetService timesheetService, TimesheetEntryService entryService,
+                                            CategoryService categoryService, TeamService teamService) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
         this.sheetService = timesheetService;
         this.entryService = entryService;
+        this.categoryService = categoryService;
+        this.teamService = teamService;
     }
 
     @Override
@@ -69,7 +73,20 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
             List<JsonTimesheetEntry> jsonEntries = new ArrayList<>();
 
             for (TimesheetEntry entry : entries) {
-                jsonEntries.add(new JsonTimesheetEntry(entry));
+                JsonTimesheetEntry new_entry = new JsonTimesheetEntry(entry);
+                Category cat = categoryService.getCategoryByID(new_entry.getCategoryID());
+                Team team =  teamService.getTeamByID(new_entry.getTeamID());
+                if(cat == null || team == null) {
+                    System.out.println("category or team not found should not happen on live system");
+                    continue;
+                }
+                String category_name = cat.getName();
+                String team_name = team.getTeamName();
+
+                new_entry.setCategoryName(category_name);
+                new_entry.setTeamName(team_name);
+
+                jsonEntries.add(new_entry);
             }
 
             JsonTimesheetAndEntries jsonTimesheetAndEntries = new JsonTimesheetAndEntries(new JsonTimesheet(timesheet), jsonEntries);

@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <title>Upload Result</title>
+        <meta name="decorator" content="atl.general"/>
+        <script type="text/javascript">
+            AJS.toInit(function () {;
+                if("$status" === "Success"){
+                    AJS.messages.success({
+                        title:"Success",
+                        body:"The timesheet import was Successfull"
+                    });
+                    document.getElementById("status-des").innerHTML = "All Timesheet Entries were successfully imported!";
+                    document.getElementById("status-des").style.color = 0;
+
+                    document.getElementById("status-header").innerHTML = "Success";
+                }
+                else if("$status" === "Failure") {
+                    AJS.messages.error({
+                        title:"Failure",
+                        body:"The timesheet import was UNSUCCESSFULL!"
+                    });
+                    document.getElementById("status-header").innerHTML = "Failure";
+                }
+                else{
+                    AJS.messages.hint({
+                        title:"Errors",
+                        body:"The import file had some issues, which were ignored in the import proccess"
+                    });
+                    var faulty_teams = "$error_teams";
+                    faulty_teams = faulty_teams.replace(/&quot;/g, "\"");
+
+                    var json_team = JSON.parse(faulty_teams);
+                    displayFaultyEntries(json_team);
+
+                    document.getElementById("status-header").innerHTML = "Error";
+
+                    document.getElementById("status-des").innerHTML = "One or more Timesheet entries refered to a Team, which is not " +
+                            "present in the current System. These Entrys were not imported!<br>" +
+                            "Please check your configuration and Reimport these Entries!";
+                }
+            });
+
+            function redirectToTimesheet() {
+                window.open("$applicationProperties.getBaseUrl()/plugins/servlet/timesheet","_self");
+            }
+
+            function displayFaultyEntries(json) {
+                var tbody = "";
+                var team_entry =""
+                for(var i = 0; i < Object.keys(json).length; i++) {
+                    var team = Object.keys(json)[i];
+                    team_entry +="<li>"+ team +"</li>\n";
+                    var entries = json[team]
+                    for(j = 0; j < entries.length; j++){
+                        var table_entry = "";
+                        var current_entry = entries[j];
+
+                        table_entry += "<tr>\n" +
+                        "<td>"+current_entry.ID+ "</td>\n" +
+                        "<td>"+current_entry.Entry+"</td>\n"+
+                        "<td>"+current_entry.Team+"</td>\n"+
+                        "<td>"+current_entry.Purpose+"<td>\n"+ "</tr>\n";
+                        tbody += (table_entry);
+                    }
+                }
+                AJS.$("#faulty-entries-body").html(tbody);
+                AJS.$("#faulty-entries-body").trigger("update");
+
+                document.getElementById("faulty-entries").style.display= "inline";
+                document.getElementById("faulty-teams").innerHTML = team_entry;
+                document.getElementById("team-des").style.display = "inline";
+            }
+
+        </script>
+    </head>
+    <body>
+        <div id="aui-message-bar"></div>
+        <h1 id="status-header"></h1>
+
+        <h3 id="status-des" style="color: red;"></h3>
+        <h2 id="team-des" style="display: none">Teams which could not be imported</h2>
+        <ul id="faulty-teams"></ul>
+
+        <table id="faulty-entries" style="display: none;" class="aui aui-table-interactive ">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Entry</th>
+                <th>Team</th>
+                <th>Descrpition</th>
+            </tr>
+            </thead>
+            <tbody id="faulty-entries-body"></tbody>
+        </table>
+
+        <br><br>
+        <div class ="field-group">
+            <input type="button" value="redirect to Timesheet" class="aui-button aui-button-primary"
+                   onclick="redirectToTimesheet()"/>
+        </div>
+    </body>
+</html>

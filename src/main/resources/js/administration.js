@@ -685,7 +685,7 @@ AJS.toInit(function () {
 
         var content = "<h1>You are about to Delete all Timesheet & Entries</h1> <br>" +
             "<h2>This action cannot be undone, only proceed, if you know what you are doing!</h2>" +
-            "<h2 style='color: red'><strong>Please confirm your action!<strong></strong></h2>";
+            "<h2 style='color: red'><center><strong>Please confirm your action!</strong></center></h2>";
 
         dialog.addHeader("Timesheet Deletion");
         dialog.addPanel("Confirm", content, "panel-body");
