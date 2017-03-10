@@ -38,10 +38,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.catrobat.jira.timesheet.utility.RestUtils.convertTeamsToJSON;
 
@@ -116,6 +113,26 @@ public class ConfigResourceRest {
             return unauthorized;
         }
         return Response.ok(new JsonConfig(configService)).build();
+    }
+
+    @GET
+    @Path("/getModifiableCategories")
+    public Response getModifiableCategories(@Context HttpServletRequest request)
+    {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+        List<JsonCategory> categories = new ArrayList<>();
+        List<Category> db_categories = categoryService.all();
+        for(Category cat : db_categories) {
+            if(!SpecialCategories.AllSpecialCategories.contains(cat.getName())) {
+                categories.add(new JsonCategory(cat.getID(), cat.getName()));
+            }
+        }
+        Collections.sort(categories, (o1,o2) -> o1.getCategoryName().compareTo(o2.getCategoryName()));
+
+        return Response.ok(categories).build();
     }
 
     @PUT
@@ -386,4 +403,5 @@ public class ConfigResourceRest {
 
         return Response.noContent().build();
     }
+
 }

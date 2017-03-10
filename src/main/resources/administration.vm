@@ -312,7 +312,16 @@
                 </div>
                 <div class="field-group">
                     <input type="submit" value="Create" class="aui-button aui-button-primary">
-                    <input type="submit" value="Remove" id="removeTeam" class="aui-button">
+                </div>
+                <br>
+                <div class="field-group">
+                    <form class="aui">
+                        <p id="team-to-remove-select">
+                        </p>
+                    </form>
+                </div>
+                <div class="field-group">
+                    <input type="submit" value="Remove" id="removeTeam" class="aui-button aui-button-primary">
                     <div class="description">
                         <p>Note on removing a team:</p>
                         <p>Remove all Users & Categories from the team</p>
@@ -334,7 +343,16 @@
                 </div>
                 <div class="field-group">
                     <input type="submit" value="Create" class="aui-button aui-button-primary">
-                    <input type="submit" value="Remove" id="removeCategory" class="aui-button">
+                </div>
+                <br>
+                <div class="field-group">
+                    <form class="aui">
+                        <p id="category-to-remove-select">
+                        </p>
+                    </form>
+                </div>
+                <div class="field-group">
+                    <input type="submit" value="Remove" id="removeCategory" class="aui-button aui-button-primary">
                     <div class="description">
                         <p>Note on removing a category:</p>
                         <p>Remove the category from all teams in team configuration.</p>

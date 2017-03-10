@@ -80,6 +80,7 @@
         <dependency>com.atlassian.auiplugin:aui-banner</dependency>
         <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
         <dependency>com.atlassian.auiplugin:message</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select</dependency>
 
         <resource type="download" name="administration.js" location="/js/administration.js"/>
         <resource type="download" name="administration.css" location="/css/administration.css"/>

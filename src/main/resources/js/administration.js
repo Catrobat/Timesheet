@@ -33,6 +33,61 @@ AJS.toInit(function () {
 
     initDialog();
 
+    function initDropdowns()
+    {
+        var possible_teams = "";
+        AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl+'config/getTeams',
+            contentType: "application/json",
+            success: function (data) {
+                for(var i = 0; i < data.length; i++){
+                    var team = data[i];
+                    var team_entry = "";
+                    if(team.teamName === "Default"){
+                        continue;
+                    }
+                    team_entry += "<aui-option>"+team.teamName+"</aui-option>";
+                    possible_teams += "\n" + team_entry;
+                }
+                document.getElementById("team-to-remove-select").innerHTML =
+                    "<aui-select id=\"team-to-remove\" placeholder=\"Select Team to Remove\">" +
+                        possible_teams +
+                    "</aui-select>"
+            },
+            fail: function () {
+               alert("teams could not be fetched");
+            }
+        });
+
+        var possible_categories="";
+
+        AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl+'config/getModifiableCategories',
+            contentType: "application/json",
+            success: function (data) {
+                for(var i = 0; i < data.length; i++){
+                    var cat = data[i];
+                    var cat_entry = "";
+
+                    cat_entry += "<aui-option>"+cat.categoryName+"</aui-option>";
+                    possible_categories += "\n" + cat_entry;
+                }
+                document.getElementById("category-to-remove-select").innerHTML =
+                    "<aui-select id=\"cat-to-remove\" placeholder=\"Select Category to Remove\">" +
+                    possible_categories +
+                    "</aui-select>"
+            },
+            fail: function () {
+                alert("categories could not be fetched");
+            }
+        });
+
+    }
+
+    initDropdowns();
+
     function fetchData() {
 
         var allUsersFetched = AJS.$.ajax({
@@ -539,17 +594,27 @@ AJS.toInit(function () {
     }
 
     function removeTeam() {
+        var team_to_remove = document.getElementById("team-to-remove").value;
+
+        if(team_to_remove === ""){
+            AJS.messages.error({
+                title:"Error!",
+                body:"Please select a Team you want to remove!"
+            });
+            return;
+        }
+
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
             url: restBaseUrl + 'config/removeTeam',
             type: "DELETE",
             contentType: "application/json",
-            data: AJS.$("#team-name").attr("value"),
+            data: team_to_remove,
             processData: false,
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "'Team' deleted successfully."
+                    body: team_to_remove+ " deleted successfully."
                 });
                 //empty the team name text field
                 AJS.$("#team-name").val("");
@@ -566,17 +631,27 @@ AJS.toInit(function () {
     }
 
     function removeCategory() {
+        var cat = document.getElementById("cat-to-remove").value;
+
+        if(cat === ""){
+            AJS.messages.error({
+                title:"Error!",
+                body:"Select a Category you want to remove!"
+            });
+            return;
+        }
+
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
             url: restBaseUrl + 'config/removeCategory',
             type: "PUT",
             contentType: "application/json",
-            data: AJS.$("#category-name").attr("value"),
+            data: cat,
             processData: false,
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "'Category' deleted successfully."
+                    body: cat + " deleted successfully."
                 });
                 //empty the team name text field
                 AJS.$("#category-name").val("");
@@ -863,7 +938,6 @@ AJS.toInit(function () {
             }
             AJS.$(".aui-dialog2-content").html(content);
         });
-
 //     // Hide event - this is triggered when the dialog is hidden
 //     AJS.dialog2("#hidden-dialog").on("hide", function () {
 //         AJS.log("hidden-dialog was hidden");
