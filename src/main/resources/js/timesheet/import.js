@@ -53,9 +53,27 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
             appendEntriesToTable(timesheetData);
         })
         .fail(function (error) {
+            var response_string = "";
+            var error_object = JSON.parse(error.responseText);
+            for(var i = 0; i < Object.keys(error_object).length; i++){
+                var entry_key = Object.keys(error_object)[i];
+                if(entry_key !== "correct"){
+                    var entries = error_object[entry_key];
+                    response_string += "<h2>"+ entry_key +"</h2>";
+
+                    for(var j = 0; j < entries.length; j++){
+                        var begin = new Date(entries[j].beginDate);
+                        var end = new Date(entries[j].endDate);
+
+                        response_string += "<p><strong>Begin: </strong>"+ begin.toLocaleDateString("en-US") +
+                            " <strong>End: </strong>"+ end.toLocaleDateString("en-US") +"<strong> Description: </strong>"
+                            + entries[j].description + "</p>";
+                    }
+                }
+            }
             AJS.messages.error({
                 title: 'There was an error during your Google Timesheet import.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
+                body: '<p>Reason: ' + response_string + '</p>'
             });
             var parsed = JSON.parse(error.responseText);
             timesheetData.entries = parsed.correct;
