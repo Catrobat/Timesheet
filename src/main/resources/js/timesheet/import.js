@@ -20,7 +20,22 @@ function prepareImportDialog(timesheetDataReply) {
 }
 
 function importGoogleDocsTable(table, timesheetData, importDialog) {
-    var entries = parseEntriesFromGoogleDocTimesheet(table, timesheetData);
+    var entriesAndFaultyRows = parseEntriesFromGoogleDocTimesheet(table, timesheetData);
+    var entries = entriesAndFaultyRows[0];
+    var faultyRows = entriesAndFaultyRows[1];
+
+    if (faultyRows.length > 0) {
+        var errorString = "Reason - The following rows are not formatted correctly: <br>";
+        for (var i = 0; i < faultyRows.length; i++) {
+            errorString += faultyRows[i] + "<br>";
+        }
+      AJS.messages.error({
+        title: 'There was an error during your Google Timesheet import.',
+        body: '<p>' + errorString + '</p>'
+      });
+      return;
+    }
+
     var url = restBaseUrl + "timesheets/" + timesheetID + "/entries/" + isMasterThesisTimesheet;
 
     if (entries.length === 0) return;
@@ -42,6 +57,9 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
                 title: 'There was an error during your Google Timesheet import.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
+            var parsed = JSON.parse(error.responseText);
+            timesheetData.entries = parsed.correct;
+            appendEntriesToTable(timesheetData);
         });
 }
 
@@ -57,16 +75,21 @@ function showImportMessage(response) {
 
 function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
     var entries = [];
+    var faultyRows = [];
 
     googleDocContent
         .split("\n")
         .forEach(function (row) {
             if (row.trim() === "") return;
             var entry = parseEntryFromGoogleDocRow(row, timesheetData);
-            entries.push(entry);
+            if (entry == null) {
+                faultyRows.push(row);
+            } else {
+              entries.push(entry);
+            }
         });
 
-    return entries;
+    return [entries, faultyRows];
 }
 
 function parseEntryFromGoogleDocRow(row, timesheetData) {

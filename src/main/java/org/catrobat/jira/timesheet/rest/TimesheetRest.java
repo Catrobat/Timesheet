@@ -500,43 +500,36 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
+        Map<String, List<JsonTimesheetEntry>> errorMap = new HashMap<>();
+        errorMap.put("correct", new ArrayList<>());
         for (JsonTimesheetEntry entry : entries) {
             try {
                 RestUtils.checkJsonTimesheetEntry(entry);
-            } catch (ParseException e) {
-                return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
-            }
-
-            try {
                 permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
-            } catch (PermissionException e) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-            }
-
-            Category category = categoryService.getCategoryByID(entry.getCategoryID());
-            Team team = teamService.getTeamByID(entry.getTeamID());
-            try {
+                Category category = categoryService.getCategoryByID(entry.getCategoryID());
+                Team team = teamService.getTeamByID(entry.getTeamID());
                 teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
-            } catch (ServiceException e) {
-                return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+                if (entry.isTheory()) {
+                    category = categoryService.getCategoryByName(SpecialCategories.THEORY);
+                } else if (entry.IsGoogleDocImport()) {
+                    category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
+                }
+                TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
+                    entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
+                    entry.getInactiveEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
+                entry.setEntryID(newEntry.getID());
+                errorMap.get("correct").add(entry);
+            } catch (ParseException | ServiceException | PermissionException e) {
+                if (!errorMap.containsKey(e.getMessage())) {
+                    errorMap.put(e.getMessage(), new ArrayList<>());
+                }
+                errorMap.get(e.getMessage()).add(entry);
             }
+        }
 
-            if (entry.isTheory()) {
-                category = categoryService.getCategoryByName(SpecialCategories.THEORY);
-            } else if (entry.IsGoogleDocImport()) {
-                category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
-            }
-
-            TimesheetEntry newEntry;
-            try {
-                newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
-                        entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
-                        entry.getInactiveEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
-            } catch (ServiceException e) {
-                return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
-            }
-
-            entry.setEntryID(newEntry.getID());
+        if (errorMap.size() > 1) {
+            Gson gson = new Gson();
+            return Response.status(Response.Status.CONFLICT).entity(errorMap).build();
         }
 
         return Response.ok(entries).build();
