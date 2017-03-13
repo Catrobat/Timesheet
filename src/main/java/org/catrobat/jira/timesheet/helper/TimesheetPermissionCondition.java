@@ -21,9 +21,11 @@ import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Component
 public class TimesheetPermissionCondition extends JiraGlobalPermissionCondition {
 
     private final PermissionService permissionService;

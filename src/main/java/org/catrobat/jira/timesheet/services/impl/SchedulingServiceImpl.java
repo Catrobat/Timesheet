@@ -3,12 +3,14 @@ package org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import org.catrobat.jira.timesheet.activeobjects.Scheduling;
 import org.catrobat.jira.timesheet.services.SchedulingService;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+@Component
 public class SchedulingServiceImpl implements SchedulingService {
 
     private final ActiveObjects ao;

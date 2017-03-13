@@ -24,6 +24,7 @@ import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Date;
@@ -31,6 +32,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+@Component
 public class TimesheetServiceImpl implements TimesheetService {
 
     private final ActiveObjects ao;

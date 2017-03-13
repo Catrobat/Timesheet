@@ -24,6 +24,7 @@ import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
+@Component
 public class PermissionServiceImpl implements PermissionService {
 
     private static final boolean DEBUG_MODE = true;
