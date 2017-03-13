@@ -639,11 +639,9 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-
         try {
             user = permissionService.checkIfUserExists();
-            permissionService.userCanEditTimesheetEntry(loggedInUser, entry.getTimeSheet(), entry);
+            permissionService.userCanEditTimesheetEntry(user, entry);
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
@@ -692,8 +690,6 @@ public class TimesheetRest {
             @PathParam("entryID") int entryID,
             @PathParam("isMTSheet") Boolean isMTSheet) {
         ApplicationUser user;
-        Timesheet sheet;
-
         try {
             user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
@@ -706,21 +702,12 @@ public class TimesheetRest {
         }
 
         TimesheetEntry entry = entryService.getEntryByID(entryID);
-
-        ApplicationUser loggedInUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        Timesheet sheet = entry.getTimeSheet();
 
         try {
-            permissionService.userCanDeleteTimesheetEntry(loggedInUser, entry);
+            permissionService.userCanDeleteTimesheetEntry(user, entry);
         } catch (PermissionException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-        }
-
-        //update latest date
-        try {
-            sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(user.getUsername()), false);
-        } catch (ServiceException e) {
-            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
 
         if (sheet == null) {
@@ -729,7 +716,7 @@ public class TimesheetRest {
 
         if (!sheet.getIsEnabled()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
-        } else if (!permissionService.userCanViewTimesheet(loggedInUser, sheet)) {
+        } else if (!permissionService.userCanViewTimesheet(user, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
         }
 
