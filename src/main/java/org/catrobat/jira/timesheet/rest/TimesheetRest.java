@@ -668,7 +668,7 @@ public class TimesheetRest {
         try {
             entryService.edit(entryID, entry.getTimeSheet(), jsonEntry.getBeginDate(), jsonEntry.getEndDate(), category,
                     jsonEntry.getDescription(), jsonEntry.getPauseMinutes(), team, jsonEntry.IsGoogleDocImport(),
-                    jsonEntry.getInactiveEndDate(), jsonEntry.getPairProgrammingUserName(), jsonEntry.getTicketID());
+                    jsonEntry.getInactiveEndDate(), jsonEntry.getTicketID(), jsonEntry.getPairProgrammingUserName());
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }

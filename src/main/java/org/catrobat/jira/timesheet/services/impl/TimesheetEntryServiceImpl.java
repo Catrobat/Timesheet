@@ -46,12 +46,8 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     public TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
             Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
             String userName) throws ServiceException{
-        if (team == null) {
-            throw new ServiceException("TimesheetEntry is not allowed with null Team.");
-        }
-        if (category == null) {
-            throw new ServiceException("TimesheetEntry is not allowed with null Category.");
-        }
+
+        checkParams(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName);
         if (ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ? AND BEGIN_DATE < ? AND END_DATE > ?", sheet.getID(), end, begin).length != 0) {
             throw new ServiceException("TimesheetEntries are not allowed to overlap.");
         }
@@ -75,6 +71,26 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         updateTimesheet(sheet, entry);
 
         return entry;
+    }
+
+    private void checkParams(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
+                             Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
+                             String userName) throws ServiceException {
+        if (team == null) {
+            throw new ServiceException("TimesheetEntry is not allowed with null Team.");
+        }
+        if (category == null) {
+            throw new ServiceException("TimesheetEntry is not allowed with null Category.");
+        }
+        if (description.length() > 255) {
+            throw new ServiceException("Description shall not be longer than 255 characters.");
+        }
+        if (jiraTicketID.length() > 255) {
+            throw new ServiceException("JiraTicketID shall not be longer than 255 characters.");
+        }
+        if (userName.length() > 255) {
+            throw new ServiceException("Pair Programming User Name shall not be longer than 255 characters.");
+        }
     }
 
     private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) throws ServiceException{
@@ -129,20 +145,16 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Override
     @Nullable
     public TimesheetEntry edit(int entryId, Timesheet sheet, Date begin, Date end, Category category,
-            String description, int pause, Team team, boolean isGoogleDocImport,
-            Date inactiveEndDate, String userName, String jiraTicketID) throws ServiceException {
+                               String description, int pause, Team team, boolean isGoogleDocImport,
+                               Date inactiveEndDate, String jiraTicketID, String userName) throws ServiceException {
 
         TimesheetEntry entry = getEntryByID(entryId);
 
         if (entry == null) {
             throw new ServiceException("Entry not found");
         }
-        if (team == null) {
-            throw new ServiceException("TimesheetEntry is not allowed with null Team.");
-        }
-        if (category == null) {
-            throw new ServiceException("TimesheetEntry is not allowed with null Category.");
-        }
+
+        checkParams(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName);
 
         entry.setTimeSheet(sheet);
         entry.setBeginDate(begin);

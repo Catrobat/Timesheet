@@ -52,6 +52,9 @@ public class TimesheetServiceImpl implements TimesheetService {
         } else if (found.length == 0) {
             throw new ServiceException("No 'Timesheet' found for this user.");
         }
+        if (lectures.length() > 255) {
+            throw new ServiceException("Lectures shall not be longer than 255 characters.");
+        }
 
         for (Timesheet aFound : found) {
             if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
