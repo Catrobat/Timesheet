@@ -63,6 +63,11 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser) {
             }
         }
     }
+
+    listOfUsers = listOfUsers.filter(function (item, index, inputArray) {
+        return inputArray.indexOf(item) == index;
+    });
+
     AJS.$(".selectTimesheetOfUserField").auiSelect2({
         placeholder: "Select User",
         tags: listOfUsers.sort(),

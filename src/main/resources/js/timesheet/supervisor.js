@@ -19,6 +19,10 @@ function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
         }
     }
 
+    listOfUsers = listOfUsers.filter(function (item, index, inputArray) {
+        return inputArray.indexOf(item) == index;
+    });
+
     AJS.$(".approvedUserSelectTimesheetOfUserField").auiSelect2({
         placeholder: "Select User",
         tags: listOfUsers.sort(),
