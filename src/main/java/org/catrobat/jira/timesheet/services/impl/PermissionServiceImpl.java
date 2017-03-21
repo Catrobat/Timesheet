@@ -71,6 +71,24 @@ public class PermissionServiceImpl implements PermissionService {
         return !teamService.getTeamsOfCoordinator(user.getUsername()).isEmpty();
     }
 
+    private boolean isUserAssignedToTeam(ApplicationUser user){
+        String userName = user.getUsername();
+        Set<Team> teams = teamService.getTeamsOfUser(userName);
+        if (teams.isEmpty()) {
+            System.out.println("user has no team assigned");
+            return false;
+        }
+
+        for (Team team : teams) {
+            Category[] categories = team.getCategories();
+            if (categories == null || categories.length == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public Response checkUserPermission() {
         ApplicationUser user;
@@ -84,7 +102,8 @@ public class PermissionServiceImpl implements PermissionService {
             if (!((!timesheetAdminExists() && checkIfUserIsGroupMember(JIRA_TEST_ADMINISTRATORS))
                     || checkIfUserIsGroupMember("Timesheet")
                     || isReadOnlyUser(user)
-                    || isTimesheetAdmin(user))) {
+                    || isTimesheetAdmin(user)
+                    || isUserAssignedToTeam(user))) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                         "'Jira-Test-Administrators', 'Timesheet' or 'read only users'").build();
             }
@@ -92,7 +111,8 @@ public class PermissionServiceImpl implements PermissionService {
             if (!((!timesheetAdminExists() && checkIfUserIsGroupMember(JIRA_ADMINISTRATORS))
                     || checkIfUserIsGroupMember("Timesheet")
                     || isReadOnlyUser(user)
-                    || isTimesheetAdmin(user))) {
+                    || isTimesheetAdmin(user)
+                    || isUserAssignedToTeam(user))) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("'User' is not assigned to " +
                         "'jira-administrators', 'Timesheet' or 'read only users'").build();
             }
@@ -331,24 +351,14 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public boolean isUserEligibleForTimesheet(ApplicationUser user) {
-        Response response = checkUserPermission();
+/*        Response response = checkUserPermission();
         if (response != null) {
+            System.out.println("user has not the neccessary permissions name: " + user.getName());
             return false;
-        }
+        }*/
 
-        String userName = user.getUsername();
-        Set<Team> teams = teamService.getTeamsOfUser(userName);
-        if (teams.isEmpty()) {
-            return false;
-        }
+        System.out.println("checking Timesheet permission for user" + user.getName());
 
-        for (Team team : teams) {
-            Category[] categories = team.getCategories();
-            if (categories == null || categories.length == 0) {
-                return false;
-            }
-        }
-
-        return true;
+        return isUserAssignedToTeam(user);
     }
 }

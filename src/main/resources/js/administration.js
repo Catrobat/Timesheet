@@ -279,6 +279,14 @@ AJS.toInit(function () {
                     }
                 }
 
+                var userGroupList = allGroups[0].sort().concat(userNameList.sort());
+                
+                AJS.$("#group-user-test").auiSelect2({
+                    placeholder: "Select usersrs or groups",
+                    tags: userGroupList,
+                    tokenSeparators: [",", " "]
+                });
+
                 //Pair Programmign - ldap group
                 AJS.$("#pp-ldap").auiSelect2({
                     placeholder: "Select Pair Programming Group",
@@ -295,13 +303,13 @@ AJS.toInit(function () {
                 //Timesheet - team coordinator picker
                 AJS.$(".coordinator").auiSelect2({
                     placeholder: "Select coordinators",
-                    tags: userNameList.sort(),
+                    tags: userGroupList,
                     tokenSeparators: [",", " "]
                 });
                 //Timesheet - team user picker
                 AJS.$(".user").auiSelect2({
                     placeholder: "Select users",
-                    tags: userNameList.sort(),
+                    tags: userGroupList,
                     tokenSeparators: [",", " "]
                 });
                 //Timesheet - team category picker

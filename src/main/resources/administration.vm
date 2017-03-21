@@ -88,6 +88,15 @@
                 </div>
             </fieldset>
 
+            <h2>Testing Group User</h2>
+            <fieldset>
+                <div class="field-group">
+                    <label for="Testing">Just for testing purpos</label>
+                    <input class="text" type="text" id="group-user-test" name="group-user-test"
+                           title="group-user-test">
+                </div>
+            </fieldset>
+
             <h2>Pair Programming LDAP Group</h2>
             <fieldset>
                 <div class="field-group">

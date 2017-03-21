@@ -17,6 +17,8 @@
 package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.service.ServiceException;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.Category;
@@ -134,11 +136,15 @@ public class TeamServiceImpl implements TeamService {
         for (Team team : ao.find(Team.class)) {
             String teamName = team.getTeamName();
 
-            List<String> developerList = getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER);
+            List<String> developerUserAndGroupList = getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER);
 
-            for (String developerName : developerList) {
-                if (developerName.equals(userName)) {
+            System.out.println("developers of team: "+ teamName);
+            for (String developerUserOrGroupName : developerUserAndGroupList) {
+                System.out.println("checking entry: " + developerUserOrGroupName);
+                if (developerUserOrGroupName.equals(userName) ||
+                        ComponentAccessor.getGroupManager().isUserInGroup(userName,developerUserOrGroupName)) {
                     teams.add(team);
+                    break;
                 }
             }
         }

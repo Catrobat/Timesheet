@@ -76,9 +76,12 @@ public class ConfigResourceRest {
                 categories.add(new JsonCategory(cat.getID(), cat.getName()));
             }
         }
+
         Collections.sort(categories, (o1, o2) -> o1.getCategoryName().compareTo(o2.getCategoryName()));
 
-        Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+        if(categoryList.size() < 2) {
+            Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+        }
 
         for (Category category : categoryList) {
             if(!SpecialCategories.AllSpecialCategories.contains(category.getName())) {
