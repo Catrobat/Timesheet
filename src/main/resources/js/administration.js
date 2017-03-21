@@ -285,12 +285,6 @@ AJS.toInit(function () {
                     return inputArray.indexOf(item) == index;
                 });
                 
-                AJS.$("#group-user-test").auiSelect2({
-                    placeholder: "Select usersrs or groups",
-                    tags: userGroupList,
-                    tokenSeparators: [",", " "]
-                });
-
                 //Pair Programmign - ldap group
                 AJS.$("#pp-ldap").auiSelect2({
                     placeholder: "Select Pair Programming Group",
