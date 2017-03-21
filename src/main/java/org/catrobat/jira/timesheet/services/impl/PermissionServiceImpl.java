@@ -357,8 +357,6 @@ public class PermissionServiceImpl implements PermissionService {
             return false;
         }*/
 
-        System.out.println("checking Timesheet permission for user" + user.getName());
-
         return isUserAssignedToTeam(user);
     }
 }

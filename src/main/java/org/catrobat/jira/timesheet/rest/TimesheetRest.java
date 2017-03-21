@@ -16,6 +16,7 @@
 
 package org.catrobat.jira.timesheet.rest;
 
+import com.atlassian.core.util.collection.ArrayUtils;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.ParseException;
@@ -141,31 +142,50 @@ public class TimesheetRest {
         }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
+        Vector<String> TeamMembers = new Vector<>();
 
-        //get all teams of that user
         for (Team team : teamService.getTeamsOfUser(loggedInUser.getName())) {
-            //get all team members
-            for (String teamMember : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
-                //collect all timesheet entries of all team members
-                try {
-                    if (ComponentAccessor.getUserManager().getUserByName(teamMember) == null) {
-                        continue; // FIXME: User no longer in Ldap group is this an error? or can it happen?
+            for (String teamMembersAndGroups : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
+                System.out.println(configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER));
+                if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
+                    Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);
+                    if(usersInGroup.size() == 0) {
+                        return Response.serverError().entity("This should never Happen !!!!!").build();
                     }
-                    String userKey = ComponentAccessor.getUserManager().getUserByName(teamMember).getKey();
-                    if (sheetService.userHasTimesheet(userKey, false)) {
-                        Timesheet sheet = sheetService.getTimesheetByUser(userKey, false);
-
-                        //all entries of each user
-                        TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
-
-                        // Add entries anonymously
-                        for (TimesheetEntry entry : entries) {
-                            jsonTimesheetEntries.add(new JsonTimesheetEntry(entry, true));
+                    else {
+                        for (String member : usersInGroup) {
+                            if(!TeamMembers.contains(member)) {
+                                TeamMembers.add(member);
+                            }
                         }
                     }
-                } catch (ServiceException e) {
-                    return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+                } else {
+                    if(!TeamMembers.contains(teamMembersAndGroups)) {
+                        TeamMembers.add(teamMembersAndGroups);
+                    }
                 }
+            }
+        }
+
+        System.out.println("TeamMembers of user "+ loggedInUser.getUsername() + " are " + TeamMembers);
+
+        for (String member : TeamMembers) {
+            //collect all timesheet entries of all team members
+            try {
+                String userKey = ComponentAccessor.getUserManager().getUserByName(member).getKey();
+                if (sheetService.userHasTimesheet(userKey, false)) {
+                    Timesheet sheet = sheetService.getTimesheetByUser(userKey, false);
+
+                    //all entries of each user
+                    TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
+
+                    // Add entries anonymously
+                    for (TimesheetEntry entry : entries) {
+                        jsonTimesheetEntries.add(new JsonTimesheetEntry(entry, true));
+                    }
+                }
+            } catch (ServiceException e) {
+                return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
         }
 
@@ -175,7 +195,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/{teamName}/entries")
     public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
-            @PathParam("teamName") String teamName) {
+                                                  @PathParam("teamName") String teamName) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -224,6 +244,7 @@ public class TimesheetRest {
 
         return Response.ok(jsonTimesheetEntries).build();
     }
+
 
     @GET
     @Path("timesheet/timesheetID/{userName}/{getMTSheet}")

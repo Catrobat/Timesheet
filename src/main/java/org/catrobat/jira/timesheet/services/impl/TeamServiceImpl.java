@@ -138,9 +138,9 @@ public class TeamServiceImpl implements TeamService {
 
             List<String> developerUserAndGroupList = getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER);
 
-            System.out.println("developers of team: "+ teamName);
+            //System.out.println("developers of team: "+ teamName);
             for (String developerUserOrGroupName : developerUserAndGroupList) {
-                System.out.println("checking entry: " + developerUserOrGroupName);
+               // System.out.println("checking entry: " + developerUserOrGroupName);
                 if (developerUserOrGroupName.equals(userName) ||
                         ComponentAccessor.getGroupManager().isUserInGroup(userName,developerUserOrGroupName)) {
                     teams.add(team);
