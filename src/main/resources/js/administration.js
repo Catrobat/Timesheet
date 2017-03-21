@@ -281,6 +281,10 @@ AJS.toInit(function () {
 
                 var userGroupList = allGroups[0].sort().concat(userNameList.sort());
                 
+                userGroupList = userGroupList.filter(function (item, index, inputArray) {
+                    return inputArray.indexOf(item) == index;
+                });
+                
                 AJS.$("#group-user-test").auiSelect2({
                     placeholder: "Select usersrs or groups",
                     tags: userGroupList,

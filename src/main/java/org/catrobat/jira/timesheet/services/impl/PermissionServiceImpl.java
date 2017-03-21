@@ -75,7 +75,7 @@ public class PermissionServiceImpl implements PermissionService {
         String userName = user.getUsername();
         Set<Team> teams = teamService.getTeamsOfUser(userName);
         if (teams.isEmpty()) {
-            System.out.println("user has no team assigned");
+            //System.out.println("user has no team assigned");
             return false;
         }
 
