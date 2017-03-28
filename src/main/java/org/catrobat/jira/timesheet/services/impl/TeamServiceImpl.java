@@ -156,14 +156,28 @@ public class TeamServiceImpl implements TeamService {
         initIfNotAlready();
         Set<Team> teams = new HashSet<>();
 
+        System.out.println("checking for coordinators");
+
         for (Team team : ao.find(Team.class)) {
             String teamName = team.getTeamName();
 
-            List<String> coordinatorList = getGroupsForRole(teamName, TeamToGroup.Role.COORDINATOR);
+            List<String> coordinatorAndCoordinatorGroupList = getGroupsForRole(teamName, TeamToGroup.Role.COORDINATOR);
+            System.out.println("coordinator for team: " + teamName + " is " + coordinatorAndCoordinatorGroupList);
 
-            for (String coordinatorName : coordinatorList) {
-                if (coordinatorName.equals(coordinatorsName)) {
-                    teams.add(team);
+            for(String coordinatorNameOrGroup : coordinatorAndCoordinatorGroupList){
+                if(ComponentAccessor.getUserManager().getUserByName(coordinatorNameOrGroup) == null){
+                    Collection<String> coordinatorNames =
+                            ComponentAccessor.getGroupManager().getUserNamesInGroup(coordinatorNameOrGroup);
+                    for(String coordinatorName : coordinatorNames){
+                        if(coordinatorName.equals(coordinatorsName)){
+                            teams.add(team);
+                        }
+                    }
+                }
+                else{
+                    if(coordinatorNameOrGroup.equals(coordinatorsName)){
+                        teams.add(team);
+                    }
                 }
             }
         }

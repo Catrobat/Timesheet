@@ -284,7 +284,7 @@ AJS.toInit(function () {
                 userGroupList = userGroupList.filter(function (item, index, inputArray) {
                     return inputArray.indexOf(item) == index;
                 });
-                
+
                 //Pair Programmign - ldap group
                 AJS.$("#pp-ldap").auiSelect2({
                     placeholder: "Select Pair Programming Group",
