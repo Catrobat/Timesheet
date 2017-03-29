@@ -281,7 +281,7 @@ function prepareForm(entry, timesheetData, isModified) {
             AJS.$(".start").fadeOut(2000);
 
             var date = form.inactiveEndDateField.val();
-            checkIfDateIsInRange(date, form);
+            //checkIfDateIsInRange(date, form);
             form.descriptionField.attr("placeholder", "Reason for your inactivity");
             AJS.$(".inactive").fadeIn(2000);
         }
@@ -403,7 +403,7 @@ function prepareForm(entry, timesheetData, isModified) {
     return form;
 }
 
-function checkIfDateIsInRange(date, form) {
+/*function checkIfDateIsInRange(date, form) {
     var today = new Date();
     if (isDateMoreThanTwoMonthsAhead(date)) {
         require('aui/flag')({
@@ -424,7 +424,7 @@ function checkIfDateIsInRange(date, form) {
         });
         form.inactiveEndDateField.val("");
     }
-}
+}*/
 
 function getIDFromCategoryName(categoryName) {
     var orig_array = timesheetData_.categoryNames;

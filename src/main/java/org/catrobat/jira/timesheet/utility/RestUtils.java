@@ -76,5 +76,7 @@ public class RestUtils {
                         categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive & Offline") )) {
             throw new ParseException("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.");
         }
+//        else
+//        	throw new ParseException("OK");
     }
 }
