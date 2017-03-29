@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {

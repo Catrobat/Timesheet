@@ -6,7 +6,6 @@ import com.atlassian.jira.bc.JiraServiceContext;
 import com.atlassian.jira.bc.group.search.GroupPickerSearchService;
 import com.atlassian.jira.bc.user.search.UserSearchService;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;

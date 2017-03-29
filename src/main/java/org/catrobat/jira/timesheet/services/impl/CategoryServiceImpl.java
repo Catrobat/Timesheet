@@ -24,7 +24,6 @@ import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.CategoryService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;

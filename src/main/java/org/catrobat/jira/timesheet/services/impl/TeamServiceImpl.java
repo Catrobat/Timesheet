@@ -18,9 +18,11 @@ package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
+
 import net.java.ao.Query;
+
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.Team;
@@ -29,6 +31,7 @@ import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 
 import javax.annotation.Nullable;
+
 import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -137,12 +140,16 @@ public class TeamServiceImpl implements TeamService {
             String teamName = team.getTeamName();
 
             List<String> developerUserAndGroupList = getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER);
-
+            
+            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
+            // TODO: check and remove println
+            //System.out.println("userName: " + userName + " / applicationUser: " + applicationUser.getName());
+            
             //System.out.println("developers of team: "+ teamName);
             for (String developerUserOrGroupName : developerUserAndGroupList) {
                // System.out.println("checking entry: " + developerUserOrGroupName);
                 if (developerUserOrGroupName.equals(userName) ||
-                        ComponentAccessor.getGroupManager().isUserInGroup(userName,developerUserOrGroupName)) {
+                        ComponentAccessor.getGroupManager().isUserInGroup(applicationUser,developerUserOrGroupName)) {
                     teams.add(team);
                     break;
                 }

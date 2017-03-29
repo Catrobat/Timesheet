@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.rest;
 
-import com.atlassian.core.util.collection.ArrayUtils;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.ParseException;

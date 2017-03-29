@@ -3,8 +3,6 @@ package ut.org.catrobat.jira.timesheet.servlet;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;

@@ -124,8 +124,8 @@ public class UserRest {
             JsonUserInformation jsonUserInformation = new JsonUserInformation();
             // TODO: check whether user key == name
             jsonUserInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
-            // TODO: change state from String to enum
-            jsonUserInformation.setState(timesheet.getState().toString());
+            // TODO: change state from String to enum DONE
+            jsonUserInformation.setState(timesheet.getState());
             jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
@@ -204,8 +204,8 @@ public class UserRest {
                 JsonTeamInformation jsonTeamInformation = new JsonTeamInformation();
                 // TODO: check whether user key == name
                 jsonTeamInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
-                // TODO: change state from String to enum
-                jsonTeamInformation.setState(timesheet.getState().toString());
+                // TODO: change state from String to enum DONE
+                jsonTeamInformation.setState(timesheet.getState());
                 jsonTeamInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
                 jsonTeamInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
                 jsonTeamInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
