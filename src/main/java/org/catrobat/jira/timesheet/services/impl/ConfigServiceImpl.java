@@ -17,7 +17,6 @@
 package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;

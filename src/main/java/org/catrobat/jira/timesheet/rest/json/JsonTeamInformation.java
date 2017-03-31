@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
+import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -14,7 +15,7 @@ public class JsonTeamInformation {
     @XmlElement
     private String userName;
     @XmlElement
-    private String state;
+    private Timesheet.State state;
     @XmlElement
     private int hoursPerMonth;
     @XmlElement
@@ -41,11 +42,11 @@ public class JsonTeamInformation {
         this.userName = userName;
     }
 
-    public String getState() {
+    public Timesheet.State getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(Timesheet.State state) {
         this.state = state;
     }
 

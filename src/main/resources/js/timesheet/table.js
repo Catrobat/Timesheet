@@ -41,7 +41,7 @@ function populateTable(timesheetDataReply) {
                 title: 'Timesheet Warning.',
                 closeable: true,
                 body: '<p> Your Timesheet is marked as <em>disabled</em>.</p>' +
-                '<p> You are not able to apply any changes until it is "disabled" again by an Administrator.</p>'
+                '<p> You are not able to apply any changes until it is "enabled" again by an Administrator.</p>'
             });
 
             require(['aui/banner'], function (banner) {
@@ -409,7 +409,8 @@ function checkIfDateIsInRange(date, form) {
         require('aui/flag')({
             type: 'error',
             title: 'Wrong date range',
-            body: 'The date is more than 2 months in advance. This is not allowed.'
+            body: 'The date is more than 2 months in advance. This is not allowed.',
+            close: 'auto'
         });
         form.inactiveEndDateField.val("");
     }
@@ -418,7 +419,8 @@ function checkIfDateIsInRange(date, form) {
         require('aui/flag')({
             type: 'error',
             title: 'Invalid date',
-            body: 'The date is behind or equal the current date.'
+            body: 'The date is behind or equal the current date.',
+            close: 'auto'
         });
         form.inactiveEndDateField.val("");
     }

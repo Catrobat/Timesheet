@@ -16,7 +16,6 @@
 
 package org.catrobat.jira.timesheet.rest;
 
-import com.atlassian.core.util.collection.ArrayUtils;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.ParseException;
@@ -436,6 +435,7 @@ public class TimesheetRest {
 
         try {
             RestUtils.checkJsonTimesheetEntryAndCategory(entry, categoryService);
+            // TODO: how to remove the old error message if the done stuff was yet successful?? 
         } catch (ParseException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
