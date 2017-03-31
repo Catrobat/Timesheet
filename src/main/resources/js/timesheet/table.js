@@ -2,6 +2,8 @@
 
 //global field
 var timesheetEntry;
+var deletingError;
+var savingError;
 
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
@@ -579,7 +581,8 @@ function deleteEntryClicked(viewRow, entryID) {
             viewRow.remove();
         })
         .fail(function (error) {
-            AJS.messages.error({
+        	removeSavingAndDeletingErrorMessages();
+            deletingError = AJS.messages.error({
                 title: 'There was an error while deleting.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
@@ -788,7 +791,8 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         },
         error: function (error) {
             console.log(error);
-            AJS.messages.error({
+            removeSavingAndDeletingErrorMessages();
+            savingError = AJS.messages.error({
                 title: 'There was an error while saving.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
@@ -797,4 +801,11 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         form.loadingSpinner.hide();
         form.saveButton.prop('disabled', false);
     });
+}
+
+function removeSavingAndDeletingErrorMessages() {
+	if(savingError)
+		savingError.closeMessage();
+	if(deletingError)
+		deletingError.closeMessage();
 }

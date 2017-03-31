@@ -1,5 +1,8 @@
 "use strict";
 
+var errorMessageObjectTwo;
+var errorMessageObjectOne;
+
 function prepareImportDialog(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
     var showImportDialogButton = AJS.$(".import-google-docs");
@@ -29,10 +32,12 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
         for (var i = 0; i < faultyRows.length; i++) {
             errorString += faultyRows[i] + "<br>";
         }
-      AJS.messages.error({
+      removeErrorMessages();
+      errorMessageObjectTwo = AJS.messages.error({
         title: 'There was an error during your Google Timesheet import.',
         body: '<p>' + errorString + '</p>'
       });
+      
       return;
     }
 
@@ -48,6 +53,7 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
     })
         .then(function (response) {
             showImportMessage(response);
+            removeErrorMessages();
             AJS.dialog2(importDialog).hide();
             timesheetData.entries = response;
             appendEntriesToTable(timesheetData);
@@ -71,14 +77,23 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
                     }
                 }
             }
-            AJS.messages.error({
+            removeErrorMessages();
+        	errorMessageObjectOne = AJS.messages.error({
                 title: 'There was an error during your Google Timesheet import.',
                 body: '<p>Reason: ' + response_string + '</p>'
             });
+        	
             var parsed = JSON.parse(error.responseText);
             timesheetData.entries = parsed.correct;
             appendEntriesToTable(timesheetData);
         });
+}
+
+function removeErrorMessages() {
+	if(errorMessageObjectTwo)
+		errorMessageObjectTwo.closeMessage();
+	if(errorMessageObjectOne)
+		errorMessageObjectOne.closeMessage();
 }
 
 function showImportMessage(response) {
@@ -87,6 +102,9 @@ function showImportMessage(response) {
     var message = "Imported " + successfulEntries + " entries.";
     AJS.messages.success({
         title: 'Import was successful!',
+        fadeout: true,
+        delay: 5000,
+        duration: 5000,
         body: message
     });
 }

@@ -4,10 +4,16 @@
         <meta name="decorator" content="atl.general"/>
         <script type="text/javascript">
             AJS.toInit(function () {;
+            var unsuccessfulImportMessage;
                 if("$status" === "Success"){
+                	if(unsuccessfulImportMessage)
+                		unsuccessfulImportMessage.closeMessage();
                     AJS.messages.success({
                         title:"Success",
-                        body:"The timesheet import was Successfull"
+                        body:"The timesheet import was successful",
+                        fadeout: true,
+                        delay: 5000,
+                        duration: 5000
                     });
                     document.getElementById("status-des").innerHTML = "All Timesheet Entries were successfully imported!";
                     document.getElementById("status-des").style.color = 0;
@@ -15,16 +21,22 @@
                     document.getElementById("status-header").innerHTML = "Success";
                 }
                 else if("$status" === "Failure") {
-                    AJS.messages.error({
+                	if(unsuccessfulImportMessage)
+                		unsuccessfulImportMessage.closeMessage();
+                	
+                    unsuccessfulImportMessage = AJS.messages.error({
                         title:"Failure",
-                        body:"The timesheet import was UNSUCCESSFULL!"
+                        body:"The timesheet import was UNSUCCESSFUL!"
                     });
                     document.getElementById("status-header").innerHTML = "Failure";
                 }
                 else{
                     AJS.messages.hint({
                         title:"Errors",
-                        body:"The import file had some issues, which were ignored in the import proccess"
+                        body:"The import file had some issues, which were ignored in the import process",
+                        fadeout: true,
+                        delay: 10000,
+                        duration: 5000
                     });
                     var faulty_teams = "$error_teams";
                     faulty_teams = faulty_teams.replace(/&quot;/g, "\"");
