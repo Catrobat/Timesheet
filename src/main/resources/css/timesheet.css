@@ -136,3 +136,9 @@ code {
 #teamLineDiagram > svg {
     width: 100% !important;
 }
+
+#timesheet-textarea textarea {
+	min-height:100px;
+	height:100%;
+	width:100%;
+}
