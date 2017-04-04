@@ -2,8 +2,15 @@
 
 //global field
 var timesheetEntry;
+
+// variables to handle how error messages and flags appear/disappear
 var deletingError;
 var savingError;
+
+var ppFlag;
+var dateRangeFlag;
+var dateFlag;
+var descrFlag;
 
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
@@ -405,10 +412,13 @@ function prepareForm(entry, timesheetData, isModified) {
     return form;
 }
 
+
 function checkIfDateIsInRange(date, form) {
     var today = new Date();
     if (isDateMoreThanTwoMonthsAhead(date)) {
-        require('aui/flag')({
+    	if (dateRangeFlag)
+    		dateRangeFlag.close();
+    	dateRangeFlag = AJS.flag({
             type: 'error',
             title: 'Wrong date range',
             body: 'The date is more than 2 months in advance. This is not allowed.',
@@ -418,7 +428,9 @@ function checkIfDateIsInRange(date, form) {
     }
 
     if (compareTime(date, today) == -1) {
-        require('aui/flag')({
+    	if (dateFlag)
+    		dateFlag.close();
+    	dateFlag = AJS.flag({
             type: 'error',
             title: 'Invalid date',
             body: 'The date is behind or equal the current date.',
@@ -656,6 +668,8 @@ function prepareViewRow(timesheetData, entry) {
     return viewRow;
 }
 
+
+
 /**
  * Handles saving an timesheetEntry
  * @param {Object} timesheetData
@@ -731,7 +745,9 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
 
     if (isPairProgrammingCategorySelected(timesheetData, form)) {
 
-        require('aui/flag')({
+    	if (ppFlag)
+    		ppFlag.close();
+    	ppFlag = AJS.flag({
             type: 'error',
             title: 'Pair Programming Partner is missing',
             body: 'Please select an partner',
@@ -740,7 +756,9 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     }
 
     if (!form.descriptionField.val()) {
-        require('aui/flag')({
+    	if (descrFlag)
+    		descrFlag.close();
+    	descrFlag = AJS.flag({
             type: 'warning',
             title: 'Description message is missing',
             body: 'You need to write a short summary about what you have done so far.',
@@ -786,6 +804,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         contentType: "application/json",
         data: JSON.stringify(timesheetEntry),
         success: function (entryData) {
+        	removeSavingAndDeletingErrorMessages();
             var augmentedEntry = augmentEntry(timesheetData, entryData);
             saveOptions.callback(augmentedEntry, timesheetData, form);
         },

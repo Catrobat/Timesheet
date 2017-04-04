@@ -54,7 +54,7 @@
 
 <div id="aui-message-bar"></div>
 
-<p id="timesheet-owner">Timesheet of: </p>
+<h1 id="timesheet-owner">Timesheet of: </h1>
 
 #*Tabs view*#
 <div class="aui-tabs horizontal-tabs" id="table-header">
