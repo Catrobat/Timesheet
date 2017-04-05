@@ -19,6 +19,27 @@
 var restBaseUrl;
 var inactiveUsers = [];
 
+var fetchinUserDataErrorMessage;
+var couldNotLoadConfigErrorMessage;
+var updateConfigErrorMessage;
+var addTeamErrorMessage;
+var addCategoryErrorMessage;
+var couldNotRenameTeamErrorMessage;
+var couldNotRenameCategoryErrorMessage;
+var selectATeamErrorMessage;
+var deleteTeamErrorMessage;
+var selectACategoryErrorMessage;
+var deleteCategoryErrorMessage;
+var processingResetTimesheetsErrorMessage;
+var updateSchedulingErrorMessage;
+var triggeringJobErrorMessage;
+var fetchingUserDataErrorMessage;
+
+function removeErrorMessage(errorMessageVar) {
+	if(errorMessageVar)
+		errorMessageVar.closeMessage();
+}
+
 AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
@@ -119,7 +140,8 @@ AJS.toInit(function () {
         AJS.$.when(allUsersFetched, categoriesFetched, groupsFetched)
             .done(populateForm)
             .fail(function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(fetchinUserDataErrorMessage);
+                fetchinUserDataErrorMessage = AJS.messages.error({
                     title: 'There was an error while fetching user data.',
                     body: '<p>Reason: ' + error.responseText + '</p>'
                 });
@@ -320,7 +342,8 @@ AJS.toInit(function () {
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(couldNotLoadConfigErrorMessage);
+                couldNotLoadConfigErrorMessage = AJS.messages.error({
                     title: "Error!",
                     body: "Could not load 'Config'."
                 });
@@ -398,12 +421,16 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Settings saved!"
+                    body: "Settings saved!",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(updateConfigErrorMessage);
+                updateConfigErrorMessage = AJS.messages.error({
                     title: "Error!",
                     body: error.responseText
                 });
@@ -421,16 +448,21 @@ AJS.toInit(function () {
             data: AJS.$("#team-name").attr("value"),
             processData: false,
             success: function () {
+            	removeErrorMessage(addTeamErrorMessage);
                 AJS.messages.success({
                     title: "Success!",
-                    body: "'Team' added successfully."
+                    body: "'Team' added successfully.",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                 });
                 //empty the team name text field
                 AJS.$("#team-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(addTeamErrorMessage);
+                addTeamErrorMessage = AJS.messages.error({
                     title: "Error!",
                     body: "Could not add 'Team'.<br />" + error.responseText
                 });
@@ -439,6 +471,7 @@ AJS.toInit(function () {
         });
     }
 
+    
     function addCategory() {
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
@@ -448,16 +481,21 @@ AJS.toInit(function () {
             data: AJS.$("#category-name").attr("value"),
             processData: false,
             success: function () {
+            	removeErrorMessage(addCategoryErrorMessage);
                 AJS.messages.success({
                     title: "Success!",
-                    body: "'Category' added successfully."
+                    body: "'Category' added successfully.",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                 });
                 //empty the category name text field
                 AJS.$("#category-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(addCategoryErrorMessage);
+            	addCategoryErrorMessage = AJS.messages.error({
                     title: "Error!",
                     body: "Could not add 'Category'<br />" + error.responseText
                 });
@@ -503,15 +541,20 @@ AJS.toInit(function () {
                 data: JSON.stringify([teamName, AJS.$("#new-team-name").val()]),
                 processData: false,
                 success: function () {
+                	removeErrorMessage(couldNotRenameTeamErrorMessage);
                     AJS.messages.success({
                         title: "Success!",
-                        body: "'Team' renamed successfully."
+                        body: "'Team' renamed successfully.",
+                        fadeout: true,
+                        delay: 5000,
+                        duration: 5000
                     });
                     fetchData();
                     AJS.$(".loadingDiv").hide();
                 },
                 error: function (error) {
-                    AJS.messages.error({
+                	removeErrorMessage(couldNotRenameTeamErrorMessage);
+                    couldNotRenameTeamErrorMessage = AJS.messages.error({
                         title: "Error!",
                         body: "Could not rename 'Team'.<br />" + error.responseText
                     });
@@ -573,13 +616,17 @@ AJS.toInit(function () {
                 success: function () {
                     AJS.messages.success({
                         title: "Success!",
-                        body: "'Category' renamed. successfully"
+                        body: "'Category' renamed. successfully",
+                        fadeout: true,
+                        delay: 5000,
+                        duration: 5000
                     });
                     fetchData();
                     AJS.$(".loadingDiv").hide();
                 },
                 error: function (error) {
-                    AJS.messages.error({
+                	removeErrorMessage(couldNotRenameCategoryErrorMessage);
+                	couldNotRenameCategoryErrorMessage = AJS.messages.error({
                         title: "Error!",
                         body: "Could not rename 'Category'<br />" + error.responseText
                     });
@@ -603,7 +650,8 @@ AJS.toInit(function () {
         var team_to_remove = document.getElementById("team-to-remove").value;
 
         if(team_to_remove === ""){
-            AJS.messages.error({
+        	removeErrorMessage(selectATeamErrorMessage);
+        	selectATeamErrorMessage = AJS.messages.error({
                 title:"Error!",
                 body:"Please select a Team you want to remove!"
             });
@@ -618,16 +666,22 @@ AJS.toInit(function () {
             data: team_to_remove,
             processData: false,
             success: function () {
+            	removeErrorMessage(selectATeamErrorMessage);
+            	removeErrorMessage(deleteTeamErrorMessage);
                 AJS.messages.success({
                     title: "Success!",
-                    body: team_to_remove+ " deleted successfully."
+                    body: team_to_remove+ " deleted successfully.",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                 });
                 //empty the team name text field
                 AJS.$("#team-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(deleteTeamErrorMessage);
+                deleteTeamErrorMessage = AJS.messages.error({
                     title: "Error!",
                     body: error.responseText
                 });
@@ -640,7 +694,8 @@ AJS.toInit(function () {
         var cat = document.getElementById("cat-to-remove").value;
 
         if(cat === ""){
-            AJS.messages.error({
+        	removeErrorMessage(selectACategoryErrorMessage);
+        	selectACategoryErrorMessage = AJS.messages.error({
                 title:"Error!",
                 body:"Select a Category you want to remove!"
             });
@@ -655,16 +710,22 @@ AJS.toInit(function () {
             data: cat,
             processData: false,
             success: function () {
+            	removeErrorMessage(selectACategoryErrorMessage);
+            	removeErrorMessage(deleteCategoryErrorMessage);
                 AJS.messages.success({
                     title: "Success!",
-                    body: cat + " deleted successfully."
+                    body: cat + " deleted successfully.",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                 });
                 //empty the team name text field
                 AJS.$("#category-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
             error: function (xhr) {
-                AJS.messages.error({
+            	removeErrorMessage(deleteCategoryErrorMessage);
+                deleteCategoryErrorMessage = AJS.messages.error({
                     title: "Error!",
                     body: xhr.responseText
                 });
@@ -791,13 +852,18 @@ AJS.toInit(function () {
             type:"DELETE",
             url: restBaseUrl + "config/resetTimesheets",
             success:function () {
+            	removeErrorMessage(processingResetTimesheetsErrorMessage);
                 AJS.messages.success({
                     title:"Success",
-                    body:"All Timesheets & Entries have been deleted!"
+                    body:"All Timesheets & Entries have been deleted!",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                     })
             },
             error:function () {
-               AJS.messages.error({
+               removeErrorMessage(processingResetTimesheetsErrorMessage);
+               processingResetTimesheetsErrorMessage = AJS.messages.error({
                    title:"Error",
                    body:"There was an Error while processing your request!"
                })
@@ -823,12 +889,16 @@ AJS.toInit(function () {
             success: function () {
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Settings saved!"
+                    body: "Settings saved!",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(updateSchedulingErrorMessage);
+                updateSchedulingErrorMessage = AJS.messages.error({
                     title: "Error!",
                     body: error.responseText
                 });
@@ -846,15 +916,20 @@ AJS.toInit(function () {
 
         AJS.$.when(callREST)
             .done(function (success) {
+            	removeErrorMessage(triggeringJobErrorMessage);
                 AJS.messages.success({
                     title: "Success!",
-                    body: jobName + " Job triggered successfully."
+                    body: jobName + " Job triggered successfully.",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                 });
                 fetchData();
                 AJS.$(".loadingDiv").hide();
             })
             .fail(function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(triggeringJobErrorMessage);
+                triggeringJobErrorMessage = AJS.messages.error({
                     title: 'There was an error while triggering the Job REST url: ' + restUrl,
                     body: '<p>Reason: ' + error.responseText + '</p>'
                 });
@@ -899,7 +974,8 @@ AJS.toInit(function () {
                 AJS.dialog2("#hidden-dialog").show();
             })
             .fail(function (error) {
-                AJS.messages.error({
+            	removeErrorMessage(fetchingUserDataErrorMessage);
+            	fetchingUserDataErrorMessage = AJS.messages.error({
                     title: 'There was an error while fetching user data.',
                     body: '<p>Reason: ' + error.responseText + '</p>'
                 });

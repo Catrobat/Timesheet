@@ -24,6 +24,8 @@ AJS.toInit(function () {
 
     var timesheet = [];
     var users = [];
+    var errorMessage;
+    var fetchingErrorMessage;
 
     function populateTable(userInformation) {
 
@@ -107,14 +109,23 @@ AJS.toInit(function () {
             data: JSON.stringify(data),
             processData: false,
             success: function () {
+            	if(fetchingErrorMessage)
+            		fetchingErrorMessage.closeMessage();
+            	if(errorMessage)
+            		errorMessage.closeMessage();
                 AJS.messages.success({
                     title: "Success!",
-                    body: "Timesheet 'enabled states' updated."
+                    body: "Timesheet 'enabled states' updated.",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
                 });
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
-                AJS.messages.error({
+            	if(errorMessage)
+            		errorMessage.closeMessage();
+                errorMessage = AJS.messages.error({
                     title: "Error!",
                     body: error.responseText
                 });
@@ -133,7 +144,9 @@ AJS.toInit(function () {
         AJS.$.when(userInformationFetched)
             .done(populateTable)
             .fail(function (error) {
-                AJS.messages.error({
+            	if(fetchingErrorMessage)
+            		fetchingErrorMessage.closeMessage();
+                fetchingErrorMessage = AJS.messages.error({
                     title: 'There was an error while fetching the required data.',
                     body: '<p>Reason: ' + error.responseText + '</p>'
                 });

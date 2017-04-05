@@ -2,11 +2,15 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.util.UserManager;
+
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
@@ -21,17 +25,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.*;
-import org.powermock.api.support.membermodification.MemberModifier;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-@RunWith(ActiveObjectsJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(TeamServiceImplTest.MyDatabaseUpdater.class)
-
+@PrepareForTest(ComponentAccessor.class)
 public class TeamServiceImplTest {
 
     private static Team catroid, html5, drone, emptyTeam;
@@ -46,6 +57,11 @@ public class TeamServiceImplTest {
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
+        
+        UserManager userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
+        PowerMockito.mockStatic(ComponentAccessor.class);
+        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
+        
         TimesheetService timesheetService = new TimesheetServiceImpl(ao);
         TimesheetEntryService entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         service = new TeamServiceImpl(ao, entryService);
@@ -115,8 +131,13 @@ public class TeamServiceImplTest {
         assertEquals(5, teamList.size());
     }
 
+    
     @Test
     public void testGetTeamsOfUser() throws IllegalAccessException {
+
+    	String userKey = "USER_KEY_1";
+    	when(ComponentAccessor.getUserManager().getUserByName(anyString()).getKey()).thenReturn(userKey);
+    	
         Team teamA = Mockito.mock(Team.class);
         Team teamB = Mockito.mock(Team.class);
         Team teamC = Mockito.mock(Team.class);
