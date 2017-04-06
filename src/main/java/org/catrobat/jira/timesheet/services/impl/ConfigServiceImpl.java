@@ -24,6 +24,7 @@ import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.TeamService;
 
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -138,15 +139,17 @@ public class ConfigServiceImpl implements ConfigService {
 
         for (String categoryName : categoryList) {
             Category category = cs.getCategoryByName(categoryName);
-            category.setName(categoryName);
-            category.save();
+            if (category != null) {
+                category.setName(categoryName);
+                category.save();
+            }
 
             //categoryToTeam for one category
-            CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"CATEGORY_ID\" = ?", category.getID()));
+            CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"CATEGORY_ID\" = ?", category != null ? category.getID() : 0));
 
             //update relation
             CategoryToTeam categoryToTeam;
-            if ((categoryToTeamArray.length == 0) || (categoryToTeamArray[0].getTeam().getTeamName() != team.getTeamName())) {
+            if ((categoryToTeamArray.length == 0) || (categoryToTeamArray[0].getTeam().getTeamName().equals(team.getTeamName()))) {
                 categoryToTeam = ao.create(CategoryToTeam.class);
             } else {
                 categoryToTeam = categoryToTeamArray[0];
@@ -218,8 +221,7 @@ public class ConfigServiceImpl implements ConfigService {
 
             //update relation
             TeamToGroup teamToGroup;
-            if ((teamToGroups.length == 0) || (teamToGroups[0].getRole() != role) || (teamToGroups[0].getTeam().getTeamName()
-                    != team.getTeamName())) {
+            if ((teamToGroups.length == 0) || (teamToGroups[0].getRole() != role) || (teamToGroups[0].getTeam().getTeamName().equals(team.getTeamName()))) {
                 teamToGroup = ao.create(TeamToGroup.class);
             } else {
                 teamToGroup = teamToGroups[0];
@@ -259,39 +261,43 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Config editTeamName(String oldTeamName, String newTeamName) {
+    public Response editTeamName(String oldTeamName, String newTeamName) {
         if (oldTeamName == null || newTeamName == null) {
-            return null;
+            return Response.status(Response.Status.FORBIDDEN).entity("Old team name or new team name does not exist.").build();
         }
 
         Team[] tempTeamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", oldTeamName));
         if (tempTeamArray.length == 0) {
-            return null;
+            return Response.status(Response.Status.FORBIDDEN).entity("Old team name could not be found.").build();
         }
         Team team = tempTeamArray[0];
 
         tempTeamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", newTeamName));
-        if (tempTeamArray.length != 0) {
-            return null;
+        if (tempTeamArray.length > 0) {
+            return Response.status(Response.Status.FORBIDDEN).entity("New team name already exist. Please take another name.").build();
         }
 
         team.setTeamName(newTeamName);
         team.save();
-
-        return getConfiguration();
+        return Response.ok().build();
     }
 
     @Override
-    public Team editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups,
+    public void editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups,
             List<String> teamCategoryNames) {
 
         teamName = teamName.trim();
 
         Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
-        if (teamArray[0].getGroups() == null) {
-            Team team = addTeam(teamName, coordinatorGroups, developerGroups, teamCategoryNames);
-            return team;
+
+        if (teamArray.length == 0) {
+            return;
         }
+        if (teamArray[0].getGroups() == null) {
+            addTeam(teamName, coordinatorGroups, developerGroups, teamCategoryNames);
+            return;
+        }
+
         Team team = teamArray[0];
 
         updateTeamMember(team, TeamToGroup.Role.COORDINATOR, coordinatorGroups);
@@ -300,8 +306,6 @@ public class ConfigServiceImpl implements ConfigService {
         updateTeamCategory(team, teamCategoryNames);
 
         team.save();
-
-        return team;
     }
 
     @Override

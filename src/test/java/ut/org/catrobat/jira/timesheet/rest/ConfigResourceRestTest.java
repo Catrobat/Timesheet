@@ -9,13 +9,14 @@ import com.atlassian.jira.user.util.UserManager;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.services.impl.*;
+import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.TSAdminGroup;
+import org.catrobat.jira.timesheet.activeobjects.Team;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.rest.ConfigResourceRest;
-import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
-import org.catrobat.jira.timesheet.rest.json.JsonTeam;
 import org.catrobat.jira.timesheet.services.*;
+import org.catrobat.jira.timesheet.services.impl.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,10 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -121,14 +125,14 @@ public class ConfigResourceRestTest {
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
 
         response = configResourceRest.getTeams(request);
-        List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
+        Object responseTeamList = response.getEntity();
         assertNotNull(responseTeamList);
     }
 
     @Test
     public void testGetCategoriesOk() throws Exception {
         response = configResourceRest.getCategories(request);
-        List<JsonCategory> responseTeamList = (List<JsonCategory>) response.getEntity();
+        Object responseTeamList = response.getEntity();
         assertNotNull(responseTeamList);
     }
 
@@ -166,7 +170,7 @@ public class ConfigResourceRestTest {
     public void testEditTeamNameNotFound() {
         String[] renameTeam = {"NotFound", "NewName"};
         response = configResourceRest.editTeamPermission(renameTeam, request);
-        assertEquals(500, response.getStatus()); // TODO: change to entity
+        assertEquals(403, response.getStatus()); // TODO: change to entity
     }
 
     @Test
@@ -300,14 +304,14 @@ public class ConfigResourceRestTest {
         JsonConfig jsonConfig = new JsonConfig(configServiceMock);
 
         response = configResourceRestMock.setConfig(jsonConfig, request);
-       assertNull(response.getEntity());
+        assertNull(response.getEntity());
     }
 
     @Test
     public void testCannotRenameCategoryNameAlreadyExists() throws Exception {
         configResourceRest.addCategory("Test", request);
         configResourceRest.addCategory("Hallo", request);
-        String[] renamePair = new String[] {"Test","Hallo"};
+        String[] renamePair = new String[]{"Test", "Hallo"};
         response = configResourceRest.editCategoryName(renamePair, request);
         assertEquals(409, response.getStatus());
     }

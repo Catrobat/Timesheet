@@ -20,6 +20,7 @@ import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.*;
 
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Transactional
@@ -29,11 +30,11 @@ public interface ConfigService {
 
     Team addTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups, List<String> teamCategoryNames);
 
-    Config editTeamName(String oldTeamName, String newTeamName);
+    Response editTeamName(String oldTeamName, String newTeamName);
 
     Config editCategoryName(String oldCategoryName, String newCategoryName);
 
-    Team editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups, List<String> teamCategoryNames);
+    void editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups, List<String> teamCategoryNames);
 
     Config editMail(String mailFromName, String mailFrom, String mailSubjectTime,
             String mailSubjectInactive, String mailSubjectOffline, String mailSubjectActive, String mailSubjectEntry,

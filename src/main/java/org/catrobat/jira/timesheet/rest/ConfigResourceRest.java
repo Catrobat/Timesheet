@@ -71,20 +71,20 @@ public class ConfigResourceRest {
         List<JsonCategory> categories = new LinkedList<>();
         List<Category> categoryList = categoryService.all();
 
-        for(Category cat : categoryList){
-            if (SpecialCategories.AllSpecialCategories.contains(cat.getName())){
+        for (Category cat : categoryList) {
+            if (SpecialCategories.AllSpecialCategories.contains(cat.getName())) {
                 categories.add(new JsonCategory(cat.getID(), cat.getName()));
             }
         }
 
-        Collections.sort(categories, (o1, o2) -> o1.getCategoryName().compareTo(o2.getCategoryName()));
+        categories.sort(Comparator.comparing(JsonCategory::getCategoryName));
 
-        if(categoryList.size() < 2) {
-            Collections.sort(categoryList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+        if (categoryList.size() < 2) {
+            categoryList.sort(Comparator.comparing(Category::getName));
         }
 
         for (Category category : categoryList) {
-            if(!SpecialCategories.AllSpecialCategories.contains(category.getName())) {
+            if (!SpecialCategories.AllSpecialCategories.contains(category.getName())) {
                 categories.add(new JsonCategory(category.getID(), category.getName()));
             }
         }
@@ -101,7 +101,7 @@ public class ConfigResourceRest {
         }
 
         List<Team> teamList = teamService.all();
-        Collections.sort(teamList, (o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName()));
+        teamList.sort(Comparator.comparing(Team::getTeamName));
         List<JsonTeam> teams = convertTeamsToJSON(teamList);
 
         return Response.ok(teams).build();
@@ -120,20 +120,19 @@ public class ConfigResourceRest {
 
     @GET
     @Path("/getModifiableCategories")
-    public Response getModifiableCategories(@Context HttpServletRequest request)
-    {
+    public Response getModifiableCategories(@Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkRootPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
         List<JsonCategory> categories = new ArrayList<>();
         List<Category> db_categories = categoryService.all();
-        for(Category cat : db_categories) {
-            if(!SpecialCategories.AllSpecialCategories.contains(cat.getName())) {
+        for (Category cat : db_categories) {
+            if (!SpecialCategories.AllSpecialCategories.contains(cat.getName())) {
                 categories.add(new JsonCategory(cat.getID(), cat.getName()));
             }
         }
-        Collections.sort(categories, (o1,o2) -> o1.getCategoryName().compareTo(o2.getCategoryName()));
+        categories.sort(Comparator.comparing(JsonCategory::getCategoryName));
 
         return Response.ok(categories).build();
     }
@@ -310,13 +309,8 @@ public class ConfigResourceRest {
             return Response.status(Response.Status.FORBIDDEN).entity("New team name must be different.").build();
         }
 
-        boolean successful = configService.editTeamName(teams[0], teams[1]) != null;
-
-        if (successful) {
-            return Response.ok().build();
-        }
-
-        return Response.serverError().build();
+        unauthorized = configService.editTeamName(teams[0], teams[1]);
+        return unauthorized;
     }
 
     @DELETE
