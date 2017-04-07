@@ -181,7 +181,7 @@ function editEntryCallback(entry, timesheetData, form) {
     });
 
     newViewRow.find("button.delete").click(function () {
-        deleteEntryClicked(newViewRow, entry.entryID);
+      showEntryDeletionDialog(newViewRow, entry.entryID);
     });
 
     oldViewRow.after(newViewRow);
@@ -555,7 +555,7 @@ function renderViewRow(timesheetData, entry) {
     });
 
     viewRow.find("button.delete").click(function () {
-        deleteEntryClicked(viewRow, entry.entryID);
+      showEntryDeletionDialog(viewRow, entry.entryID);
     });
 
     return viewRow;
@@ -575,8 +575,37 @@ function editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewR
     formRow.show();
 }
 
-function deleteEntryClicked(viewRow, entryID) {
+function showEntryDeletionDialog(viewRow, entryID) {
+  var dialog = new AJS.Dialog({
+    width: 520,
+    height: 390,
+    id: "timesheets-deletion-dialog",
+    closeOnOutsideClick: true
+  });
 
+  var content = "<h1>You are about to a Timesheet Entry.</h1> <br>" +
+      "<h2>This action cannot be undone.</h2>" +
+      "<h2 style='color: red'><center><strong>Please confirm your action!</strong></center></h2>";
+
+  dialog.addHeader("Timesheet Entry Deletion");
+  dialog.addPanel("Confirm", content, "panel-body");
+
+  dialog.addButton("Cancel", function () {
+    dialog.remove();
+  });
+
+  dialog.addButton("Confirm", function () {
+    deleteEntryClicked(viewRow, entryID);
+    dialog.remove();
+  });
+
+  dialog.gotoPage(0);
+  dialog.gotoPanel(0);
+
+  dialog.show();
+}
+
+function deleteEntryClicked(viewRow, entryID) {
     var ajaxUrl = restBaseUrl + 'entries/' + entryID + '/' + isMasterThesisTimesheet;
 
     var spinner = viewRow.find('span.aui-icon-wait');
