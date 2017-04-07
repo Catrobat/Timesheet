@@ -55,6 +55,9 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         if (ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ? AND BEGIN_DATE < ? AND END_DATE > ?", sheet.getID(), end, begin).length != 0) {
             throw new ServiceException("TimesheetEntries are not allowed to overlap.");
         }
+        if (begin.compareTo(end) > 0) {
+            throw new ServiceException("Begin Date must be before End Date.");
+        }
 
         TimesheetEntry entry = ao.create(TimesheetEntry.class);
 
@@ -142,6 +145,9 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         }
         if (category == null) {
             throw new ServiceException("TimesheetEntry is not allowed with null Category.");
+        }
+        if (begin.compareTo(end) > 0) {
+            throw new ServiceException("Begin Date must be before End Date.");
         }
 
         entry.setTimeSheet(sheet);

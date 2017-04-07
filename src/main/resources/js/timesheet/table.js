@@ -708,6 +708,9 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     var pauseTime = form.pauseTimeField.timepicker('getTime');
     var beginDate = new Date(date + " " + toTimeString(beginTime));
     var endDate = new Date(date + " " + toTimeString(endTime));
+    if (beginDate > endDate) {
+        endDate.setDate(endDate.getDate() + 1)
+    }
     var pauseMin = pauseTime.getHours() * 60 + pauseTime.getMinutes();
 
     var inactiveEndDate = form.inactiveEndDateField.val();
