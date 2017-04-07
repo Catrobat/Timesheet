@@ -58,7 +58,7 @@ public interface PermissionService {
 
     void userCanAddTimesheetEntry(ApplicationUser user, Timesheet sheet, Date beginDate, boolean isGoogleDocsImport) throws PermissionException;
 
-    void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, TimesheetEntry entry) throws PermissionException;
+    void userCanEditTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException;
 
     void userCanDeleteTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException;
 

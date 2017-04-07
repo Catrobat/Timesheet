@@ -214,8 +214,8 @@ public class PermissionServiceImplTest {
 
     @Test
     public void testIfUserCanEditTimesheetEntry() throws Exception {
-        permissionServiceException.userCanEditTimesheetEntry(owner, sheet, timeSheetEntry);
-        verify(permissionServiceException).userCanEditTimesheetEntry(owner, sheet, timeSheetEntry);
+        permissionServiceException.userCanEditTimesheetEntry(owner, timeSheetEntry);
+        verify(permissionServiceException).userCanEditTimesheetEntry(owner, timeSheetEntry);
     }
 
     @Test(expected = PermissionException.class)
@@ -233,7 +233,7 @@ public class PermissionServiceImplTest {
         when(sheetService.getTimesheetByID(1)).thenReturn(sheet);
         when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
 
-        permissionService.userCanEditTimesheetEntry(owner, sheet, timeSheetEntry);
+        permissionService.userCanEditTimesheetEntry(owner, timeSheetEntry);
     }
 
     @Test(expected = PermissionException.class)
@@ -249,7 +249,7 @@ public class PermissionServiceImplTest {
         when(sheetService.getTimesheetByID(1)).thenReturn(sheet);
         when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
 
-        permissionService.userCanEditTimesheetEntry(owner, sheet, timeSheetEntry);
+        permissionService.userCanEditTimesheetEntry(owner, timeSheetEntry);
     }
 
     @Test
@@ -292,8 +292,8 @@ public class PermissionServiceImplTest {
 
     @Test(expected = PermissionException.class)
     public void testNullUserCanNotEditTimesheetException() throws Exception {
-        permissionService.userCanEditTimesheetEntry(eve, sheet, timeSheetEntry);
-        verify(permissionServiceException).userCanEditTimesheetEntry(eve, sheet, timeSheetEntry);
+        permissionService.userCanEditTimesheetEntry(eve, timeSheetEntry);
+        verify(permissionServiceException).userCanEditTimesheetEntry(eve, timeSheetEntry);
     }
 
     @Test(expected = PermissionException.class)

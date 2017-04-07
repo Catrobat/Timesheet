@@ -24,6 +24,7 @@ import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
+@Component
 public class PermissionServiceImpl implements PermissionService {
 
     private static final boolean DEBUG_MODE = true;
@@ -266,39 +268,18 @@ public class PermissionServiceImpl implements PermissionService {
         if (isTimesheetAdmin(user)) {
             return;
         }
-        if (userOwnsSheet(user, sheet)) {
-            if (!isGoogleDocsImport) {
-                if (dateIsOlderThanAMonth(beginDate)) {
-                    throw new PermissionException("You can not add an entry that is older than 30 days.");
-                }
-            } else {
-                if (dateIsOlderThanFiveYears(beginDate)) {
-                    throw new PermissionException("You can not add an imported entry that is older than 5 years.");
-                }
-            }
-        } else {
-            throw new PermissionException("Access forbidden: Sorry, you are not a timesheet admin!");
-        }
+        checkTimesheetAccess("add", user, sheet, beginDate, isGoogleDocsImport);
     }
 
     @Override
-    public void userCanEditTimesheetEntry(ApplicationUser user, Timesheet sheet, TimesheetEntry entry) throws PermissionException {
+    public void userCanEditTimesheetEntry(ApplicationUser user, TimesheetEntry entry) throws PermissionException {
         if (isTimesheetAdmin(user)) {
             return;
         }
-        if (userOwnsSheet(user, sheet)) {
-            if (!entry.getIsGoogleDocImport()) {
-                if (dateIsOlderThanAMonth(entry.getBeginDate()) || dateIsOlderThanAMonth(entry.getEndDate())) {
-                    throw new PermissionException("You can not edit an entry that is older than 30 days.");
-                }
-            } else {
-                if (dateIsOlderThanFiveYears(entry.getBeginDate()) || dateIsOlderThanFiveYears(entry.getEndDate())) {
-                    throw new PermissionException("You can not edit an imported entry that is older than 5 years.");
-                }
-            }
-        } else {
-            throw new PermissionException("Access forbidden: Sorry, you are not a timesheet admin!");
-        }
+        Timesheet sheet = entry.getTimeSheet();
+        Date beginDate = entry.getBeginDate();
+        boolean isGoogleDocsImport = entry.getIsGoogleDocImport();
+        checkTimesheetAccess("edit", user, sheet, beginDate, isGoogleDocsImport);
     }
 
     @Override
@@ -306,19 +287,25 @@ public class PermissionServiceImpl implements PermissionService {
         if (isTimesheetAdmin(user)) {
             return;
         }
+        Timesheet sheet = entry.getTimeSheet();
+        Date beginDate = entry.getBeginDate();
+        boolean isGoogleDocsImport = entry.getIsGoogleDocImport();
+        checkTimesheetAccess("delete", user, sheet, beginDate, isGoogleDocsImport);
+    }
 
-        if (userOwnsSheet(user, entry.getTimeSheet())) {
-            if (!entry.getIsGoogleDocImport()) {
-                if (dateIsOlderThanAMonth(entry.getBeginDate()) || dateIsOlderThanAMonth(entry.getEndDate())) {
-                    throw new PermissionException("You can not delete an that is older than 30 days.");
+    private void checkTimesheetAccess(String method, ApplicationUser user, Timesheet sheet, Date beginDate, boolean isGoogleDocsImport) throws PermissionException {
+        if (userOwnsSheet(user, sheet)) {
+            if (!isGoogleDocsImport) {
+                if (dateIsOlderThanAMonth(beginDate)) {
+                    throw new PermissionException("You can not " + method + " an entry that is older than 30 days.");
                 }
             } else {
-                if (dateIsOlderThanFiveYears(entry.getBeginDate()) || dateIsOlderThanFiveYears(entry.getEndDate())) {
-                    throw new PermissionException("You can not delete an imported entry that is older than 5 years.");
+                if (dateIsOlderThanFiveYears(beginDate)) {
+                    throw new PermissionException("You can not " + method + " an imported entry that is older than 5 years.");
                 }
             }
         } else {
-            throw new PermissionException("Access forbidden: Sorry, but you are not a timesheet admin!");
+            throw new PermissionException("Access forbidden: Sorry, you are not a timesheet admin!");
         }
     }
 
