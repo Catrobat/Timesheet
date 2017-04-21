@@ -99,8 +99,8 @@ public class JsonImporterServletTest {
     @Test
     public void testDoGetTimesheet() throws IOException, ServletException {
         ImportTimesheetAsJsonServlet importTimesheetAsJsonServlet = new ImportTimesheetAsJsonServlet(loginUriProvider,
-                webSudoManager, permissionService, configService, ao, timesheetService, entryService, categoryService, teamService,
-                renderer, pageBuilderService);
+                webSudoManager, permissionService, configService, timesheetService, entryService, categoryService, teamService,
+                renderer);
 
         importTimesheetAsJsonServlet.doGet(request, response);
     }

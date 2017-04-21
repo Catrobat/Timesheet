@@ -1,13 +1,11 @@
 package org.catrobat.jira.timesheet.servlet;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.webresource.api.assembler.PageBuilderService;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import org.apache.commons.fileupload.FileItem;
@@ -17,7 +15,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetAndEntries;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
@@ -34,29 +31,25 @@ import java.util.*;
 
 public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
 
-    private final ActiveObjects activeObjects;
     private final TimesheetService timesheetService;
     private final TimesheetEntryService timesheetEntryService;
     private final CategoryService categoryService;
     private final TeamService teamService;
     private final TemplateRenderer renderer;
-    private final PageBuilderService pageBuilderService;
+
     private enum Result{Success, Failure, Errors}
     private Result importResult;
 
     public ImportTimesheetAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-            PermissionService permissionService, ConfigService configService, ActiveObjects activeObjects,
-            TimesheetService timesheetService, TimesheetEntryService timesheetEntryService,
-            CategoryService categoryService, TeamService teamService, TemplateRenderer renderer,
-                                        PageBuilderService pageBuilderService) {
+                                        PermissionService permissionService, ConfigService configService,
+                                        TimesheetService timesheetService, TimesheetEntryService timesheetEntryService,
+                                        CategoryService categoryService, TeamService teamService, TemplateRenderer renderer) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
-        this.activeObjects = activeObjects;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
         this.categoryService = categoryService;
         this.teamService = teamService;
         this.renderer = renderer;
-        this.pageBuilderService = pageBuilderService;
         this.importResult = Result.Success;
     }
 
@@ -65,7 +58,6 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
         super.doGet(request, response);
         renderer.render("upload.vm", response.getWriter());
     }
-
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -180,10 +172,5 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
         params.put("status", importResult);
         params.put("error_teams", gson.toJson(faulty_teams));
         renderer.render("upload_result.vm", params, response.getWriter());
-    }
-
-    private void dropEntries() {
-        activeObjects.deleteWithSQL(TimesheetEntry.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Timesheet.class, "1=?", "1");
     }
 }

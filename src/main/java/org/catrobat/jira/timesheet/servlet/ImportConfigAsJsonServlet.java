@@ -95,12 +95,6 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
             e.printStackTrace();
         }
 
-
-        if (request.getParameter("drop") != null && request.getParameter("drop").equals("drop")) {
-            // FIXME: do we even need dropping here???
-            dropEntries();
-        }
-
         Gson gson = new Gson();
 
         JsonReader jsonReader = new JsonReader(new FileReader(new File(temp.getAbsolutePath())));
