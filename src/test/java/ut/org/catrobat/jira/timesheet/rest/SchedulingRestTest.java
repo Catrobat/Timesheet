@@ -67,7 +67,7 @@ public class SchedulingRestTest {
         categoryService = new CategoryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao, timesheetService);
-        teamService = new TeamServiceImpl(ao, timesheetEntryService);
+        teamService = new TeamServiceImpl(ao, categoryService, timesheetEntryService);
         ConfigServiceImpl configService = new ConfigServiceImpl(ao, categoryService, teamService);
 
         // For some tests we need a mock...

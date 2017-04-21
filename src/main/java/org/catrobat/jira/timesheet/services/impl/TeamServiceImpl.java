@@ -23,10 +23,8 @@ import com.atlassian.jira.user.ApplicationUser;
 
 import net.java.ao.Query;
 
-import org.catrobat.jira.timesheet.activeobjects.Category;
-import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
-import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
+import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.springframework.stereotype.Component;
@@ -41,13 +39,15 @@ import static com.google.common.collect.Lists.newArrayList;
 public class TeamServiceImpl implements TeamService {
 
     private final ActiveObjects ao;
+    private final CategoryService categoryService;
     private final TimesheetEntryService entryService;
 
     private boolean isInitialised = false;
     private static final String DEFAULT_TEAM = "Default";
 
-    public TeamServiceImpl(ActiveObjects ao, TimesheetEntryService entryService) {
+    public TeamServiceImpl(ActiveObjects ao, CategoryService categoryService, TimesheetEntryService entryService) {
         this.ao = ao;
+        this.categoryService = categoryService;
         this.entryService = entryService;
     }
 
@@ -210,6 +210,32 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public void editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups,
+                         List<String> teamCategoryNames) {
+
+        teamName = teamName.trim();
+
+        Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
+
+        if (teamArray.length == 0) {
+            return;
+        }
+        Team team;
+        if (teamArray[0].getGroups() == null) {
+            team = add(teamName);
+        } else {
+            team = teamArray[0];
+        }
+
+        updateTeamMember(team, TeamToGroup.Role.COORDINATOR, coordinatorGroups);
+        updateTeamMember(team, TeamToGroup.Role.DEVELOPER, developerGroups);
+
+        updateTeamCategory(team, teamCategoryNames);
+
+        team.save();
+    }
+
+    @Override
     public void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws ServiceException {
         if (team == null) {
             throw new ServiceException("Team not found.");
@@ -217,6 +243,76 @@ public class TeamServiceImpl implements TeamService {
             throw new ServiceException("Category not found.");
         } else if (!Arrays.asList(team.getCategories()).contains(category)) {
             throw new ServiceException("Category is not associated with Team.");
+        }
+    }
+
+    private void updateTeamMember(Team team, TeamToGroup.Role role, List<String> userList) {
+        if (userList == null) {
+            return;
+        }
+
+        // remove no longer existing relations
+        TeamToGroup[] allTeamToGroups = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ? AND \"ROLE\" = ?", team.getID(), role));
+        for (TeamToGroup oldTeamRelation : allTeamToGroups) {
+            if (!userList.contains(oldTeamRelation.getGroup().getGroupName())) {
+                ao.delete(oldTeamRelation);
+            }
+        }
+
+        for (String userName : userList) {
+            Group[] groups = ao.find(Group.class, Query.select().where("upper(\"GROUP_NAME\") = upper(?)", userName));
+
+            Group group;
+            if (groups.length == 0) {
+                group = ao.create(Group.class);
+                group.setGroupName(userName);
+                group.save();
+            } else {
+                group = groups[0];
+            }
+
+            // teamToGroup for one group
+            TeamToGroup[] teamToGroups = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ? AND \"GROUP_ID\" = ? AND \"ROLE\" = ?", team.getID(), group.getID(), role));
+
+            // add new relation
+            TeamToGroup teamToGroup;
+            if (teamToGroups.length == 0) {
+                teamToGroup = ao.create(TeamToGroup.class);
+                teamToGroup.setGroup(group);
+                teamToGroup.setTeam(team);
+                teamToGroup.setRole(role);
+                teamToGroup.save();
+            }
+        }
+    }
+
+    private void updateTeamCategory(Team team, List<String> categoryList) {
+        if (categoryList == null) {
+            return;
+        }
+
+        // remove no longer existing relations
+        CategoryToTeam[] allCategoryToTeam = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
+        for (CategoryToTeam oldTeamRelation : allCategoryToTeam) {
+            if (!categoryList.contains(oldTeamRelation.getCategory().getName())) {
+                ao.delete(oldTeamRelation);
+            }
+        }
+
+        for (String categoryName : categoryList) {
+            Category category = categoryService.getCategoryByName(categoryName);
+
+            //categoryToTeam for one category
+            CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ? AND \"CATEGORY_ID\" = ?", team.getID(), category.getID()));
+
+            //update relation
+            CategoryToTeam categoryToTeam;
+            if (categoryToTeamArray.length == 0) {
+                categoryToTeam = ao.create(CategoryToTeam.class);
+                categoryToTeam.setTeam(team);
+                categoryToTeam.setCategory(category);
+                categoryToTeam.save();
+            }
         }
     }
 }

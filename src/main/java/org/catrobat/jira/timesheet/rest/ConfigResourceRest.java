@@ -141,6 +141,7 @@ public class ConfigResourceRest {
     @Path("/saveConfig")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setConfig(final JsonConfig jsonConfig, @Context HttpServletRequest request) {
+
         Response unauthorized = permissionService.checkRootPermission();
         if (unauthorized != null) {
             return unauthorized;
@@ -182,10 +183,17 @@ public class ConfigResourceRest {
             }
         }
 
+        return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/editTeams")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response editTeams(final JsonConfig jsonConfig, @Context HttpServletRequest request) {
         if (jsonConfig.getTeams() != null) {
             for (JsonTeam jsonTeam : jsonConfig.getTeams()) {
-                configService.editTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
-                        jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
+                teamService.editTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
+                    jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
             }
         }
 
@@ -218,6 +226,19 @@ public class ConfigResourceRest {
         DatabaseUtil db = new DatabaseUtil(ao);
         db.clearAllTimesheetTables();
         return Response.status(Response.Status.OK).entity("All timesheet tables has been dropped!").build();
+    }
+
+    @GET
+    @Path("/database/fix")
+    public Response fixDatabase(@Context HttpServletRequest request) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        DatabaseUtil db = new DatabaseUtil(ao);
+        db.fixDatabaseInconsistencies();
+        return Response.status(Response.Status.OK).entity("Database Inconsistencies have been fixed.").build();
     }
 
     @GET

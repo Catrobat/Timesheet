@@ -388,29 +388,6 @@ AJS.toInit(function () {
         config.timesheetAdmins = timesheetAdmins;
         config.timesheetAdminGroups = timesheetAdminGroups;
 
-        config.teams = [];
-        for (var i = 0; i < teams.length; i++) {
-            var tempTeamName = teams[i].replace(/\W/g, '-');
-            var tempTeam = {};
-            tempTeam.teamName = teams[i];
-
-            tempTeam.coordinatorGroups = AJS.$("#" + tempTeamName + "-coordinator").auiSelect2("val");
-            for (var j = 0; j < tempTeam.coordinatorGroups.length; j++) {
-                tempTeam.coordinatorGroups[j] = tempTeam.coordinatorGroups[j].replace(/^groups-/i, "");
-            }
-
-            tempTeam.developerGroups = AJS.$("#" + tempTeamName + "-developer").auiSelect2("val");
-            for (var j = 0; j < tempTeam.developerGroups.length; j++) {
-                tempTeam.developerGroups[j] = tempTeam.developerGroups[j].replace(/^groups-/i, "");
-            }
-
-            tempTeam.teamCategoryNames = AJS.$("#" + tempTeamName + "-category").auiSelect2("val");
-            for (var j = 0; j < tempTeam.teamCategoryNames.length; j++) {
-                tempTeam.teamCategoryNames[j] = tempTeam.teamCategoryNames[j].replace(/^groups-/i, "");
-            }
-            config.teams.push(tempTeam);
-        }
-
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
             url: restBaseUrl + 'config/saveConfig',
@@ -438,6 +415,59 @@ AJS.toInit(function () {
             }
         });
     }
+
+  function updateTeams() {
+    var config = {};
+    config.teams = [];
+    for (var i = 0; i < teams.length; i++) {
+      var tempTeamName = teams[i].replace(/\W/g, '-');
+      var tempTeam = {};
+      tempTeam.teamName = teams[i];
+
+      tempTeam.coordinatorGroups = AJS.$("#" + tempTeamName + "-coordinator").auiSelect2("val");
+      for (var j = 0; j < tempTeam.coordinatorGroups.length; j++) {
+        tempTeam.coordinatorGroups[j] = tempTeam.coordinatorGroups[j].replace(/^groups-/i, "");
+      }
+
+      tempTeam.developerGroups = AJS.$("#" + tempTeamName + "-developer").auiSelect2("val");
+      for (var j = 0; j < tempTeam.developerGroups.length; j++) {
+        tempTeam.developerGroups[j] = tempTeam.developerGroups[j].replace(/^groups-/i, "");
+      }
+
+      tempTeam.teamCategoryNames = AJS.$("#" + tempTeamName + "-category").auiSelect2("val");
+      for (var j = 0; j < tempTeam.teamCategoryNames.length; j++) {
+        tempTeam.teamCategoryNames[j] = tempTeam.teamCategoryNames[j].replace(/^groups-/i, "");
+      }
+      config.teams.push(tempTeam);
+    }
+
+    AJS.$(".loadingDiv").show();
+    AJS.$.ajax({
+      url: restBaseUrl + 'config/editTeams',
+      type: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify(config),
+      processData: false,
+      success: function () {
+        AJS.messages.success({
+          title: "Success!",
+          body: "Settings saved!",
+          fadeout: true,
+          delay: 5000,
+          duration: 5000
+        });
+        AJS.$(".loadingDiv").hide();
+      },
+      error: function (error) {
+        removeErrorMessage(updateConfigErrorMessage);
+        updateConfigErrorMessage = AJS.messages.error({
+          title: "Error!",
+          body: error.responseText
+        });
+        AJS.$(".loadingDiv").hide();
+      }
+    });
+  }
 
     function addTeam() {
         AJS.$(".loadingDiv").show();
@@ -752,7 +782,7 @@ AJS.toInit(function () {
     AJS.$("#team-general").submit(function (e) {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Save') {
-            updateConfig();
+            updateTeams();
             scrollToAnchor('top');
         } else if ((AJS.$(document.activeElement).val()[0] === "C") &&
             (AJS.$(document.activeElement).val()[1] === "-")) {
@@ -763,11 +793,9 @@ AJS.toInit(function () {
     });
 
     AJS.$("#category-general").submit(function (e) {
+        // TODO: is this still needed?
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
-            updateConfig();
-            scrollToAnchor('top');
-        } else if ((AJS.$(document.activeElement).val()[0] === "C") &&
+        if ((AJS.$(document.activeElement).val()[0] === "C") &&
             (AJS.$(document.activeElement).val()[1] === "-")) {
             editCategory(AJS.$(document.activeElement).val());
         } else {

@@ -97,7 +97,7 @@ public class TimesheetRestTest {
 
         CategoryService categoryService = new CategoryServiceImpl(ao);
         TimesheetService timesheetService = new TimesheetServiceImpl(ao);
-        TeamService teamService = new TeamServiceImpl(ao, timesheetEntryService);
+        TeamService teamService = new TeamServiceImpl(ao, categoryService, timesheetEntryService);
         ConfigService configService = new ConfigServiceImpl(ao, categoryService, teamService);
         timesheetEntryService = new TimesheetEntryServiceImpl(ao, timesheetService);
 

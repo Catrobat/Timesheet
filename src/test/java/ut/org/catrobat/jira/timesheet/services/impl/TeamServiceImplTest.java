@@ -12,9 +12,11 @@ import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TimesheetEntryServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TimesheetServiceImpl;
@@ -63,8 +65,9 @@ public class TeamServiceImplTest {
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         
         TimesheetService timesheetService = new TimesheetServiceImpl(ao);
+        CategoryService categoryService = new CategoryServiceImpl(ao);
         TimesheetEntryService entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
-        service = new TeamServiceImpl(ao, entryService);
+        service = new TeamServiceImpl(ao, categoryService, entryService);
     }
 
     @Test

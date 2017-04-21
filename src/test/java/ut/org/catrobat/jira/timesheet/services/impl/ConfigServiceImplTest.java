@@ -58,7 +58,7 @@ public class ConfigServiceImplTest {
         cs = new CategoryServiceImpl(ao);
         timesheetService = new TimesheetServiceImpl(ao);
         entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
-        teamService = new TeamServiceImpl(ao, entryService);
+        teamService = new TeamServiceImpl(ao, cs, entryService);
         configurationService = new ConfigServiceImpl(ao, cs, teamService);
     }
 

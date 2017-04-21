@@ -57,7 +57,7 @@ public class AdminServletTest {
         CategoryService categoryService = new CategoryServiceImpl(ao);
         TimesheetService timesheetService = new TimesheetServiceImpl(ao);
         TimesheetEntryService entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
-        TeamService teamService = new TeamServiceImpl(ao, entryService);
+        TeamService teamService = new TeamServiceImpl(ao, categoryService, entryService);
         ConfigService configService = new ConfigServiceImpl(ao, categoryService, teamService);
 
         adminServlet = new AdminServlet(loginUriProviderMock, templateRendererMock, webSudoManagerMock, permissionServiceMock, configService);

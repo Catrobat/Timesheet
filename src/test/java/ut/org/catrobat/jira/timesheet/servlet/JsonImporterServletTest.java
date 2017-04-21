@@ -75,7 +75,7 @@ public class JsonImporterServletTest {
         timesheetService = new TimesheetServiceImpl(ao);
         entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         categoryService = new CategoryServiceImpl(ao);
-        teamService = new TeamServiceImpl(ao, entryService);
+        teamService = new TeamServiceImpl(ao, categoryService, entryService);
 
         ApplicationUser user = mock(ApplicationUser.class);
         request = mock(HttpServletRequest.class);

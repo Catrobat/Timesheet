@@ -132,47 +132,6 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    private void updateTeamCategory(Team team, List<String> categoryList) {
-        if (categoryList == null) {
-            return;
-        }
-
-        Set<CategoryToTeam> addedRelations = new HashSet<>();
-
-        for (String categoryName : categoryList) {
-            Category category = cs.getCategoryByName(categoryName);
-            if (category != null) {
-                category.setName(categoryName);
-                category.save();
-            }
-
-            //categoryToTeam for one category
-            CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"CATEGORY_ID\" = ?", category != null ? category.getID() : 0));
-
-            //update relation
-            CategoryToTeam categoryToTeam;
-            if ((categoryToTeamArray.length == 0) || (categoryToTeamArray[0].getTeam().getTeamName().equals(team.getTeamName()))) {
-                categoryToTeam = ao.create(CategoryToTeam.class);
-            } else {
-                categoryToTeam = categoryToTeamArray[0];
-            }
-
-            categoryToTeam.setTeam(team);
-            categoryToTeam.setCategory(category);
-            categoryToTeam.save();
-
-            addedRelations.add(categoryToTeam);
-        }
-
-        //update all existing categoryToTeam relations of a team
-        CategoryToTeam[] allCategoryToTeam = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", team.getID()));
-        for (CategoryToTeam oldTeamRelation : allCategoryToTeam) {
-            if (!addedRelations.contains(oldTeamRelation)) {
-                ao.delete(oldTeamRelation);
-            }
-        }
-    }
-
     private void fillTeam(Team team, TeamToGroup.Role role, List<String> teamList) {
         if (teamList == null) {
             return;
@@ -195,56 +154,6 @@ public class ConfigServiceImpl implements ConfigService {
             mapper.setTeam(team);
             mapper.setRole(role);
             mapper.save();
-        }
-    }
-
-    private void updateTeamMember(Team team, TeamToGroup.Role role, List<String> userList) {
-        if (userList == null) {
-            return;
-        }
-
-        //comparison list of TeamToGroups
-        Set<TeamToGroup> addedRelations = new HashSet<>();
-
-        for (String userName : userList) {
-            Group[] groups = ao.find(Group.class, Query.select().where("upper(\"GROUP_NAME\") = upper(?)", userName));
-
-            Group group;
-            if (groups.length == 0) {
-                group = ao.create(Group.class);
-            } else {
-                group = groups[0];
-            }
-            group.setGroupName(userName);
-            group.save();
-
-            //teamToGroup for one group
-            TeamToGroup[] teamToGroups = ao.find(TeamToGroup.class, Query.select().where("\"GROUP_ID\" = ?", group.getID()));
-
-            //update relation
-            TeamToGroup teamToGroup;
-            if ((teamToGroups.length == 0) || (teamToGroups[0].getRole() != role) || (teamToGroups[0].getTeam().getTeamName().equals(team.getTeamName()))) {
-                teamToGroup = ao.create(TeamToGroup.class);
-            } else {
-                teamToGroup = teamToGroups[0];
-            }
-
-            teamToGroup.setGroup(group);
-            teamToGroup.setTeam(team);
-            teamToGroup.setRole(role);
-            teamToGroup.save();
-
-            //actually added TeamToGroup relation
-            addedRelations.add(teamToGroup);
-        }
-
-        //retrieve all existing relations of a team
-        TeamToGroup[] allTeamToGroups = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ? AND \"ROLE\" = ?", team.getID(), role));
-        //update all existing categoryToTeam relations of a team
-        for (TeamToGroup oldTeamRelation : allTeamToGroups) {
-            if (!addedRelations.contains(oldTeamRelation)) {
-                ao.delete(oldTeamRelation);
-            }
         }
     }
 
@@ -282,32 +191,6 @@ public class ConfigServiceImpl implements ConfigService {
         team.setTeamName(newTeamName);
         team.save();
         return Response.ok().build();
-    }
-
-    @Override
-    public void editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups,
-            List<String> teamCategoryNames) {
-
-        teamName = teamName.trim();
-
-        Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
-
-        if (teamArray.length == 0) {
-            return;
-        }
-        if (teamArray[0].getGroups() == null) {
-            addTeam(teamName, coordinatorGroups, developerGroups, teamCategoryNames);
-            return;
-        }
-
-        Team team = teamArray[0];
-
-        updateTeamMember(team, TeamToGroup.Role.COORDINATOR, coordinatorGroups);
-        updateTeamMember(team, TeamToGroup.Role.DEVELOPER, developerGroups);
-
-        updateTeamCategory(team, teamCategoryNames);
-
-        team.save();
     }
 
     @Override
