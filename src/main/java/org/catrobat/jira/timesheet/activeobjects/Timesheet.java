@@ -23,7 +23,7 @@ import net.java.ao.schema.Table;
 import java.util.Date;
 
 // This is only needed for the test server because of data model update
-@Table("TimesheetModel3")
+@Table("TimesheetModel4")
 public interface Timesheet extends Entity {
 
     String getUserKey();
