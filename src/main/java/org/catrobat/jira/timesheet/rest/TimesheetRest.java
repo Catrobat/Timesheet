@@ -148,14 +148,9 @@ public class TimesheetRest {
                 System.out.println(configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER));
                 if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
                     Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);
-                    if(usersInGroup.size() == 0) {
-                        return Response.serverError().entity("This should never Happen !!!!!").build();
-                    }
-                    else {
-                        for (String member : usersInGroup) {
-                            if(!TeamMembers.contains(member)) {
-                                TeamMembers.add(member);
-                            }
+                    for (String member : usersInGroup) {
+                        if (!TeamMembers.contains(member)) {
+                            TeamMembers.add(member);
                         }
                     }
                 } else {
