@@ -125,7 +125,6 @@ public class TimesheetRestTest {
         when(sheet.getTargetHours()).thenReturn(150);
         when(sheet.getTargetHoursCompleted()).thenReturn(50);
         when(sheet.getTargetHoursRemoved()).thenReturn(0);
-        when(sheet.getIsEnabled()).thenReturn(true);
         when(sheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(sheet.getState()).thenReturn(Timesheet.State.ACTIVE);
         return sheet;
@@ -723,7 +722,6 @@ public class TimesheetRestTest {
         when(timesheetEntryMock.getTeam()).thenReturn(teamMock);
         when(timesheetEntryMock.getCategory()).thenReturn(categoryMock);
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
-        when(timesheetMock.getIsEnabled()).thenReturn(true);
         when(teamServiceMock.getTeamsOfUser(anyString())).thenReturn(teams);
         when(teamServiceMock.getTeamByID(anyInt())).thenReturn(teamMock);
         when(categoryServiceMock.getCategoryByID(anyInt())).thenReturn(categoryMock);

@@ -587,13 +587,13 @@ public class TimesheetRest {
                 sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getLatestEntryDate(), isMTSheet, jsonTimesheet.isEnabled(), jsonTimesheet.getState());
+                        jsonTimesheet.getLatestEntryDate(), isMTSheet, jsonTimesheet.getState());
             } else {
                 sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getLatestEntryDate(), isMTSheet, jsonTimesheet.isEnabled(), jsonTimesheet.getState());
+                        jsonTimesheet.getLatestEntryDate(), isMTSheet, jsonTimesheet.getState());
             }
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -735,7 +735,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.CONFLICT).entity("Timesheet not found.").build();
         }
 
-        if (!sheet.getIsEnabled()) {
+        if (sheet.getState() == Timesheet.State.DISABLED) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Your timesheet has been disabled.").build();
         } else if (!permissionService.userCanViewTimesheet(user, sheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Access denied.").build();
@@ -765,7 +765,7 @@ public class TimesheetRest {
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                             sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isMTSheet, sheet.getIsEnabled(), state);
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isMTSheet, state);
                 } catch (ServiceException e) {
                     return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
                 }
@@ -776,7 +776,7 @@ public class TimesheetRest {
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
                         sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
-                        new Date(), isMTSheet, sheet.getIsEnabled(), sheet.getState());
+                        new Date(), isMTSheet, sheet.getState());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }

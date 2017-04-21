@@ -48,7 +48,6 @@ public class TimesheetServletTest {
         when(timeSheet.getID()).thenReturn(1);
         when(timeSheet.getUserKey()).thenReturn(admin_key);
         when(timeSheet.getState()).thenReturn(Timesheet.State.ACTIVE);
-        when(timeSheet.getIsEnabled()).thenReturn(false);
         when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(true);
     }

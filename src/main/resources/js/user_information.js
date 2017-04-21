@@ -47,8 +47,10 @@ AJS.toInit(function () {
                 inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
             }
 
+            var enabled = userInformation[i].state != "DISABLED";
+
             var enabledColumn = "</td><td headers='ti-enabled'><input class=\"checkbox\" type=\"checkbox\" id='checkBox"+ userInformation[i].timesheetID + "'>";
-            if (userInformation[i].isEnabled) {
+            if (enabled) {
                 enabledColumn = "</td><td headers='ti-enabled'><input class=\"checkbox\" type=\"checkbox\" id='checkBox"+ userInformation[i].timesheetID + "' checked>";
             }
             var row = "<tr>" +

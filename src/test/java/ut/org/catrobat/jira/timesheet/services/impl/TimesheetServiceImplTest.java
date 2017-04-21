@@ -49,7 +49,7 @@ public class TimesheetServiceImplTest {
         int targetHoursRemoved = 0;
         String reason = "Agathe Bauer";
         service.add(userKey, displayName, targetHoursPractice, targetHoursTheory, targetHours, targetHoursCompleted,
-                targetHoursRemoved, lectures, reason, false, true, Timesheet.State.ACTIVE);
+                targetHoursRemoved, lectures, reason, false, Timesheet.State.ACTIVE);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         //Assert
@@ -62,7 +62,6 @@ public class TimesheetServiceImplTest {
         assertEquals(lectures, timesheet[0].getLectures());
         assertTrue(latestEntryDate.getTime() - timesheet[0].getLatestEntryBeginDate().getTime() < 1000);
         assertEquals(Timesheet.State.ACTIVE, timesheet[0].getState());
-        assertEquals(true, timesheet[0].getIsEnabled());
     }
 
     @Test
@@ -76,7 +75,6 @@ public class TimesheetServiceImplTest {
         sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
         sheet.setState(Timesheet.State.ACTIVE);
-        sheet.setIsEnabled(true);
         sheet.save();
         ao.flushAll();
 
@@ -98,7 +96,6 @@ public class TimesheetServiceImplTest {
         sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
         sheet.setState(Timesheet.State.ACTIVE);
-        sheet.setIsEnabled(true);
         sheet.save();
         ao.flushAll();
 
@@ -192,16 +189,17 @@ public class TimesheetServiceImplTest {
     @Test
     public void testUpdateTimesheetEnableStateOk() throws ServiceException{
         Timesheet timesheet = ao.create(Timesheet.class);
-        timesheet.setIsEnabled(true);
+        timesheet.setState(Timesheet.State.ACTIVE);
+        timesheet.save();
 
         Timesheet stillEnabled = service.updateTimesheetEnableState(timesheet.getID(), true);
-        assertEquals(true, stillEnabled.getIsEnabled());
+        assertEquals(Timesheet.State.ACTIVE, stillEnabled.getState());
         Timesheet nowDisabled = service.updateTimesheetEnableState(timesheet.getID(), false);
-        assertEquals(false, nowDisabled.getIsEnabled());
+        assertEquals(Timesheet.State.DISABLED, nowDisabled.getState());
         Timesheet stillDisabled = service.updateTimesheetEnableState(timesheet.getID(), false);
-        assertEquals(false, stillDisabled.getIsEnabled());
+        assertEquals(Timesheet.State.DISABLED, stillDisabled.getState());
         Timesheet enabledAgain = service.updateTimesheetEnableState(timesheet.getID(), true);
-        assertEquals(true, enabledAgain.getIsEnabled());
+        assertEquals(Timesheet.State.ACTIVE, enabledAgain.getState());
     }
 
     @Test(expected = ServiceException.class)

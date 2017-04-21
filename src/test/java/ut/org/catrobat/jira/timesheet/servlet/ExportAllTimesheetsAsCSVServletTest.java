@@ -82,11 +82,9 @@ public class ExportAllTimesheetsAsCSVServletTest {
         when(timesheet.getLatestEntryBeginDate()).thenReturn(new Date());
         when(timesheet.getLectures()).thenReturn("Mobile Computing");
         when(timesheet.getState()).thenReturn(Timesheet.State.ACTIVE);
-        when(timesheet.getIsEnabled()).thenReturn(true);
         when(timesheet.getUserKey()).thenReturn("test_key");
         when(timesheet.getTargetHoursRemoved()).thenReturn(0);
         when(timesheet.getReason()).thenReturn("Agathe Bauer");
-        when(timesheet.getIsEnabled()).thenReturn(true);
         when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(response.getOutputStream()).thenReturn(outputStream);
         when(configService.getConfiguration()).thenReturn(config);

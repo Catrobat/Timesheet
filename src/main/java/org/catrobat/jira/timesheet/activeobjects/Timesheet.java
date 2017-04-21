@@ -23,7 +23,7 @@ import net.java.ao.schema.Table;
 import java.util.Date;
 
 // This is only needed for the test server because of data model update
-@Table("TimesheetModel2")
+@Table("TimesheetModel3")
 public interface Timesheet extends Entity {
 
     String getUserKey();
@@ -54,10 +54,6 @@ public interface Timesheet extends Entity {
 
     void setTargetHoursRemoved(int hours);
 
-    boolean getIsEnabled();
-
-    void setIsEnabled(boolean isEnabled);
-
     String getLectures();
 
     void setLectures(String lectures);
@@ -79,7 +75,7 @@ public interface Timesheet extends Entity {
     State getState();
 
     enum State {
-        ACTIVE, INACTIVE, AUTO_INACTIVE, INACTIVE_OFFLINE
+        ACTIVE, INACTIVE, AUTO_INACTIVE, INACTIVE_OFFLINE, DISABLED
     }
 
     @OneToMany(reverse = "getTimeSheet")

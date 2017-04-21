@@ -112,9 +112,9 @@ public class SchedulingRestTest {
 
     @Test
     public void testActivityNotification_TimesheetEntryIsEmpty() throws Exception {
-        timesheetService.add("key 1", "user 1", 450, 450, 900, 200, 0, "master thesis", "", true, true, Timesheet.State.ACTIVE); // master thesis
-        timesheetService.add("key 2", "user 2", 450, 0, 450, 450, 0, "bachelor thesis", "", false, false, Timesheet.State.ACTIVE); // disabled
-        timesheetService.add("key 3", "user 3", 450, 0, 450, 200, 20, "seminar paper", "", false, true, Timesheet.State.INACTIVE); // inactive
+        timesheetService.add("key 1", "user 1", 450, 450, 900, 200, 0, "master thesis", "", true, Timesheet.State.ACTIVE); // master thesis
+        timesheetService.add("key 2", "user 2", 450, 0, 450, 450, 0, "bachelor thesis", "", false, Timesheet.State.ACTIVE); // disabled
+        timesheetService.add("key 3", "user 3", 450, 0, 450, 200, 20, "seminar paper", "", false, Timesheet.State.INACTIVE); // inactive
 
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
@@ -134,7 +134,7 @@ public class SchedulingRestTest {
 
     @Test
     public void testActivityNotification_differentKindsOfTimesheets() throws Exception {
-        Timesheet timesheet1 = timesheetService.add("key 1", "user 1", 450, 450, 900, 200, 0, "master thesis", "", true, true, Timesheet.State.ACTIVE);
+        Timesheet timesheet1 = timesheetService.add("key 1", "user 1", 450, 450, 900, 200, 0, "master thesis", "", true, Timesheet.State.ACTIVE);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -173,7 +173,7 @@ public class SchedulingRestTest {
         //PowerMockito.verifyPrivate(spy, never()).invoke("sendMail", Matchers.anyObject());
 
         timesheetService.remove(timesheet1);
-        Timesheet timesheet2 = timesheetService.add("key 1", "user 1", 450, 450, 900, 200, 0, "master thesis", "", true, true, Timesheet.State.INACTIVE); // inactive
+        Timesheet timesheet2 = timesheetService.add("key 1", "user 1", 450, 450, 900, 200, 0, "master thesis", "", true, Timesheet.State.INACTIVE); // inactive
 
         timesheetEntryService.add(timesheet2, yesterday, today, categoryDrone, "testing a lot of things",
                 30, droneTeam, false, yesterday, "123456", "MarkusHobisch"); // this should work

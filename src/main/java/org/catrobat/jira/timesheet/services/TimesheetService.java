@@ -35,12 +35,12 @@ public interface TimesheetService {
      * @param targetHoursTheory   specifies the amount of hours the user has to
 *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
-     * @param isMasterThesisTimesheet @return the new Timesheet, or null       */
+     * @param isMasterThesisTimesheet @return the new Timesheet, or null          */
     @Nullable
     Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
-            int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-            String reason, Date latestEntryDate, boolean isMasterThesisTimesheet, boolean isEnabled,
-            Timesheet.State state) throws ServiceException;
+                            int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
+                            String reason, Date latestEntryDate, boolean isMasterThesisTimesheet,
+                            Timesheet.State state) throws ServiceException;
 
     Timesheet updateTimesheet(int id, int targetHoursCompleted, int targetHoursPractice, Date latestEntryDate, Timesheet.State state);
 
@@ -49,16 +49,16 @@ public interface TimesheetService {
      * @param userKey             identifies the user
      * @param displayName
      * @param targetHoursPractice specifies the amount of hours the user has to
-     *                            solve in practical work
+ *                            solve in practical work
      * @param targetHoursTheory   specifies the amount of hours the user has to
 *                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
-     * @param isMasterThesisTimesheet @return the new Timesheet    */
+     * @param isMasterThesisTimesheet @return the new Timesheet        */
     @NotNull
     Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
-            int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-            String reason, boolean isMasterThesisTimesheet, boolean isEnabled,
-            Timesheet.State state);
+                  int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
+                  String reason, boolean isMasterThesisTimesheet,
+                  Timesheet.State state);
 
     @NotNull
     List<Timesheet> all();

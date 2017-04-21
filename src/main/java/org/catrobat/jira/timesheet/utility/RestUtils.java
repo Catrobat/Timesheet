@@ -40,7 +40,7 @@ public class RestUtils {
     public static void checkTimesheetIsEnabled(Timesheet sheet) throws PermissionException {
         if (sheet == null) {
             throw new PermissionException("Timesheet not found.");
-        } else if (!sheet.getIsEnabled()) {
+        } else if (sheet.getState() == Timesheet.State.DISABLED) {
             throw new PermissionException("Your timesheet has been disabled.");
         }
     }

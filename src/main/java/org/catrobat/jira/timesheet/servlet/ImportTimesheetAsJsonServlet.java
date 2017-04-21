@@ -132,7 +132,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                     jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
                     jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                    jsonTimesheet.isMTSheet(), jsonTimesheet.isEnabled(), jsonTimesheet.getState());
+                    jsonTimesheet.isMTSheet(), jsonTimesheet.getState());
 
             for (JsonTimesheetEntry entry : timesheetEntryList) {
                 try {

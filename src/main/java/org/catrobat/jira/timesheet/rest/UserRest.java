@@ -161,7 +161,6 @@ public class UserRest {
             }
             jsonUserInformation.setTeams(teamString);
             jsonUserInformation.setTimesheetID(timesheet.getID());
-            jsonUserInformation.setEnabled(timesheet.getIsEnabled());
 
             jsonUserInformationList.add(jsonUserInformation);
         }

@@ -70,11 +70,9 @@ public class ExportMTTimesheetAsCSVServletTest {
         when(timesheet.getLatestEntryBeginDate()).thenReturn(new Date());
         when(timesheet.getLectures()).thenReturn("Mobile Computing");
         when(timesheet.getState()).thenReturn(Timesheet.State.ACTIVE);
-        when(timesheet.getIsEnabled()).thenReturn(true);
         when(timesheet.getUserKey()).thenReturn(test_key);
         when(timesheet.getTargetHoursRemoved()).thenReturn(0);
         when(timesheet.getReason()).thenReturn("Agathe Bauer");
-        when(timesheet.getIsEnabled()).thenReturn(true);
         when(timesheet.getIsMasterThesisTimesheet()).thenReturn(true);
         when(timesheetService.getTimesheetByUser(user.getKey(), true)).thenReturn(timesheet);
         when(response.getOutputStream()).thenReturn(outputStream);

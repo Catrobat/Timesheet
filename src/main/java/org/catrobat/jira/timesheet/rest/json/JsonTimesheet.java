@@ -77,7 +77,6 @@ public final class JsonTimesheet {
         this.targetHours = timesheet.getTargetHours();
         this.targetHoursCompleted = timesheet.getTargetHoursCompleted();
         this.targetHoursRemoved = timesheet.getTargetHoursRemoved();
-        this.isEnabled = timesheet.getIsEnabled();
         this.isMTSheet = timesheet.getIsMasterThesisTimesheet();
         this.state = timesheet.getState();
         this.displayName = timesheet.getDisplayName();

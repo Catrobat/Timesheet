@@ -55,7 +55,7 @@ public class ActivityVerificationJob implements PluginJob {
             }
             else if (timesheet.getState() == Timesheet.State.AUTO_INACTIVE &&
                     schedulingService.isOlderThanOfflineTime(latestEntryDate)) {
-                timesheet.setIsEnabled(false);
+                timesheet.setState(Timesheet.State.DISABLED);
                 timesheet.save();
                 statusFlagMessage = "user is still inactive since the specified disabled limit";
             }

@@ -44,8 +44,8 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
-            int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures, String reason, Date latestEntryDate,
-            boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) throws ServiceException {
+                                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures, String reason, Date latestEntryDate,
+                                   boolean isMasterThesisTimesheet, Timesheet.State state) throws ServiceException {
 
         ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
@@ -71,7 +71,6 @@ public class TimesheetServiceImpl implements TimesheetService {
                 sheet.setLectures(lectures);
                 sheet.setReason(reason);
                 sheet.setLatestEntryBeginDate(latestEntryDate);
-                sheet.setIsEnabled(isEnabled);
                 sheet.setState(state);
                 sheet.save();
                 return sheet;
@@ -95,9 +94,9 @@ public class TimesheetServiceImpl implements TimesheetService {
     @NotNull
     @Override
     public Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
-            int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-            String lectures, String reason,
-            boolean isMasterThesisTimesheet, boolean isEnabled, Timesheet.State state) {
+                         int targetHours, int targetHoursCompleted, int targetHoursRemoved,
+                         String lectures, String reason,
+                         boolean isMasterThesisTimesheet, Timesheet.State state) {
 
         Timesheet sheet = ao.create(Timesheet.class);
         sheet.setUserKey(userKey);
@@ -110,7 +109,6 @@ public class TimesheetServiceImpl implements TimesheetService {
         sheet.setLectures(lectures);
         sheet.setReason(reason);
         sheet.setLatestEntryBeginDate(new Date());
-        sheet.setIsEnabled(isEnabled);
         sheet.setIsMasterThesisTimesheet(isMasterThesisTimesheet);
         sheet.setState(state);
         sheet.save();
@@ -147,7 +145,12 @@ public class TimesheetServiceImpl implements TimesheetService {
             throw new ServiceException("No Timesheet found for this user.");
         }
 
-        sheet.setIsEnabled(isEnabled);
+        if (!isEnabled) {
+            sheet.setState(Timesheet.State.DISABLED);
+        }
+        if (isEnabled && sheet.getState() == Timesheet.State.DISABLED) {
+            sheet.setState(Timesheet.State.ACTIVE);
+        }
         sheet.save();
         return sheet;
     }
