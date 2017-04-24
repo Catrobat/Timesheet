@@ -80,7 +80,7 @@ public class ActivityNotificationJob implements PluginJob {
     private List<String> getCoordinatorsMailAddress(ApplicationUser user) {
         List<String> coordinatorMailAddressList = new LinkedList<>();
         for (Team team : teamService.getTeamsOfUser(user.getName())) {
-            for (String coordinator : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
+            for (String coordinator : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
                 coordinatorMailAddressList.add(ComponentAccessor.getUserManager().getUserByName(coordinator).getEmailAddress());
         }
 

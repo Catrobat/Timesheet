@@ -16,9 +16,10 @@
 
 package org.catrobat.jira.timesheet.rest.json;
 
-import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
+import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.TeamService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -68,11 +69,11 @@ public class JsonTeam {
         developerGroups = new ArrayList<>();
     }
 
-    public JsonTeam(Team toCopy, ConfigService configService) {
+    public JsonTeam(Team toCopy, ConfigService configService, TeamService teamService) {
         this.teamID = toCopy.getID();
         this.teamName = toCopy.getTeamName();
-        this.coordinatorGroups = configService.getGroupsForRole(this.teamName, TeamToGroup.Role.COORDINATOR);
-        this.developerGroups = configService.getGroupsForRole(this.teamName, TeamToGroup.Role.DEVELOPER);
+        this.coordinatorGroups = teamService.getGroupsForRole(this.teamName, TeamToGroup.Role.COORDINATOR);
+        this.developerGroups = teamService.getGroupsForRole(this.teamName, TeamToGroup.Role.DEVELOPER);
         this.teamCategoryNames = configService.getCategoryNamesForTeam(this.teamName);
     }
 
@@ -136,10 +137,7 @@ public class JsonTeam {
         if ((this.teamName == null) ? (other.teamName != null) : !this.teamName.equals(other.teamName)) {
             return false;
         }
-        if (!categoryIDs.equals(other.categoryIDs)) {
-            return false;
-        }
-        return true;
+        return categoryIDs.equals(other.categoryIDs);
     }
 
     @Override

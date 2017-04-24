@@ -115,7 +115,7 @@ public class ConfigResourceRest {
         if (unauthorized != null) {
             return unauthorized;
         }
-        return Response.ok(new JsonConfig(configService)).build();
+        return Response.ok(new JsonConfig(configService, teamService)).build();
     }
 
     @GET
@@ -178,7 +178,7 @@ public class ConfigResourceRest {
                 ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(username);
                 if (user != null) {
                     configService.addTimesheetAdmin(user);
-                    //RestUtils.getInstance().printUserInformation(username, user);
+                    //RestUtils.printUserInformation(username, user);
                 }
             }
         }
@@ -268,9 +268,11 @@ public class ConfigResourceRest {
         ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(userName);
         String jsonFlags = "[{";
         jsonFlags += "canView: ";
+        StringBuilder jsonFlagsBuilder = new StringBuilder(jsonFlags);
         for (Timesheet sheet : ao.find(Timesheet.class)) {
-            jsonFlags += "{" + sheet.getID() + ": " + permissionService.userCanViewTimesheet(user, sheet) + "},";
+            jsonFlagsBuilder.append("{").append(sheet.getID()).append(": ").append(permissionService.userCanViewTimesheet(user, sheet)).append("},");
         }
+        jsonFlags = jsonFlagsBuilder.toString();
 
         jsonFlags += "]";
 

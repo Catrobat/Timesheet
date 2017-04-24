@@ -217,9 +217,7 @@ public final class JsonTimesheetEntry {
         if (!inactiveEndDate.equals(that.inactiveEndDate)) return false;
         if (!partner.equals(that.partner)) return false;
         if (!ticketID.equals(that.ticketID)) return false;
-        if (!description.equals(that.description)) return false;
-
-        return true;
+        return description.equals(that.description);
     }
 
     @Override

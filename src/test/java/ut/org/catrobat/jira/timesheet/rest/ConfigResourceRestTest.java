@@ -301,7 +301,7 @@ public class ConfigResourceRestTest {
 
         PowerMockito.when(ComponentAccessor.getGroupManager().getUsersInGroup(anyString())).thenReturn(usersInGroup);
 
-        JsonConfig jsonConfig = new JsonConfig(configServiceMock);
+        JsonConfig jsonConfig = new JsonConfig(configServiceMock, teamServiceMock);
 
         response = configResourceRestMock.setConfig(jsonConfig, request);
         assertNull(response.getEntity());

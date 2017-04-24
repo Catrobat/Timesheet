@@ -4,10 +4,12 @@ var selectedUser;
 var isMTSheetSelected;
 
 function isReadOnlyUser(userName, config) {
-    var readOnlyUsers = config.readOnlyUsers.split(',');
-    for (var i = 0; i < readOnlyUsers.length; i++) {
-        if (readOnlyUsers[i].localeCompare(userName) == 0) {
-            return true;
+    if (config.readOnlyUsers) {
+        var readOnlyUsers = config.readOnlyUsers.split(',');
+        for (var i = 0; i < readOnlyUsers.length; i++) {
+            if (readOnlyUsers[i].localeCompare(userName) == 0) {
+                return true;
+            }
         }
     }
     return false;
