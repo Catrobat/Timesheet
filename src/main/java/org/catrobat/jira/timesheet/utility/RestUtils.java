@@ -20,7 +20,7 @@ public class RestUtils {
 
     public static List<Team> asSortedList(Collection<Team> c) {
         List<Team> list = new ArrayList<>(c);
-        Collections.sort(list, ((o1, o2) -> o1.getTeamName().compareTo(o2.getTeamName())));
+        list.sort((Comparator.comparing(Team::getTeamName)));
         return list;
     }
 
@@ -76,7 +76,30 @@ public class RestUtils {
                         categoryService.getCategoryByID(entry.getCategoryID()).getName().equals("Inactive & Offline") )) {
             throw new ParseException("You also have to select the 'Inactive' Category for a valid 'Inactive-Entry'.");
         }
-//        else
-//        	throw new ParseException("OK");
     }
+
+    /* Notice: Just for information
+     * -----------------------------------------------------------------------------------------------------------------
+
+    public static void printUserInformation(String username, ApplicationUser user) {
+        ApplicationUser userByName = ComponentAccessor.getUserManager().getUserByName(username);
+        Assert.isTrue(userByName.equals(user),"Users not equal!");
+
+        System.out.println();
+        System.out.println("user.getEmailAddress()       = " + user.getEmailAddress());
+        System.out.println("userByName.getEmailAddress() = " + userByName.getEmailAddress());
+
+        System.out.println("userByName.getName()         = " + userByName.getName());
+        System.out.println("userByName.getUsername()     = " + userByName.getUsername());
+        System.out.println("user.getUsername()           = " + user.getUsername());
+        System.out.println("username()           = " + username);
+
+        System.out.println("userByName.getDisplayName()  = " + userByName.getDisplayName());
+        System.out.println("user.getDisplayName()        = " + user.getDisplayName());
+
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("userByName.getKey()          = " + userByName.getKey());
+        System.out.println("########################################################################");
+    }
+    */
 }
