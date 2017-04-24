@@ -157,14 +157,14 @@ public class TimesheetRest {
                         }
                     }
                 } else {
-                    if(!TeamMembers.contains(teamMembersAndGroups)) {
+                    if (!TeamMembers.contains(teamMembersAndGroups)) {
                         TeamMembers.add(teamMembersAndGroups);
                     }
                 }
             }
         }
 
-        System.out.println("TeamMembers of user "+ loggedInUser.getUsername() + " are " + TeamMembers);
+        System.out.println("TeamMembers of user " + loggedInUser.getUsername() + " are " + TeamMembers);
 
         for (String member : TeamMembers) {
             //collect all timesheet entries of all team members
@@ -192,7 +192,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/{teamName}/entries")
     public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
-                                                  @PathParam("teamName") String teamName) {
+            @PathParam("teamName") String teamName) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -480,6 +480,7 @@ public class TimesheetRest {
         }
 
         TimesheetEntry newEntry;
+
         try {
             newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
                     entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
@@ -534,9 +535,10 @@ public class TimesheetRest {
                 }
                 // Category cannot be associated with team, check null only
                 // teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
+
                 TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
-                    entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
-                    entry.getInactiveEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
+                        entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
+                        entry.getInactiveEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
                 entry.setEntryID(newEntry.getID());
                 errorMap.get("correct").add(entry);
             } catch (ParseException | ServiceException | PermissionException e) {

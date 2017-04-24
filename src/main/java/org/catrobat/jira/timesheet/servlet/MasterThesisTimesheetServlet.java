@@ -79,19 +79,18 @@ public class MasterThesisTimesheetServlet extends HttpServlet {
             }
 
             Map<String, Object> paramMap = Maps.newHashMap();
-            paramMap.put("timesheetid", sheet.getID());
-            if (permissionService.isJiraAdministrator(user)) {
-                paramMap.put("isadmin", true);
+            if (permissionService.timesheetAdminExists()) {
+                paramMap.put("isAdmin", permissionService.isTimesheetAdmin(user));
             } else {
-                paramMap.put("isadmin", false);
-            }
-            if (permissionService.checkIfUserIsGroupMember("Coordinators")) {
-                paramMap.put("iscoordinator", true);
-            } else {
-                paramMap.put("iscoordinator", false);
+                paramMap.put("isAdmin", permissionService.isJiraAdministrator(user));
             }
 
-            paramMap.put("ismasterthesistimesheet", true);
+            paramMap.put("isCoordinator", permissionService.isUserTeamCoordinator(user));
+            paramMap.put("isReadOnlyUser", permissionService.isReadOnlyUser(user));
+
+            paramMap.put("timesheetID", sheet.getID());
+            paramMap.put("isMasterThesisTimesheet", true);
+
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());
         } catch (ServiceException e) {

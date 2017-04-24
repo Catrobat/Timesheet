@@ -583,7 +583,7 @@ function showEntryDeletionDialog(viewRow, entryID) {
     closeOnOutsideClick: true
   });
 
-  var content = "<h1>You are about to a Timesheet Entry.</h1> <br>" +
+    var content = "<h1>Do you really want to delete the timesheet entry?</h1> <br>" +
       "<h2>This action cannot be undone.</h2>" +
       "<h2 style='color: red'><center><strong>Please confirm your action!</strong></center></h2>";
 

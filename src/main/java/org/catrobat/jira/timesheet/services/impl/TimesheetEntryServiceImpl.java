@@ -49,7 +49,6 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
             Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
             String userName) throws ServiceException {
 
-        checkParams(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName);
         if (ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ? AND BEGIN_DATE < ? AND END_DATE > ?", sheet.getID(), end, begin).length != 0) {
             throw new ServiceException("TimesheetEntries are not allowed to overlap.");
         }
@@ -62,7 +61,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
             int pause, Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID, String userName,
             TimesheetEntry entry) throws ServiceException {
 
-        checkParams(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName);
+        checkParams(begin, end, category, description, team, jiraTicketID, userName);
 
         entry.setTimeSheet(sheet);
         entry.setBeginDate(begin);
@@ -80,8 +79,8 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         return entry;
     }
 
-    private void checkParams(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
-            Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
+    private void checkParams(Date begin, Date end, Category category, String description,
+            Team team, String jiraTicketID,
             String userName) throws ServiceException {
         if (team == null) {
             throw new ServiceException("TimesheetEntry is not allowed with null Team.");
