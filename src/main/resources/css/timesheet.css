@@ -78,9 +78,10 @@
     width: 150px;
 }
 
-#timesheet-table .description {
-    min-width: 150px;
-    width: 210px;
+#timesheet-table .description,
+#timesheet-table .description_ {
+    min-width: 300px;
+    width: 300px;
 }
 
 #timesheet-table button {
