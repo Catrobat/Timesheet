@@ -65,8 +65,6 @@ public final class JsonTimesheetEntry {
     private String partner;
     @XmlElement
     private boolean isGoogleDocImport;
-    @XmlElement
-    private boolean isTheory;
 
     public JsonTimesheetEntry() {
     }
@@ -90,7 +88,6 @@ public final class JsonTimesheetEntry {
         } else {
             this.categoryID = -1;
         }
-        this.isTheory = timesheetEntry.getIsTheory();
 
         if (!anonymously) {
             this.entryID = timesheetEntry.getID();
@@ -195,10 +192,6 @@ public final class JsonTimesheetEntry {
         this.isGoogleDocImport = isGoogleDocImport;
     }
 
-    public boolean isTheory() {return isTheory;}
-
-    public void setIsTheory(boolean theory) {isTheory = theory; }
-
     public String getCategoryName() {return categoryName;}
 
     public void setCategoryName(String categoryName) {this.categoryName = categoryName;}
@@ -219,7 +212,6 @@ public final class JsonTimesheetEntry {
         if (teamID != that.teamID) return false;
         if (categoryID != that.categoryID) return false;
         if (isGoogleDocImport != that.isGoogleDocImport) return false;
-        if (isTheory != that.isTheory) return false;
         if (!beginDate.equals(that.beginDate)) return false;
         if (!endDate.equals(that.endDate)) return false;
         if (!inactiveEndDate.equals(that.inactiveEndDate)) return false;
@@ -263,7 +255,6 @@ public final class JsonTimesheetEntry {
                 ", teamID=" + teamID +
                 ", categoryID=" + categoryID +
                 ", isGoogleDocImport=" + isGoogleDocImport +
-                ", isTheory=" + isTheory +
                 '}';
     }
 }

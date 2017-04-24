@@ -148,7 +148,6 @@ public class TimesheetRestTest {
         when(entry.getJiraTicketID()).thenReturn("CAT-1530");
         when(entry.getPairProgrammingUserName()).thenReturn("Partner");
         when(entry.getIsGoogleDocImport()).thenReturn(false);
-        when(entry.getIsTheory()).thenReturn(false);
         return entry;
     }
 

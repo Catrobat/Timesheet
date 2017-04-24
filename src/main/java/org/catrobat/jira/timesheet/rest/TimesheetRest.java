@@ -524,12 +524,13 @@ public class TimesheetRest {
                 permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
-                teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
-                if (entry.isTheory()) {
+                if (entry.IsGoogleDocImport() && entry.getCategoryID() == -1) {
                     category = categoryService.getCategoryByName(SpecialCategories.THEORY);
-                } else if (entry.IsGoogleDocImport()) {
+                } else if (entry.IsGoogleDocImport() && entry.getCategoryID() == -2) {
                     category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
                 }
+                // Category cannot be associated with team, check null only
+                // teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
                 TimesheetEntry newEntry = entryService.add(sheet, entry.getBeginDate(), entry.getEndDate(), category,
                     entry.getDescription(), entry.getPauseMinutes(), team, entry.IsGoogleDocImport(),
                     entry.getInactiveEndDate(), entry.getTicketID(), entry.getPairProgrammingUserName());
@@ -544,7 +545,6 @@ public class TimesheetRest {
         }
 
         if (errorMap.size() > 1) {
-            Gson gson = new Gson();
             return Response.status(Response.Status.CONFLICT).entity(errorMap).build();
         }
 

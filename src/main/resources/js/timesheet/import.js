@@ -129,7 +129,6 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
 }
 
 function parseEntryFromGoogleDocRow(row, timesheetData) {
-    var isTheory;
     var pieces = row.split("\t");
 
     //check if import entry length is valid
@@ -141,14 +140,16 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         pieces[4] = "00:00";
     }
     //check if any field of the import entry is empty
+    var categoryID = 0;
     for (var i = 0; i <= 7; i++) {
         //Category is allowed to be empty
         if (i == 5 && pieces[i].toLowerCase() == "j") {
-            isTheory = true;
             pieces[i] = "Theory";
+            categoryID = -1;
         }
         else if (i == 5 && pieces[i] == "") {
             pieces[i] = "GoogleDocsImport";
+            categoryID = -2;
         }
         else if (pieces[i] == "") {
             return null;
@@ -161,15 +162,6 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         return null;
 
     var firstTeamID = Object.keys(timesheetData.teams)[0];
-    var firstTeam = timesheetData.teams[firstTeamID];
-    var firstCategoryIDOfFirstTeam = firstTeam.teamCategories[0];
-
-    //import category ID from Google Doc
-    var categoryID = getCategoryID(pieces[5], firstTeam.teamCategories, timesheetData);
-
-    if (categoryID == 0) {
-        categoryID = firstCategoryIDOfFirstTeam;
-    }
 
     return {
         description: pieces[6],
@@ -181,7 +173,6 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         isGoogleDocImport: true,
         ticketID: "",
         partner: "",
-        inactiveEndDate: new Date(pieces[0] + " " + pieces[1]),
-        isTheory: isTheory
+        inactiveEndDate: new Date(pieces[0] + " " + pieces[1])
     };
 }

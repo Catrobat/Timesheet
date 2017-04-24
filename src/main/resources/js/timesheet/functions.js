@@ -37,16 +37,6 @@ function getNameFromCategoryIndex(categoryID, timesheetData) {
     return "";
 }
 
-function getCategoryID(categoryName, teamCategories, timesheetData) {
-    for (var i = 0; i < teamCategories.length; i++) {
-        var teamID = teamCategories[i];
-        if (categoryName == timesheetData.categoryIDs[teamID].categoryName) {
-            return teamID;
-        }
-    }
-    return 0;
-}
-
 function initUserSaveButton() {
     AJS.$("#timesheet-information").submit(function (e) {
         e.preventDefault();

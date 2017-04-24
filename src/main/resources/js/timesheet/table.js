@@ -658,6 +658,16 @@ function augmentEntry(timesheetData, entry) {
         teamName = timesheetData.teams[entry.teamID].teamName;
     }
 
+    // TODO: remove after GoogleDocsImport is Disabled
+    var categoryName;
+    if (entry.categoryID === -1) {
+        categoryName = "Theory";
+    } else if (entry.categoryID === -2) {
+        categoryName = "GoogleDocsImport";
+    } else {
+        categoryName = timesheetData.categoryIDs[entry.categoryID].categoryName;
+    }
+
     var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
 
     return {
@@ -666,7 +676,7 @@ function augmentEntry(timesheetData, entry) {
         end: toTimeString(new Date(entry.endDate)),
         pause: (entry.pauseMinutes > 0) ? toUTCTimeString(pauseDate) : "",
         duration: toTimeString(calculateDuration(entry.beginDate, entry.endDate, pauseDate)),
-        category: timesheetData.categoryIDs[entry.categoryID].categoryName,
+        category: categoryName,
         team: teamName,
         entryID: entry.entryID,
         beginDate: entry.beginDate,

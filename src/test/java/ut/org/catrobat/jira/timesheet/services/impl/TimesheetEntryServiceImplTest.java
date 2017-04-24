@@ -59,12 +59,19 @@ public class TimesheetEntryServiceImplTest {
         service = new TimesheetEntryServiceImpl(ao, timesheetService);
     }
 
+    private Category createCategory() {
+        Category category = ao.create(Category.class);
+        category.setName("ASDF");
+        category.save();
+        return category;
+    }
+
     @Test
     public void testAdd() throws Exception {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = ao.create(Category.class);
+        Category category = createCategory();
         Team team = ao.create(Team.class);
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
@@ -95,7 +102,7 @@ public class TimesheetEntryServiceImplTest {
     public void testAddOverlapThrowsException() throws Exception {
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = ao.create(Category.class);
+        Category category = createCategory();
         Team team = ao.create(Team.class);
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
@@ -116,7 +123,7 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = ao.create(Category.class);
+        Category category = createCategory();
         Team team = ao.create(Team.class);
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
@@ -148,7 +155,7 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = ao.create(Category.class);
+        Category category = createCategory();
         Team team = ao.create(Team.class);
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
@@ -180,7 +187,7 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = ao.create(Category.class);
+        Category category = createCategory();
         Team team = ao.create(Team.class);
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
@@ -207,7 +214,7 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = ao.create(Category.class);
+        Category category = createCategory();
         Team team = ao.create(Team.class);
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
@@ -248,7 +255,7 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = ao.create(Category.class);
+        Category category = createCategory();
         Team team = ao.create(Team.class);
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
