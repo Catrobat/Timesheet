@@ -47,7 +47,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Override
     public TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
             Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
-            String userName) throws ServiceException{
+            String userName) throws ServiceException {
 
         checkParams(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName);
         if (ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ? AND BEGIN_DATE < ? AND END_DATE > ?", sheet.getID(), end, begin).length != 0) {
@@ -55,6 +55,14 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         }
 
         TimesheetEntry entry = ao.create(TimesheetEntry.class);
+        return setTimesheetEntryData(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName, entry);
+    }
+
+    private TimesheetEntry setTimesheetEntryData(Timesheet sheet, Date begin, Date end, Category category, String description,
+            int pause, Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID, String userName,
+            TimesheetEntry entry) throws ServiceException {
+
+        checkParams(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName);
 
         entry.setTimeSheet(sheet);
         entry.setBeginDate(begin);
@@ -67,17 +75,14 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         entry.setInactiveEndDate(inactiveEndDate);
         entry.setJiraTicketID(jiraTicketID);
         entry.setPairProgrammingUserName(userName);
-
         entry.save();
-
         updateTimesheet(sheet, entry);
-
         return entry;
     }
 
     private void checkParams(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
-                             Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
-                             String userName) throws ServiceException {
+            Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
+            String userName) throws ServiceException {
         if (team == null) {
             throw new ServiceException("TimesheetEntry is not allowed with null Team.");
         }
@@ -98,7 +103,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         }
     }
 
-    private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) throws ServiceException{
+    private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) throws ServiceException {
         int completedHours = getHoursOfTimesheet(sheet);
         int completedPracticeHours = getPracticeHoursOfTimesheet(sheet);
         Date latestEntryDate = getLatestEntry(sheet).getBeginDate();
@@ -125,7 +130,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         for (TimesheetEntry entry : entries) {
             minutes += entry.getDurationMinutes();
         }
-        return minutes/60;
+        return minutes / 60;
     }
 
     private int getPracticeHoursOfTimesheet(Timesheet sheet) {
@@ -138,7 +143,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
                 minutes += entry.getDurationMinutes();
             }
         }
-        return minutes/60;
+        return minutes / 60;
     }
 
     @Override
@@ -150,34 +155,15 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Override
     @Nullable
     public TimesheetEntry edit(int entryId, Timesheet sheet, Date begin, Date end, Category category,
-                               String description, int pause, Team team, boolean isGoogleDocImport,
-                               Date inactiveEndDate, String jiraTicketID, String userName) throws ServiceException {
+            String description, int pause, Team team, boolean isGoogleDocImport,
+            Date inactiveEndDate, String jiraTicketID, String userName) throws ServiceException {
 
         TimesheetEntry entry = getEntryByID(entryId);
 
         if (entry == null) {
             throw new ServiceException("Entry not found");
         }
-
-        checkParams(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName);
-
-        entry.setTimeSheet(sheet);
-        entry.setBeginDate(begin);
-        entry.setEndDate(end);
-        entry.setCategory(category);
-        entry.setDescription(description);
-        entry.setPauseMinutes(pause);
-        entry.setTeam(team);
-        entry.setIsGoogleDocImport(isGoogleDocImport);
-        entry.setInactiveEndDate(inactiveEndDate);
-        entry.setJiraTicketID(jiraTicketID);
-        entry.setPairProgrammingUserName(userName);
-
-        entry.save();
-
-        updateTimesheet(sheet, entry);
-
-        return entry;
+        return setTimesheetEntryData(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName, entry);
     }
 
     @Override
@@ -208,7 +194,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
                 minutes += entry.getDurationMinutes();
             }
         }
-        return minutes/60;
+        return minutes / 60;
     }
 
     @Override

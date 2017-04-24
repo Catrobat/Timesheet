@@ -47,10 +47,7 @@ public class MasterThesisTimesheetPermissionCondition extends JiraGlobalPermissi
             return false;
         }
 
-        if (ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Master-Students")) {
-            return true;
-        }
+        return ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, "Master-Students");
 
-        return false;
     }
 }

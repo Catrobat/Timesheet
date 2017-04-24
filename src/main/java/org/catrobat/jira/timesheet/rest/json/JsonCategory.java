@@ -68,9 +68,6 @@ public class JsonCategory {
         if (this.categoryID != other.categoryID) {
             return false;
         }
-        if ((this.categoryName == null) ? (other.categoryName != null) : !this.categoryName.equals(other.categoryName)) {
-            return false;
-        }
-        return true;
+        return (this.categoryName == null) ? other.categoryName == null : this.categoryName.equals(other.categoryName);
     }
 }

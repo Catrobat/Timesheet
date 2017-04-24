@@ -33,7 +33,10 @@ import com.atlassian.query.Query;
 import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition;
-import org.catrobat.jira.timesheet.rest.json.*;
+import org.catrobat.jira.timesheet.rest.json.JsonTeam;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
+import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.catrobat.jira.timesheet.utility.EmailUtil;
@@ -144,8 +147,8 @@ public class TimesheetRest {
         Vector<String> TeamMembers = new Vector<>();
 
         for (Team team : teamService.getTeamsOfUser(loggedInUser.getName())) {
-            for (String teamMembersAndGroups : configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
-                System.out.println(configService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER));
+            for (String teamMembersAndGroups : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
+                System.out.println(teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER));
                 if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
                     Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);
                     for (String member : usersInGroup) {
@@ -214,7 +217,7 @@ public class TimesheetRest {
         }
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
-        for (String developerTeamMemberName : configService.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER)) {
+        for (String developerTeamMemberName : teamService.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER)) {
             TimesheetEntry[] timesheetEntries;
             try {
                 String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(developerTeamMemberName);

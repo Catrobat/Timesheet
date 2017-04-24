@@ -28,13 +28,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
@@ -108,7 +106,7 @@ public class JsonExporterServletTest {
 
     @Test
     public void testDoGetConfig() throws IOException, ServletException{
-        ExportConfigAsJsonServlet exportConfigAsJsonServlet = new ExportConfigAsJsonServlet(loginUriProvider, webSudoManager, configService, permissionService);
+        ExportConfigAsJsonServlet exportConfigAsJsonServlet = new ExportConfigAsJsonServlet(loginUriProvider, webSudoManager, configService, permissionService, teamService);
 
         exportConfigAsJsonServlet.doGet(request, response);
     }

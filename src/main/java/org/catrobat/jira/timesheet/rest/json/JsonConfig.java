@@ -16,8 +16,12 @@
 
 package org.catrobat.jira.timesheet.rest.json;
 
-import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.activeobjects.Config;
+import org.catrobat.jira.timesheet.activeobjects.TSAdminGroup;
+import org.catrobat.jira.timesheet.activeobjects.Team;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.TeamService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -79,12 +83,12 @@ public final class JsonConfig {
 
     }
 
-    public JsonConfig(ConfigService configService) {
+    public JsonConfig(ConfigService configService, TeamService teamService) {
         Config toCopy = configService.getConfiguration();
 
         Map<String, JsonTeam> teamMap = new TreeMap<>();
         for (Team team : toCopy.getTeams()) {
-            teamMap.put(team.getTeamName(), new JsonTeam(team, configService));
+            teamMap.put(team.getTeamName(), new JsonTeam(team, configService, teamService));
         }
 
         this.teams = new ArrayList<>();

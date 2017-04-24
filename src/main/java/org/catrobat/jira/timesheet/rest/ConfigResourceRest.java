@@ -115,7 +115,7 @@ public class ConfigResourceRest {
         if (unauthorized != null) {
             return unauthorized;
         }
-        return Response.ok(new JsonConfig(configService)).build();
+        return Response.ok(new JsonConfig(configService, teamService)).build();
     }
 
     @GET

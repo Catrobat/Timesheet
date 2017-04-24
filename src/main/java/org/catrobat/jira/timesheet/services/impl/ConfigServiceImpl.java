@@ -27,9 +27,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class ConfigServiceImpl implements ConfigService {
@@ -211,23 +209,6 @@ public class ConfigServiceImpl implements ConfigService {
         category.save();
 
         return getConfiguration();
-    }
-
-    @Override
-    public List<String> getGroupsForRole(String teamName, TeamToGroup.Role role) {
-        // TODO: move to teamService
-        List<String> groupList = new ArrayList<>();
-        TeamToGroup[] teamToGroupArray = ao.find(TeamToGroup.class, Query.select()
-                .where("\"ROLE\" = ?", role)
-        );
-
-        for (TeamToGroup teamToGroup : teamToGroupArray) {
-            if (teamToGroup.getTeam().getTeamName().toLowerCase().equals(teamName.toLowerCase())) {
-                groupList.add(teamToGroup.getGroup().getGroupName());
-            }
-        }
-
-        return groupList;
     }
 
     @Override

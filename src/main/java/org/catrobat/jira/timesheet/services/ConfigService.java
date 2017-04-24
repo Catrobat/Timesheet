@@ -18,7 +18,10 @@ package org.catrobat.jira.timesheet.services;
 
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.user.ApplicationUser;
-import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.activeobjects.Config;
+import org.catrobat.jira.timesheet.activeobjects.TSAdminGroup;
+import org.catrobat.jira.timesheet.activeobjects.Team;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -39,8 +42,6 @@ public interface ConfigService {
             String mailBodyTime, String mailBodyInactive, String mailBodyOffline, String mailBodyActive, String mailBodyEntry);
 
     Config editReadOnlyUsers(String readOnlyUsers);
-
-    List<String> getGroupsForRole(String teamName, TeamToGroup.Role role);
 
     int[] getCategoryIDsForTeam(String teamName);
 

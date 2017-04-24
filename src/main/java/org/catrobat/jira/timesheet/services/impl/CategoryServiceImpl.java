@@ -123,9 +123,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     public boolean isPairProgrammingCategory(Category category) {
         String categoryName = category.getName();
-        if (categoryName.toLowerCase().contains("(pp)") || categoryName.toLowerCase().contains("pair")) {
-            return true;
-        }
-        return false;
+        return categoryName.toLowerCase().contains("(pp)") || categoryName.toLowerCase().contains("pair");
     }
 }

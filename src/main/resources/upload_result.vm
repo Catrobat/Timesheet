@@ -3,8 +3,8 @@
         <title>Upload Result</title>
         <meta name="decorator" content="atl.general"/>
         <script type="text/javascript">
-            AJS.toInit(function () {;
-            var unsuccessfulImportMessage;
+            AJS.toInit(function () {
+                var unsuccessfulImportMessage;
                 if("$status" === "Success"){
                 	if(unsuccessfulImportMessage)
                 		unsuccessfulImportMessage.closeMessage();
@@ -58,11 +58,11 @@
 
             function displayFaultyEntries(json) {
                 var tbody = "";
-                var team_entry =""
+                var team_entry = "";
                 for(var i = 0; i < Object.keys(json).length; i++) {
                     var team = Object.keys(json)[i];
                     team_entry +="<li>"+ team +"</li>\n";
-                    var entries = json[team]
+                    var entries = json[team];
                     for(j = 0; j < entries.length; j++){
                         var table_entry = "";
                         var current_entry = entries[j];

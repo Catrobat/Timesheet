@@ -346,7 +346,7 @@ public class TimesheetRestTest {
 
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
-        when(configServiceMock.getGroupsForRole(team1.getTeamName(), TeamToGroup.Role.DEVELOPER)).thenReturn(developerList);
+        when(teamServiceMock.getGroupsForRole(team1.getTeamName(), TeamToGroup.Role.DEVELOPER)).thenReturn(developerList);
 
         Date today = new Date();
 
@@ -406,7 +406,7 @@ public class TimesheetRestTest {
 
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
-        when(configServiceMock.getGroupsForRole(team1.getTeamName(), TeamToGroup.Role.DEVELOPER)).thenReturn(developerList);
+        when(teamServiceMock.getGroupsForRole(team1.getTeamName(), TeamToGroup.Role.DEVELOPER)).thenReturn(developerList);
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
 
@@ -455,7 +455,7 @@ public class TimesheetRestTest {
 
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
-        when(configServiceMock.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER)).thenReturn(developerList);
+        when(teamServiceMock.getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER)).thenReturn(developerList);
 
         //user1 should be the testUser
         when(user1.getName()).thenReturn(userName);

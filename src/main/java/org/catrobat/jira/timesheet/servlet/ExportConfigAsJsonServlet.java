@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TeamService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,11 +20,13 @@ import java.util.Date;
 public class ExportConfigAsJsonServlet extends HighPrivilegeServlet {
 
     private final ConfigService configService;
+    private final TeamService teamService;
 
     public ExportConfigAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
-                                     ConfigService configService, PermissionService permissionService) {
+            ConfigService configService, PermissionService permissionService, TeamService teamService) {
         super(loginUriProvider, webSudoManager, permissionService, configService);
         this.configService = configService;
+        this.teamService = teamService;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class ExportConfigAsJsonServlet extends HighPrivilegeServlet {
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", filename);
 
-        JsonConfig jsonConfig = new JsonConfig(configService);
+        JsonConfig jsonConfig = new JsonConfig(configService, teamService);
 
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonConfig);
