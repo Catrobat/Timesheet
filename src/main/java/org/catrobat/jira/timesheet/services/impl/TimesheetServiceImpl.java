@@ -117,18 +117,11 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public void remove(Timesheet timesheet) throws ServiceException {
-        int id = timesheet.getID();
-        Timesheet[] found = ao.find(Timesheet.class, "ID = ?", id);
-
-        if (found.length > 1) {
-            throw new ServiceException("Found more than one timesheet with the same id.");
-        }
-
-        for (TimesheetEntry entry : found[0].getEntries()) {
+        for (TimesheetEntry entry : timesheet.getEntries()) {
             ao.delete(entry);
         }
 
-        ao.delete(found[0]);
+        ao.delete(timesheet);
     }
 
     @NotNull

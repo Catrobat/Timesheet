@@ -27,51 +27,39 @@ import java.util.Date;
 public interface Timesheet extends Entity {
 
     String getUserKey();
-
     void setUserKey(String key);
 
     String getDisplayName();
-
     void setDisplayName(String name);
 
     int getTargetHoursPractice();
-
     void setTargetHoursPractice(int hours);
 
     int getTargetHoursTheory();
-
     void setTargetHoursTheory(int hours);
 
     int getTargetHours();
-
     void setTargetHours(int hours);
 
     int getTargetHoursCompleted();
-
     void setTargetHoursCompleted(int hours);
 
     int getTargetHoursRemoved();
-
     void setTargetHoursRemoved(int hours);
 
     String getLectures();
-
     void setLectures(String lectures);
 
     String getReason();
-
     void setReason(String reason);
 
     Date getLatestEntryBeginDate();
-
     void setLatestEntryBeginDate(Date date);
 
     boolean getIsMasterThesisTimesheet();
-
     void setIsMasterThesisTimesheet(boolean isMasterThesisTimesheet);
 
     void setState(State state);
-
     State getState();
 
     enum State {

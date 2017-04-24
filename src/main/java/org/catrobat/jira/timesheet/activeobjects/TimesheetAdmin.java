@@ -23,20 +23,14 @@ import net.java.ao.Preload;
 public interface TimesheetAdmin extends Entity {
 
     Config getConfiguration();
-
     void setConfiguration(Config configuration);
 
     String getUserKey();
-
     void setUserKey(String userKey);
 
     String getUserName();
-
     void setUserName(String userName);
 
-    void setFullName(String name);
-
     String getEmailAddress();
-
     void setEmailAddress(String mailAddress);
 }

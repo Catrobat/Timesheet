@@ -21,6 +21,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 
+import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import org.catrobat.jira.timesheet.activeobjects.*;
@@ -55,9 +56,9 @@ public class TeamServiceImpl implements TeamService {
         if (!isInitialised) {
             Team[] found = ao.find(Team.class, "TEAM_NAME = ?", DEFAULT_TEAM);
             if (found.length == 0) {
-                Team team = ao.create(Team.class);
-                team.setTeamName(DEFAULT_TEAM);
-                team.save();
+                ao.create(Team.class,
+                    new DBParam("TEAM_NAME", DEFAULT_TEAM)
+                );
             }
             isInitialised = true;
         }
@@ -65,9 +66,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Team add(String name) {
-        Team team = ao.create(Team.class);
-        team.setTeamName(name);
-        team.save();
+        Team team = ao.create(Team.class,
+            new DBParam("TEAM_NAME", name)
+        );
 
         return team;
     }
@@ -82,10 +83,6 @@ public class TeamServiceImpl implements TeamService {
 
         if(found.length == 0){
             throw new ServiceException("Team not found.");
-        }
-
-        if (found.length > 1) {
-            throw new ServiceException("Multiple Teams with the same Name");
         }
 
         Team team = found[0];
@@ -122,12 +119,9 @@ public class TeamServiceImpl implements TeamService {
         initIfNotAlready();
         Team[] found = ao.find(Team.class, "TEAM_NAME = ?", name);
 
-       if(found == null){
+        // TODO: check whether found can be null
+        if(found == null) {
             return null;
-        }
-
-        if (found.length > 1) {
-            throw new ServiceException("Multiple Teams with the same Name");
         }
 
         return (found.length > 0) ? found[0] : null;
@@ -275,13 +269,12 @@ public class TeamServiceImpl implements TeamService {
             TeamToGroup[] teamToGroups = ao.find(TeamToGroup.class, Query.select().where("\"TEAM_ID\" = ? AND \"GROUP_ID\" = ? AND \"ROLE\" = ?", team.getID(), group.getID(), role));
 
             // add new relation
-            TeamToGroup teamToGroup;
             if (teamToGroups.length == 0) {
-                teamToGroup = ao.create(TeamToGroup.class);
-                teamToGroup.setGroup(group);
-                teamToGroup.setTeam(team);
-                teamToGroup.setRole(role);
-                teamToGroup.save();
+                ao.create(TeamToGroup.class,
+                    new DBParam("GROUP_ID", group),
+                    new DBParam("TEAM_ID", team),
+                    new DBParam("ROLE", role)
+                );
             }
         }
     }
@@ -306,12 +299,11 @@ public class TeamServiceImpl implements TeamService {
             CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ? AND \"CATEGORY_ID\" = ?", team.getID(), category.getID()));
 
             //update relation
-            CategoryToTeam categoryToTeam;
             if (categoryToTeamArray.length == 0) {
-                categoryToTeam = ao.create(CategoryToTeam.class);
-                categoryToTeam.setTeam(team);
-                categoryToTeam.setCategory(category);
-                categoryToTeam.save();
+                ao.create(CategoryToTeam.class,
+                    new DBParam("TEAM_ID", team),
+                    new DBParam("CATEGORY_ID", category)
+                );
             }
         }
     }

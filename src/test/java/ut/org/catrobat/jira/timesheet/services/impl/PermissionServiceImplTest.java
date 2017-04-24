@@ -10,6 +10,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
+import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -335,17 +336,17 @@ public class PermissionServiceImplTest {
         @Override
         public void update(EntityManager em) throws Exception {
             em.migrate(Team.class);
-            catroid = em.create(Team.class);
-            catroid.setTeamName("catroid");
-            catroid.save();
+            catroid = em.create(Team.class,
+                new DBParam("TEAM_NAME", "catroid")
+            );
 
-            html5 = em.create(Team.class);
-            html5.setTeamName("html5");
-            html5.save();
+            html5 = em.create(Team.class,
+                new DBParam("TEAM_NAME", "html5")
+            );
 
-            drone = em.create(Team.class);
-            drone.setTeamName("drone");
-            drone.save();
+            drone = em.create(Team.class,
+                new DBParam("TEAM_NAME", "Drone")
+            );
 
             em.migrate(TimesheetAdmin.class);
             TimesheetAdmin timesheetAdmin = em.create(TimesheetAdmin.class);

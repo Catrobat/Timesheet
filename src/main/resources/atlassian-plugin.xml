@@ -206,6 +206,9 @@
         <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.TSAdminGroup</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.Scheduling</entity>
+
+        <!-- Upgrade Tasks -->
+        <upgradeTask>org.catrobat.jira.timesheet.activeobjects.upgrade.TimesheetUpgradeTask001</upgradeTask>
     </ao>
 
     <!-- rest-resources -->

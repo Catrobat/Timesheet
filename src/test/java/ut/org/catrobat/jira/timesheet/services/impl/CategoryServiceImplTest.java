@@ -2,12 +2,14 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
+import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
@@ -39,7 +41,9 @@ public class CategoryServiceImplTest {
 
     @Test
     public void testGetCategoryByIDOk() {
-        Category category = ao.create(Category.class);
+        Category category = ao.create(Category.class,
+            new DBParam("NAME", "test")
+        );
         Category retrievedCategory = categoryService.getCategoryByID(category.getID());
         assertEquals(category, retrievedCategory);
     }
@@ -52,15 +56,15 @@ public class CategoryServiceImplTest {
 
     @Test
     public void testIsPairProgrammingCategory() {
-        Category pairProg = ao.create(Category.class);
-        pairProg.setName("Pair Programming");
-        pairProg.save();
-        Category refactorPP = ao.create(Category.class);
-        refactorPP.setName("Refactoring (PP)");
-        refactorPP.save();
-        Category notPair = ao.create(Category.class);
-        notPair.setName("Some Category");
-        notPair.save();
+        Category pairProg = ao.create(Category.class,
+            new DBParam("NAME", "Pair Programming")
+        );
+        Category refactorPP = ao.create(Category.class,
+            new DBParam("NAME", "Refactoring (PP)")
+        );
+        Category notPair = ao.create(Category.class,
+            new DBParam("NAME", "Some Category")
+        );
 
         assertTrue(categoryService.isPairProgrammingCategory(pairProg));
         assertTrue(categoryService.isPairProgrammingCategory(refactorPP));
@@ -128,20 +132,26 @@ public class CategoryServiceImplTest {
             em.migrate(Category.class);
             em.migrate(CategoryToTeam.class);
             em.migrate(TimesheetEntry.class);
+            em.migrate(Team.class);
 
-            Category meeting = em.create(Category.class);
-            meeting.setName("Meeting");
-            meeting.save();
+            Category meeting = em.create(Category.class,
+                new DBParam("NAME", "Meeting")
+            );
 
-            Category programming = em.create(Category.class);
-            programming.setName("Programming");
-            programming.save();
+            Category programming = em.create(Category.class,
+                new DBParam("NAME", "Programming")
+            );
 
-            CategoryToTeam categoryToTeam = em.create(CategoryToTeam.class);
-            categoryToTeam.save();
+            Team team = em.create(Team.class,
+                new DBParam("TEAM_NAME", "Catroid")
+            );
+
+            CategoryToTeam categoryToTeam = em.create(CategoryToTeam.class,
+                new DBParam("TEAM_ID", team),
+                new DBParam("CATEGORY_ID", meeting)
+            );
 
             TimesheetEntry timesheetEntry = em.create(TimesheetEntry.class);
-            timesheetEntry.save();
         }
     }
 }

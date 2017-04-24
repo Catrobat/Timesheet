@@ -18,6 +18,7 @@ package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
 import net.java.ao.Preload;
+import net.java.ao.schema.NotNull;
 import net.java.ao.schema.Table;
 
 @Preload
@@ -33,17 +34,17 @@ public interface TeamToGroup extends Entity {
         Role = attribute of the relationship, no part of Team or Group
      */
 
+    @NotNull
     Team getTeam();
-
     void setTeam(Team team);
 
+    @NotNull
     Group getGroup();
-
     void setGroup(Group group);
 
     //further information about the relationship
+    @NotNull
     Role getRole();
-
     void setRole(Role role);
 
     enum Role {

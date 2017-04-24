@@ -286,6 +286,7 @@ public class ConfigResourceRest {
             return unauthorized;
         }
 
+        // TODO: move check to TeamService
         Team[] teams = configService.getConfiguration().getTeams();
         for (Team team : teams) {
             if (team.getTeamName().compareTo(teamName) == 0) {
@@ -293,6 +294,7 @@ public class ConfigResourceRest {
             }
         }
 
+        // TODO: call TeamService instead
         boolean successful = configService.addTeam(teamName, null, null, null) != null;
 
         if (successful) {

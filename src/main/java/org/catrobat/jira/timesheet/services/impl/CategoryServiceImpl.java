@@ -18,6 +18,7 @@ package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
+import net.java.ao.DBParam;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
@@ -43,9 +44,9 @@ public class CategoryServiceImpl implements CategoryService {
         for (String special : SpecialCategories.AllSpecialCategories) {
             Category[] found = ao.find(Category.class, "NAME = ?", special);
             if (found.length == 0) {
-                Category category = ao.create(Category.class);
-                category.setName(special);
-                category.save();
+                ao.create(Category.class,
+                    new DBParam("NAME", special)
+                );
             }
         }
         isInitialised = true;
@@ -84,9 +85,10 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ServiceException("This category already exists!");
         }
 
-        Category category = ao.create(Category.class);
-        category.setName(name);
-        category.save();
+        Category category = ao.create(Category.class,
+            new DBParam("NAME", name)
+        );
+
         return category;
     }
 
@@ -98,9 +100,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category[] found = ao.find(Category.class, "NAME = ?", name);
 
-        if (found.length > 1) {
-            throw new ServiceException("Found multiple categories with the same name!");
-        } else if (found.length == 0) {
+        if (found.length == 0) {
             throw new ServiceException("Could not find category with this name!");
         }
 

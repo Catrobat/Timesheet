@@ -1,11 +1,13 @@
 package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.activeobjects.internal.ActiveObjectsSqlException;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.util.UserManager;
 
+import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -96,12 +98,11 @@ public class TeamServiceImplTest {
         Assert.assertEquals(null, receivedTeam);
     }
 
-    @Test(expected = ServiceException.class)
-    public void testGetTeamBNameLengthCheck() throws IllegalAccessException, ServiceException {
-        Team duplicate = ao.create(Team.class);
-        duplicate.setTeamName("Drone");
-        duplicate.save();
-        service.getTeamByName("Drone");
+    @Test(expected = ActiveObjectsSqlException.class)
+    public void testDuplicateNameThrowsException() throws ActiveObjectsSqlException {
+        ao.create(Team.class,
+            new DBParam("TEAM_NAME", "Drone")
+        );
     }
 
     @Test
@@ -116,15 +117,6 @@ public class TeamServiceImplTest {
         service.removeTeam(notExistent);
 
         assertEquals(0, ao.find(Team.class, "TEAM_NAME = ?", notExistent).length);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testRemoveTeamLengthCheck() throws IllegalAccessException, ServiceException {
-        Team duplicate = ao.create(Team.class);
-        duplicate.setTeamName("Drone");
-        duplicate.save();
-
-        service.removeTeam("Drone");
     }
 
     @Test
@@ -180,21 +172,21 @@ public class TeamServiceImplTest {
             em.migrate(TeamToGroup.class);
             em.migrate(CategoryToTeam.class);
 
-            catroid = em.create(Team.class);
-            catroid.setTeamName("Catroid");
-            catroid.save();
+            catroid = em.create(Team.class,
+                new DBParam("TEAM_NAME", "Catroid")
+            );
 
-            html5 = em.create(Team.class);
-            html5.setTeamName("HTML5");
-            html5.save();
+            html5 = em.create(Team.class,
+                new DBParam("TEAM_NAME", "HTML5")
+            );
 
-            drone = em.create(Team.class);
-            drone.setTeamName("Drone");
-            drone.save();
+            drone = em.create(Team.class,
+                new DBParam("TEAM_NAME", "Drone")
+            );
 
-            emptyTeam = em.create(Team.class);
-            emptyTeam.setTeamName("Empty");
-            emptyTeam.save();
+            emptyTeam = em.create(Team.class,
+                new DBParam("TEAM_NAME", "Empty")
+            );
 
             developer1 = em.create(Group.class);
             developer1.setGroupName("Developer1");
@@ -204,30 +196,31 @@ public class TeamServiceImplTest {
             coordinator1.setGroupName("Coordinator1");
             coordinator1.save();
 
-            TeamToGroup dev1ToDrone = em.create(TeamToGroup.class);
-            dev1ToDrone.setGroup(developer1);
-            dev1ToDrone.setTeam(drone);
-            dev1ToDrone.setRole(TeamToGroup.Role.DEVELOPER);
-            dev1ToDrone.save();
-            TeamToGroup dev1ToCatroid = em.create(TeamToGroup.class);
-            dev1ToCatroid.setGroup(developer1);
-            dev1ToCatroid.setTeam(catroid);
-            dev1ToCatroid.setRole(TeamToGroup.Role.DEVELOPER);
-            dev1ToCatroid.save();
+            TeamToGroup dev1ToDrone = em.create(TeamToGroup.class,
+                new DBParam("GROUP_ID", developer1),
+                new DBParam("TEAM_ID", drone),
+                new DBParam("ROLE", TeamToGroup.Role.DEVELOPER)
+            );
 
-            TeamToGroup coord1ToDrone = em.create(TeamToGroup.class);
-            coord1ToDrone.setGroup(coordinator1);
-            coord1ToDrone.setTeam(drone);
-            coord1ToDrone.setRole(TeamToGroup.Role.COORDINATOR);
-            coord1ToDrone.save();
-            TeamToGroup coord1ToHTML5 = em.create(TeamToGroup.class);
-            coord1ToHTML5.setGroup(coordinator1);
-            coord1ToHTML5.setTeam(html5);
-            coord1ToHTML5.setRole(TeamToGroup.Role.COORDINATOR);
-            coord1ToHTML5.save();
+            TeamToGroup dev1ToCatroid = em.create(TeamToGroup.class,
+                new DBParam("GROUP_ID", developer1),
+                new DBParam("TEAM_ID", catroid),
+                new DBParam("ROLE", TeamToGroup.Role.DEVELOPER)
+            );
+
+            TeamToGroup coord1ToDrone = em.create(TeamToGroup.class,
+                new DBParam("GROUP_ID", coordinator1),
+                new DBParam("TEAM_ID", drone),
+                new DBParam("ROLE", TeamToGroup.Role.COORDINATOR)
+            );
+
+            TeamToGroup coord1ToHTML5 = em.create(TeamToGroup.class,
+                new DBParam("GROUP_ID", coordinator1),
+                new DBParam("TEAM_ID", html5),
+                new DBParam("ROLE", TeamToGroup.Role.COORDINATOR)
+            );
 
             TimesheetEntry timesheetEntry = em.create(TimesheetEntry.class);
-            timesheetEntry.save();
         }
     }
 }

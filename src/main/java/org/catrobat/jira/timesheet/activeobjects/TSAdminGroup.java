@@ -23,11 +23,9 @@ import net.java.ao.Preload;
 public interface TSAdminGroup extends Entity {
 
     Config getConfiguration();
-
     void setConfiguration(Config configuration);
 
     String getGroupName();
-
     void setGroupName(String groupName);
 
     //@OneToMany(reverse = "getTimesheetAdminGroup")

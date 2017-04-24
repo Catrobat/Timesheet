@@ -19,11 +19,14 @@ package org.catrobat.jira.timesheet.activeobjects;
 import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
 import net.java.ao.OneToMany;
+import net.java.ao.schema.NotNull;
+import net.java.ao.schema.Unique;
 
 public interface Category extends Entity {
 
+    @Unique
+    @NotNull
     String getName();
-
     void setName(String name);
 
     @ManyToMany(value = CategoryToTeam.class, reverse = "getCategory", through = "getTeam")
@@ -31,5 +34,4 @@ public interface Category extends Entity {
 
     @OneToMany(reverse = "getCategory")
     TimesheetEntry[] getEntries();
-
 }

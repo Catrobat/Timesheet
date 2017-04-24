@@ -24,11 +24,9 @@ import net.java.ao.schema.StringLength;
 public interface Config extends Entity {
 
     String getMailFromName();
-
     void setMailFromName(String fromName);
 
     String getMailFrom();
-
     void setMailFrom(String from);
 
     @StringLength(StringLength.UNLIMITED)

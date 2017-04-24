@@ -19,6 +19,7 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.service.ServiceException;
+import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -59,11 +60,20 @@ public class TimesheetEntryServiceImplTest {
         service = new TimesheetEntryServiceImpl(ao, timesheetService);
     }
 
-    private Category createCategory() {
-        Category category = ao.create(Category.class);
-        category.setName("ASDF");
-        category.save();
+    private Category createTestCategory() {
+        Category category = ao.create(Category.class,
+            new DBParam("NAME", "testCategory")
+        );
+
         return category;
+    }
+
+    private Team createTestTeam() {
+        Team team = ao.create(Team.class,
+            new DBParam("TEAM_NAME", "testTeam")
+        );
+
+        return team;
     }
 
     @Test
@@ -71,8 +81,8 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = createCategory();
-        Team team = ao.create(Team.class);
+        Category category = createTestCategory();
+        Team team = createTestTeam();
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
         String desc = "Debugged this thingy...";
@@ -102,8 +112,8 @@ public class TimesheetEntryServiceImplTest {
     public void testAddOverlapThrowsException() throws Exception {
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = createCategory();
-        Team team = ao.create(Team.class);
+        Category category = createTestCategory();
+        Team team = createTestTeam();
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
         String desc = "Debugged this thingy...";
@@ -123,8 +133,8 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = createCategory();
-        Team team = ao.create(Team.class);
+        Category category = createTestCategory();
+        Team team = createTestTeam();
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
         String desc = "Debugged this thingy...";
@@ -155,8 +165,8 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = createCategory();
-        Team team = ao.create(Team.class);
+        Category category = createTestCategory();
+        Team team = createTestTeam();
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
         String desc = "Debugged this thingy...";
@@ -187,8 +197,8 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = createCategory();
-        Team team = ao.create(Team.class);
+        Category category = createTestCategory();
+        Team team = createTestTeam();
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
         String desc = "Debugged this thingy...";
@@ -214,8 +224,8 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = createCategory();
-        Team team = ao.create(Team.class);
+        Category category = createTestCategory();
+        Team team = createTestTeam();
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
         String desc = "Debugged this thingy...";
@@ -255,8 +265,8 @@ public class TimesheetEntryServiceImplTest {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = ao.create(Timesheet.class);
-        Category category = createCategory();
-        Team team = ao.create(Team.class);
+        Category category = createTestCategory();
+        Team team = createTestTeam();
         Date begin = new Date();
         Date end = new Date(begin.getTime() + oneHourInMS);
         String desc = "Debugged this thingy...";

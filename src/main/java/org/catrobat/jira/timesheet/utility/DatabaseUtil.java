@@ -1,6 +1,7 @@
 package org.catrobat.jira.timesheet.utility;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import net.java.ao.DBParam;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
@@ -77,7 +78,7 @@ public class DatabaseUtil {
         }
         TeamToGroup[] teamToGroupList = ao.find(TeamToGroup.class);
         for (TeamToGroup teamToGroup : teamToGroupList) {
-            if (teamToGroup.getTeam() == null || teamToGroup.getGroup() == null) {
+            if (teamToGroup.getTeam() == null || teamToGroup.getGroup() == null || teamToGroup.getRole() == null) {
                 ao.delete(teamToGroup);
             }
         }

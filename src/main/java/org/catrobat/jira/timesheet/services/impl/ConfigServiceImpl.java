@@ -18,6 +18,7 @@ package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.user.ApplicationUser;
+import net.java.ao.DBParam;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.CategoryService;
@@ -104,9 +105,10 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
         Config configuration = getConfiguration();
-        Team team = ao.create(Team.class);
+        Team team = ao.create(Team.class,
+            new DBParam("TEAM_NAME", teamName)
+        );
         team.setConfiguration(configuration);
-        team.setTeamName(teamName);
 
         fillTeam(team, TeamToGroup.Role.COORDINATOR, coordinatorGroups);
         fillTeam(team, TeamToGroup.Role.DEVELOPER, developerGroups);
@@ -125,10 +127,10 @@ public class ConfigServiceImpl implements ConfigService {
 
         for (String categoryName : categoryList) {
             Category category = cs.getCategoryByName(categoryName);
-            CategoryToTeam mapper = ao.create(CategoryToTeam.class);
-            mapper.setTeam(team);
-            mapper.setCategory(category);
-            mapper.save();
+            ao.create(CategoryToTeam.class,
+                new DBParam("TEAM_ID", team),
+                new DBParam("CATEGORY_ID", category)
+            );
         }
     }
 
@@ -149,11 +151,11 @@ public class ConfigServiceImpl implements ConfigService {
             group.setGroupName(groupName);
             group.save();
 
-            TeamToGroup mapper = ao.create(TeamToGroup.class);
-            mapper.setGroup(group);
-            mapper.setTeam(team);
-            mapper.setRole(role);
-            mapper.save();
+            ao.create(TeamToGroup.class,
+                new DBParam("GROUP_ID", group),
+                new DBParam("TEAM_ID", team),
+                new DBParam("ROLE", role)
+            );
         }
     }
 
@@ -311,7 +313,6 @@ public class ConfigServiceImpl implements ConfigService {
         timesheetAdmin.setUserKey(userKey);
         timesheetAdmin.setUserName(user.getUsername());
         timesheetAdmin.setEmailAddress(user.getEmailAddress());
-        timesheetAdmin.setFullName(user.getDisplayName());
         timesheetAdmin.setConfiguration(getConfiguration());
         timesheetAdmin.save();
 

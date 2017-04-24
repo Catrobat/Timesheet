@@ -19,15 +19,17 @@ package org.catrobat.jira.timesheet.activeobjects;
 import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
 import net.java.ao.OneToMany;
+import net.java.ao.schema.NotNull;
+import net.java.ao.schema.Unique;
 
 public interface Team extends Entity {
 
+    @Unique
+    @NotNull
     String getTeamName();
-
     void setTeamName(String name);
 
     Config getConfiguration();
-
     void setConfiguration(Config configuration);
 
     @ManyToMany(value = TeamToGroup.class, reverse = "getTeam", through = "getGroup")

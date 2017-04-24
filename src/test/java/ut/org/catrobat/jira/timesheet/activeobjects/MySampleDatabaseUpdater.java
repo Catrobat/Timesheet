@@ -1,5 +1,6 @@
 package ut.org.catrobat.jira.timesheet.activeobjects;
 
+import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import org.catrobat.jira.timesheet.activeobjects.*;
@@ -30,45 +31,45 @@ public class MySampleDatabaseUpdater implements DatabaseUpdater {
         jsonSheet.setUserKey("joh");
         jsonSheet.save();
 
-        Team scratchTeam = em.create(Team.class);
-        scratchTeam.setTeamName("SCRATCH");
-        scratchTeam.save();
+        Team scratchTeam = em.create(Team.class,
+            new DBParam("TEAM_NAME", "SCRATCH")
+        );
 
-        Team confluenceTeam = em.create(Team.class);
-        confluenceTeam.setTeamName("CONFLUENCE");
-        confluenceTeam.save();
+        Team confluenceTeam = em.create(Team.class,
+            new DBParam("TEAM_NAME", "CONFLUENCE")
+        );
 
-        Team catrobatTeam = em.create(Team.class);
-        catrobatTeam.setTeamName("CATROBAT");
-        catrobatTeam.save();
+        Team catrobatTeam = em.create(Team.class,
+            new DBParam("TEAM_NAME", "CATROBAT")
+        );
 
-        Category meetingCategory = em.create(Category.class);
-        meetingCategory.setName("Meeting");
-        meetingCategory.save();
+        Category meetingCategory = em.create(Category.class,
+            new DBParam("NAME", "Meeting")
+        );
 
-        Category programmingCategory = em.create(Category.class);
-        programmingCategory.setName("Programming");
-        programmingCategory.save();
+        Category programmingCategory = em.create(Category.class,
+            new DBParam("NAME", "Programming")
+        );
 
-        CategoryToTeam catHasMee = em.create(CategoryToTeam.class);
-        catHasMee.setTeam(catrobatTeam);
-        catHasMee.setCategory(meetingCategory);
-        catHasMee.save();
+        CategoryToTeam catHasMee = em.create(CategoryToTeam.class,
+            new DBParam("TEAM_ID", catrobatTeam),
+            new DBParam("CATEGORY_ID", meetingCategory)
+        );
 
-        CategoryToTeam catHasPro = em.create(CategoryToTeam.class);
-        catHasPro.setTeam(catrobatTeam);
-        catHasPro.setCategory(programmingCategory);
-        catHasPro.save();
+        CategoryToTeam catHasPro = em.create(CategoryToTeam.class,
+            new DBParam("TEAM_ID", catrobatTeam),
+            new DBParam("CATEGORY_ID", programmingCategory)
+        );
 
-        CategoryToTeam conHasPro = em.create(CategoryToTeam.class);
-        conHasPro.setTeam(confluenceTeam);
-        conHasPro.setCategory(programmingCategory);
-        conHasPro.save();
+        CategoryToTeam conHasPro = em.create(CategoryToTeam.class,
+            new DBParam("TEAM_ID", confluenceTeam),
+            new DBParam("CATEGORY_ID", programmingCategory)
+        );
 
-        CategoryToTeam scrHasMee = em.create(CategoryToTeam.class);
-        scrHasMee.setTeam(scratchTeam);
-        scrHasMee.setCategory(meetingCategory);
-        scrHasMee.save();
+        CategoryToTeam scrHasMee = em.create(CategoryToTeam.class,
+            new DBParam("TEAM_ID", scratchTeam),
+            new DBParam("CATEGORY_ID", meetingCategory)
+        );
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy hh:mm");
 

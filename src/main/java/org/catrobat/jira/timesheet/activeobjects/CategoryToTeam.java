@@ -17,14 +17,15 @@
 package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
+import net.java.ao.schema.NotNull;
 
 public interface CategoryToTeam extends Entity {
 
+    @NotNull
     Category getCategory();
-
     void setCategory(Category category);
 
+    @NotNull
     Team getTeam();
-
     void setTeam(Team team);
 }

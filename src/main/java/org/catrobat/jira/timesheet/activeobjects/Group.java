@@ -24,7 +24,6 @@ import net.java.ao.Preload;
 public interface Group extends Entity {
 
     String getGroupName();
-
     void setGroupName(String groupName);
 
     @ManyToMany(value = TeamToGroup.class, reverse = "getGroup", through = "getTeam")
