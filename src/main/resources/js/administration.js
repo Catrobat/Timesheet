@@ -285,7 +285,7 @@ AJS.toInit(function () {
 
                 //build category list
                 var specialCategories = ["Inactive", "Inactive & Offline", "GoogleDocsImport", "Theory", "Research",
-                    "Default Category (original cateogry got deleted)"];
+                    "Default Category (original category got deleted)"];
                 AJS.$("#categories").empty();
                 for (var i = 0; i < categoryList.length; i++) {
                     if (specialCategories.indexOf(categoryList[i]) != -1) {
