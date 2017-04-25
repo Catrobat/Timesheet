@@ -163,11 +163,17 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
 
     var firstTeamID = Object.keys(timesheetData.teams)[0];
 
+    var beginDate = new Date(pieces[0] + " " + pieces[1]);
+    var endDate = new Date(pieces[0] + " " + pieces[2]);
+    if (beginDate > endDate) {
+        endDate.setDate(endDate.getDate() + 1)
+    }
+
     return {
         description: pieces[6],
         pauseMinutes: getMinutesFromTimeString(pieces[4]),
-        beginDate: new Date(pieces[0] + " " + pieces[1]),
-        endDate: new Date(pieces[0] + " " + pieces[2]),
+        beginDate: beginDate,
+        endDate: endDate,
         teamID: firstTeamID,
         categoryID: categoryID,
         isGoogleDocImport: true,
