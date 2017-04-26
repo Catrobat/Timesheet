@@ -169,7 +169,7 @@ public class ConfigResourceRestTest {
     public void testEditTeamNameNotFound() {
         String[] renameTeam = {"NotFound", "NewName"};
         response = configResourceRest.editTeamPermission(renameTeam, request);
-        assertEquals(403, response.getStatus()); // TODO: change to entity
+        assertEquals("Old team name could not be found.", response.getEntity());
     }
 
     @Test

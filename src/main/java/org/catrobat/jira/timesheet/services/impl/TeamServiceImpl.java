@@ -119,12 +119,7 @@ public class TeamServiceImpl implements TeamService {
         initIfNotAlready();
         Team[] found = ao.find(Team.class, "TEAM_NAME = ?", name);
 
-        // TODO: check whether found can be null
-        if(found == null) {
-            return null;
-        }
-
-        return (found.length > 0) ? found[0] : null;
+        return (found.length == 1) ? found[0] : null;
     }
 
     @Override
@@ -132,18 +127,15 @@ public class TeamServiceImpl implements TeamService {
         initIfNotAlready();
         Set<Team> teams = new HashSet<>();
 
+        ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
+
+        // TODO: improve me, this code is bad
         for (Team team : ao.find(Team.class)) {
             String teamName = team.getTeamName();
 
             List<String> developerUserAndGroupList = getGroupsForRole(teamName, TeamToGroup.Role.DEVELOPER);
-            
-            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
-            // TODO: check and remove println
-            //System.out.println("userName: " + userName + " / applicationUser: " + applicationUser.getName());
-            
-            //System.out.println("developers of team: "+ teamName);
+
             for (String developerUserOrGroupName : developerUserAndGroupList) {
-               // System.out.println("checking entry: " + developerUserOrGroupName);
                 if (developerUserOrGroupName.equals(userName) ||
                         ComponentAccessor.getGroupManager().isUserInGroup(applicationUser,developerUserOrGroupName)) {
                     teams.add(team);
