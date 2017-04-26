@@ -61,7 +61,6 @@ public class TimesheetRest {
     private final CategoryService categoryService;
     private final TeamService teamService;
     private final PermissionService permissionService;
-    private final ConfigService configService;
     private final TimesheetPermissionCondition permissionCondition;
     private final EmailUtil emailUtil;
 
@@ -72,9 +71,8 @@ public class TimesheetRest {
         this.sheetService = ss;
         this.categoryService = cs;
         this.permissionService = ps;
-        this.configService = ahcs;
         this.permissionCondition = permissionCondition;
-        emailUtil = new EmailUtil(configService);
+        emailUtil = new EmailUtil(ahcs);
     }
 
     @GET
@@ -856,7 +854,7 @@ public class TimesheetRest {
             }
         }
 
-        Collections.sort(timesheets, timesheetComparator);
+        timesheets.sort(timesheetComparator);
         for (Timesheet timesheet : timesheets) {
             String userKey = timesheet.getUserKey();
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);

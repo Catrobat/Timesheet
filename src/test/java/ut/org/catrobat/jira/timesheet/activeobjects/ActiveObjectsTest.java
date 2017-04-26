@@ -21,10 +21,6 @@ import static org.junit.Assert.*;
 @RunWith(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)
 
-/**
- * This Test Suite verifies that active object entities are correctly mapped
- * to each other
- */
 public class ActiveObjectsTest {
 
     private EntityManager entityManager;

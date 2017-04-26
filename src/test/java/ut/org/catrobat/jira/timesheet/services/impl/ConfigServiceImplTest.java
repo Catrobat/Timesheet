@@ -22,6 +22,7 @@ import net.java.ao.EntityManager;
 import net.java.ao.Query;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.services.*;
@@ -45,20 +46,16 @@ public class ConfigServiceImplTest {
     @SuppressWarnings("UnusedDeclaration")
     private EntityManager entityManager;
     private ActiveObjects ao;
-    private CategoryService cs;
-    private TimesheetEntryService entryService;
-    private TeamService teamService;
-    private TimesheetService timesheetService;
     private ConfigService configurationService;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        cs = new CategoryServiceImpl(ao);
-        timesheetService = new TimesheetServiceImpl(ao);
-        entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
-        teamService = new TeamServiceImpl(ao, cs, entryService);
+        CategoryService cs = new CategoryServiceImpl(ao);
+        TimesheetService timesheetService = new TimesheetServiceImpl(ao);
+        TimesheetEntryService entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
+        TeamService teamService = new TeamServiceImpl(ao, cs, entryService);
         configurationService = new ConfigServiceImpl(ao, cs, teamService);
     }
 
@@ -80,13 +77,16 @@ public class ConfigServiceImplTest {
 
     @Test
     public void testAddedTeamHasSpecialCategories() {
+        // FIXME: this test does not seem to do, what the name says
         Team testteam = configurationService.addTeam("Test", null, null, null);
         CategoryToTeam[] categoryToTeamArray = ao.find(CategoryToTeam.class, Query.select().where("\"TEAM_ID\" = ?", testteam.getID()));
 
         List<CategoryToTeam> categoryToTeamList = Arrays.asList(categoryToTeamArray);
 
-        for (String specialCategory : SpecialCategories.DefaultCategories) {
-            Assert.assertFalse(categoryToTeamList.contains(specialCategory));
+        for (String specialCategoryString : SpecialCategories.DefaultCategories) {
+            System.out.println(specialCategoryString);
+            Category[] specialCategory = ao.find(Category.class, "NAME = ?", specialCategoryString);
+            Assert.assertFalse(categoryToTeamList.contains(specialCategory[0]));
         }
     }
 

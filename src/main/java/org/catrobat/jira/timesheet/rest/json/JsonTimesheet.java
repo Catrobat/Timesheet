@@ -224,7 +224,7 @@ public final class JsonTimesheet {
         if (isEnabled != that.isEnabled) {
             return false;
         }
-        if (displayName != that.displayName) {
+        if (displayName.equals(that.displayName)) {
             return false;
         }
 

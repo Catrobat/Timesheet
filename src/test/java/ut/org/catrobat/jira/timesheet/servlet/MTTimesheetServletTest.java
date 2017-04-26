@@ -20,12 +20,8 @@ public class MTTimesheetServletTest {
 
     private MasterThesisTimesheetServlet masterThesisTimesheetServlet;
 
-    private LoginUriProvider loginUriProvider;
-    private TemplateRenderer templateRenderer;
     private TimesheetService sheetService;
     private PermissionService permissionService;
-
-    private Timesheet timeSheet;
 
     private HttpServletResponse response;
     private HttpServletRequest request;
@@ -36,12 +32,12 @@ public class MTTimesheetServletTest {
     public void setUp() throws Exception {
         new MockComponentWorker().init();
 
-        loginUriProvider = mock(LoginUriProvider.class);
-        templateRenderer = mock(TemplateRenderer.class);
+        LoginUriProvider loginUriProvider = mock(LoginUriProvider.class);
+        TemplateRenderer templateRenderer = mock(TemplateRenderer.class);
         sheetService = mock(TimesheetService.class);
         permissionService = mock(PermissionService.class);
 
-        timeSheet = mock(Timesheet.class);
+        Timesheet timeSheet = mock(Timesheet.class);
         sheetService = mock(TimesheetService.class);
 
         request = mock(HttpServletRequest.class);

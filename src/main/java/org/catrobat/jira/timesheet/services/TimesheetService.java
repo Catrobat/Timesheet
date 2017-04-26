@@ -47,7 +47,7 @@ public interface TimesheetService {
     /**
      * Adds a new Timesheet
      * @param userKey             identifies the user
-     * @param displayName
+     * @param displayName           the name displayed for the timesheet
      * @param targetHoursPractice specifies the amount of hours the user has to
  *                            solve in practical work
      * @param targetHoursTheory   specifies the amount of hours the user has to
@@ -80,17 +80,6 @@ public interface TimesheetService {
      * @return Boolean
      */
     Boolean userHasTimesheet(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException;
-
-    /**
-     * Returns Administrator Timesheet corresponding his UserKey
-     *
-     * @return Timesheet, null if unknown userKey
-     */
-    @Nullable
-    Timesheet getAdministratorTimesheet(String userKey) throws ServiceException;
-
-    @Nullable
-    Timesheet getTimesheetImport(String userKey) throws ServiceException;
 
     @Nullable
     Timesheet getTimesheetByID(int id);

@@ -37,7 +37,6 @@ import static org.mockito.Mockito.*;
 @PrepareForTest({ComponentAccessor.class, SchedulingRest.class})
 public class SchedulingRestTest {
 
-    private SchedulingRest schedulingRestMock;
     private ConfigService configServiceMock;
     private PermissionService permissionServiceMock;
     private TimesheetService timesheetServiceMock;
@@ -56,9 +55,7 @@ public class SchedulingRestTest {
 
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
-        TimesheetEntryService timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
         timesheetServiceMock = mock(TimesheetService.class, RETURNS_DEEP_STUBS);
-        TeamService teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         UserManager userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         httpRequest = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         TimesheetScheduler timesheetScheduler = mock(TimesheetScheduler.class, RETURNS_DEEP_STUBS);
@@ -70,11 +67,6 @@ public class SchedulingRestTest {
         teamService = new TeamServiceImpl(ao, categoryService, timesheetEntryService);
         ConfigServiceImpl configService = new ConfigServiceImpl(ao, categoryService, teamService);
 
-        // For some tests we need a mock...
-        schedulingRestMock = new SchedulingRest(configServiceMock, permissionServiceMock, timesheetEntryServiceMock,
-                timesheetServiceMock, teamServiceMock, categoryService, timesheetScheduler, schedulingService);
-
-        // ... and for some tests we need a real instance of the class
         schedulingRest = new SchedulingRest(configService, permissionServiceMock, timesheetEntryService,
                 timesheetService, teamService, categoryService, timesheetScheduler, schedulingService);
 
@@ -90,8 +82,9 @@ public class SchedulingRestTest {
         when(permissionServiceMock.checkRootPermission()).thenReturn(null);
         Scheduling scheduling = mock(Scheduling.class);
         JsonScheduling jsonScheduling = new JsonScheduling(scheduling);
-        schedulingRest.setScheduling(jsonScheduling, httpRequest);
-        Response response = schedulingRest.getScheduling(httpRequest);
+        Response response = schedulingRest.setScheduling(jsonScheduling, httpRequest);
+        assertNull(response.getEntity());
+        response = schedulingRest.getScheduling(httpRequest);
 
         JsonScheduling responseJson = (JsonScheduling)response.getEntity();
         assertEquals(jsonScheduling.getInactiveTime(), responseJson.getInactiveTime());
@@ -103,10 +96,13 @@ public class SchedulingRestTest {
     @Test
     public void testActivityNotification_unauthorized() throws Exception {
         //preparations
-        when(permissionServiceMock.checkUserPermission()).thenReturn(mock(Response.class));
+        Response unauthorized =  mock(Response.class);
+        when(unauthorized.getStatus()).thenReturn(Response.Status.UNAUTHORIZED.getStatusCode());
+        when(permissionServiceMock.checkRootPermission()).thenReturn(unauthorized);
 
         //execution & verifying
-        schedulingRestMock.activityNotification(httpRequest);
+        Response response = schedulingRest.activityNotification(httpRequest);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         Mockito.verify(timesheetServiceMock, never()).all();
     }
 
@@ -127,9 +123,10 @@ public class SchedulingRestTest {
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
 
-        when(permissionServiceMock.checkUserPermission()).thenReturn(null);
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
 
-        schedulingRest.activityNotification(httpRequest);
+        Response response = schedulingRest.activityNotification(httpRequest);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     @Test
@@ -158,7 +155,7 @@ public class SchedulingRestTest {
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
 
-        when(permissionServiceMock.checkUserPermission()).thenReturn(null);
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
 
         timesheetEntryService.add(timesheet1, yesterday, today, categoryDrone, "testing a lot of things",
                 30, droneTeam, false, yesterday, "123456", "MarkusHobisch"); // this should work

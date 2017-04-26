@@ -21,13 +21,12 @@ import static org.junit.Assert.assertNotNull;
 public class SchedulingServiceImplTest {
 
     private EntityManager entityManager;
-    private ActiveObjects ao;
     private SchedulingService schedulingService;
 
     @Before
     public void setUp() {
         assertNotNull(entityManager);
-        ao = new TestActiveObjects(entityManager);
+        ActiveObjects ao = new TestActiveObjects(entityManager);
         schedulingService = new SchedulingServiceImpl(ao);
     }
 

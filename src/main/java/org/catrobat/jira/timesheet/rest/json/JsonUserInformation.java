@@ -32,7 +32,6 @@ public class JsonUserInformation {
     private int latestEntryHours;
     @XmlElement
     private String latestEntryDescription;
-
     @XmlElement
     private String email;
     @XmlElement

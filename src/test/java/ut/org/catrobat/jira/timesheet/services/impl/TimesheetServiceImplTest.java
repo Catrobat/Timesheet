@@ -116,8 +116,7 @@ public class TimesheetServiceImplTest {
 
     @Test(expected = ServiceException.class)
     public void testGetTimesheetByUserNotFound() throws Exception {
-        //Act
-        Timesheet missingSheet = service.getTimesheetByUser("USER_DOES_NOT_EXIST", false);
+        service.getTimesheetByUser("USER_DOES_NOT_EXIST", false);
     }
 
     @Test

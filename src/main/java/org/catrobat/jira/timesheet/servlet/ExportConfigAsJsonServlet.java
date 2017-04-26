@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class ExportConfigAsJsonServlet extends HighPrivilegeServlet {
@@ -33,9 +32,6 @@ public class ExportConfigAsJsonServlet extends HighPrivilegeServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
-        ZonedDateTime today = ZonedDateTime.now();
-        String dateString = today.getYear() + "-" + today.getMonth() + "-" + today.getDayOfMonth();
-        System.out.println(today.toString());
         String filename = "attachment; filename=\"" +
                 "Timesheet_Config_"+new Date() +".json\"";
 

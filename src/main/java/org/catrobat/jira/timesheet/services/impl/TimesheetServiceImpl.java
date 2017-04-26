@@ -199,26 +199,6 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public Timesheet getAdministratorTimesheet(String userKey) throws ServiceException {
-        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
-
-        if (found.length > 1) {
-            throw new ServiceException("Found more than two Timesheets with the same UserKey.");
-        } else if (found.length == 0) {
-            return null;
-        } else {
-            return found[0];
-        }
-    }
-
-    @Override
-    public Timesheet getTimesheetImport(String userKey) {
-        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
-
-        return found.length > 0 ? found[0] : null;
-    }
-
-    @Override
     public Timesheet getTimesheetByID(int id) {
         return ao.get(Timesheet.class, id);
     }

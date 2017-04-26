@@ -1,7 +1,6 @@
 package org.catrobat.jira.timesheet.utility;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import net.java.ao.DBParam;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;

@@ -15,10 +15,6 @@ import java.util.*;
 public class ActivityVerificationJobTest {
 
     private ActivityVerificationJob activityVerificationJob;
-    private TimesheetService sheetService;
-    private TimesheetEntryService entryService;
-    private TeamService teamService;
-    private CategoryService categoryService;
     private SchedulingService schedulingService;
     private Map<String, Object> params;
 
@@ -28,10 +24,10 @@ public class ActivityVerificationJobTest {
     public void setUp() {
         activityVerificationJob = new ActivityVerificationJob();
 
-        sheetService = Mockito.mock(TimesheetService.class);
-        entryService = Mockito.mock(TimesheetEntryService.class);
-        teamService = Mockito.mock(TeamService.class);
-        categoryService = Mockito.mock(CategoryService.class);
+        TimesheetService sheetService = Mockito.mock(TimesheetService.class);
+        TimesheetEntryService entryService = Mockito.mock(TimesheetEntryService.class);
+        TeamService teamService = Mockito.mock(TeamService.class);
+        CategoryService categoryService = Mockito.mock(CategoryService.class);
         schedulingService = Mockito.mock(SchedulingService.class);
         params = new HashMap<>();
 

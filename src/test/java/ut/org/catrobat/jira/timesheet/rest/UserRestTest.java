@@ -46,16 +46,14 @@ public class UserRestTest {
     private UserUtil userUtilMock;
     private ApplicationUser userMock;
     private EntityManager entityManager;
-    private TestActiveObjects ao;
     private PermissionService permissionServiceMock;
-
     private UserSearchService userSearchService;
     private GroupPickerSearchService groupPickerSearchService;
 
     @Before
     public void setUp() throws Exception {
         assertNotNull(entityManager);
-        ao = new TestActiveObjects(entityManager);
+        TestActiveObjects ao = new TestActiveObjects(entityManager);
 
         userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         userUtilMock = mock(UserUtil.class, RETURNS_DEEP_STUBS);

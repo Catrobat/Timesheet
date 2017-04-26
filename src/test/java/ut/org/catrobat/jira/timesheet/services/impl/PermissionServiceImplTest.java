@@ -210,7 +210,7 @@ public class PermissionServiceImplTest {
     @Test(expected = PermissionException.class)
     public void testIfUserExistsExceptionHandling() throws PermissionException {
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()).thenReturn(null);
-        Assert.assertEquals(permissionService.checkIfUserExists(), PermissionException.class);
+        permissionService.checkIfUserExists();
     }
 
     @Test

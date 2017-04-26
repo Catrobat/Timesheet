@@ -4,12 +4,15 @@ import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
+import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
+import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.CategoryToTeam;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.rest.ConfigResourceRest;
@@ -50,7 +53,6 @@ public class ConfigResourceRestTest {
     private Category categoryMock;
 
     private ConfigResourceRest configResourceRest;
-    private ConfigResourceRest configResourceRestMock;
 
     private javax.ws.rs.core.Response response;
     private HttpServletRequest request;
@@ -64,7 +66,6 @@ public class ConfigResourceRestTest {
 
         UserManager userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
         configServiceMock = mock(ConfigService.class, RETURNS_DEEP_STUBS);
-        CategoryService categoryServiceMock = mock(CategoryService.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
         teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         request = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
@@ -80,8 +81,6 @@ public class ConfigResourceRestTest {
         ConfigService configService = new ConfigServiceImpl(ao, categoryService, teamService);
         configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock, ao);
 
-        configResourceRestMock = new ConfigResourceRest(configServiceMock, teamServiceMock, categoryServiceMock, permissionServiceMock, ao);
-
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
         PowerMockito.when(ComponentAccessor.getJiraAuthenticationContext()).thenReturn(jiraAuthMock);
@@ -91,6 +90,19 @@ public class ConfigResourceRestTest {
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(permissionServiceMock.checkUserPermission()).thenReturn(null);
         when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+
+        // satisfying constraints for removing
+        CategoryToTeam[] categoryToTeams = ao.find(CategoryToTeam.class);
+        for (CategoryToTeam categoryToTeam : categoryToTeams) {
+            ao.delete(categoryToTeam);
+        }
+        ao.create(Category.class, new DBParam("NAME", SpecialCategories.DEFAULT));
+    }
+
+    @Test
+    public void testAddCategoryOk() throws ServiceException {
+        response = configResourceRest.addCategory("Test", request);
+        assertNull(response.getEntity());
     }
 
     @Test
@@ -197,10 +209,6 @@ public class ConfigResourceRestTest {
         when(team2.getTeamName()).thenReturn("IRC");
         when(team2.getCategories()).thenReturn(new Category[0]);
 
-        Set<Team> teams = new HashSet<>();
-        teams.add(team1);
-        teams.add(team2);
-
         ApplicationUser user1 = mock(ApplicationUser.class);
 
         //user1 should be the testUser
@@ -210,7 +218,7 @@ public class ConfigResourceRestTest {
 
         when(permissionServiceMock.checkUserPermission()).thenReturn(response);
 
-        response = configResourceRestMock.removeCategory("Meeting", request);
+        response = configResourceRest.removeCategory("Meeting", request);
         assertNull(response.getEntity());
     }
 
@@ -244,7 +252,7 @@ public class ConfigResourceRestTest {
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
 
-        response = configResourceRestMock.getConfig(request);
+        response = configResourceRest.getConfig(request);
         assertNotNull(response.getEntity());
     }
 
@@ -282,7 +290,7 @@ public class ConfigResourceRestTest {
         usersInGroup.add(user1);
         usersInGroup.add(user2);
 
-        when(permissionServiceMock.checkUserPermission()).thenReturn(response);
+        when(permissionServiceMock.checkRootPermission()).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
         when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
 
@@ -290,7 +298,7 @@ public class ConfigResourceRestTest {
 
         JsonConfig jsonConfig = new JsonConfig(configServiceMock, teamServiceMock);
 
-        response = configResourceRestMock.setConfig(jsonConfig, request);
+        response = configResourceRest.setConfig(jsonConfig, request);
         assertNull(response.getEntity());
     }
 

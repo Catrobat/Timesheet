@@ -146,19 +146,19 @@ public class UserRest {
             }
 
             jsonUserInformation.setEmail(getEmailOfUserKey(timesheet.getUserKey()));
-            String teamString = "";
+            StringBuilder teamString = new StringBuilder();
             Set<Team> developerSet = teamService.getTeamsOfUser(getUserNameOfUserKey(timesheet.getUserKey()));
             Set<Team> coordinatorSet = teamService.getTeamsOfCoordinator(getUserNameOfUserKey(timesheet.getUserKey()));
             Set<Team> allTeams = new HashSet<>();
             allTeams.addAll(developerSet);
             allTeams.addAll(coordinatorSet);
             for (Team team : allTeams) {
-                if (!teamString.equals("")) {
-                    teamString += ", ";
+                if (!teamString.toString().equals("")) {
+                    teamString.append(", ");
                 }
-                teamString += team.getTeamName();
+                teamString.append(team.getTeamName());
             }
-            jsonUserInformation.setTeams(teamString);
+            jsonUserInformation.setTeams(teamString.toString());
             jsonUserInformation.setTimesheetID(timesheet.getID());
 
             jsonUserInformationList.add(jsonUserInformation);

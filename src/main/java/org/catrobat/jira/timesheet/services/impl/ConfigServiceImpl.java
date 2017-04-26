@@ -317,12 +317,10 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Config editPairProgrammingGroup(String pairProgrammingGroup) {
+    public void editPairProgrammingGroup(String pairProgrammingGroup) {
         Config config = getConfiguration();
         config.setPairProgrammingGroup(pairProgrammingGroup);
 
         config.save();
-
-        return config;
     }
 }

@@ -41,7 +41,7 @@ public class PermissionServiceImpl implements PermissionService {
     private static final boolean DEBUG_MODE = true;
     private final TeamService teamService;
     private final ConfigService configService;
-    public final String BASE_URL = ComponentAccessor.getApplicationProperties().getString(APKeys.JIRA_BASEURL);
+    private final String BASE_URL = ComponentAccessor.getApplicationProperties().getString(APKeys.JIRA_BASEURL);
 
     public PermissionServiceImpl(TeamService teamService, ConfigService configService) {
         this.teamService = teamService;

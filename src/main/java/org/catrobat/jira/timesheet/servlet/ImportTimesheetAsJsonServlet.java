@@ -108,7 +108,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             return;
         }
 
-        String errorString = "";
+        StringBuilder errorString = new StringBuilder();
 
         for (JsonTimesheetAndEntries timesheetAndEntries : timesheetAndEntriesList) {
             JsonTimesheet jsonTimesheet = timesheetAndEntries.getJsonTimesheet();
@@ -117,7 +117,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             ApplicationUser jsonUser = ComponentAccessor.getUserManager().getUserByKey(jsonTimesheet.getUserKey());
             if (jsonUser == null) {
                 // TODO: do we even need to check whether the user exists?
-                errorString += "User with Key: " + jsonTimesheet.getUserKey() + " does not exists. Timesheet ignored.\n";
+                errorString.append("User with Key: ").append(jsonTimesheet.getUserKey()).append(" does not exists. Timesheet ignored.\n");
                 continue;
             }
             Timesheet sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getDisplayName(),
@@ -162,7 +162,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                             entry.getTicketID(), entry.getPairProgrammingUserName());
 
                 } catch (ServiceException e) {
-                    errorString += e.getMessage() + " Entry ignored.\n";
+                    errorString.append(e.getMessage()).append(" Entry ignored.\n");
                     continue;
                 }
             }

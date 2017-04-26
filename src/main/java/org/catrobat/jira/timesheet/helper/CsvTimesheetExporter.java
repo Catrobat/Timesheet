@@ -30,11 +30,11 @@ public class CsvTimesheetExporter {
     }
 
     public String getTimesheetCsvDataAll(List<Timesheet> timesheetList) {
-        String timesheetData = "";
+        StringBuilder timesheetData = new StringBuilder();
         for (Timesheet timesheet : timesheetList) {
-            timesheetData = timesheetData + getTimesheetCsvData(timesheet);
+            timesheetData.append(getTimesheetCsvData(timesheet));
         }
-        return timesheetData;
+        return timesheetData.toString();
     }
 
     public String getTimesheetCsvData(Timesheet timesheet) {

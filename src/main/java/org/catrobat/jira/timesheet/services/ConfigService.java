@@ -56,5 +56,5 @@ public interface ConfigService {
 
     Config removeTimesheetAdmin(String TimesheetAdminKey);
 
-    Config editPairProgrammingGroup(String pairProgrammingGroup);
+    void editPairProgrammingGroup(String pairProgrammingGroup);
 }

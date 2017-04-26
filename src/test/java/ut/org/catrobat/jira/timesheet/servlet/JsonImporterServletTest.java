@@ -57,7 +57,6 @@ public class JsonImporterServletTest {
     private EntityManager entityManager;
     private ActiveObjects ao;
     private TemplateRenderer renderer;
-    private PageBuilderService pageBuilderService;
 
     @Before
     public void setup() throws IOException, PermissionException {
@@ -80,7 +79,6 @@ public class JsonImporterServletTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         renderer = mock(TemplateRenderer.class);
-        pageBuilderService = mock(PageBuilderService.class);
 
         when(user.getUsername()).thenReturn("chris");
         when(user.getKey()).thenReturn("chris");
