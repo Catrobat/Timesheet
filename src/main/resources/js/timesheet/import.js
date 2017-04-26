@@ -156,15 +156,31 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         }
     }
 
-    //check if entry values are correct
-    if ((!isValidDate(new Date(pieces[0] + " " + pieces[1]))) ||
-        (!isValidDate(new Date(pieces[0] + " " + pieces[2]))))
+    var beginDateString = pieces[0] + " " + pieces[1];
+    var endDateString = pieces[0] + " " + pieces[2];
+
+    var beginDate;
+    var endDate;
+    // check date format
+    var german = /^\d\d\.\d\d\.\d\d\d\d \d?\d:\d\d$/;
+    var iso = /^\d\d\d\d-\d\d-\d\d \d\d:\d?\d$/;
+    if (german.test(beginDateString) && german.test(endDateString)) {
+        beginDate = parseGermanDate(beginDateString);
+        endDate = parseGermanDate(endDateString);
+    } else if(iso.test(beginDateString) && iso.test(endDateString)) {
+        beginDate = new Date(beginDateString);
+        endDate = new Date(endDateString);
+    } else {
         return null;
+    }
+
+    //check if entry values are correct
+    if ((!isValidDate(beginDate)) || (!isValidDate(endDate))) {
+        return null;
+    }
 
     var firstTeamID = Object.keys(timesheetData.teams)[0];
 
-    var beginDate = new Date(pieces[0] + " " + pieces[1]);
-    var endDate = new Date(pieces[0] + " " + pieces[2]);
     if (beginDate > endDate) {
         endDate.setDate(endDate.getDate() + 1)
     }
@@ -179,6 +195,6 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         isGoogleDocImport: true,
         ticketID: "",
         partner: "",
-        inactiveEndDate: new Date(pieces[0] + " " + pieces[1])
+        inactiveEndDate: beginDate
     };
 }

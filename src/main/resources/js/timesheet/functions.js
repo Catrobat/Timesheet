@@ -259,6 +259,11 @@ function isValidDate(date) {
     }
 }
 
+function parseGermanDate(input) {
+    var parts = input.match(/(\d+)/g);
+    return new Date(parts[2], parts[1]-1, parts[0], parts[3], parts[4]);
+}
+
 function getMinutesFromTimeString(timeString) {
     var pieces = timeString.split(":");
     if (pieces.length === 2) {
