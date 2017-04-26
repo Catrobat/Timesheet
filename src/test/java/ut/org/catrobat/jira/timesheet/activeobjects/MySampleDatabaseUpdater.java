@@ -12,7 +12,6 @@ public class MySampleDatabaseUpdater implements DatabaseUpdater {
     @Override
     public void update(EntityManager em) throws Exception {
         em.migrate(Config.class);
-        em.migrate(TSAdminGroup.class);
         em.migrate(TimesheetAdmin.class);
         em.migrate(Group.class);
 

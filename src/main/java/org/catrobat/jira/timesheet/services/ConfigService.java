@@ -19,7 +19,6 @@ package org.catrobat.jira.timesheet.services;
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.user.ApplicationUser;
 import org.catrobat.jira.timesheet.activeobjects.Config;
-import org.catrobat.jira.timesheet.activeobjects.TSAdminGroup;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 
@@ -47,19 +46,13 @@ public interface ConfigService {
 
     List<String> getCategoryNamesForTeam(String teamName);
 
-    boolean isTimesheetAdminGroup(String groupName);
-
     boolean isTimesheetAdmin(String userKey);
-
-    TSAdminGroup addTimesheetAdminGroup(String timesheetAdminGroupName);
 
     TimesheetAdmin addTimesheetAdmin(ApplicationUser user);
 
-    void clearTimesheetAdminGroups();
+    void editTimesheetAdmins(List<String> timesheetAdmins);
 
     void clearTimesheetAdmins();
-
-    Config removeTimesheetAdminGroup(String groupName);
 
     Config removeTimesheetAdmin(String TimesheetAdminKey);
 

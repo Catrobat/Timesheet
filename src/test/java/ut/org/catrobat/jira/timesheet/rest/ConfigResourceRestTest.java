@@ -10,7 +10,6 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.Category;
-import org.catrobat.jira.timesheet.activeobjects.TSAdminGroup;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.rest.ConfigResourceRest;
@@ -241,14 +240,8 @@ public class ConfigResourceRestTest {
 
         TimesheetAdmin[] timesheetAdmins = {timesheetAdmin1, timesheetAdmin2};
 
-        TSAdminGroup timesheetAdminGroup = Mockito.mock(TSAdminGroup.class);
-        when(timesheetAdminGroup.getGroupName()).thenReturn("TSAdminGroup");
-
-        TSAdminGroup[] timesheetAdminGroups = {timesheetAdminGroup};
-
         when(permissionServiceMock.checkUserPermission()).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
-        when(configServiceMock.getConfiguration().getTimesheetAdminGroups()).thenReturn(timesheetAdminGroups);
         when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
 
         response = configResourceRestMock.getConfig(request);
@@ -282,11 +275,6 @@ public class ConfigResourceRestTest {
 
         TimesheetAdmin[] timesheetAdmins = {timesheetAdmin1, timesheetAdmin2};
 
-        TSAdminGroup timesheetAdminGroup = Mockito.mock(TSAdminGroup.class);
-        when(timesheetAdminGroup.getGroupName()).thenReturn("TSAdminGroup");
-
-        TSAdminGroup[] timesheetAdminGroups = {timesheetAdminGroup};
-
         ApplicationUser user1 = mock(ApplicationUser.class);
         ApplicationUser user2 = mock(ApplicationUser.class);
 
@@ -296,7 +284,6 @@ public class ConfigResourceRestTest {
 
         when(permissionServiceMock.checkUserPermission()).thenReturn(response);
         when(configServiceMock.getConfiguration().getTeams()).thenReturn(teams);
-        when(configServiceMock.getConfiguration().getTimesheetAdminGroups()).thenReturn(timesheetAdminGroups);
         when(configServiceMock.getConfiguration().getTimesheetAdminUsers()).thenReturn(timesheetAdmins);
 
         PowerMockito.when(ComponentAccessor.getGroupManager().getUsersInGroup(anyString())).thenReturn(usersInGroup);

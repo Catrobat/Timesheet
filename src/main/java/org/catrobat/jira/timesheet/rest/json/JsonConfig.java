@@ -17,7 +17,6 @@
 package org.catrobat.jira.timesheet.rest.json;
 
 import org.catrobat.jira.timesheet.activeobjects.Config;
-import org.catrobat.jira.timesheet.activeobjects.TSAdminGroup;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.services.ConfigService;
@@ -46,8 +45,6 @@ public final class JsonConfig {
 
     @XmlElement
     private List<JsonTeam> teams;
-    @XmlElement
-    private List<String> timesheetAdminGroups;
     @XmlElement
     private List<String> timesheetAdmins;
     @XmlElement
@@ -101,11 +98,6 @@ public final class JsonConfig {
             }
         }
 
-        this.timesheetAdminGroups = new ArrayList<>();
-        for (TSAdminGroup timesheetAdminGroup : toCopy.getTimesheetAdminGroups()) {
-            timesheetAdminGroups.add(timesheetAdminGroup.getGroupName());
-        }
-
         this.pairProgrammingGroup = toCopy.getPairProgrammingGroup();
 
         this.readOnlyUsers = toCopy.getReadOnlyUsers();
@@ -132,14 +124,6 @@ public final class JsonConfig {
 
     public void setTeams(List<JsonTeam> teams) {
         this.teams = teams;
-    }
-
-    public List<String> getTimesheetAdminGroups() {
-        return timesheetAdminGroups;
-    }
-
-    public void setTimesheetAdminGroups(List<String> timesheetAdminGroups) {
-        this.timesheetAdminGroups = timesheetAdminGroups;
     }
 
     public List<String> getTimesheetAdmins() {

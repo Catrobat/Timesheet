@@ -10,7 +10,6 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.Config;
-import org.catrobat.jira.timesheet.activeobjects.TSAdminGroup;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.services.*;
@@ -83,7 +82,6 @@ public class JsonExporterServletTest {
 
         when(configService.getConfiguration()).thenReturn(config);
         when(config.getTimesheetAdminUsers()).thenReturn(new TimesheetAdmin[0]);
-        when(config.getTimesheetAdminGroups()).thenReturn(new TSAdminGroup[0]);
         when(config.getTeams()).thenReturn(new Team[0]);
 
         when(response.getOutputStream()).thenReturn(new TestServletOutputStream());

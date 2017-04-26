@@ -102,9 +102,6 @@ public interface Config extends Entity {
     void setPairProgrammingGroup(String pairProgrammingGroup);
 
     @OneToMany(reverse = "getConfiguration")
-    TSAdminGroup[] getTimesheetAdminGroups();
-
-    @OneToMany(reverse = "getConfiguration")
     TimesheetAdmin[] getTimesheetAdminUsers();
 
     @OneToMany(reverse = "getConfiguration")

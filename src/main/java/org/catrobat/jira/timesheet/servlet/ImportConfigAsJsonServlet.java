@@ -123,32 +123,7 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
         configService.editReadOnlyUsers(jsonConfig.getReadOnlyUsers());
         configService.editPairProgrammingGroup(jsonConfig.getPairProgrammingGroup());
 
-        //clear fields
-        configService.clearTimesheetAdminGroups();
-        configService.clearTimesheetAdmins();
-
-        // add TimesheetAdmin group
-        if (jsonConfig.getTimesheetAdminGroups() != null) {
-            for (String approvedGroupName : jsonConfig.getTimesheetAdminGroups()) {
-                configService.addTimesheetAdminGroup(approvedGroupName);
-                // add all users in group
-                Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(approvedGroupName);
-                for (ApplicationUser user : usersInGroup) {
-                    configService.addTimesheetAdmin(user);
-                }
-            }
-        }
-
-        // add TimesheetAdmins
-        if (jsonConfig.getTimesheetAdmins() != null) {
-            for (String username : jsonConfig.getTimesheetAdmins()) {
-                ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(username);
-                if (user != null) {
-                    configService.addTimesheetAdmin(user);
-                    //RestUtils.getInstance().printUserInformation(username, user);
-                }
-            }
-        }
+        configService.editTimesheetAdmins(jsonConfig.getTimesheetAdmins());
 
         for(JsonTeam jsonTeam : jsonConfig.getTeams())
         {
@@ -173,7 +148,6 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
 
     private void dropEntries() {
         activeObjects.deleteWithSQL(TimesheetEntry.class, "1=?", "1");
-        activeObjects.deleteWithSQL(TSAdminGroup.class, "1=?", "1");
         activeObjects.deleteWithSQL(TimesheetAdmin.class, "1=?", "1");
         activeObjects.deleteWithSQL(CategoryToTeam.class, "1=?", "1");
         activeObjects.deleteWithSQL(Category.class, "1=?", "1");

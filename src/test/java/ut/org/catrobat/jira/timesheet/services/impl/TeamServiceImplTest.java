@@ -147,21 +147,21 @@ public class TeamServiceImplTest {
         assertTrue(teamsOfUser.contains(drone));
     }
 
-//    @Test
-//    public void testGetCoordinatorTeamsOfUser() throws IllegalAccessException {
-//        Team teamA = Mockito.mock(Team.class);
-//        Team teamB = Mockito.mock(Team.class);
-//        Team teamC = Mockito.mock(Team.class);
-//
-//        Mockito.doReturn("teamA").when(teamA).getTeamName();
-//        Mockito.doReturn("teamB").when(teamB).getTeamName();
-//        Mockito.doReturn("teamC").when(teamC).getTeamName();
-//
-//        Set<Team> teamsOfCoords = service.getTeamsOfCoordinator(coordinator1.getGroupName());
-//        assertEquals(2, teamsOfCoords.size());
-//        assertTrue(teamsOfCoords.contains(html5));
-//        assertTrue(teamsOfCoords.contains(drone));
-//    }
+    @Test
+    public void testGetCoordinatorTeamsOfUser() throws IllegalAccessException {
+        Team teamA = Mockito.mock(Team.class);
+        Team teamB = Mockito.mock(Team.class);
+        Team teamC = Mockito.mock(Team.class);
+
+        Mockito.doReturn("teamA").when(teamA).getTeamName();
+        Mockito.doReturn("teamB").when(teamB).getTeamName();
+        Mockito.doReturn("teamC").when(teamC).getTeamName();
+
+        Set<Team> teamsOfCoords = service.getTeamsOfCoordinator(coordinator1.getGroupName());
+        assertEquals(2, teamsOfCoords.size());
+        assertTrue(teamsOfCoords.contains(html5));
+        assertTrue(teamsOfCoords.contains(drone));
+    }
 
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 

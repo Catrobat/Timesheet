@@ -204,7 +204,6 @@
         <entity>org.catrobat.jira.timesheet.activeobjects.Config</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.Group</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin</entity>
-        <entity>org.catrobat.jira.timesheet.activeobjects.TSAdminGroup</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.Scheduling</entity>
 
         <!-- Upgrade Tasks -->

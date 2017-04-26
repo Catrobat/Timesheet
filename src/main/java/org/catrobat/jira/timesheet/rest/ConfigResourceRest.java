@@ -155,33 +155,7 @@ public class ConfigResourceRest {
         configService.editReadOnlyUsers(jsonConfig.getReadOnlyUsers());
         configService.editPairProgrammingGroup(jsonConfig.getPairProgrammingGroup());
 
-        //clear fields
-        configService.clearTimesheetAdminGroups();
-        configService.clearTimesheetAdmins();
-
-        // add TimesheetAdmin group
-        if (jsonConfig.getTimesheetAdminGroups() != null) {
-            for (String timesheetAdminGroup : jsonConfig.getTimesheetAdminGroups()) {
-                configService.addTimesheetAdminGroup(timesheetAdminGroup);
-                // add all users in group
-                Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(timesheetAdminGroup);
-                for (ApplicationUser user : usersInGroup) {
-                    configService.addTimesheetAdmin(user);
-                }
-
-            }
-        }
-
-        // add TimesheetAdmins
-        if (jsonConfig.getTimesheetAdmins() != null) {
-            for (String username : jsonConfig.getTimesheetAdmins()) {
-                ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(username);
-                if (user != null) {
-                    configService.addTimesheetAdmin(user);
-                    //RestUtils.printUserInformation(username, user);
-                }
-            }
-        }
+        configService.editTimesheetAdmins(jsonConfig.getTimesheetAdmins());
 
         return Response.noContent().build();
     }

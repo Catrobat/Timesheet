@@ -376,17 +376,15 @@ AJS.toInit(function () {
 
         var usersAndGroups = AJS.$("#plugin-administration").auiSelect2("val");
         var timesheetAdmins = [];
-        var timesheetAdminGroups = [];
         for (var i = 0; i < usersAndGroups.length; i++) {
             if (usersAndGroups[i].match("^users-")) {
                 timesheetAdmins.push(usersAndGroups[i].split("users-")[1]);
             } else if (usersAndGroups[i].match("^groups-")) {
-                timesheetAdminGroups.push(usersAndGroups[i].split("groups-")[1]);
+                timesheetAdmins.push(usersAndGroups[i].split("groups-")[1]);
             }
         }
 
         config.timesheetAdmins = timesheetAdmins;
-        config.timesheetAdminGroups = timesheetAdminGroups;
 
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({

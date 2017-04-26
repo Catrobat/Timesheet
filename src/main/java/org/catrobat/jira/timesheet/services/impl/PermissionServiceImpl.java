@@ -150,7 +150,7 @@ public class PermissionServiceImpl implements PermissionService {
     public boolean isTimesheetAdmin(ApplicationUser user) {
         Config config = configService.getConfiguration();
 
-        if (config.getTimesheetAdminUsers().length == 0 && config.getTimesheetAdminGroups().length == 0) {
+        if (config.getTimesheetAdminUsers().length == 0) {
             return false;
         }
 
@@ -159,12 +159,13 @@ public class PermissionServiceImpl implements PermissionService {
             return true;
         }
 
-        Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(user.getUsername());
-        for (String groupName : groupNameCollection) {
-            if (configService.isTimesheetAdminGroup(groupName)) {
-                return true;
-            }
-        }
+        // TODO: insert code below if groups get saved as well
+//        Collection<String> groupNameCollection = ComponentAccessor.getGroupManager().getGroupNamesForUser(user.getUsername());
+//        for (String groupName : groupNameCollection) {
+//            if (configService.isTimesheetAdmin(groupName)) {
+//                return true;
+//            }
+//        }
 
         return false;
     }
@@ -203,9 +204,9 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public boolean timesheetAdminExists() {
         Config config = configService.getConfiguration();
-        TimesheetAdmin[] timesheetAdminUsers = config.getTimesheetAdminUsers();
-        TSAdminGroup[] timesheetAdminGroups = config.getTimesheetAdminGroups();
-        return timesheetAdminUsers.length > 0 || timesheetAdminGroups.length > 0;
+        TimesheetAdmin[] timesheetAdmins = config.getTimesheetAdminUsers();
+
+        return timesheetAdmins.length > 0;
     }
 
     private boolean userOwnsSheet(ApplicationUser user, Timesheet sheet) {

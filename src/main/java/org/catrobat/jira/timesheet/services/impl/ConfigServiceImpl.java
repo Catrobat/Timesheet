@@ -17,6 +17,7 @@
 package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.user.ApplicationUser;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -158,13 +160,6 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public void clearTimesheetAdminGroups() {
-        for (TSAdminGroup timesheetAdminGroup : ao.find(TSAdminGroup.class)) {
-            ao.delete(timesheetAdminGroup);
-        }
-    }
-
-    @Override
     public void clearTimesheetAdmins() {
         for (TimesheetAdmin timesheetAdmin : ao.find(TimesheetAdmin.class)) {
             ao.delete(timesheetAdmin);
@@ -211,31 +206,6 @@ public class ConfigServiceImpl implements ConfigService {
         category.save();
 
         return getConfiguration();
-    }
-
-    @Override
-    public TSAdminGroup addTimesheetAdminGroup(String groupName) {
-        if (groupName == null || groupName.trim().length() == 0) {
-            return null;
-        }
-        groupName = groupName.trim();
-
-        TSAdminGroup[] timesheetAdminGroupArray = ao.find(TSAdminGroup.class, Query.select()
-                .where("upper(\"GROUP_NAME\") = upper(?)", groupName));
-        if (timesheetAdminGroupArray.length == 0) {
-            return createTimesheetAdminGroup(groupName);
-        } else {
-            return createTimesheetAdminGroup(groupName);
-        }
-    }
-
-    private TSAdminGroup createTimesheetAdminGroup(String timesheetAdminGroupName) {
-        TSAdminGroup timesheetAdminGroup = ao.create(TSAdminGroup.class);
-        timesheetAdminGroup.setGroupName(timesheetAdminGroupName);
-        timesheetAdminGroup.setConfiguration(getConfiguration());
-        timesheetAdminGroup.save();
-
-        return timesheetAdminGroup;
     }
 
     @Override
@@ -287,6 +257,27 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
+    @Override
+    public void editTimesheetAdmins(List<String> timesheetAdmins) {
+        this.clearTimesheetAdmins();
+
+        // add TimesheetAdmins
+        if (timesheetAdmins != null) {
+            for (String timesheetAdmin : timesheetAdmins) {
+                ApplicationUser userOrGroup = ComponentAccessor.getUserManager().getUserByName(timesheetAdmin);
+                if (userOrGroup != null) {
+                    this.addTimesheetAdmin(userOrGroup);
+                } else {
+                    // TODO: change to work with groups as well
+                    Collection<ApplicationUser> usersInGroup = ComponentAccessor.getGroupManager().getUsersInGroup(timesheetAdmin);
+                    for (ApplicationUser user : usersInGroup) {
+                        this.addTimesheetAdmin(user);
+                    }
+                }
+            }
+        }
+    }
+
     private TimesheetAdmin createTimesheetAdmin(ApplicationUser user) {
         String userKey = user.getKey();
 
@@ -301,39 +292,12 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public boolean isTimesheetAdminGroup(String groupName) {
-        if (groupName != null) {
-            groupName = groupName.trim();
-        }
-
-        return (ao.find(TSAdminGroup.class).length == 0 && ao.find(TimesheetAdmin.class).length == 0) ||
-                ao.find(TSAdminGroup.class, Query.select()
-                        .where("upper(\"GROUP_NAME\") = upper(?)", groupName)).length != 0;
-    }
-
-    @Override
     public boolean isTimesheetAdmin(String userKey) {
         if (userKey != null) {
             userKey = userKey.trim();
         }
 
         return ao.find(TimesheetAdmin.class, Query.select().where("upper(\"USER_KEY\") = upper(?)", userKey)).length != 0;
-    }
-
-    @Override
-    public Config removeTimesheetAdminGroup(String groupName) {
-        if (groupName != null) {
-            groupName = groupName.trim();
-        }
-
-        TSAdminGroup[] timesheetAdminGroupArray = ao.find(TSAdminGroup.class, Query.select()
-                .where("upper(\"GROUP_NAME\") = upper(?)", groupName));
-        if (timesheetAdminGroupArray.length == 0) {
-            return null;
-        }
-        ao.delete(timesheetAdminGroupArray[0]);
-
-        return getConfiguration();
     }
 
     @Override

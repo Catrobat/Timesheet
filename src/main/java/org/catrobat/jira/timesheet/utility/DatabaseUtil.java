@@ -31,7 +31,6 @@ public class DatabaseUtil {
         ao.deleteWithSQL(TimesheetEntry.class, "ID > ?", 0);
         ao.deleteWithSQL(Timesheet.class, "ID > ?", 0);
         ao.deleteWithSQL(TimesheetAdmin.class, "ID > ?", 0);
-        ao.deleteWithSQL(TSAdminGroup.class, "ID > ?", 0);
 
         ao.deleteWithSQL(CategoryToTeam.class, "ID > ?", 0);
         ao.deleteWithSQL(TeamToGroup.class, "ID > ?", 0);

@@ -353,11 +353,6 @@ public class PermissionServiceImplTest {
             timesheetAdmin.setConfiguration(config);
             timesheetAdmin.setUserKey("APPROVED_KEY");
             timesheetAdmin.setUserName("TimesheetAdmin");
-
-            em.migrate(TSAdminGroup.class);
-            TSAdminGroup timesheetAdminGroup = em.create(TSAdminGroup.class);
-            timesheetAdminGroup.setConfiguration(config);
-            timesheetAdminGroup.setGroupName("TSAdminGroup");
         }
     }
 }
