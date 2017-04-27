@@ -20,6 +20,7 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
+import net.java.ao.DBParam;
 import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
@@ -98,8 +99,9 @@ public class TimesheetServiceImpl implements TimesheetService {
                          String lectures, String reason,
                          boolean isMasterThesisTimesheet, Timesheet.State state) {
 
-        Timesheet sheet = ao.create(Timesheet.class);
-        sheet.setUserKey(userKey);
+        Timesheet sheet = ao.create(Timesheet.class,
+            new DBParam("USER_KEY", userKey)
+        );
         sheet.setDisplayName(displayName);
         sheet.setTargetHoursPractice(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);

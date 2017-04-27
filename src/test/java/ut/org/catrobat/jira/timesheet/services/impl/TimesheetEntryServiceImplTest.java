@@ -76,11 +76,19 @@ public class TimesheetEntryServiceImplTest {
         return team;
     }
 
+    private Timesheet createTestTimesheet() {
+        Timesheet timesheet = ao.create(Timesheet.class,
+            new DBParam("USER_KEY", "testTimesheet")
+        );
+
+        return timesheet;
+    }
+
     @Test
     public void testAdd() throws Exception {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
-        Timesheet sheet = ao.create(Timesheet.class);
+        Timesheet sheet = createTestTimesheet();
         Category category = createTestCategory();
         Team team = createTestTeam();
         Date begin = new Date();
@@ -111,7 +119,7 @@ public class TimesheetEntryServiceImplTest {
     @Test(expected = ServiceException.class)
     public void testAddOverlapThrowsException() throws Exception {
         long oneHourInMS = 60 * 60 * 1000;
-        Timesheet sheet = ao.create(Timesheet.class);
+        Timesheet sheet = createTestTimesheet();
         Category category = createTestCategory();
         Team team = createTestTeam();
         Date begin = new Date();
@@ -132,7 +140,7 @@ public class TimesheetEntryServiceImplTest {
     public void testGetEntriesBySheet() throws Exception {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
-        Timesheet sheet = ao.create(Timesheet.class);
+        Timesheet sheet = createTestTimesheet();
         Category category = createTestCategory();
         Team team = createTestTeam();
         Date begin = new Date();
@@ -164,7 +172,7 @@ public class TimesheetEntryServiceImplTest {
     public void testEditTimesheetEntryByID() throws Exception {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
-        Timesheet sheet = ao.create(Timesheet.class);
+        Timesheet sheet = createTestTimesheet();
         Category category = createTestCategory();
         Team team = createTestTeam();
         Date begin = new Date();
@@ -196,7 +204,7 @@ public class TimesheetEntryServiceImplTest {
     public void testDeleteTimesheetEntry() throws Exception {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
-        Timesheet sheet = ao.create(Timesheet.class);
+        Timesheet sheet = createTestTimesheet();
         Category category = createTestCategory();
         Team team = createTestTeam();
         Date begin = new Date();
@@ -223,7 +231,7 @@ public class TimesheetEntryServiceImplTest {
     public void testEditTimesheetEntryWithSetter() throws Exception {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
-        Timesheet sheet = ao.create(Timesheet.class);
+        Timesheet sheet = createTestTimesheet();
         Category category = createTestCategory();
         Team team = createTestTeam();
         Date begin = new Date();
@@ -264,7 +272,7 @@ public class TimesheetEntryServiceImplTest {
     public void testGetTimesheetEntryByID() throws Exception {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
-        Timesheet sheet = ao.create(Timesheet.class);
+        Timesheet sheet = createTestTimesheet();
         Category category = createTestCategory();
         Team team = createTestTeam();
         Date begin = new Date();

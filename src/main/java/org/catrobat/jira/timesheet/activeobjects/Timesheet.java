@@ -18,6 +18,7 @@ package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
 import net.java.ao.OneToMany;
+import net.java.ao.schema.NotNull;
 import net.java.ao.schema.Table;
 
 import java.util.Date;
@@ -26,6 +27,7 @@ import java.util.Date;
 @Table("TimesheetModel4")
 public interface Timesheet extends Entity {
 
+    @NotNull
     String getUserKey();
     void setUserKey(String key);
 

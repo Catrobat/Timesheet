@@ -349,9 +349,10 @@ public class PermissionServiceImplTest {
             );
 
             em.migrate(TimesheetAdmin.class);
-            TimesheetAdmin timesheetAdmin = em.create(TimesheetAdmin.class);
+            TimesheetAdmin timesheetAdmin = em.create(TimesheetAdmin.class,
+                new DBParam("USER_KEY", "APPROVED_KEY")
+            );
             timesheetAdmin.setConfiguration(config);
-            timesheetAdmin.setUserKey("APPROVED_KEY");
             timesheetAdmin.setUserName("TimesheetAdmin");
         }
     }

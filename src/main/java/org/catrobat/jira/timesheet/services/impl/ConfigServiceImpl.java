@@ -281,8 +281,9 @@ public class ConfigServiceImpl implements ConfigService {
     private TimesheetAdmin createTimesheetAdmin(ApplicationUser user) {
         String userKey = user.getKey();
 
-        TimesheetAdmin timesheetAdmin = ao.create(TimesheetAdmin.class);
-        timesheetAdmin.setUserKey(userKey);
+        TimesheetAdmin timesheetAdmin = ao.create(TimesheetAdmin.class,
+            new DBParam("USER_KEY", userKey)
+        );
         timesheetAdmin.setUserName(user.getUsername());
         timesheetAdmin.setEmailAddress(user.getEmailAddress());
         timesheetAdmin.setConfiguration(getConfiguration());

@@ -18,6 +18,7 @@ package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
 import net.java.ao.Preload;
+import net.java.ao.schema.NotNull;
 
 @Preload
 public interface TimesheetAdmin extends Entity {
@@ -25,6 +26,7 @@ public interface TimesheetAdmin extends Entity {
     Config getConfiguration();
     void setConfiguration(Config configuration);
 
+    @NotNull
     String getUserKey();
     void setUserKey(String userKey);
 

@@ -3,6 +3,7 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.service.ServiceException;
+import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -67,7 +68,9 @@ public class TimesheetServiceImplTest {
     @Test
     public void testAll() throws Exception {
         //Arange
-        Timesheet sheet = ao.create(Timesheet.class);
+        Timesheet sheet = ao.create(Timesheet.class,
+            new DBParam("USER_KEY", "USER_001")
+        );
         sheet.setUserKey(userKey);
         sheet.setTargetHoursPractice(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);
@@ -88,8 +91,9 @@ public class TimesheetServiceImplTest {
     @Test
     public void testGetTimesheetByUser() throws Exception {
         //Arange
-        Timesheet sheet = ao.create(Timesheet.class);
-        sheet.setUserKey(userKey);
+        Timesheet sheet = ao.create(Timesheet.class,
+            new DBParam("USER_KEY", userKey)
+        );
         sheet.setTargetHoursPractice(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);
         sheet.setTargetHoursTheory(targetHours);
@@ -158,7 +162,9 @@ public class TimesheetServiceImplTest {
 
     @Test
     public void testUpdateTimesheet() {
-        Timesheet timesheet = ao.create(Timesheet.class);
+        Timesheet timesheet = ao.create(Timesheet.class,
+            new DBParam("USER_KEY", "USER_000")
+        );
 
         int targetHoursCompletedOld = 100;
         int targetHoursPracticeOld = 150;
@@ -187,7 +193,9 @@ public class TimesheetServiceImplTest {
 
     @Test
     public void testUpdateTimesheetEnableStateOk() throws ServiceException{
-        Timesheet timesheet = ao.create(Timesheet.class);
+        Timesheet timesheet = ao.create(Timesheet.class,
+            new DBParam("USER_KEY", "USER_001")
+        );
         timesheet.setState(Timesheet.State.ACTIVE);
         timesheet.save();
 
@@ -203,7 +211,9 @@ public class TimesheetServiceImplTest {
 
     @Test(expected = ServiceException.class)
     public void testUpdateTimesheetEnableStateNotFound() throws ServiceException {
-        Timesheet unusedTimesheet = ao.create(Timesheet.class);
+        Timesheet unusedTimesheet = ao.create(Timesheet.class,
+            new DBParam("USER_KEY", "USER_001")
+        );
         service.updateTimesheetEnableState(unusedTimesheet.getID()+1, false);
     }
 
@@ -213,9 +223,9 @@ public class TimesheetServiceImplTest {
         public void update(EntityManager em) throws Exception {
             em.migrate(Timesheet.class);
 
-            Timesheet sheet = em.create(Timesheet.class);
-            sheet.setUserKey("USER_000");
-            sheet.save();
+            Timesheet sheet = em.create(Timesheet.class,
+                new DBParam("USER_KEY", "USER_000")
+            );
         }
     }
 }
