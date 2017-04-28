@@ -74,13 +74,13 @@ function initSelectTimesheetButton() {
         });
 
         var selectedUser;
-        var isMTSheetSelected = false;
+        var isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
 
-        if (AJS.$(document.activeElement).val() === 'Show') {
+        // TODO: why even 2 different fields??? simplify to 1
+        if (AJS.$("#user-select2-field").val()) {
             selectedUser = AJS.$("#user-select2-field").val().split(',');
-        } else if (AJS.$(document.activeElement).val() === 'Display') {
+        } else if (AJS.$("#approved-user-select2-field").val()) {
             selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
-            isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
         }
 
         if (selectedUser[0] !== "") {

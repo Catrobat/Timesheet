@@ -57,6 +57,9 @@ public final class JsonTimesheet {
     private int targetHoursCompleted;
     @XmlElement
     private int targetHoursRemoved;
+    // TODO: isEnabled can be removed entirely and be replaced with state
+    // make the banner on client side
+    // make sure updateTimesheetState still works as planned
     @XmlElement
     private boolean isEnabled;
     @XmlElement
