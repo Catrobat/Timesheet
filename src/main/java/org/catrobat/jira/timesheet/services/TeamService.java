@@ -47,7 +47,7 @@ public interface TeamService {
 
     List<String> getGroupsForRole(String teamName, TeamToGroup.Role role);
 
-    void editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups, List<String> teamCategoryNames);
+    void editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups, List<String> teamCategoryNames) throws ServiceException;
 
     void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws ServiceException;
 }
