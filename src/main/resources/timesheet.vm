@@ -366,6 +366,9 @@
 
 <script>
     function drawTeamDiagram(data, labelData) {
+        var labelNames = [];
+        labelNames = getUsedCategoryNames(data);
+
         var teamDiagram = new Morris.Area({
             // ID of the element in which to draw the chart.
             element: 'teamLineDiagram',
@@ -375,8 +378,7 @@
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
-            ykeys: ['cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6', 'cat7', 'cat8', 'cat9', 'cat10',
-                'cat11', 'cat12', 'cat13', 'cat14', 'cat15'],
+            ykeys: labelNames,
             // Labels for the ykeys -- will be displayed when you hover over the
             // chart.
             labels: labelData,
@@ -420,7 +422,29 @@
 </script>
 
 <script>
+    function getUsedCategoryNames(data) {
+        var labelNames = [];
+
+    	  for (var i = 0; i < data.length; i++) {
+        	  for ( property in data[i] ) {
+  				      if ( property !== "year" ) {
+  					        if ( data[i][property] !== 0 && data[i][property] !== undefined ) {
+  						          if ( !labelNames.includes(property) ) {
+                          labelNames.push(property);
+                        }
+  					        }
+  				      }
+			      }
+		    }
+		    return labelNames;
+	  }
+</script>
+
+<script>
     function drawCategoryDiagram(data, labelData) {
+ 	      var labelNames = [];
+ 	      labelNames = getUsedCategoryNames(data);
+
         var categoryDiagram = new Morris.Area({
             // ID of the element in which to draw the chart.
             element: 'categoryLineDiagram',
@@ -430,8 +454,7 @@
             // The name of the data record attribute that contains x-values.
             xkey: 'year',
             // A list of names of data record attributes that contain y-values.
-            ykeys: ['cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6', 'cat7', 'cat8', 'cat9', 'cat10',
-                'cat11', 'cat12', 'cat13', 'cat14', 'cat15'],
+            ykeys: labelNames,
             // Labels for the ykeys -- will be displayed when you hover over the
             // chart.
             labels: labelData,

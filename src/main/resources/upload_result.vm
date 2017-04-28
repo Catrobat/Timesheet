@@ -46,8 +46,8 @@
 
                     document.getElementById("status-header").innerHTML = "Error";
 
-                    document.getElementById("status-des").innerHTML = "One or more Timesheet entries refered to a Team, which is not " +
-                            "present in the current System. These Entrys were not imported!<br>" +
+                    document.getElementById("status-des").innerHTML = "One or more Timesheet entries referred to a Team, which is not " +
+                            "present in the current System. These Entries were not imported!<br>" +
                             "Please check your configuration and Reimport these Entries!";
                 }
             });
@@ -99,7 +99,7 @@
                 <th>ID</th>
                 <th>Entry</th>
                 <th>Team</th>
-                <th>Descrpition</th>
+                <th>Description</th>
             </tr>
             </thead>
             <tbody id="faulty-entries-body"></tbody>

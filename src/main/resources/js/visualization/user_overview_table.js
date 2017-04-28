@@ -55,7 +55,7 @@ function appendEntriesToVisTable(timesheetData) {
             //date within the last six months
             if (compareToDate.getTime() >= sixMonthAgo.getTime()) {
                 timeLastSixMonthHours = timeLastSixMonthHours + hours;
-                timeLastSixMonthMinutes = timeLastSixMonthMinutes + minutes;
+                timeLastSixMonthMinutes = timeLastSixMonthMinutes + minutes - pause;
 
                 if (timeLastSixMonthMinutes >= 60) {
                     var minutesToFullHours = Math.floor(timeLastSixMonthMinutes / 60); //get only full hours
@@ -122,7 +122,7 @@ function appendEntriesToVisTable(timesheetData) {
         "</tr>");
 
     //append time last 6 month
-    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\"><strong>" + "Overall Time Last 6 Month" + "</strong></td>" +
+    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\"><strong>" + "Overall Time Last 6 Months" + "</strong></td>" +
         "<td headers=\"basic-time\" class=\"time\"><strong>" + timeLastSixMonthHours + "hours " + timeLastSixMonthMinutes + "mins" + "</strong></td>" +
         "</tr>");
 

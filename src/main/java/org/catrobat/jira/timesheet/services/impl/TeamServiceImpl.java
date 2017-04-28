@@ -197,15 +197,16 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups,
-                         List<String> teamCategoryNames) {
+                         List<String> teamCategoryNames) throws ServiceException {
 
         teamName = teamName.trim();
 
         Team[] teamArray = ao.find(Team.class, Query.select().where("upper(\"TEAM_NAME\") = upper(?)", teamName));
 
         if (teamArray.length == 0) {
-            return;
+            throw new ServiceException("Team not found. Maybe it was deleted. Please refresh the page and try again.");
         }
+        
         Team team;
         if (teamArray[0].getGroups() == null) {
             team = add(teamName);

@@ -166,8 +166,12 @@ public class ConfigResourceRest {
     public Response editTeams(final JsonConfig jsonConfig, @Context HttpServletRequest request) {
         if (jsonConfig.getTeams() != null) {
             for (JsonTeam jsonTeam : jsonConfig.getTeams()) {
-                teamService.editTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
-                    jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
+                try {
+                    teamService.editTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
+                        jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
+                } catch (ServiceException e) {
+                    return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+                }
             }
         }
 
