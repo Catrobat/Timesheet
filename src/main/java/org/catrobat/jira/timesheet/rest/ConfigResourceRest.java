@@ -167,11 +167,11 @@ public class ConfigResourceRest {
         if (jsonConfig.getTeams() != null) {
             for (JsonTeam jsonTeam : jsonConfig.getTeams()) {
                 try {
-					teamService.editTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
-					    jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
-				} catch (ServiceException e) {
-					return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-				}
+                    teamService.editTeam(jsonTeam.getTeamName(), jsonTeam.getCoordinatorGroups(),
+                        jsonTeam.getDeveloperGroups(), jsonTeam.getTeamCategoryNames());
+                } catch (ServiceException e) {
+                    return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+                }
             }
         }
 

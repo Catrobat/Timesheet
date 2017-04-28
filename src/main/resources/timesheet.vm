@@ -366,10 +366,9 @@
 
 <script>
     function drawTeamDiagram(data, labelData) {
-    
-    	var labelNames = [];
- 	    labelNames = getUsedCategoryNames(data);
- 	    	
+        var labelNames = [];
+        labelNames = getUsedCategoryNames(data);
+
         var teamDiagram = new Morris.Area({
             // ID of the element in which to draw the chart.
             element: 'teamLineDiagram',
@@ -424,29 +423,28 @@
 
 <script>
     function getUsedCategoryNames(data) {
-    
- 	    var labelNames = [];
- 	    	
-    	for (var i = 0; i < data.length; i++) {    		
-        	for ( property in data[i] ) {
-  				if ( property !== "year" ) {					
-  					if ( data[i][property] !== 0 && data[i][property] !== undefined ) {
-  						if ( !labelNames.includes(property) )
-  							labelNames.push(property);
-  					}
-  				}
-			}
-		}
-		return labelNames;
-	}
+        var labelNames = [];
+
+    	  for (var i = 0; i < data.length; i++) {
+        	  for ( property in data[i] ) {
+  				      if ( property !== "year" ) {
+  					        if ( data[i][property] !== 0 && data[i][property] !== undefined ) {
+  						          if ( !labelNames.includes(property) ) {
+                          labelNames.push(property);
+                        }
+  					        }
+  				      }
+			      }
+		    }
+		    return labelNames;
+	  }
 </script>
 
 <script>
     function drawCategoryDiagram(data, labelData) {
-    
- 	    var labelNames = [];
- 	    labelNames = getUsedCategoryNames(data);
-       
+ 	      var labelNames = [];
+ 	      labelNames = getUsedCategoryNames(data);
+
         var categoryDiagram = new Morris.Area({
             // ID of the element in which to draw the chart.
             element: 'categoryLineDiagram',

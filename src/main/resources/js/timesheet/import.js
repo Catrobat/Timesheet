@@ -118,7 +118,7 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
         .forEach(function (row) {
             if (row.trim() === "") return;
             var entry = parseEntryFromGoogleDocRow(row, timesheetData);
-            if (entry == null) {
+            if (entry === null) {
                 faultyRows.push(row);
             } else if (entry === columnsMissing) {
             	faultyRows.push(row + columnsMissing);
@@ -137,7 +137,6 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
             } else if (entry === beginEndDateNotValid) {
             	faultyRows.push(row + beginEndDateNotValid);
             } else {
-            
               entries.push(entry);
             }
         });
@@ -150,8 +149,8 @@ var wrongDateFormat = "<strong> (Wrong Dateformat)</strong>";
 var beginEndDateNotValid = "<strong> (Begin- or Enddate not valid)</strong>";
  
 function parseEntryFromGoogleDocRow(row, timesheetData) {
-    var pieces = row.split("\t");   
-    
+    var pieces = row.split("\t");
+
     //check if import entry length is valid
     if ((pieces.length < 7)) {
         return columnsMissing;
