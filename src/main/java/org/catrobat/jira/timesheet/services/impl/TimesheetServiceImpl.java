@@ -97,7 +97,12 @@ public class TimesheetServiceImpl implements TimesheetService {
     public Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
                          int targetHours, int targetHoursCompleted, int targetHoursRemoved,
                          String lectures, String reason,
-                         boolean isMasterThesisTimesheet, Timesheet.State state) {
+                         boolean isMasterThesisTimesheet, Timesheet.State state) throws ServiceException {
+
+        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ? AND IS_MASTER_THESIS_TIMESHEET = ?", userKey, isMasterThesisTimesheet);
+        if (found.length != 0) {
+            throw new ServiceException("A timesheet for user: " + userKey + " isMTSheet: " + isMasterThesisTimesheet + "already exists");
+        }
 
         Timesheet sheet = ao.create(Timesheet.class,
             new DBParam("USER_KEY", userKey)

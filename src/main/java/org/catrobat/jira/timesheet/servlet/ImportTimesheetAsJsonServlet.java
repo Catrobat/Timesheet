@@ -120,11 +120,17 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                 errorString.append("User with Key: ").append(jsonTimesheet.getUserKey()).append(" does not exists. Timesheet ignored.\n");
                 continue;
             }
-            Timesheet sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getDisplayName(),
+            Timesheet sheet;
+            try {
+                sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getDisplayName(),
                     jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
                     jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
                     jsonTimesheet.isMTSheet(), jsonTimesheet.getState());
+            } catch (ServiceException e) {
+                errorString.append(e.toString()).append(" Timesheet ignored.\n");
+                continue;
+            }
 
             for (JsonTimesheetEntry entry : timesheetEntryList) {
                 try {

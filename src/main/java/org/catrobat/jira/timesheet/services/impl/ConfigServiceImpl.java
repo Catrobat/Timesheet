@@ -113,8 +113,8 @@ public class ConfigServiceImpl implements ConfigService {
         fillTeam(team, TeamToGroup.Role.COORDINATOR, coordinatorGroups);
         fillTeam(team, TeamToGroup.Role.DEVELOPER, developerGroups);
 
-        fillCategory(team, teamCategoryNames);
         fillCategory(team, SpecialCategories.DefaultCategories);
+        fillCategory(team, teamCategoryNames);
         team.save();
 
         return team;

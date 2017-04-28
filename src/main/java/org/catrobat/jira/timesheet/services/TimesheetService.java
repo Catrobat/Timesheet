@@ -58,7 +58,7 @@ public interface TimesheetService {
     Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
                   String reason, boolean isMasterThesisTimesheet,
-                  Timesheet.State state);
+                  Timesheet.State state) throws ServiceException;
 
     @NotNull
     List<Timesheet> all();
