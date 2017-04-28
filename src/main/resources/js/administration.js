@@ -969,14 +969,6 @@ AJS.toInit(function () {
         fetchData();
     });
 
-    function unescapeHtml(safe) {
-        if (safe) {
-            return AJS.$('<div />').html(safe).text();
-        } else {
-            return '';
-        }
-    }
-
     AJS.$(document).keydown(function (e) {
         var keyCode = e.keyCode || e.which;
         if (e.ctrlKey && e.altKey && e.shiftKey) {

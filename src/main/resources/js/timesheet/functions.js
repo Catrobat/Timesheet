@@ -1,6 +1,5 @@
 "use strict";
 
-var selectedUser;
 var isMTSheetSelected;
 
 function isReadOnlyUser(userName, config) {
@@ -238,12 +237,6 @@ function calculateDuration(begin, end, pause) {
     return new Date(end - begin - (pauseDate.getHours() * 60 + pauseDate.getMinutes()) * 60 * 1000);
 }
 
-function countDefinedElementsInArray(array) {
-    return array.filter(function (v) {
-        return v !== undefined
-    }).length;
-}
-
 /**
  * Check if date is a valid Date
  * source: http://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript
@@ -301,22 +294,6 @@ function compareTime(time1, time2) {
         return -1;
     }
     return 0; // equal
-}
-
-function isInactiveCategorySelected(timesheetData, form) {
-    var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
-    var categoryIndex = form.categorySelect.val();
-    return indexOfInactive == categoryIndex;
-}
-
-function isDeactivatedCategorySelected(timesheetData, form) {
-    var indexOfDeactivated = getIDFromCategoryName("inactive & offline", timesheetData);
-    var categoryIndex = form.categorySelect.val();
-    return indexOfDeactivated == categoryIndex;
-}
-
-function isSystemCategorySelected(timesheetData, form) {
-    return isInactiveCategorySelected(timesheetData, form) || isDeactivatedCategorySelected(timesheetData, form);
 }
 
 function isPairProgrammingCategorySelected(timesheetData, form) {

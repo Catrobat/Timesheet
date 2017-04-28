@@ -1,5 +1,4 @@
 "use strict";
-var orig;
 
 function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
     var timesheetData = timesheetReply[0];
