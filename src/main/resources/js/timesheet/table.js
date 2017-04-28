@@ -33,19 +33,13 @@ function populateTable(timesheetDataReply) {
                 '<p> If you notice any uncommon plugin behaviour, or need support feel free to ' +
                 'contact one of the project "Coordinators", or an "Administrator".</p>'
             });
-        } else if (timesheetData.state == "AUTO_INACTIVE") {
+        } else if (timesheetData.state === "AUTO_INACTIVE") {
             require(['aui/banner'], function (banner) {
                 banner({
                     body: 'Your Timesheet is marked as <strong>' + timesheetData.state + '</strong>.'
                 });
             });
-        } else if (timesheetData.state != "ACTIVE") {
-            AJS.messages.warning({
-                title: 'Timesheet Warning.',
-                closeable: true,
-                body: '<p>Your Timesheet is marked as <em>' + timesheetData.state + '</em>.</p>'
-            });
-        } else if (!timesheetData.isEnabled) {
+        } else if (timesheetData.state === "DISABLED") {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
@@ -58,6 +52,12 @@ function populateTable(timesheetDataReply) {
                     body: 'Your Timesheet is marked as <strong>disabled</strong>.'
                 });
             });
+        } else if (timesheetData.state !== "ACTIVE") {
+          AJS.messages.warning({
+            title: 'Timesheet Warning.',
+            closeable: true,
+            body: '<p>Your Timesheet is marked as <em>' + timesheetData.state + '</em>.</p>'
+          });
         } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
 
             // FIXME: is this banner needed?
