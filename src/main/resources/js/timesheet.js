@@ -258,7 +258,6 @@ function updateTimesheetHours(existingTimesheetData) {
         timesheetID: existingTimesheetData.timesheetID,
         lectures: AJS.$("#timesheet-hours-lectures").val(),
         reason: AJS.$("#timesheet-substract-hours-text").val(),
-        ects: AJS.$("#timesheet-hours-ects").val(),
         targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
         targetHourTheory: toFixed(AJS.$("#timesheet-target-hours-theory").val(), 2),
         targetHours: AJS.$("#timesheet-hours-text").val(),
@@ -266,11 +265,6 @@ function updateTimesheetHours(existingTimesheetData) {
         - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
         targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
         latestEntryDate: existingTimesheetData.latestEntryDate,
-        isActive: existingTimesheetData.isActive,
-        isAutoInactive: existingTimesheetData.isAutoInactive,
-        isOffline: existingTimesheetData.isOffline,
-        isAutoOffline: existingTimesheetData.isAutoOffline,
-        isEnabled: existingTimesheetData.isEnabled,
         isMTSheet: existingTimesheetData.isMTSheet,
         state: existingTimesheetData.state
     };
