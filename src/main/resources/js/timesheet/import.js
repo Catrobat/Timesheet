@@ -120,8 +120,8 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
             var entry = parseEntryFromGoogleDocRow(row, timesheetData);
             if (entry == null) {
                 faultyRows.push(row);
-            } else if (entry === linesExceeded) {
-            	faultyRows.push(row + linesExceeded);
+            } else if (entry === columnsMissing) {
+            	faultyRows.push(row + columnsMissing);
             } else if (entry === 0) {
             	faultyRows.push(row + "<strong> (Date is empty)</strong>");
             } else if (entry === 1) {
@@ -145,7 +145,7 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
     return [entries, faultyRows];
 }
 
-var linesExceeded = "<strong> (More lines than allowed)</strong>";
+var columnsMissing = "<strong> (Less than 7 columns)</strong>";
 var wrongDateFormat = "<strong> (Wrong Dateformat)</strong>";
 var beginEndDateNotValid = "<strong> (Begin- or Enddate not valid)</strong>";
  
@@ -154,7 +154,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     
     //check if import entry length is valid
     if ((pieces.length < 7)) {
-        return linesExceeded;
+        return columnsMissing;
     }
     //if no pause is specified 0 minutes is given
     if (pieces[4] == "") {
