@@ -120,7 +120,24 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
             var entry = parseEntryFromGoogleDocRow(row, timesheetData);
             if (entry == null) {
                 faultyRows.push(row);
+            } else if (entry === linesExceeded) {
+            	faultyRows.push(row + linesExceeded);
+            } else if (entry === 0) {
+            	faultyRows.push(row + "<strong> (Date is empty)</strong>");
+            } else if (entry === 1) {
+            	faultyRows.push(row + "<strong> (Start is empty)</strong>");
+            } else if (entry === 2) {
+            	faultyRows.push(row + "<strong> (End is empty)</strong>");
+            } else if (entry === 3) {
+            	faultyRows.push(row + "<strong> (Duration is empty)</strong>");
+            } else if (entry === 6) {
+            	faultyRows.push(row + "<strong> (Task Description is empty)</strong>");
+            } else if (entry === wrongDateFormat) {
+            	faultyRows.push(row + wrongDateFormat);
+            } else if (entry === beginEndDateNotValid) {
+            	faultyRows.push(row + beginEndDateNotValid);
             } else {
+            
               entries.push(entry);
             }
         });
@@ -128,12 +145,16 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
     return [entries, faultyRows];
 }
 
+var linesExceeded = "<strong> (More lines than allowed)</strong>";
+var wrongDateFormat = "<strong> (Wrong Dateformat)</strong>";
+var beginEndDateNotValid = "<strong> (Begin- or Enddate not valid)</strong>";
+ 
 function parseEntryFromGoogleDocRow(row, timesheetData) {
-    var pieces = row.split("\t");
-
+    var pieces = row.split("\t");   
+    
     //check if import entry length is valid
     if ((pieces.length < 7)) {
-        return null;
+        return linesExceeded;
     }
     //if no pause is specified 0 minutes is given
     if (pieces[4] == "") {
@@ -152,7 +173,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
             categoryID = -2;
         }
         else if (pieces[i] == "") {
-            return null;
+            return i;
         }
     }
 
@@ -171,12 +192,12 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         beginDate = new Date(beginDateString);
         endDate = new Date(endDateString);
     } else {
-        return null;
+        return wrongDateFormat;
     }
 
     //check if entry values are correct
     if ((!isValidDate(beginDate)) || (!isValidDate(endDate))) {
-        return null;
+        return beginEndDateNotValid;
     }
 
     var firstTeamID = Object.keys(timesheetData.teams)[0];
