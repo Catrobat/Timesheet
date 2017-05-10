@@ -54,8 +54,7 @@ function appendEntriesToVisTable(timesheetData) {
 
             //date within the last six months
             if (compareToDate.getTime() >= sixMonthAgo.getTime()) {
-                timeLastSixMonthHours = timeLastSixMonthHours + hours;
-                timeLastSixMonthMinutes = timeLastSixMonthMinutes + minutes - pause;
+            	timeLastSixMonthMinutes = timeLastSixMonthMinutes + calculatedTime;               
 
                 if (timeLastSixMonthMinutes >= 60) {
                     var minutesToFullHours = Math.floor(timeLastSixMonthMinutes / 60); //get only full hours
