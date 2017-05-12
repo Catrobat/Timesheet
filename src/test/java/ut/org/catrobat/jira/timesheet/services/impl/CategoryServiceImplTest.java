@@ -31,6 +31,7 @@ public class CategoryServiceImplTest {
     private EntityManager entityManager;
 
     private int specialCategoryCount = SpecialCategories.AllSpecialCategories.size();
+    private int predefinedCategoryCount = SpecialCategories.PredefinedCategories.size();
 
     @Before
     public void setUp() throws Exception {
@@ -98,7 +99,7 @@ public class CategoryServiceImplTest {
     @Test
     public void testGetAllCategories() throws Exception {
         List<Category> receivedCategories = categoryService.all();
-        Assert.assertEquals(2+specialCategoryCount, receivedCategories.size());
+        Assert.assertEquals(2+specialCategoryCount+predefinedCategoryCount, receivedCategories.size());
     }
 
     @Test
@@ -135,11 +136,11 @@ public class CategoryServiceImplTest {
             em.migrate(Team.class);
 
             Category meeting = em.create(Category.class,
-                new DBParam("NAME", "Meeting")
+                new DBParam("NAME", "TestMeeting")
             );
 
             Category programming = em.create(Category.class,
-                new DBParam("NAME", "Programming")
+                new DBParam("NAME", "TestProgramming")
             );
 
             Team team = em.create(Team.class,

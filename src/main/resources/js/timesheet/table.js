@@ -660,13 +660,69 @@ function augmentEntry(timesheetData, entry) {
 
     // TODO: remove after GoogleDocsImport is Disabled
     var categoryName;
-    if (entry.categoryID === -1) {
-        categoryName = "Theory";
-    } else if (entry.categoryID === -2) {
-        categoryName = "GoogleDocsImport";
-    } else {
-        categoryName = timesheetData.categoryIDs[entry.categoryID].categoryName;
+    var catID = entry.categoryID;
+    switch (catID) {
+    case -1:
+    	categoryName = "Theory";
+    	break;
+    case -2:
+    	categoryName = "GoogleDocsImport";
+    	break;
+    case -3:
+    	categoryName = "Theory (MT)";
+		break;
+	case -4:
+		categoryName = "Meeting";
+		break;
+	case -5:
+		categoryName = "Pair programming";
+		break;
+	case -6:
+		categoryName = "Programming";
+		break;
+	case -7:
+		categoryName = "Research";
+		break;
+	case -8:
+		categoryName = "Planning Game";
+		break;
+	case -9:
+		categoryName = "Refactoring";
+		break;
+	case -10:
+		categoryName = "Refactoring (PP)";
+		break;
+	case -11:
+		categoryName = "Code Acceptance";
+		break;
+	case -12:
+		categoryName = "Organisational tasks";
+		break;
+	case -13:
+		categoryName = "Discussing issues/Supporting/Consulting";
+		break;
+	case -14:
+		categoryName = "Inactive";
+		break;
+	case -15:
+		categoryName = "Other";
+		break;
+	case -16:
+		categoryName = "Bug fixing (PP)";
+		break;
+	case -17:
+		categoryName = "Bug fixing";
+		break;
+    default:
+    	categoryName = timesheetData.categoryIDs[entry.categoryID].categoryName;
     }
+//    if (entry.categoryID === -1) {
+//        categoryName = "Theory";
+//    } else if (entry.categoryID === -2) {
+//        categoryName = "GoogleDocsImport";
+//    } else {
+//        categoryName = timesheetData.categoryIDs[entry.categoryID].categoryName;
+//    }
 
     var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
 

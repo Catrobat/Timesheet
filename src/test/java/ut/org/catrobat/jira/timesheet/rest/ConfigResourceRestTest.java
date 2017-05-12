@@ -218,7 +218,7 @@ public class ConfigResourceRestTest {
 
         when(permissionServiceMock.checkUserPermission()).thenReturn(response);
 
-        response = configResourceRest.removeCategory("Meeting", request);
+        response = configResourceRest.removeCategory("TestMeeting", request);
         assertNull(response.getEntity());
     }
 

@@ -526,11 +526,70 @@ public class TimesheetRest {
                 permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
-                if (entry.IsGoogleDocImport() && entry.getCategoryID() == -1) {
-                    category = categoryService.getCategoryByName(SpecialCategories.THEORY);
-                } else if (entry.IsGoogleDocImport() && entry.getCategoryID() == -2) {
-                    category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
-                }
+                
+                if (entry.IsGoogleDocImport()) {
+            		int categoryID = entry.getCategoryID();
+            		switch (categoryID) {
+            			case -1:
+            				category = categoryService.getCategoryByName(SpecialCategories.THEORY);
+            				break;
+            			case -3:
+            				category = categoryService.getCategoryByName(SpecialCategories.THEORY_MT);
+            				break;
+            			case -4:
+            				category = categoryService.getCategoryByName(SpecialCategories.MEETING);
+            				break;
+            			case -5:
+            				category = categoryService.getCategoryByName(SpecialCategories.PAIR_PROGRAMMING);
+            				break;
+            			case -6:
+            				category = categoryService.getCategoryByName(SpecialCategories.PROGRAMMING);
+            				break;
+            			case -7:
+            				category = categoryService.getCategoryByName(SpecialCategories.RESEARCH);
+            				break;
+            			case -8:
+            				category = categoryService.getCategoryByName(SpecialCategories.PLANNING_GAME);
+            				break;
+            			case -9:
+            				category = categoryService.getCategoryByName(SpecialCategories.REFACTORING);
+            				break;
+            			case -10:
+            				category = categoryService.getCategoryByName(SpecialCategories.REFACTORING_PP);
+            				break;
+            			case -11:
+            				category = categoryService.getCategoryByName(SpecialCategories.CODE_ACCEPTANCE);
+            				break;
+            			case -12:
+            				category = categoryService.getCategoryByName(SpecialCategories.ORGANISATIONAL_TASKS);
+            				break;
+            			case -13:
+            				category = categoryService.getCategoryByName(SpecialCategories.DISCUSSING_ISSUES_SUPPORTING_CONSULTING);
+            				break;
+            			case -14:
+            				category = categoryService.getCategoryByName(SpecialCategories.INACTIVE);
+            				break;
+            			case -15:
+            				category = categoryService.getCategoryByName(SpecialCategories.OTHER);
+            				break;
+            			case -16:
+            				category = categoryService.getCategoryByName(SpecialCategories.BUG_FIXING_PP);
+            				break;
+            			case -17:
+            				category = categoryService.getCategoryByName(SpecialCategories.BUG_FIXING);
+            				break;
+            			case -2:
+            			default:
+            				category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
+            		}
+            	}
+                
+                
+//                if (entry.IsGoogleDocImport() && entry.getCategoryID() == -1) {
+//                    category = categoryService.getCategoryByName(SpecialCategories.THEORY);
+//                } else if (entry.IsGoogleDocImport() && entry.getCategoryID() == -2) {
+//                    category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
+//                }
                 // Category cannot be associated with team, check null only
                 // teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
 

@@ -43,11 +43,11 @@ public class MySampleDatabaseUpdater implements DatabaseUpdater {
         );
 
         Category meetingCategory = em.create(Category.class,
-            new DBParam("NAME", "Meeting")
+            new DBParam("NAME", "TestMeeting")
         );
 
         Category programmingCategory = em.create(Category.class,
-            new DBParam("NAME", "Programming")
+            new DBParam("NAME", "TestProgramming")
         );
 
         CategoryToTeam catHasMee = em.create(CategoryToTeam.class,
