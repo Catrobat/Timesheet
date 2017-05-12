@@ -907,6 +907,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         	removeSavingAndDeletingErrorMessages();
             var augmentedEntry = augmentEntry(timesheetData, entryData);
             saveOptions.callback(augmentedEntry, timesheetData, form);
+            AJS.$(".description_").val("");
         },
         error: function (error) {
             console.log(error);
