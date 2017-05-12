@@ -62,14 +62,14 @@ public class ExportTimesheetAsCSVServletTest {
         when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
-        when(timesheet.getTargetHoursPractice()).thenReturn(50);
+        when(timesheet.getHoursPracticeCompleted()).thenReturn(50);
         when(timesheet.getTargetHoursTheory()).thenReturn(100);
         when(timesheet.getTargetHours()).thenReturn(300);
-        when(timesheet.getTargetHoursCompleted()).thenReturn(150);
+        when(timesheet.getHoursCompleted()).thenReturn(150);
         when(timesheet.getLatestEntryBeginDate()).thenReturn(new Date());
         when(timesheet.getLectures()).thenReturn("Mobile Computing");
         when(timesheet.getUserKey()).thenReturn(test_key);
-        when(timesheet.getTargetHoursRemoved()).thenReturn(0);
+        when(timesheet.getHoursDeducted()).thenReturn(0);
         when(timesheet.getReason()).thenReturn("Agathe Bauer");
         when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(timesheetService.getTimesheetByUser(user.getKey(), false)).thenReturn(timesheet);

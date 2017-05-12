@@ -52,12 +52,12 @@ public class CsvTimesheetExporter {
                 "isMTSheet" + NEW_LINE);
 
         sb.append(timesheet.getUserKey()).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHoursPractice())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getHoursPracticeCompleted())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHoursTheory())).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHoursCompleted())).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHoursRemoved())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getHoursCompleted())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getHoursDeducted())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHours())).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getTargetHoursCompleted())).append(DELIMITER);
+        sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getHoursCompleted())).append(DELIMITER);
         sb.append(timesheet.getReason()).append(DELIMITER);
         sb.append(timesheet.getLectures()).append(DELIMITER);
         sb.append(timesheet.getIsMasterThesisTimesheet()).append(NEW_LINE);

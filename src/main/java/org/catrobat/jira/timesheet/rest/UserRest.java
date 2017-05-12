@@ -135,7 +135,7 @@ public class UserRest {
                 Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
                 jsonUserInformation.setInactiveEndDate(inactiveEndDate);
             }
-            jsonUserInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());
+            jsonUserInformation.setTotalPracticeHours(timesheet.getHoursPracticeCompleted());
             TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
             if (latestEntry != null) {
                 jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
@@ -213,7 +213,7 @@ public class UserRest {
                     Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
                     jsonTeamInformation.setInactiveEndDate(inactiveEndDate);
                 }
-                jsonTeamInformation.setTotalPracticeHours(timesheet.getTargetHoursPractice());
+                jsonTeamInformation.setTotalPracticeHours(timesheet.getHoursPracticeCompleted());
                 TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
                 if (latestEntry != null) {
                     jsonTeamInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);

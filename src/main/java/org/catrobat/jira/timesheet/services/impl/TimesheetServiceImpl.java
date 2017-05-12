@@ -64,11 +64,11 @@ public class TimesheetServiceImpl implements TimesheetService {
                 Timesheet sheet = aFound;
 
                 sheet.setDisplayName(user.getDisplayName());
-                sheet.setTargetHoursPractice(targetHoursPractice);
+                sheet.setHoursPracticeCompleted(targetHoursPractice);
                 sheet.setTargetHoursTheory(targetHoursTheory);
                 sheet.setTargetHours(targetHours);
-                sheet.setTargetHoursCompleted(targetHoursCompleted);
-                sheet.setTargetHoursRemoved(targetHoursRemoved);
+                sheet.setHoursCompleted(targetHoursCompleted);
+                sheet.setHoursDeducted(targetHoursRemoved);
                 sheet.setLectures(lectures);
                 sheet.setReason(reason);
                 sheet.setLatestEntryBeginDate(latestEntryDate);
@@ -84,8 +84,8 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet updateTimesheet(int id, int targetHoursCompleted, int targetHoursPractice,  Date latestEntryDate, Timesheet.State state) {
         Timesheet timesheet = ao.get(Timesheet.class, id);
-        timesheet.setTargetHoursCompleted(targetHoursCompleted);
-        timesheet.setTargetHoursPractice(targetHoursPractice);
+        timesheet.setHoursCompleted(targetHoursCompleted);
+        timesheet.setHoursPracticeCompleted(targetHoursPractice);
         timesheet.setLatestEntryBeginDate(latestEntryDate);
         timesheet.setState(state);
         timesheet.save();
@@ -101,18 +101,18 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ? AND IS_MASTER_THESIS_TIMESHEET = ?", userKey, isMasterThesisTimesheet);
         if (found.length != 0) {
-            throw new ServiceException("A timesheet for user: " + userKey + " isMTSheet: " + isMasterThesisTimesheet + "already exists");
+            throw new ServiceException("A timesheet for user: " + userKey + " isMTSheet: " + isMasterThesisTimesheet + " already exists");
         }
 
         Timesheet sheet = ao.create(Timesheet.class,
             new DBParam("USER_KEY", userKey)
         );
         sheet.setDisplayName(displayName);
-        sheet.setTargetHoursPractice(targetHoursPractice);
+        sheet.setHoursPracticeCompleted(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);
         sheet.setTargetHours(targetHours);
-        sheet.setTargetHoursCompleted(targetHoursCompleted);
-        sheet.setTargetHoursRemoved(targetHoursRemoved);
+        sheet.setHoursCompleted(targetHoursCompleted);
+        sheet.setHoursDeducted(targetHoursRemoved);
         sheet.setLectures(lectures);
         sheet.setReason(reason);
         sheet.setLatestEntryBeginDate(new Date());

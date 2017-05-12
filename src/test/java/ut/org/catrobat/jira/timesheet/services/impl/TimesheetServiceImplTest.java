@@ -56,10 +56,10 @@ public class TimesheetServiceImplTest {
         //Assert
         assertEquals(1, timesheet.length);
         assertEquals(userKey, timesheet[0].getUserKey());
-        assertEquals(targetHoursPractice, timesheet[0].getTargetHoursPractice());
+        assertEquals(targetHoursPractice, timesheet[0].getHoursPracticeCompleted());
         assertEquals(targetHoursTheory, timesheet[0].getTargetHoursTheory());
         assertEquals(targetHours, timesheet[0].getTargetHours());
-        assertEquals(targetHoursCompleted, timesheet[0].getTargetHoursCompleted());
+        assertEquals(targetHoursCompleted, timesheet[0].getHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
         assertTrue(latestEntryDate.getTime() - timesheet[0].getLatestEntryBeginDate().getTime() < 1000);
         assertEquals(Timesheet.State.ACTIVE, timesheet[0].getState());
@@ -71,8 +71,7 @@ public class TimesheetServiceImplTest {
         Timesheet sheet = ao.create(Timesheet.class,
             new DBParam("USER_KEY", "USER_001")
         );
-        sheet.setUserKey(userKey);
-        sheet.setTargetHoursPractice(targetHoursPractice);
+        sheet.setHoursPracticeCompleted(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);
         sheet.setTargetHoursTheory(targetHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
@@ -94,7 +93,7 @@ public class TimesheetServiceImplTest {
         Timesheet sheet = ao.create(Timesheet.class,
             new DBParam("USER_KEY", userKey)
         );
-        sheet.setTargetHoursPractice(targetHoursPractice);
+        sheet.setHoursPracticeCompleted(targetHoursPractice);
         sheet.setTargetHoursTheory(targetHoursTheory);
         sheet.setTargetHoursTheory(targetHours);
         sheet.setTargetHoursTheory(targetHoursCompleted);
@@ -155,9 +154,9 @@ public class TimesheetServiceImplTest {
 
         //Act
         final int newPracticalHours = 300;
-        refSheet.setTargetHoursPractice(newPracticalHours);
+        refSheet.setHoursPracticeCompleted(newPracticalHours);
         //Assert
-        assertTrue(refSheet.getTargetHoursPractice() == 300);
+        assertTrue(refSheet.getHoursPracticeCompleted() == 300);
     }
 
     @Test
@@ -171,8 +170,8 @@ public class TimesheetServiceImplTest {
         Date latestEntryDateOld = new Date(100);
         Timesheet.State stateOld = Timesheet.State.AUTO_INACTIVE;
 
-        timesheet.setTargetHoursCompleted(targetHoursCompletedOld);
-        timesheet.setTargetHoursPractice(targetHoursPracticeOld);
+        timesheet.setHoursCompleted(targetHoursCompletedOld);
+        timesheet.setHoursPracticeCompleted(targetHoursPracticeOld);
         timesheet.setLatestEntryBeginDate(latestEntryDateOld);
         timesheet.setState(stateOld);
         timesheet.save();
@@ -185,8 +184,8 @@ public class TimesheetServiceImplTest {
         Timesheet updatedTimesheet = service.updateTimesheet(timesheet.getID(), targetHoursCompletedNew,
                 targetHoursPracticeNew, latestEntryDateNew, stateNew);
 
-        assertEquals(targetHoursCompletedNew, updatedTimesheet.getTargetHoursCompleted());
-        assertEquals(targetHoursPracticeNew, updatedTimesheet.getTargetHoursPractice());
+        assertEquals(targetHoursCompletedNew, updatedTimesheet.getHoursCompleted());
+        assertEquals(targetHoursPracticeNew, updatedTimesheet.getHoursPracticeCompleted());
         assertEquals(latestEntryDateNew, updatedTimesheet.getLatestEntryBeginDate());
         assertEquals(stateNew, updatedTimesheet.getState());
     }

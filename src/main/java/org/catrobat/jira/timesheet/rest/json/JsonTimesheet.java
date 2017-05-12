@@ -75,11 +75,11 @@ public final class JsonTimesheet {
         this.lectures = timesheet.getLectures();
         this.reason = timesheet.getReason();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
-        this.targetHourPractice = timesheet.getTargetHoursPractice();
+        this.targetHourPractice = timesheet.getHoursPracticeCompleted();
         this.targetHourTheory = timesheet.getTargetHoursTheory();
         this.targetHours = timesheet.getTargetHours();
-        this.targetHoursCompleted = timesheet.getTargetHoursCompleted();
-        this.targetHoursRemoved = timesheet.getTargetHoursRemoved();
+        this.targetHoursCompleted = timesheet.getHoursCompleted();
+        this.targetHoursRemoved = timesheet.getHoursDeducted();
         this.isMTSheet = timesheet.getIsMasterThesisTimesheet();
         this.state = timesheet.getState();
         this.displayName = timesheet.getDisplayName();

@@ -120,11 +120,11 @@ public class TimesheetRestTest {
         when(sheet.getLectures()).thenReturn("Mobile Computing");
         Date latestEntryDate = new Date();
         when(sheet.getLatestEntryBeginDate()).thenReturn(latestEntryDate);
-        when(sheet.getTargetHoursPractice()).thenReturn(50);
+        when(sheet.getHoursPracticeCompleted()).thenReturn(50);
         when(sheet.getTargetHoursTheory()).thenReturn(50);
         when(sheet.getTargetHours()).thenReturn(150);
-        when(sheet.getTargetHoursCompleted()).thenReturn(50);
-        when(sheet.getTargetHoursRemoved()).thenReturn(0);
+        when(sheet.getHoursCompleted()).thenReturn(50);
+        when(sheet.getHoursDeducted()).thenReturn(0);
         when(sheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(sheet.getState()).thenReturn(Timesheet.State.ACTIVE);
         return sheet;
@@ -580,7 +580,7 @@ public class TimesheetRestTest {
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
 
         when(timesheetMock.getTargetHours()).thenReturn(100);
-        when(timesheetMock.getTargetHoursCompleted()).thenReturn(50);
+        when(timesheetMock.getHoursCompleted()).thenReturn(50);
 
         when(userMock.getEmailAddress()).thenReturn("test@test.at");
         when(ComponentAccessor.getMailQueue()).thenReturn(mailQueueMock);

@@ -127,6 +127,11 @@ public class ConfigServiceImpl implements ConfigService {
 
         for (String categoryName : categoryList) {
             Category category = cs.getCategoryByName(categoryName);
+            if (category == null) {
+                category = ao.create(Category.class,
+                    new DBParam("NAME", categoryName)
+                );
+            }
             ao.create(CategoryToTeam.class,
                 new DBParam("TEAM_ID", team),
                 new DBParam("CATEGORY_ID", category)
@@ -144,12 +149,12 @@ public class ConfigServiceImpl implements ConfigService {
 
             Group group;
             if (groupArray.length == 0) {
-                group = ao.create(Group.class);
+                group = ao.create(Group.class,
+                    new DBParam("GROUP_NAME", groupName)
+                );
             } else {
                 group = groupArray[0];
             }
-            group.setGroupName(groupName);
-            group.save();
 
             ao.create(TeamToGroup.class,
                 new DBParam("GROUP_ID", group),

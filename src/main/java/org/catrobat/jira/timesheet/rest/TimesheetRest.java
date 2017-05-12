@@ -356,7 +356,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
-        int completeTime = sheet.getTargetHoursCompleted();
+        int completeTime = sheet.getHoursCompleted();
         int targetTime = sheet.getTargetHours();
 
         // FIXME: i dont think here is the right place for that check
@@ -760,9 +760,9 @@ public class TimesheetRest {
             if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
                 try {
                     sheetService.editTimesheet(ComponentAccessor.
-                                    getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
-                            sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                            sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
+                                    getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
+                            sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getHoursCompleted(),
+                            sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                             entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isMTSheet, state);
                 } catch (ServiceException e) {
                     return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -771,9 +771,9 @@ public class TimesheetRest {
         } else {
             try {
                 sheetService.editTimesheet(ComponentAccessor.
-                                getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getTargetHoursPractice(),
-                        sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getTargetHoursCompleted(),
-                        sheet.getTargetHoursRemoved(), sheet.getLectures(), sheet.getReason(),
+                                getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
+                        sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getHoursCompleted(),
+                        sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                         new Date(), isMTSheet, sheet.getState());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();

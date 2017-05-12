@@ -134,18 +134,12 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
 
             for (JsonTimesheetEntry entry : timesheetEntryList) {
                 try {
-                    System.out.println("Entry cat: " + entry.getCategoryName());
-                    System.out.println("Entry team: " + entry.getTeamName());
                     Category category = categoryService.getCategoryByName(entry.getCategoryName());
                     if (category == null) {
                         System.out.println("Category in import does not exist, need to set Default Category");
                         category = categoryService.getCategoryByName(SpecialCategories.DEFAULT);
                     }
                     Team team = teamService.getTeamByName(entry.getTeamName());
-                    List<Team> teams = teamService.all();
-                    for(Team t : teams) {
-                        System.out.println(t.getTeamName());
-                    }
                     if (team == null) {
                         importResult = Result.Errors;
                         System.out.println("Team given in import does not exist");
@@ -174,6 +168,10 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             }
         }
         Map<String, Object> params = new HashMap<>();
+        if (!errorString.toString().isEmpty()) {
+            System.out.println(errorString); // TODO: view errors after import
+            importResult = Result.Errors;
+        }
 
         params.put("status", importResult);
         params.put("error_teams", gson.toJson(faulty_teams));
