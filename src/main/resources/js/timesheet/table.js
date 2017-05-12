@@ -391,7 +391,7 @@ function prepareForm(entry, timesheetData, isModified) {
             data.sections[0].issues.forEach(function (issue) {
                 tickets.push(issue.key + " : " + issue.summary);
             });
-            var reg = /\d/g;
+            var reg = /\d+/g;
             var number = data.sections[0].sub;
             if (number) {
                 text = number.match(reg)[0] + " issues";
