@@ -146,6 +146,8 @@ function addNewEntryCallback(entry, timesheetData, form) {
 
     form.categorySelect.trigger("change"); // this is needed for the sparkling effect
 
+    replaceJiraTicketLinks();
+
     var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
     var indexOfDeactivated = getIDFromCategoryName("inactive & offline", timesheetData);
     var categoryIndex = form.categorySelect.val();
