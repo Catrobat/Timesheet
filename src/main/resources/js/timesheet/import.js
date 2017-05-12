@@ -39,7 +39,7 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
 	        title: 'There was an error during your Google Timesheet import.',
 	        body: '<p>' + errorString + '</p>'
       });
-      
+      closeImportDialog();
       return;
     }
     
@@ -106,7 +106,15 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
             var parsed = JSON.parse(error.responseText);
             timesheetData.entries = parsed.correct;
             appendEntriesToTable(timesheetData);
+        })
+        .always(function() {
+            closeImportDialog();
         });
+}
+
+function closeImportDialog() {
+    var importDialog = AJS.$(".import-dialog");
+    AJS.dialog2(importDialog).hide();
 }
 
 function removeErrorMessages(messageVariable) {
