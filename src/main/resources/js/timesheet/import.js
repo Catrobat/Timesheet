@@ -43,14 +43,14 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
       return;
     }
     
-    if (trimmedRows > 0) {
-		var errorString = "The following rows have been imported corretly.<br>" +
+    if (trimmedRows.length > 0) {
+		var errorString = "The following rows have been imported correctly.<br>" +
 				"HOWEVER: Their Task Descriptions have been trimmed to 255 characters! <br>";
-		for (var i = 0; i < faultyRows.length; i++) {
-		    errorString += faultyRows[i] + "<br>";
+		for (var i = 0; i < trimmedRows.length; i++) {
+		    errorString += trimmedRows[i] + "<br>";
 		}
 		
-		AJS.messages.success({
+		AJS.messages.warning({
 			title: 'Just for your information.',
 			body: '<p>' + errorString + '</p>',
             fadeout: true,
@@ -131,7 +131,6 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
     var entries = [];
     var faultyRows = [];
     var trimmedTaskDescriptionRows = [];
-    var trimmedTaskDescriptionRowsToDisplay = [];
 
     googleDocContent
         .split("\n")
