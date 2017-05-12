@@ -34,7 +34,7 @@
         </ol>
       </li>
       <li>Select the rows you want to import, but ensure your <code>Task Description</code> does not
-        exceed 160 characters.
+        exceed 254 characters.
       </li>
       <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
       <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
