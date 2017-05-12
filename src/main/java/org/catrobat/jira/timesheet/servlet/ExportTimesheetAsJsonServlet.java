@@ -61,7 +61,7 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
                 actualDate.toString().substring(25,28) +
                 "-" +
                 loggedInUser.getUsername() +
-                "_Timesheet_Timesheet.json\"";
+                "_Timesheet.json\"";
 
         String id = request.getParameter("id");
 

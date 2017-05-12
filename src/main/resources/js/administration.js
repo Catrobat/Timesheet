@@ -862,7 +862,7 @@ AJS.toInit(function () {
             dialog.remove();
         });
 
-        dialog.addButton("Confirm", function () {
+        dialog.addButton("OK", function () {
             resetTimesheets();
             dialog.remove();
         });

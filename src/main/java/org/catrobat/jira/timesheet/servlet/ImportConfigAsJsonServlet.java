@@ -144,13 +144,13 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
     }
 
     private void dropEntries() {
-        activeObjects.deleteWithSQL(TimesheetEntry.class, "1=?", "1");
-        activeObjects.deleteWithSQL(TimesheetAdmin.class, "1=?", "1");
-        activeObjects.deleteWithSQL(CategoryToTeam.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Category.class, "1=?", "1");
-        activeObjects.deleteWithSQL(TeamToGroup.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Team.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Group.class, "1=?", "1");
-        activeObjects.deleteWithSQL(Config.class, "1=?", "1");
+        activeObjects.deleteWithSQL(TimesheetEntry.class, "1=?", 1);
+        activeObjects.deleteWithSQL(TimesheetAdmin.class, "1=?", 1);
+        activeObjects.deleteWithSQL(CategoryToTeam.class, "1=?", 1);
+        activeObjects.deleteWithSQL(Category.class, "1=?", 1);
+        activeObjects.deleteWithSQL(TeamToGroup.class, "1=?", 1);
+        activeObjects.deleteWithSQL(Team.class, "1=?", 1);
+        activeObjects.deleteWithSQL(Group.class, "1=?", 1);
+        activeObjects.deleteWithSQL(Config.class, "1=?", 1);
     }
 }

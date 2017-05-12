@@ -188,13 +188,13 @@ public class TeamServiceImplTest {
                 new DBParam("TEAM_NAME", "Empty")
             );
 
-            developer1 = em.create(Group.class);
-            developer1.setGroupName("Developer1");
-            developer1.save();
+            developer1 = em.create(Group.class,
+                new DBParam("GROUP_NAME", "Developer1")
+            );
 
-            coordinator1 = em.create(Group.class);
-            coordinator1.setGroupName("Coordinator1");
-            coordinator1.save();
+            coordinator1 = em.create(Group.class,
+                new DBParam("GROUP_NAME", "Coordinator1")
+            );
 
             TeamToGroup dev1ToDrone = em.create(TeamToGroup.class,
                 new DBParam("GROUP_ID", developer1),

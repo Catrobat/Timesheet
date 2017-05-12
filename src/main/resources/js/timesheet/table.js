@@ -146,6 +146,8 @@ function addNewEntryCallback(entry, timesheetData, form) {
 
     form.categorySelect.trigger("change"); // this is needed for the sparkling effect
 
+    replaceJiraTicketLinks();
+
     var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
     var indexOfDeactivated = getIDFromCategoryName("inactive & offline", timesheetData);
     var categoryIndex = form.categorySelect.val();
@@ -389,7 +391,7 @@ function prepareForm(entry, timesheetData, isModified) {
             data.sections[0].issues.forEach(function (issue) {
                 tickets.push(issue.key + " : " + issue.summary);
             });
-            var reg = /\d/g;
+            var reg = /\d+/g;
             var number = data.sections[0].sub;
             if (number) {
                 text = number.match(reg)[0] + " issues";
@@ -594,7 +596,7 @@ function showEntryDeletionDialog(viewRow, entryID) {
     dialog.remove();
   });
 
-  dialog.addButton("Confirm", function () {
+  dialog.addButton("OK", function () {
     deleteEntryClicked(viewRow, entryID);
     dialog.remove();
   });

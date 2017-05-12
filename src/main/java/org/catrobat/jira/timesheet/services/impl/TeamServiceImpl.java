@@ -251,9 +251,9 @@ public class TeamServiceImpl implements TeamService {
 
             Group group;
             if (groups.length == 0) {
-                group = ao.create(Group.class);
-                group.setGroupName(userName);
-                group.save();
+                group = ao.create(Group.class,
+                    new DBParam("GROUP_NAME", userName)
+                );
             } else {
                 group = groups[0];
             }

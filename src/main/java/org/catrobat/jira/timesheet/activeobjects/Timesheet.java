@@ -23,8 +23,6 @@ import net.java.ao.schema.Table;
 
 import java.util.Date;
 
-// This is only needed for the test server because of data model update
-@Table("TimesheetModel4")
 public interface Timesheet extends Entity {
 
     @NotNull
@@ -34,8 +32,11 @@ public interface Timesheet extends Entity {
     String getDisplayName();
     void setDisplayName(String name);
 
-    int getTargetHoursPractice();
-    void setTargetHoursPractice(int hours);
+    int getHoursPracticeCompleted();
+    void setHoursPracticeCompleted(int hours);
+
+    int getHoursCompleted();
+    void setHoursCompleted(int hours);
 
     int getTargetHoursTheory();
     void setTargetHoursTheory(int hours);
@@ -43,11 +44,8 @@ public interface Timesheet extends Entity {
     int getTargetHours();
     void setTargetHours(int hours);
 
-    int getTargetHoursCompleted();
-    void setTargetHoursCompleted(int hours);
-
-    int getTargetHoursRemoved();
-    void setTargetHoursRemoved(int hours);
+    int getHoursDeducted();
+    void setHoursDeducted(int hours);
 
     String getLectures();
     void setLectures(String lectures);
@@ -70,5 +68,4 @@ public interface Timesheet extends Entity {
 
     @OneToMany(reverse = "getTimeSheet")
     TimesheetEntry[] getEntries();
-
 }
