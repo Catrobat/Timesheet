@@ -82,6 +82,9 @@
 #timesheet-table .description_ {
     min-width: 300px;
     width: 300px;
+    word-wrap: break-word;
+    word-break: break-all;
+    hyphens: auto;
 }
 
 #timesheet-table button {
