@@ -192,8 +192,8 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     for (var i = 0; i <= 7; i++) {
         //Category is allowed to be empty
     	
-    	if (i == 5) {
-    		var categoryColumn = pieces[i].toLowerCase();
+    	if (i === 5) {
+    		var categoryColumn = pieces[i];
     		switch (categoryColumn) {
     			case "j":
     				pieces[i] = "Theory";
