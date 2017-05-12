@@ -596,7 +596,7 @@ function showEntryDeletionDialog(viewRow, entryID) {
     dialog.remove();
   });
 
-  dialog.addButton("Confirm", function () {
+  dialog.addButton("OK", function () {
     deleteEntryClicked(viewRow, entryID);
     dialog.remove();
   });
