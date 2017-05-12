@@ -49,6 +49,14 @@ public class CategoryServiceImpl implements CategoryService {
                 );
             }
         }
+        for (String special : SpecialCategories.PredefinedCategories) {
+            Category[] found = ao.find(Category.class, "NAME = ?", special);
+            if (found.length == 0) {
+                ao.create(Category.class,
+                    new DBParam("NAME", special)
+                );
+            }
+        }
         isInitialised = true;
     }
 

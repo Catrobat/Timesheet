@@ -23,22 +23,40 @@ function prepareImportDialog(timesheetDataReply) {
 }
 
 function importGoogleDocsTable(table, timesheetData, importDialog) {
-    var entriesAndFaultyRows = parseEntriesFromGoogleDocTimesheet(table, timesheetData);
-    var entries = entriesAndFaultyRows[0];
-    var faultyRows = entriesAndFaultyRows[1];
+    var entriesAndFaultyRowsAndTrimmedRows = parseEntriesFromGoogleDocTimesheet(table, timesheetData);
+    var entries = entriesAndFaultyRowsAndTrimmedRows[0];
+    var faultyRows = entriesAndFaultyRowsAndTrimmedRows[1];
+    var trimmedRows = entriesAndFaultyRowsAndTrimmedRows[2]; 
 
     if (faultyRows.length > 0) {
         var errorString = "Reason - The following rows are not formatted correctly: <br>";
         for (var i = 0; i < faultyRows.length; i++) {
             errorString += faultyRows[i] + "<br>";
         }
-      removeErrorMessages();
-      errorMessageObjectTwo = AJS.messages.error({
-        title: 'There was an error during your Google Timesheet import.',
-        body: '<p>' + errorString + '</p>'
+		removeErrorMessages(errorMessageObjectOne);
+		removeErrorMessages(errorMessageObjectTwo);
+		errorMessageObjectTwo = AJS.messages.error({
+	        title: 'There was an error during your Google Timesheet import.',
+	        body: '<p>' + errorString + '</p>'
       });
       
       return;
+    }
+    
+    if (trimmedRows.length > 0) {
+		var errorString = "The following rows have been imported correctly.<br>" +
+				"HOWEVER: Their Task Descriptions have been trimmed to 255 characters! <br>";
+		for (var i = 0; i < trimmedRows.length; i++) {
+		    errorString += trimmedRows[i] + "<br>";
+		}
+		
+		AJS.messages.warning({
+			title: 'Just for your information.',
+			body: '<p>' + errorString + '</p>',
+            fadeout: true,
+            delay: 5000,
+            duration: 5000
+		});
     }
 
     var url = restBaseUrl + "timesheets/" + timesheetID + "/entries/" + isMasterThesisTimesheet;
@@ -53,7 +71,8 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
     })
         .then(function (response) {
             showImportMessage(response);
-            removeErrorMessages();
+            removeErrorMessages(errorMessageObjectOne);
+            removeErrorMessages(errorMessageObjectTwo);
             AJS.dialog2(importDialog).hide();
             timesheetData.entries = response;
             appendEntriesToTable(timesheetData);
@@ -77,7 +96,8 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
                     }
                 }
             }
-            removeErrorMessages();
+            removeErrorMessages(errorMessageObjectOne);
+            removeErrorMessages(errorMessageObjectTwo);
         	errorMessageObjectOne = AJS.messages.error({
                 title: 'There was an error during your Google Timesheet import.',
                 body: '<p>Reason: ' + response_string + '</p>'
@@ -89,11 +109,9 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
         });
 }
 
-function removeErrorMessages() {
-	if(errorMessageObjectTwo)
-		errorMessageObjectTwo.closeMessage();
-	if(errorMessageObjectOne)
-		errorMessageObjectOne.closeMessage();
+function removeErrorMessages(messageVariable) {
+	if(messageVariable)
+		messageVariable.closeMessage();
 }
 
 function showImportMessage(response) {
@@ -112,6 +130,7 @@ function showImportMessage(response) {
 function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
     var entries = [];
     var faultyRows = [];
+    var trimmedTaskDescriptionRows = [];
 
     googleDocContent
         .split("\n")
@@ -139,9 +158,17 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
             } else {
               entries.push(entry);
             }
+            
+            var pieces = row.split("\t");
+            if (pieces.length === 7){
+            	var taskDescription = pieces[6];
+            	if (taskDescription.length > 255) {
+            		trimmedTaskDescriptionRows.push("<span style=\"color:#BDBDBD\">" + row + "</span>");
+            	}
+            }
         });
 
-    return [entries, faultyRows];
+    return [entries, faultyRows, trimmedTaskDescriptionRows];
 }
 
 var columnsMissing = "<strong> (Less than 7 columns)</strong>";
@@ -152,7 +179,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     var pieces = row.split("\t");
 
     //check if import entry length is valid
-    if ((pieces.length < 7)) {
+    if (pieces.length < 7) {
         return columnsMissing;
     }
     //if no pause is specified 0 minutes is given
@@ -163,17 +190,96 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     var categoryID = 0;
     for (var i = 0; i <= 7; i++) {
         //Category is allowed to be empty
-        if (i == 5 && pieces[i].toLowerCase() == "j") {
-            pieces[i] = "Theory";
-            categoryID = -1;
-        }
-        else if (i == 5 && pieces[i] == "") {
-            pieces[i] = "GoogleDocsImport";
-            categoryID = -2;
-        }
-        else if (pieces[i] == "") {
+    	
+    	if (i === 5) {
+    		var categoryColumn = pieces[i];
+    		switch (categoryColumn) {
+    			case "j":
+    				pieces[i] = "Theory";
+    				categoryID = -1;
+    				break;
+    			case "Theory (MT)":
+    				pieces[i] = "Theory (MT)";
+    				categoryID = -3;
+    				break;
+    			case "Meeting":
+    				pieces[i] = "Meeting";
+    				categoryID = -4;
+    				break;
+    			case "Pair programming":
+    				pieces[i] = "Pair Programming";
+    				categoryID = -5;
+    				break;
+    			case "Programming":
+    				pieces[i] = "Programming";
+    				categoryID = -6;
+    				break;
+    			case "Research":
+    				pieces[i] = "Research";
+    				categoryID = -7;
+    				break;
+    			case "Planning Game":
+    				pieces[i] = "Planning Game";
+    				categoryID = -8;
+    				break;
+    			case "Refactoring":
+    				pieces[i] = "Refactoring";
+    				categoryID = -9;
+    				break;
+    			case "Refactoring (PP)":
+    				pieces[i] = "Refactoring (PP)";
+    				categoryID = -10;
+    				break;
+    			case "Code Acceptance":
+    				pieces[i] = "Code Acceptance";
+    				categoryID = -11;
+    				break;
+    			case "Organisational tasks":
+    				pieces[i] = "Organisational tasks";
+    				categoryID = -12;
+    				break;
+    			case "Discussing issues/Supporting/Consulting":
+    				pieces[i] = "Discussing issues/Supporting/Consulting";
+    				categoryID = -13;
+    				break;
+    			case "Inactive":
+    				pieces[i] = "Inactive";
+    				categoryID = -14;
+    				break;
+    			case "Other":
+    				pieces[i] = "Other";
+    				categoryID = -15;
+    				break;
+    			case "Bug fixing (PP)":
+    				pieces[i] = "Bug fixing (PP)";
+    				categoryID = -16;
+    				break;
+    			case "Bug fixing":
+    				pieces[i] = "Bug fixing";
+    				categoryID = -17;
+    				break;
+    				
+    			case "":
+    			default:
+    				pieces[i] = "GoogleDocsImport";
+    				categoryID = -2;
+    		}
+    	}
+    	else if (pieces[i] == "") {
             return i;
         }
+    	
+//        if (i == 5 && pieces[i].toLowerCase() == "j") {
+//            pieces[i] = "Theory";
+//            categoryID = -1;
+//        }
+//        else if (i == 5 && pieces[i] == "") {
+//            pieces[i] = "GoogleDocsImport";
+//            categoryID = -2;
+//        }
+//        else if (pieces[i] == "") {
+//            return i;
+//        }
     }
 
     var beginDateString = pieces[0] + " " + pieces[1];
@@ -204,9 +310,19 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     if (beginDate > endDate) {
         endDate.setDate(endDate.getDate() + 1)
     }
+    
+    var taskDescription;
+    if (pieces[6].length > 255) {
+    	taskDescription = pieces[6].substring(0, 254);
+    	
+    }
+    else {
+    	taskDescription = pieces[6];
+    }
+    	
 
     return {
-        description: pieces[6],
+        description: taskDescription,
         pauseMinutes: getMinutesFromTimeString(pieces[4]),
         beginDate: beginDate,
         endDate: endDate,

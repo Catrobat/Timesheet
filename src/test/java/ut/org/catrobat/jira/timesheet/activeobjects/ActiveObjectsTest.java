@@ -65,7 +65,7 @@ public class ActiveObjectsTest {
 
         Category meetingCategory = entry1.getCategory();
 
-        assertEquals(meetingCategory.getName(), "Meeting");
+        assertEquals(meetingCategory.getName(), "TestMeeting");
 
         Team[] projectsOfMeeting = meetingCategory.getTeams();
 
