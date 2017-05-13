@@ -15,6 +15,10 @@
         <code>Pause</code>, <code>Category</code>, <code>Description</code>
       </li>
       <li>
+        Make sure the entries have a header row that start with <strong>Datum</strong>
+        and a footer row that starts with <strong>BEGINN</strong>.
+      </li>
+      <li>
         Make sure the values in column <code>Date</code> is formatted this way: <code>YYYY-MM-DD</code>
         (e.g. <code>2015-09-21</code>). You can achieve this by
         <ol>
@@ -37,20 +41,27 @@
         exceed 254 characters.
       </li>
       <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
-      <li>Copy records by clicking on <strong>Edit</strong> > <strong>Copy</strong></li>
-      <li>Paste content in the text box below</li>
+      <li>Download Timesheet as TSV by clicking <strong>File</strong> > <strong>Download as</strong> >
+        <strong>Tab-separated values (.tsv, current sheet)</strong></li>
+      <li>Upload file and wait for the import dialog to close itself (it might take some seconds).</li>
     </ol>
     <i>(tested with Google Chrome)</i></br>
     <strong>Example:</strong></br>
 
-    <pre>2017-03-24	11:30	18:15	06:45			Fixed stuff
-2017-03-23	12:00	13:15	01:15			Did some stuff</pre>
+    <pre>
+    ignored rows
+    Datum	Von	Bis	Dauer in h	Pause	Theorie? Ja => j	Tätigkeit
+    2017-03-24	11:30	18:15	06:45			Fixed stuff
+    2017-03-23	12:00	13:15	01:15			Did some stuff
+    BEGINN
+    ignored rows
+    </pre>
 
-    <form class="aui import-form" id="timesheet-textarea">
-      <!--<input type="text" name="import-text" class="text" />-->
-      <textarea name="import-text" class="import-text" id="import-text"></textarea>
+    <form class="aui" method="POST" enctype="multipart/form-data" id="upload-form">
+      <div class="field-group">
+        <input class="upfile" type="file" name="upload-field" id="upload-field"/>
+      </div>
     </form>
-    <button onclick="clearContent();">Clear Text Box</button>
 
     <footer class="aui-dialog2-footer">
       <div class="aui-dialog2-footer-actions">

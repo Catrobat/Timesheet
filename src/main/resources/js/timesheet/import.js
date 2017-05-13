@@ -17,9 +17,58 @@ function prepareImportDialog(timesheetDataReply) {
     autosize(importTextarea);
 
     startImportButton.click(function () {
-        importGoogleDocsTable(importTextarea.val(), timesheetData, importDialog);
-    });
+        uploadFile(function (e) {
+          var timesheet = e.target.result;
+          var entryRows = "";
+          var start = false;
+          var end = false;
+          timesheet.split("\n").forEach(function (line) {
+            if (line.startsWith("BEGINN")) {
+              end = true;
+            }
+            if (start && !end) {
+              entryRows += line + "\n";
+            }
+            if (line.startsWith("Datum")) {
+              start = true;
+            }
+          });
 
+          importGoogleDocsTable(entryRows, timesheetData, importDialog);
+        });
+    });
+}
+
+function readFile(file, callback) {
+  var reader = new FileReader();
+
+  reader.onload = callback;
+
+  reader.readAsText(file.files[0]);
+}
+
+function uploadFile(callback) {
+  var file = document.getElementById("upload-field");
+  var filename = file.value;
+  if (filename === "") {
+    AJS.messages.error({
+      title: "Error !",
+      body: "Select a Timesheet file to proceed!"
+    });
+    closeImportDialog();
+  }
+  else {
+    if (!filename.toLowerCase().includes(".tsv")) {
+      AJS.messages.error({
+        title: "Error !",
+        body: "The data type of the file must be .tsv!"
+      });
+      closeImportDialog();
+    }
+    else {
+      readFile(file, callback);
+    }
+  }
 }
 
 function importGoogleDocsTable(table, timesheetData, importDialog) {
@@ -52,10 +101,7 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
 		
 		AJS.messages.warning({
 			title: 'Just for your information.',
-			body: '<p>' + errorString + '</p>',
-            fadeout: true,
-            delay: 5000,
-            duration: 5000
+			body: '<p>' + errorString + '</p>'
 		});
     }
 
