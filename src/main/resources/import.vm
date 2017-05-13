@@ -10,44 +10,52 @@
   <div class="aui-dialog2-content">
     <ol>
       <li>
-        Make sure the columns of your Google Doc Timesheet are in the following order:
-        <code>Date</code>, <code>From</code>, <code>To</code>, <code>Duration in h</code>,
-        <code>Pause</code>, <code>Category</code>, <code>Description</code>
+        Verify that the timesheet format is correct. Make sure that
+        <ul>
+          <li>
+            columns of your Google Doc Timesheet are in the following order:
+            <code>Date</code>, <code>From</code>, <code>To</code>, <code>Duration in h</code>,
+            <code>Pause</code>, <code>Category</code>, <code>Description</code>
+          </li>
+          <li>
+            no entry has missing values (i.e. the end date of the current entry).
+          </li>
+          <li>
+            the entries have a header row that start with <strong>Datum</strong>
+            and a footer row that starts with <strong>BEGINN</strong>.
+          </li>
+          <li>
+            the values in column <code>Date</code> is formatted this way: <code>YYYY-MM-DD</code> or: <code>DD.MM.YYYY</code>
+            (e.g. <code>2015-09-21</code>). You can achieve this by
+            <ol>
+              <li>Select Fields in column <code>Date</code></li>
+              <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
+                Formats</strong> > <strong>Number Format</strong></li>
+              <li>Paste <code>yyyy"-"mm"-"dd</code> and confirm</li>
+            </ol>
+          </li>
+          <li>
+            the values in column <code>From</code> and <code>To</code> are formatted this way:
+            <code>HH:MM</code> (e.g. <code>12:00</code>). You can achieve this by
+            <ol>
+              <li>Select Fields in column <code>From/To</code></li>
+              <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
+                Formats</strong> > <strong>Number Format</strong></li>
+              <li>Paste <code>HH":"MM</code> and confirm</li>
+            </ol>
+          </li>
+          <li>
+            that your table has <strong>no</strong> merged cells.
+          </li>
+        </ul>
       </li>
-      <li>
-        Make sure the entries have a header row that start with <strong>Datum</strong>
-        and a footer row that starts with <strong>BEGINN</strong>.
-      </li>
-      <li>
-        Make sure the values in column <code>Date</code> is formatted this way: <code>YYYY-MM-DD</code>
-        (e.g. <code>2015-09-21</code>). You can achieve this by
-        <ol>
-          <li>Select Fields in column <code>Date</code></li>
-          <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
-            Formats</strong> > <strong>Number Format</strong></li>
-          <li>Paste <code>yyyy"-"mm"-"dd</code> and confirm</li>
-        </ol>
-      </li>
-      <li>Make sure the values in column <code>From</code> and <code>To</code> are formatted this way:
-        <code>HH:MM</code> (e.g. <code>12:00</code>). You can achieve this by
-        <ol>
-          <li>Select Fields in column <code>From/To</code></li>
-          <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
-            Formats</strong> > <strong>Number Format</strong></li>
-          <li>Paste <code>HH":"MM</code> and confirm</li>
-        </ol>
-      </li>
-      <li>Select the rows you want to import, but ensure your <code>Task Description</code> does not
-        exceed 254 characters.
-      </li>
-      <li><strong>Important - </strong> ensure that your table has <strong>no</strong> merged cells.</li>
       <li>Download Timesheet as TSV by clicking <strong>File</strong> > <strong>Download as</strong> >
         <strong>Tab-separated values (.tsv, current sheet)</strong></li>
-      <li>Upload file and wait for the import dialog to close itself (it might take some seconds).</li>
+      <li>Upload file and wait for the import dialog to close itself (it might take a minute).</li>
+      <li>Note: the key data (target hours, lectures) will not be imported and has to be set by yourself.</li>
     </ol>
     <i>(tested with Google Chrome)</i></br>
     <strong>Example:</strong></br>
-
     <pre>
     ignored rows
     Datum	Von	Bis	Dauer in h	Pause	Theorie? Ja => j	Tätigkeit
@@ -56,7 +64,6 @@
     BEGINN
     ignored rows
     </pre>
-
     <form class="aui" method="POST" enctype="multipart/form-data" id="upload-form">
       <div class="field-group">
         <input class="upfile" type="file" name="upload-field" id="upload-field"/>
