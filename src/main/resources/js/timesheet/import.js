@@ -18,6 +18,7 @@ function prepareImportDialog(timesheetDataReply) {
 
     startImportButton.click(function () {
         uploadFile(function (e) {
+          AJS.$(".loadingDiv").css('visibility', 'visible');
           var timesheet = e.target.result;
           var entryRows = "";
           var start = false;

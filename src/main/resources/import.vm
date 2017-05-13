@@ -72,6 +72,7 @@
 
     <footer class="aui-dialog2-footer">
       <div class="aui-dialog2-footer-actions">
+        <div class="loadingDiv" style="display: inline-block;visibility: hidden"><span>Saving</span><span class="aui-icon aui-icon-wait">Loading...</span></div>
         <button class="aui-button aui-button-primary start-import">Import</button>
       </div>
     </footer>
