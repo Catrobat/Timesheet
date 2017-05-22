@@ -246,15 +246,23 @@ public class UserRest {
             return response;
         }
 
+        ApplicationUser loggedInUser = permissionService.getLoggedInUser();
+
         String pairProgrammingGroup = configService.getConfiguration().getPairProgrammingGroup();
+        Collection<ApplicationUser> pairProgrammingUsers;
         if (pairProgrammingGroup == null || pairProgrammingGroup.isEmpty()) {
-            return getUsers(request);
+            JiraServiceContext jiraServiceContext = new JiraServiceContextImpl(loggedInUser);
+            pairProgrammingUsers = userSearchService.findUsersAllowEmptyQuery(jiraServiceContext, "");
+        } else {
+            pairProgrammingUsers = ComponentAccessor.getGroupManager().getUsersInGroup(pairProgrammingGroup);
         }
 
         List<String> jsonUserList = new ArrayList<>();
-        Collection<ApplicationUser> allUsers = ComponentAccessor.getGroupManager().getUsersInGroup(pairProgrammingGroup);
-        for (ApplicationUser user : allUsers) {
-            jsonUserList.add(user.getName());
+
+        for (ApplicationUser user : pairProgrammingUsers) {
+            if (!user.equals(loggedInUser)) {
+                jsonUserList.add(user.getName());
+            }
         }
 
         return Response.ok(jsonUserList).build();
