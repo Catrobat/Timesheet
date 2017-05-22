@@ -17,46 +17,106 @@ function prepareImportDialog(timesheetDataReply) {
     autosize(importTextarea);
 
     startImportButton.click(function () {
-        importGoogleDocsTable(importTextarea.val(), timesheetData, importDialog);
-    });
+        uploadFile(function (e) {
+          AJS.$(".loadingDiv").css('visibility', 'visible');
+          var timesheet = e.target.result;
+          var entryRows = "";
+          var start = false;
+          var end = false;
+          timesheet.split("\n").forEach(function (line) {
+            if (line.startsWith("BEGINN")) {
+              end = true;
+            }
+            if (start && !end) {
+              entryRows += line + "\n";
+            }
+            if (line.startsWith("Datum")) {
+              start = true;
+            }
+          });
 
+          importGoogleDocsTable(entryRows, timesheetData, importDialog);
+        });
+    });
+}
+
+function readFile(file, callback) {
+  var reader = new FileReader();
+
+  reader.onload = callback;
+
+  reader.readAsText(file.files[0]);
+}
+
+function uploadFile(callback) {
+  var file = document.getElementById("upload-field");
+  var filename = file.value;
+  if (filename === "") {
+    AJS.messages.error({
+      title: "Error !",
+      body: "Select a Timesheet file to proceed!"
+    });
+    closeImportDialog();
+  }
+  else {
+    if (!filename.toLowerCase().includes(".tsv")) {
+      AJS.messages.error({
+        title: "Error !",
+        body: "The data type of the file must be .tsv!"
+      });
+      closeImportDialog();
+    }
+    else {
+      readFile(file, callback);
+    }
+  }
 }
 
 function importGoogleDocsTable(table, timesheetData, importDialog) {
     var entriesAndFaultyRowsAndTrimmedRows = parseEntriesFromGoogleDocTimesheet(table, timesheetData);
     var entries = entriesAndFaultyRowsAndTrimmedRows[0];
     var faultyRows = entriesAndFaultyRowsAndTrimmedRows[1];
-    var trimmedRows = entriesAndFaultyRowsAndTrimmedRows[2]; 
+    var trimmedRows = entriesAndFaultyRowsAndTrimmedRows[2];
+    var skippedRows = entriesAndFaultyRowsAndTrimmedRows[3];
 
     if (faultyRows.length > 0) {
         var errorString = "Reason - The following rows are not formatted correctly: <br>";
         for (var i = 0; i < faultyRows.length; i++) {
             errorString += faultyRows[i] + "<br>";
         }
-		removeErrorMessages(errorMessageObjectOne);
-		removeErrorMessages(errorMessageObjectTwo);
-		errorMessageObjectTwo = AJS.messages.error({
-	        title: 'There was an error during your Google Timesheet import.',
-	        body: '<p>' + errorString + '</p>'
-      });
-      closeImportDialog();
-      return;
+        removeErrorMessages(errorMessageObjectOne);
+        removeErrorMessages(errorMessageObjectTwo);
+        errorMessageObjectTwo = AJS.messages.error({
+            title: 'There was an error during your Google Timesheet import.',
+            body: '<p>' + errorString + '</p>'
+        });
+        closeImportDialog();
+        return;
     }
-    
+    var warning_string = "";
     if (trimmedRows.length > 0) {
-		var errorString = "The following rows have been imported correctly.<br>" +
-				"HOWEVER: Their Task Descriptions have been trimmed to 255 characters! <br>";
-		for (var i = 0; i < trimmedRows.length; i++) {
-		    errorString += trimmedRows[i] + "<br>";
-		}
-		
-		AJS.messages.warning({
-			title: 'Just for your information.',
-			body: '<p>' + errorString + '</p>',
-            fadeout: true,
-            delay: 5000,
-            duration: 5000
-		});
+        var errorString = "The following rows have been imported correctly.<br>" +
+            "HOWEVER: Their Task Descriptions have been trimmed to 255 characters! <br>";
+        for (var i = 0; i < trimmedRows.length; i++) {
+            errorString += trimmedRows[i] + "<br>";
+        }
+
+        warning_string += errorString;
+    }
+
+    if (skippedRows.length > 0) {
+        var warning = "The following entries have been skipped: <br>";
+        for (var i = 0; i < skippedRows.length; i++) {
+            warning += skippedRows[i] + "<br>";
+        }
+        warning_string += warning;
+    }
+
+    if (warning_string.length != 0) {
+        AJS.messages.warning({
+            title: 'Just for your information.',
+            body: '<p>' + warning_string + '</p>'
+        });
     }
 
     var url = restBaseUrl + "timesheets/" + timesheetID + "/entries/" + isMasterThesisTimesheet;
@@ -139,11 +199,17 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
     var entries = [];
     var faultyRows = [];
     var trimmedTaskDescriptionRows = [];
+    var skipped_rows = [];
 
     googleDocContent
         .split("\n")
         .forEach(function (row) {
             if (row.trim() === "") return;
+            if(checkForEmptyRow(row)) {
+                skipped_rows.push("<span style=\"color:#BDBDBD\">" + row + "</span>");
+                //foreach continue
+                return;
+            }
             var entry = parseEntryFromGoogleDocRow(row, timesheetData);
             if (entry === null) {
                 faultyRows.push(row);
@@ -176,7 +242,7 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
             }
         });
 
-    return [entries, faultyRows, trimmedTaskDescriptionRows];
+    return [entries, faultyRows, trimmedTaskDescriptionRows, skipped_rows];
 }
 
 var columnsMissing = "<strong> (Less than 7 columns)</strong>";
@@ -341,4 +407,24 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
         partner: "",
         inactiveEndDate: beginDate
     };
+}
+
+function checkForEmptyRow(row){
+    var pieces = row.split("\t");
+    var i;
+    var empty = true;
+    for(i = 0; i < pieces.length-1; i ++){
+        if(pieces[i].length != 0){
+            if(pieces[i] === "\n")
+                continue;
+            if(i === 3) {
+                if (pieces[3] === "0:00:00") {
+                    continue;
+                }
+            }
+            empty = false;
+            break;
+        }
+    }
+    return empty;
 }
