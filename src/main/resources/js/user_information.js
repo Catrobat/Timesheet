@@ -19,6 +19,7 @@
 var restBaseUrl;
 
 AJS.toInit(function () {
+    window.onbeforeunload = null;
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 

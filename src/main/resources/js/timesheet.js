@@ -8,6 +8,7 @@ var timesheetData_;
 var timesheetIDOfUser;
 
 AJS.toInit(function () {
+    window.onbeforeunload = null;
     if (hostname.includes("catrob.at")) {
         baseUrl = "https://" + hostname;
     }
