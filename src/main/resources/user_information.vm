@@ -44,12 +44,12 @@
                     This is a basic information overview of all available LDAP users. The basic implementation
                     provides a search function and shows the project members timesheet states.
                 </p>
-                <div id="update-timesheet-button" class="field-group">
+                <!--div id="update-timesheet-button" class="field-group">
                     <form id="update-timesheet-status">
                         <input type="submit" value="Save User Information" class="aui-button aui-button-primary"
                                style="float: right;">
                     </form>
-                </div>
+                </div-->
                 <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
                     <thead>
                     <tr>

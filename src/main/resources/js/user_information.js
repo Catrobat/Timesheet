@@ -28,7 +28,6 @@ AJS.toInit(function () {
     var fetchingErrorMessage;
 
     function populateTable(userInformation) {
-
         users = userInformation;
 
         AJS.$(".loadingDiv").show();
@@ -47,17 +46,15 @@ AJS.toInit(function () {
                 inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
             }
 
-            var enabled = userInformation[i].state != "DISABLED";
+            var enabled = userInformation[i].state !== "DISABLED";
 
-            var enabledColumn = "</td><td headers='ti-enabled'><input class=\"checkbox\" type=\"checkbox\" id='checkBox"+ userInformation[i].timesheetID + "'>";
-            if (enabled) {
-                enabledColumn = "</td><td headers='ti-enabled'><input class=\"checkbox\" type=\"checkbox\" id='checkBox"+ userInformation[i].timesheetID + "' checked>";
-            }
+            var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
+            var enabledColumn = "</td><td headers='ti-enabled'>" + enableButton;
             var row = "<tr>" +
                 "<td headers='ti-users' class='users'>" + userInformation[i].userName +
                 "</td><td headers='ti-email' class='email'>" + userInformation[i].email +
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
-                "</td><td headers='ti-state' class='state'>" + userInformation[i].state +
+                "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "'>" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
 
                 "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
@@ -70,6 +67,9 @@ AJS.toInit(function () {
                 enabledColumn +
                 "</td></tr>";
             AJS.$("#user-information-table-content").append(row);
+
+            var timesheetID = userInformation[i].timesheetID;
+            setEnableButton(timesheetID, enabled);
         }
 
         AJS.$("#user-information-table").trigger("update");
@@ -88,6 +88,63 @@ AJS.toInit(function () {
             AJS.$("#user-information-table").trigger("update");
         });
         AJS.$(".loadingDiv").hide();
+    }
+
+    function setEnableButton(timesheetID, enabled) {
+        var button = AJS.$("#button" + timesheetID);
+        button.prop("onclick", null).off("click");
+        if (enabled) {
+            button.text("Disable Timesheet");
+            button.click(function () {
+                setTimesheetState(timesheetID, false)
+            });
+            button.css("background", "");
+        } else {
+            button.text("Enable Timesheet");
+            button.click(function () {
+                setTimesheetState(timesheetID, true)
+            });
+            button.css("background", "red");
+        }
+    }
+
+    function setTimesheetState(timesheetID, enabled) {
+        AJS.$(".loadingDiv").show();
+        AJS.$.ajax({
+            url: restBaseUrl + 'timesheets/' + timesheetID + '/updateEnableState/' + enabled,
+            type: "POST",
+            contentType: "application/json",
+            processData: false,
+            success: function () {
+                if (fetchingErrorMessage)
+                    fetchingErrorMessage.closeMessage();
+                if (errorMessage)
+                    errorMessage.closeMessage();
+                AJS.messages.success({
+                    title: "Success!",
+                    body: "Timesheet " + timesheetID + " 'enabled state' updated.",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
+                });
+                setEnableButton(timesheetID, enabled);
+                if (enabled) {
+                    AJS.$("#state" + timesheetID).text("ACTIVE");
+                } else {
+                    AJS.$("#state" + timesheetID).text("DISABLED");
+                }
+                AJS.$(".loadingDiv").hide();
+            },
+            error: function (error) {
+                if (errorMessage)
+                    errorMessage.closeMessage();
+                errorMessage = AJS.messages.error({
+                    title: "Error!",
+                    body: error.responseText
+                });
+                AJS.$(".loadingDiv").hide();
+            }
+        });
     }
 
     function updateTimesheetStatus() {
@@ -158,10 +215,10 @@ AJS.toInit(function () {
 
     fetchData();
 
-    AJS.$("#update-timesheet-status").submit(function (e) {
-        e.preventDefault();
-        if (AJS.$(document.activeElement).val() === "Save User Information") {
-            updateTimesheetStatus();
-        }
-    });
+    // AJS.$("#update-timesheet-status").submit(function (e) {
+    //     e.preventDefault();
+    //     if (AJS.$(document.activeElement).val() === "Save User Information") {
+    //         updateTimesheetStatus();
+    //     }
+    // });
 });

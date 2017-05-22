@@ -690,6 +690,25 @@ public class TimesheetRest {
         return Response.ok(newJsonTimesheetList).build();
     }
 
+    @POST
+    @Path("timesheets/{timesheetID}/updateEnableState/{enabled}")
+    public Response postTimesheetEnableState(@Context HttpServletRequest request,
+                                             @PathParam("timesheetID") int timesheetID,
+                                             @PathParam("enabled") Boolean enabled) throws ServiceException {
+        Response response = permissionService.checkRootPermission();
+        if (response != null) {
+            return response;
+        }
+
+        Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
+        if (sheet != null) {
+            sheet = sheetService.updateTimesheetEnableState(timesheetID, enabled);
+        }
+
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
+        return Response.ok(jsonTimesheet).build();
+    }
+
     @PUT
     @Path("entries/{entryID}/{isMTSheet}")
     public Response putTimesheetEntry(@Context HttpServletRequest request,
