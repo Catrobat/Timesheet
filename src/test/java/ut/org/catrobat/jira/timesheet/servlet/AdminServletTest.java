@@ -75,6 +75,8 @@ public class AdminServletTest {
 
     @Test
     public void testDoGet() throws Exception {
+        when(request.getMethod()).thenReturn("GET");
+        adminServlet.service(request, response);
         adminServlet.doGet(request, response);
     }
 

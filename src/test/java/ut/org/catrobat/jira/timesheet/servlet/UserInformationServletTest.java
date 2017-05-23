@@ -64,6 +64,8 @@ public class UserInformationServletTest {
 
     @Test
     public void testDoGet() throws Exception {
+        when(request.getMethod()).thenReturn("GET");
+        userInformationServlet.service(request, response);
         userInformationServlet.doGet(request, response);
     }
 }

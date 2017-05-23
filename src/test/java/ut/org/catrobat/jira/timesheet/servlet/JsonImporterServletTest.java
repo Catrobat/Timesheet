@@ -102,10 +102,27 @@ public class JsonImporterServletTest {
     }
 
     @Test
+    public void testDoPostTimesheet() throws IOException, ServletException {
+        ImportTimesheetAsJsonServlet importTimesheetAsJsonServlet = new ImportTimesheetAsJsonServlet(loginUriProvider,
+                webSudoManager, permissionService, configService, timesheetService, entryService, categoryService, teamService,
+                renderer);
+
+        importTimesheetAsJsonServlet.doPost(request, response);
+    }
+
+    @Test
     public void testDoGetConfig() throws IOException, ServletException {
         ImportConfigAsJsonServlet importConfigAsJsonServlet = new ImportConfigAsJsonServlet(loginUriProvider,
                 webSudoManager, configService, teamService, ao, permissionService, renderer, categoryService);
 
         importConfigAsJsonServlet.doGet(request, response);
+    }
+
+    @Test
+    public void testDoPostConfig() throws IOException, ServletException {
+        ImportConfigAsJsonServlet importConfigAsJsonServlet = new ImportConfigAsJsonServlet(loginUriProvider,
+                webSudoManager, configService, teamService, ao, permissionService, renderer, categoryService);
+
+        importConfigAsJsonServlet.doPost(request, response);
     }
 }

@@ -50,19 +50,23 @@ public class MTTimesheetServletTest {
         when(admin.getKey()).thenReturn(admin_key);
         when(admin.getUsername()).thenReturn("admin");
         when(permissionService.checkIfUserExists()).thenReturn(admin);
-        when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(timeSheet);
+        when(sheetService.getTimesheetByUser(admin_key, true)).thenReturn(timeSheet);
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
         when(timeSheet.getID()).thenReturn(1);
         when(timeSheet.getUserKey()).thenReturn(admin_key);
         when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(true);
+        when(request.getMethod()).thenReturn("GET");
+        when(permissionService.isUserEligibleForTimesheet(admin)).thenReturn(true);
+        when(sheetService.userHasTimesheet(admin_key, true)).thenReturn(true);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testDoGetNullPointerException() throws Exception {
+    @Test
+    public void testDoGet() throws Exception {
         when(permissionService.checkIfUserExists()).thenReturn(admin);
         when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(null);
 
+        masterThesisTimesheetServlet.service(request, response);
         masterThesisTimesheetServlet.doGet(request, response);
     }
 }

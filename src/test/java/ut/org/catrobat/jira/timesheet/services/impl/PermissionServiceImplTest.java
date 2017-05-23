@@ -9,6 +9,7 @@ import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserManager;
 import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
@@ -72,6 +73,7 @@ public class PermissionServiceImplTest {
         GroupManager groupManager = mock(GroupManager.class);
         UserManager jiraUserManager = mock(UserManager.class);
         JiraAuthenticationContext jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
+        UserKeyService userKeyService = mock(UserKeyService.class);
 
         assertNotNull(entityManager);
 
@@ -95,10 +97,6 @@ public class PermissionServiceImplTest {
         timeSheetEntry = mock(TimesheetEntry.class);
         team = mock(Team.class);
         permissionServiceException = mock(PermissionServiceImpl.class);
-
-        //real world objects
-        ao.create(Config.class).save();
-        config = ao.find(Config.class)[0];
 
         String coord_key = "coord_key";
         String owner_key = "owner_key";
@@ -147,6 +145,9 @@ public class PermissionServiceImplTest {
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(test.getUsername())).thenReturn(test);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(coord.getUsername())).thenReturn(coord);
         PowerMockito.when(ComponentAccessor.getUserManager().getUserByKey(tsAdmin.getUsername())).thenReturn(tsAdmin);
+
+        PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyService);
+        PowerMockito.when(userKeyService.getKeyForUsername("TimesheetAdmin")).thenReturn("APPROVED_KEY");
 
         Set<Team> owner_teams = new HashSet<>();
         Set<Team> eve_teams = new HashSet<>();
@@ -331,10 +332,18 @@ public class PermissionServiceImplTest {
         verify(permissionServiceException).userCanDeleteTimesheetEntry(owner, timeSheetEntry);
     }
 
+    @Test
+    public void testTimesheetAdminExists() {
+        boolean adminExists = permissionService.timesheetAdminExists();
+        assertTrue(adminExists);
+    }
+
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 
         @Override
         public void update(EntityManager em) throws Exception {
+            em.migrate(Config.class);
+            config = em.create(Config.class);
             em.migrate(Team.class);
             catroid = em.create(Team.class,
                 new DBParam("TEAM_NAME", "catroid")
@@ -354,6 +363,7 @@ public class PermissionServiceImplTest {
             );
             timesheetAdmin.setConfiguration(config);
             timesheetAdmin.setUserName("TimesheetAdmin");
+            timesheetAdmin.save();
         }
     }
 }
