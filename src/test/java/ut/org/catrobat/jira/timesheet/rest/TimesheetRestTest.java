@@ -290,7 +290,6 @@ public class TimesheetRestTest {
         when(teamServiceMock.getTeamsOfUser(user1.getKey())).thenReturn(teams);
 
         response = timesheetRestMock.getTeamsForTimesheetID(requestMock, 1);
-        System.out.println(response.getEntity());
         List<JsonTeam> responseTeamList = (List<JsonTeam>) response.getEntity();
         assertEquals(responseTeamList, expectedTeams);
     }

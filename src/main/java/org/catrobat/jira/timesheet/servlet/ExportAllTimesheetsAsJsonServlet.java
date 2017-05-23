@@ -13,6 +13,8 @@ import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetAndEntries;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,7 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
     private final TimesheetEntryService entryService;
     private final TeamService teamService;
     private final CategoryService categoryService;
+    private static final Logger logger = LoggerFactory.getLogger(ExportAllTimesheetsAsJsonServlet.class);
 
     public ExportAllTimesheetsAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                             PermissionService permissionService, ConfigService configService,
@@ -77,7 +80,7 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
                 Category cat = categoryService.getCategoryByID(new_entry.getCategoryID());
                 Team team =  teamService.getTeamByID(new_entry.getTeamID());
                 if(cat == null || team == null) {
-                    System.out.println("category or team not found should not happen on live system");
+                    logger.error("category or team not found should not happen on live system");
                     continue;
                 }
                 String category_name = cat.getName();

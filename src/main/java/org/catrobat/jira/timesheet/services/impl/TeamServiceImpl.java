@@ -151,13 +151,10 @@ public class TeamServiceImpl implements TeamService {
         initIfNotAlready();
         Set<Team> teams = new HashSet<>();
 
-        System.out.println("checking for coordinators");
-
         for (Team team : ao.find(Team.class)) {
             String teamName = team.getTeamName();
 
             List<String> coordinatorAndCoordinatorGroupList = getGroupsForRole(teamName, TeamToGroup.Role.COORDINATOR);
-            System.out.println("coordinator for team: " + teamName + " is " + coordinatorAndCoordinatorGroupList);
 
             for(String coordinatorNameOrGroup : coordinatorAndCoordinatorGroupList){
                 if(ComponentAccessor.getUserManager().getUserByName(coordinatorNameOrGroup) == null){

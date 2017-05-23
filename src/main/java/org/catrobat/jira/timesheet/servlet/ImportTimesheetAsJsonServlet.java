@@ -20,6 +20,8 @@ import org.catrobat.jira.timesheet.rest.json.JsonTimesheetAndEntries;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +41,8 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
 
     private enum Result{Success, Failure, Errors}
     private Result importResult;
+
+    private static final Logger logger = LoggerFactory.getLogger(ImportConfigAsJsonServlet.class);
 
     public ImportTimesheetAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                         PermissionService permissionService, ConfigService configService,
@@ -65,7 +69,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
 
         Map<String, List<Map<String,String>>> faulty_teams = new HashMap<>();
 
-        System.out.println("new Import");
+        logger.info("new Import");
         boolean isMultipartContent = ServletFileUpload.isMultipartContent(request);
         if (!isMultipartContent) {
             response.sendError(500, "An error occurred: no files were given!");
@@ -136,13 +140,13 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                 try {
                     Category category = categoryService.getCategoryByName(entry.getCategoryName());
                     if (category == null) {
-                        System.out.println("Category in import does not exist, need to set Default Category");
+                        logger.info("Category: {} in import does not exist, need to set Default Category", entry.getCategoryName());
                         category = categoryService.getCategoryByName(SpecialCategories.DEFAULT);
                     }
                     Team team = teamService.getTeamByName(entry.getTeamName());
                     if (team == null) {
                         importResult = Result.Errors;
-                        System.out.println("Team given in import does not exist");
+                        logger.warn("Team: {} given in import does not exist", entry.getTeamName());
 
                         Map<String, String> map = new HashMap<>();
                         map.put("ID" , Integer.toString(entry.getEntryID()));
@@ -169,7 +173,7 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
         }
         Map<String, Object> params = new HashMap<>();
         if (!errorString.toString().isEmpty()) {
-            System.out.println(errorString); // TODO: view errors after import
+            logger.warn(errorString.toString()); // TODO: view errors after import
             importResult = Result.Errors;
         }
 

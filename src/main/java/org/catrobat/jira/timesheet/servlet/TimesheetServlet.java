@@ -25,6 +25,8 @@ import com.google.common.collect.Maps;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -41,7 +43,7 @@ public class TimesheetServlet extends HttpServlet {
     private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
     private final PermissionService permissionService;
-
+    private static final Logger logger = LoggerFactory.getLogger(TimesheetServlet.class);
 
     public TimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
             final TimesheetService sheetService, final PermissionService permissionService) {
@@ -74,10 +76,8 @@ public class TimesheetServlet extends HttpServlet {
             Timesheet timesheet = null;
 
             if (sheetService.userHasTimesheet(userKey, false)) {
-                System.out.println("current user has an active timesheet");
-                System.out.println("user key is:" + userKey);
                 timesheet = sheetService.getTimesheetByUser(userKey, false);
-                System.out.println("Timesheet Id is:"  + timesheet.getID());
+                logger.info("Current user (user key: {}) has an active timesheet (timesheet id: {})", userKey, timesheet.getID());
             }
             if (timesheet == null) {
                 timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 150, 0, 0, "Bachelor Thesis",

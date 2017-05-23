@@ -41,6 +41,8 @@ import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.catrobat.jira.timesheet.utility.EmailUtil;
 import org.catrobat.jira.timesheet.utility.RestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -63,6 +65,7 @@ public class TimesheetRest {
     private final PermissionService permissionService;
     private final TimesheetPermissionCondition permissionCondition;
     private final EmailUtil emailUtil;
+    private static final Logger logger = LoggerFactory.getLogger(TimesheetRest.class);
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
             final TeamService ts, PermissionService ps, final ConfigService ahcs, TimesheetPermissionCondition permissionCondition) {
@@ -146,7 +149,6 @@ public class TimesheetRest {
 
         for (Team team : teamService.getTeamsOfUser(loggedInUser.getName())) {
             for (String teamMembersAndGroups : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
-                System.out.println(teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER));
                 if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
                     Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);
                     for (String member : usersInGroup) {
@@ -161,8 +163,6 @@ public class TimesheetRest {
                 }
             }
         }
-
-        System.out.println("TeamMembers of user " + loggedInUser.getUsername() + " are " + TeamMembers);
 
         for (String member : TeamMembers) {
             //collect all timesheet entries of all team members
@@ -887,11 +887,11 @@ public class TimesheetRest {
 
             for (Issue issue : issues) {
                 String displayName = issue.getAssignee().getDisplayName();
-                System.out.println("displayName = " + displayName);
+                logger.debug("displayName = {}", displayName);
             }
 
         } catch (SearchException e) {
-            System.out.println("Error running search: " + e);
+            logger.warn("Error running search: {}", e);
         }
 
         JSONObject jo = new JSONObject();

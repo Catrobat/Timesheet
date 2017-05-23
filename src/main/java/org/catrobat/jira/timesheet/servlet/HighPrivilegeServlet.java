@@ -23,6 +23,8 @@ import com.atlassian.sal.api.websudo.WebSudoManager;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -39,6 +41,7 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
     protected final WebSudoManager webSudoManager;
     protected final PermissionService permissionService;
     private final ConfigService configService;
+    private static final Logger logger = LoggerFactory.getLogger(HighPrivilegeServlet.class);
 
     public HighPrivilegeServlet(final LoginUriProvider loginUriProvider, final WebSudoManager webSudoManager,
             final PermissionService permissionService, ConfigService configService) {
@@ -73,7 +76,7 @@ public abstract class HighPrivilegeServlet extends HttpServlet {
         if (timesheetAdmins.length > 0) {
             for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
                 if (timesheetAdmin.getUserKey().equals(user.getKey())) {
-                    System.out.println("User: " + timesheetAdmin.getUserName() + " is approved to access!");
+                    logger.info("User: {} is approved to access!", timesheetAdmin.getUserName());
                     enforceWebSudoProtection(request, response);
                     return;
                 }

@@ -84,7 +84,6 @@ public class ConfigServiceImplTest {
         List<CategoryToTeam> categoryToTeamList = Arrays.asList(categoryToTeamArray);
 
         for (String specialCategoryString : SpecialCategories.DefaultCategories) {
-            System.out.println(specialCategoryString);
             Category[] specialCategory = ao.find(Category.class, "NAME = ?", specialCategoryString);
             Assert.assertFalse(categoryToTeamList.contains(specialCategory[0]));
         }

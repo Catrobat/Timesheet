@@ -4,6 +4,8 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 public class DatabaseUtil {
 
     private final ActiveObjects ao;
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseUtil.class);
 
     public DatabaseUtil(ActiveObjects ao) {
         this.ao = ao;
@@ -23,7 +26,7 @@ public class DatabaseUtil {
         ao.deleteWithSQL(TimesheetEntry.class, "ID > ?", 0);
         ao.deleteWithSQL(Timesheet.class, "ID > ?", 0);
 
-        System.out.println("All timesheets & entries have been deleted!");
+        logger.warn("All timesheets & entries have been deleted!");
     }
 
     public void clearAllTimesheetTables() {
@@ -39,7 +42,7 @@ public class DatabaseUtil {
         ao.deleteWithSQL(Group.class, "ID > ?", 0);
         ao.deleteWithSQL(Scheduling.class, "ID > ?", 0);
 
-        System.out.println("All timesheet tables has been deleted!");
+        logger.warn("All timesheet tables has been deleted!");
     }
 
     public List getActiveObjectsAsJson(String tableName, String query) {

@@ -6,6 +6,8 @@ import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.utility.EmailUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -20,10 +22,11 @@ public class ActivityNotificationJob implements PluginJob {
     private ConfigService configService;
     private SchedulingService schedulingService;
     private EmailUtil emailUtil;
+    private static final Logger logger = LoggerFactory.getLogger(ActivityNotificationJob.class);
 
     @Override
     public void execute(Map<String, Object> map) {
-        System.out.println((new Date()).toString() + " ActivityNotificationJob");
+        logger.info("ActivityNotificationJob triggered at: {}", (new Date()).toString());
 
         sheetService = (TimesheetService) map.get("sheetService");
         entryService = (TimesheetEntryService) map.get("entryService");

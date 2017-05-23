@@ -7,6 +7,8 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -20,10 +22,11 @@ public class ActivityVerificationJob implements PluginJob {
     private TeamService teamService;
     private CategoryService categoryService;
     private SchedulingService schedulingService;
+    private static final Logger logger = LoggerFactory.getLogger(ActivityVerificationJob.class);
 
     @Override
     public void execute(Map<String, Object> map) {
-        System.out.println((new Date()).toString() + " ActivityVerificationJob");
+        logger.info("ActivityVerificationJob triggered at: {}", (new Date()).toString());
 
         Date today = new Date();
 
@@ -128,11 +131,12 @@ public class ActivityVerificationJob implements PluginJob {
     private String printStatusFlags(Timesheet timesheet, String statusString) {
         String header = "Timesheet from: " + timesheet.getDisplayName() + "-------------------------------------\n";
         header += "Transition: " + statusString;
-        System.out.println(header);
-        String message = "state: " + timesheet.getState();
-        System.out.println(message);
-        System.out.println("latest Entry: " + timesheet.getLatestEntryBeginDate().toString());
-        System.out.println("END Status: -------------------------------------");
+        String body = "state: " + timesheet.getState();
+        body += "latest Entry: " + timesheet.getLatestEntryBeginDate().toString();
+        body += "END Status: -------------------------------------";
+        String message = header + body;
+        logger.debug(message);
+
         return message;
     }
 }

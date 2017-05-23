@@ -340,7 +340,6 @@ public class PermissionServiceImpl implements PermissionService {
     public boolean isUserEligibleForTimesheet(ApplicationUser user) {
 /*        Response response = checkUserPermission();
         if (response != null) {
-            System.out.println("user has not the neccessary permissions name: " + user.getName());
             return false;
         }*/
 

@@ -19,6 +19,8 @@ import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +38,7 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
     private final ActiveObjects activeObjects;
     private final TemplateRenderer renderer;
     private final CategoryService categoryService;
+    private static final Logger logger = LoggerFactory.getLogger(ImportConfigAsJsonServlet.class);
 
     public ImportConfigAsJsonServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
                                      ConfigService configService, TeamService teamService,
@@ -108,8 +111,6 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
 
     private void jsonToConfig(JsonConfig jsonConfig, ConfigService configService) throws ServletException {
         // TODO: copy paste from Config REST, remove at one place
-        System.out.println("in json to config");
-
         dropEntries();
 
         configService.editMail(jsonConfig.getMailFromName(), jsonConfig.getMailFrom(),
@@ -128,7 +129,7 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
             {
                 if(!SpecialCategories.AllSpecialCategories.contains(cat) && categoryService.getCategoryByName(cat) == null)
                 {
-                    System.out.println("category does not exist, creating");
+                    logger.info("category: {} does not exist, creating", cat);
                     try{
                         categoryService.add(cat);
                     }
