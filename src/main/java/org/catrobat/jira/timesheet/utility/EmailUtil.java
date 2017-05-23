@@ -10,10 +10,13 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
 import org.catrobat.jira.timesheet.services.ConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmailUtil {
 
     private ConfigService configService;
+    private static final Logger logger = LoggerFactory.getLogger(EmailUtil.class);
 
     public EmailUtil(ConfigService configService) {
         this.configService = configService;
@@ -120,11 +123,13 @@ public class EmailUtil {
     }
 
     public void sendEmail(String emailTo, String mailSubject, String mailBody) {
-        Email email = new Email(emailTo);
-        email.setSubject(mailSubject);
-        email.setBody(mailBody);
-
-        SingleMailQueueItem item = new SingleMailQueueItem(email);
-        ComponentAccessor.getMailQueue().addItem(item);
+        logger.info("Email to: {} with subject: {} and content: {}", emailTo, mailSubject, mailBody);
+        // TODO: reinsert code below, after verifying email behaviour
+//        Email email = new Email(emailTo);
+//        email.setSubject(mailSubject);
+//        email.setBody(mailBody);
+//
+//        SingleMailQueueItem item = new SingleMailQueueItem(email);
+//        ComponentAccessor.getMailQueue().addItem(item);
     }
 }
