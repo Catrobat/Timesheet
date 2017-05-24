@@ -19,7 +19,6 @@ package org.catrobat.jira.timesheet.activeobjects;
 import net.java.ao.Entity;
 import net.java.ao.OneToMany;
 import net.java.ao.schema.NotNull;
-import net.java.ao.schema.Table;
 
 import java.util.Date;
 
