@@ -161,6 +161,10 @@ function addNewEntryCallback(entry, timesheetData, form) {
         AJS.$(".end").hide();
         AJS.$(".start").hide();
     }
+    var categoryName = getNameFromCategoryIndex(categoryIndex, timesheetData);
+    if (!(categoryName.includes("(pp)") || categoryName.includes("pair"))) {
+        AJS.$(".partner").hide();
+    }
 }
 
 /**
@@ -190,7 +194,6 @@ function editEntryCallback(entry, timesheetData, form) {
     oldViewRow.remove();
 
     form.row.hide();
-
 }
 
 /**
