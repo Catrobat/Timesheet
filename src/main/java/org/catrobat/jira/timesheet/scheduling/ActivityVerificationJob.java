@@ -43,46 +43,32 @@ public class ActivityVerificationJob implements PluginJob {
                 continue;
             }
 
-            String statusFlagMessage;
+            String statusFlagMessage = "nothing changed";
 
             Date latestEntryDate = timesheet.getLatestEntryBeginDate();
-            TimesheetEntry latestInactiveEntry = getLatestInactiveEntry(timesheet);
-            if (latestInactiveEntry != null && latestInactiveEntry.getInactiveEndDate().compareTo(today) > 0) {
-                timesheet.setState(Timesheet.State.INACTIVE); // FIXME: should already be set
-                timesheet.save();
-                statusFlagMessage = "user has set himself to inactive";
-            }
-            else if (timesheet.getState() == Timesheet.State.ACTIVE && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
+            Date latestInactiveEndDate = entryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
+            Timesheet.State state = timesheet.getState();
+            if (state == Timesheet.State.ACTIVE && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 setAutoInactive(timesheet);
                 statusFlagMessage = "user is active, but latest entry is older than the specified inactive limit";
             }
-            else if (timesheet.getState() == Timesheet.State.AUTO_INACTIVE &&
+            else if (state == Timesheet.State.AUTO_INACTIVE &&
                     schedulingService.isOlderThanOfflineTime(latestEntryDate)) {
                 timesheet.setState(Timesheet.State.DISABLED);
                 timesheet.save();
                 statusFlagMessage = "user is still inactive since the specified disabled limit";
             }
-            else if (timesheet.getState() != Timesheet.State.ACTIVE && !schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
+            else if (isManualInactiveState(state) && latestInactiveEndDate.compareTo(today) < 0) {
                 timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
                 statusFlagMessage = "user is back again";
             }
-            // user has set himself inactive
-            else if (timesheet.getState() == Timesheet.State.INACTIVE && schedulingService.isOlderThanRemainingTime(latestEntryDate)) {
-                timesheet.setState(Timesheet.State.AUTO_INACTIVE);
-                timesheet.save();
-                statusFlagMessage = "user remains inactive, will be set to auto inactive";
-            }
-            else if (!schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
-                timesheet.setState(Timesheet.State.ACTIVE);
-                timesheet.save();
-                statusFlagMessage = "default case: user is active";
-            }
-            else {
-                statusFlagMessage = "nothing changed";
-            }
             printStatusFlags(timesheet, statusFlagMessage);
         }
+    }
+
+    private boolean isManualInactiveState(Timesheet.State state) {
+        return state == Timesheet.State.INACTIVE || state == Timesheet.State.INACTIVE_OFFLINE;
     }
 
     private void setAutoInactive(Timesheet timesheet) {
@@ -117,23 +103,12 @@ public class ActivityVerificationJob implements PluginJob {
         }
     }
 
-    private TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {
-        TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
-        for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE)
-                    && (entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
     private String printStatusFlags(Timesheet timesheet, String statusString) {
         String header = "Timesheet from: " + timesheet.getDisplayName() + "-------------------------------------\n";
         header += "Transition: " + statusString;
         String body = "state: " + timesheet.getState();
         body += "latest Entry: " + timesheet.getLatestEntryBeginDate().toString();
-        body += "END Status: -------------------------------------";
+        body += "END Status -------------------------------------";
         String message = header + body;
         logger.debug(message);
 
