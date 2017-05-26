@@ -73,8 +73,6 @@ public class ActivityVerificationJob implements PluginJob {
     }
 
     private void setAutoInactive(Timesheet timesheet) {
-        timesheet.setState(Timesheet.State.AUTO_INACTIVE);
-        timesheet.save();
         Date begin = timesheet.getLatestEntryBeginDate();
         if (begin == null) begin = new Date();
         Date end = new Date();
@@ -102,6 +100,8 @@ public class ActivityVerificationJob implements PluginJob {
         } catch (ServiceException e) {
             e.printStackTrace();
         }
+        timesheet.setState(Timesheet.State.AUTO_INACTIVE);
+        timesheet.save();
     }
 
     private String printStatusFlags(Timesheet timesheet, String statusString) {

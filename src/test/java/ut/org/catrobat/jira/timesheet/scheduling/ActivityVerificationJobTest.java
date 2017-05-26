@@ -1,6 +1,7 @@
 package ut.org.catrobat.jira.timesheet.scheduling;
 
 import org.catrobat.jira.timesheet.activeobjects.Category;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.scheduling.ActivityVerificationJob;
@@ -69,6 +70,11 @@ public class ActivityVerificationJobTest {
         Mockito.when(entryService.getEntriesBySheet(timesheet1)).thenReturn(sheet1Entries);
         Mockito.when(entryService.getEntriesBySheet(timesheet2)).thenReturn(sheet2Entries);
         Mockito.when(entryService.getEntriesBySheet(timesheet3)).thenReturn(sheet3Entries);
+
+        Set<Team> teamSet = new HashSet<>();
+        teamSet.add(Mockito.mock(Team.class));
+
+        Mockito.when(teamService.getTeamsOfUser(timesheet1.getUserKey())).thenReturn(teamSet);
     }
 
     @Test

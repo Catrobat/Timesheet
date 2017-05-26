@@ -118,6 +118,10 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
             }
         }
 
+        if (sheet.getState() == Timesheet.State.AUTO_INACTIVE) {
+            state = Timesheet.State.ACTIVE;
+        }
+
         timesheetService.updateTimesheet(sheet.getID(), completedHours, completedPracticeHours, latestEntryDate, state);
     }
 
