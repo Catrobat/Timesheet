@@ -46,7 +46,7 @@ public class ActivityVerificationJob implements PluginJob {
             String statusFlagMessage = "nothing changed";
 
             Date latestEntryDate = timesheet.getLatestEntryBeginDate();
-            Date latestInactiveEndDate = entryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
+            TimesheetEntry latestInactiveEntry = entryService.getLatestInactiveEntry(timesheet);
             Timesheet.State state = timesheet.getState();
             if (state == Timesheet.State.ACTIVE && schedulingService.isOlderThanInactiveTime(latestEntryDate)) {
                 setAutoInactive(timesheet);
@@ -58,7 +58,8 @@ public class ActivityVerificationJob implements PluginJob {
                 timesheet.save();
                 statusFlagMessage = "user is still inactive since the specified disabled limit";
             }
-            else if (isManualInactiveState(state) && latestInactiveEndDate.compareTo(today) < 0) {
+            else if (isManualInactiveState(state) && latestInactiveEntry != null &&
+                    latestInactiveEntry.getInactiveEndDate().compareTo(today) < 0) {
                 timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
                 statusFlagMessage = "user is back again";
