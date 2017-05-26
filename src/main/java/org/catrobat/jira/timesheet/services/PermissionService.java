@@ -34,6 +34,10 @@ public interface PermissionService {
     String JIRA_TEST_ADMINISTRATORS = "Jira-Test-Administrators";
     String JIRA_ADMINISTRATORS = "jira-administrators";
 
+    boolean toggleGoogleDocsImport();
+
+    boolean isGoogleDocsImportEnabled();
+
     ApplicationUser getLoggedInUser();
 
     ApplicationUser checkIfUserExists() throws PermissionException;

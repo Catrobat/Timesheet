@@ -83,6 +83,8 @@
         <dependency>com.atlassian.auiplugin:aui-select</dependency>
 
         <resource type="download" name="administration.js" location="/js/administration.js"/>
+        <resource type="download" name="admin_import.js" location="/js/admin_import.js" />
+        <resource type="download" name="import.js" location="/js/timesheet/import.js" />
         <resource type="download" name="administration.css" location="/css/administration.css"/>
         <context>administration</context>
     </web-resource>

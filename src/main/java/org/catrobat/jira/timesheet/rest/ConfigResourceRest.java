@@ -61,6 +61,30 @@ public class ConfigResourceRest {
     }
 
     @GET
+    @Path("/toggleGoogleDocsImport")
+    public Response toggleGoogleDocsImport(@Context HttpServletRequest request) {
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        boolean enabled = permissionService.toggleGoogleDocsImport();
+        return Response.ok(enabled).build();
+    }
+
+    @GET
+    @Path("/isGoogleDocsImportEnabled")
+    public Response getGoogleDocsImportState(@Context HttpServletRequest request) {
+        Response unauthorized = permissionService.checkUserPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+
+        boolean enabled = permissionService.isGoogleDocsImportEnabled();
+        return Response.ok(enabled).build();
+    }
+
+    @GET
     @Path("/getCategories")
     public Response getCategories(@Context HttpServletRequest request) {
         Response unauthorized = permissionService.checkUserPermission();

@@ -42,10 +42,22 @@ public class PermissionServiceImpl implements PermissionService {
     private final TeamService teamService;
     private final ConfigService configService;
     private final String BASE_URL = ComponentAccessor.getApplicationProperties().getString(APKeys.JIRA_BASEURL);
+    private boolean GOOGLE_DOCS_IMPORT_ENABLED = true;
 
     public PermissionServiceImpl(TeamService teamService, ConfigService configService) {
         this.teamService = teamService;
         this.configService = configService;
+    }
+
+    @Override
+    public boolean toggleGoogleDocsImport() {
+        GOOGLE_DOCS_IMPORT_ENABLED = !GOOGLE_DOCS_IMPORT_ENABLED;
+        return GOOGLE_DOCS_IMPORT_ENABLED;
+    }
+
+    @Override
+    public boolean isGoogleDocsImportEnabled() {
+        return GOOGLE_DOCS_IMPORT_ENABLED;
     }
 
     @Override
@@ -267,6 +279,10 @@ public class PermissionServiceImpl implements PermissionService {
     public void userCanAddTimesheetEntry(ApplicationUser user, Timesheet sheet, Date beginDate, boolean isGoogleDocsImport) throws PermissionException {
         if (isTimesheetAdmin(user)) {
             return;
+        }
+        if (isGoogleDocsImport && !GOOGLE_DOCS_IMPORT_ENABLED) {
+            throw new PermissionException("GoogleDocsImport has been Disabled. " +
+                    "Talk to a Timesheet Admin if you still need to import a timesheet.");
         }
         checkTimesheetAccess("add", user, sheet, beginDate, isGoogleDocsImport);
     }

@@ -75,7 +75,21 @@ AJS.toInit(function () {
         fetchData(timesheetID);
         AJS.$("#reset-timesheet-settings").hide();
     }
+
+    hideGoogleDocsImportButtonWhenDisabled();
 });
+
+function hideGoogleDocsImportButtonWhenDisabled() {
+    AJS.$.ajax({
+        type: "GET",
+        url: restBaseUrl + "config/isGoogleDocsImportEnabled",
+        success: function (enabled) {
+            if (!enabled) {
+                AJS.$("#button-wrapper").hide();
+            }
+        }
+    });
+}
 
 function replaceJiraTicketLinks() {
     var tickets = AJS.$(".td.ticket a");

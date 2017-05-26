@@ -45,6 +45,9 @@
         <li class="menu-item">
             <a href="#tabs-scheduling"><strong>Background Jobs</strong></a>
         </li>
+        <li class="menu-item">
+            <a href="#tabs-googledocs"><strong>GoogleDocsImport</strong></a>
+        </li>
     </ul>
     <div class="tabs-pane active-pane" id="tabs-general">
         <form id="general" class="aui">
@@ -431,6 +434,13 @@
                 </div>
             </fieldset>
         </form>
+    </div>
+    <div class="tabs-pane" id="tabs-googledocs">
+        <p></p>
+        <h2>GoogleDocs Import Toggle</h2>
+        <button id="toggle-google-docs" class="aui-button" onclick="toggleGoogleDocsImport()">Toggle GoogleDocsImport</button>
+        <h2>Admin Google Docs Import</h2>
+        <input class="text"></input><button class="aui-button">Import GoogleDocs For User</button>
     </div>
 </div>
 

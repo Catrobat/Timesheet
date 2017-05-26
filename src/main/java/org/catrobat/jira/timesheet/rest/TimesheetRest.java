@@ -511,6 +511,11 @@ public class TimesheetRest {
             return response;
         }
 
+        if (!permissionService.isGoogleDocsImportEnabled() && !permissionService.isTimesheetAdmin(user)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("GoogleDocsImport has been Disabled. " +
+                    "Talk to a Timesheet Admin if you still need to import a timesheet.").build();
+        }
+
         Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
         try {
             RestUtils.checkTimesheetIsEnabled(sheet);
