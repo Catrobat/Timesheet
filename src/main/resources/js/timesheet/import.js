@@ -144,7 +144,7 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
                     title: 'Timesheet import timeout.',
                     body: '<p>Reason: your timesheet appears to be too big. Talk to a Timesheet Admin.</p>'
                 });
-            } else {
+            } else if (error.statusText === "Conflict") {
                 var response_string = "";
                 var error_object = JSON.parse(error.responseText);
                 for (var i = 0; i < Object.keys(error_object).length; i++) {
@@ -173,6 +173,11 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
                 var parsed = JSON.parse(error.responseText);
                 timesheetData.entries = parsed.correct;
                 appendEntriesToTable(timesheetData);
+            } else {
+                errorMessageObjectOne = AJS.messages.error({
+                    title: 'Timesheet import Error.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
             }
         })
         .always(function() {
