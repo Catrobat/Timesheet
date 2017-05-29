@@ -493,11 +493,10 @@ public class TimesheetRest {
     }
 
     @POST
-    @Path("timesheets/{timesheetID}/entries/{isMTSheet}")
+    @Path("timesheets/{timesheetID}/entries")
     public Response postTimesheetEntries(@Context HttpServletRequest request,
             final JsonTimesheetEntry[] entries,
-            @PathParam("timesheetID") int timesheetID,
-            @PathParam("isMTSheet") Boolean isMTSheet) {
+            @PathParam("timesheetID") int timesheetID) {
 
         ApplicationUser user;
         try {

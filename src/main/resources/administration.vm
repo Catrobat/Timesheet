@@ -440,7 +440,16 @@
         <h2>GoogleDocs Import Toggle</h2>
         <button id="toggle-google-docs" class="aui-button" onclick="toggleGoogleDocsImport()">Toggle GoogleDocsImport</button>
         <h2>Admin Google Docs Import</h2>
-        <input class="text"></input><button class="aui-button">Import GoogleDocs For User</button>
+        <p>Works even if GoogleDocs Import is disabled.</p>
+        <p><strong>This feature is still experimental. Use with caution.</strong></p>
+        <p>User needs to access their Timesheet at least once to enable the import.</p>
+        <form class="aui">
+            <input id="select-for-import" class="text" width="120px"></input><br/>
+            <label>Is Masterthesis Timesheet: </label><input id="is-mt-sheet" class="checkbox" type="checkbox" />
+        </form>
+        <button class="aui-button" onclick="getTimesheetIDOfUser()">Load User</button>
+        <button class="aui-button import-google-docs" disabled>Import GoogleDocs For User</button>
+        #include("import.vm")
     </div>
 </div>
 

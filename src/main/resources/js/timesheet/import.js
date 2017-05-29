@@ -119,7 +119,7 @@ function importGoogleDocsTable(table, timesheetData, importDialog) {
         });
     }
 
-    var url = restBaseUrl + "timesheets/" + timesheetID + "/entries/" + isMasterThesisTimesheet;
+    var url = restBaseUrl + "timesheets/" + timesheetID + "/entries";
 
     if (entries.length === 0) return;
 
