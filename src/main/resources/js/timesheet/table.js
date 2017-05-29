@@ -109,7 +109,7 @@ function populateTable(timesheetDataReply) {
     var addNewEntryOptions = {
         httpMethod: "post",
         callback: addNewEntryCallback,
-        ajaxUrl: restBaseUrl + "timesheets/" + timesheetData.timesheetID + '/entry/' + isMasterThesisTimesheet
+        ajaxUrl: restBaseUrl + "timesheets/" + timesheetData.timesheetID + '/entry'
     };
 
     var emptyForm = renderFormRow(timesheetData, emptyEntry, addNewEntryOptions, false);
@@ -549,7 +549,7 @@ function renderViewRow(timesheetData, entry) {
     var editEntryOptions = {
         httpMethod: "put",
         callback: editEntryCallback,
-        ajaxUrl: restBaseUrl + "entries/" + entry.entryID + '/' + isMasterThesisTimesheet
+        ajaxUrl: restBaseUrl + "entries/" + entry.entryID
     };
 
     var viewRow = prepareViewRow(timesheetData, augmentedEntry);
@@ -611,7 +611,7 @@ function showEntryDeletionDialog(viewRow, entryID) {
 }
 
 function deleteEntryClicked(viewRow, entryID) {
-    var ajaxUrl = restBaseUrl + 'entries/' + entryID + '/' + isMasterThesisTimesheet;
+    var ajaxUrl = restBaseUrl + 'entries/' + entryID;
 
     var spinner = viewRow.find('span.aui-icon-wait');
     spinner.show();

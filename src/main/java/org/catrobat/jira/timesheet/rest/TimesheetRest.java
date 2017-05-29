@@ -246,7 +246,6 @@ public class TimesheetRest {
     public Response getTimesheetIDOFUser(@Context HttpServletRequest request,
             @PathParam("userName") String userName,
             @PathParam("getMTSheet") Boolean getMTSheet) {
-
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         Response response = permissionService.checkUserPermission();
         if (response != null) {
@@ -330,7 +329,6 @@ public class TimesheetRest {
     @Path("timesheets/{timesheetID}")
     public Response getTimesheet(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
-
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -373,7 +371,6 @@ public class TimesheetRest {
     @Path("timesheets/{timesheetID}/entries")
     public Response getTimesheetEntries(@Context HttpServletRequest request,
             @PathParam("timesheetID") int timesheetID) {
-
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         Response response = permissionService.checkUserPermission();
         if (response != null) {
@@ -418,12 +415,10 @@ public class TimesheetRest {
     }
 
     @POST
-    @Path("timesheets/{timesheetID}/entry/{isMTSheet}")
+    @Path("timesheets/{timesheetID}/entry")
     public Response postTimesheetEntry(@Context HttpServletRequest request,
             final JsonTimesheetEntry entry,
-            @PathParam("timesheetID") int timesheetID,
-            @PathParam("isMTSheet") Boolean isMTSheet) {
-
+            @PathParam("timesheetID") int timesheetID) {
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
@@ -497,7 +492,6 @@ public class TimesheetRest {
     public Response postTimesheetEntries(@Context HttpServletRequest request,
             final JsonTimesheetEntry[] entries,
             @PathParam("timesheetID") int timesheetID) {
-
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -618,12 +612,10 @@ public class TimesheetRest {
     }
 
     @POST
-    @Path("timesheets/update/{timesheetID}/{isMTSheet}")
+    @Path("timesheets/update/{timesheetID}")
     public Response postTimesheetHours(@Context HttpServletRequest request,
             final JsonTimesheet jsonTimesheet,
-            @PathParam("timesheetID") int timesheetID,
-            @PathParam("isMTSheet") Boolean isMTSheet) {
-
+            @PathParam("timesheetID") int timesheetID) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -648,13 +640,13 @@ public class TimesheetRest {
                 sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getLatestEntryDate(), isMTSheet, jsonTimesheet.getState());
+                        jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isMTSheet(), jsonTimesheet.getState());
             } else {
                 sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getLatestEntryDate(), isMTSheet, jsonTimesheet.getState());
+                        jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isMTSheet(), jsonTimesheet.getState());
             }
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -669,7 +661,6 @@ public class TimesheetRest {
     @Path("timesheets/updateEnableStates")
     public Response postTimesheetEnableStates(@Context HttpServletRequest request,
             final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
-
         Response response = permissionService.checkRootPermission();
         if (response != null) {
             return response;
@@ -714,12 +705,10 @@ public class TimesheetRest {
     }
 
     @PUT
-    @Path("entries/{entryID}/{isMTSheet}")
+    @Path("entries/{entryID}")
     public Response putTimesheetEntry(@Context HttpServletRequest request,
             final JsonTimesheetEntry jsonEntry,
-            @PathParam("entryID") int entryID,
-            @PathParam("isMTSheet") Boolean isMTSheet) {
-
+            @PathParam("entryID") int entryID) {
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
@@ -786,10 +775,9 @@ public class TimesheetRest {
     }
 
     @DELETE
-    @Path("entries/{entryID}/{isMTSheet}")
+    @Path("entries/{entryID}")
     public Response deleteTimesheetEntry(@Context HttpServletRequest request,
-            @PathParam("entryID") int entryID,
-            @PathParam("isMTSheet") Boolean isMTSheet) {
+            @PathParam("entryID") int entryID) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -845,7 +833,7 @@ public class TimesheetRest {
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
                             sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getHoursCompleted(),
                             sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), isMTSheet, state);
+                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), sheet.getIsMasterThesisTimesheet(), state);
                 } catch (ServiceException e) {
                     return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
                 }
@@ -856,7 +844,7 @@ public class TimesheetRest {
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
                         sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getHoursCompleted(),
                         sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
-                        new Date(), isMTSheet, sheet.getState());
+                        new Date(), sheet.getIsMasterThesisTimesheet(), sheet.getState());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }

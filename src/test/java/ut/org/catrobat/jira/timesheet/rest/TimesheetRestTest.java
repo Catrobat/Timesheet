@@ -627,13 +627,12 @@ public class TimesheetRestTest {
     @Test
     public void testPostTimesheetEntryOk() throws Exception {
         int timesheetID = 1;
-        Boolean isMTSheet = false;
         TimesheetEntry timesheetEntryMock = createTimesheetEntryMock();
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(timesheetEntryMock);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
-        response = timesheetRest.postTimesheetEntry(requestMock, jsonTimesheetEntry, timesheetID, isMTSheet);
+        response = timesheetRest.postTimesheetEntry(requestMock, jsonTimesheetEntry, timesheetID);
         assertNotNull(response.getEntity());
     }
 
@@ -669,8 +668,7 @@ public class TimesheetRestTest {
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
         when(permissionServiceMock.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(true);
 
-
-        response = timesheetRest.postTimesheetHours(requestMock, jsonTimesheet, timesheetID, isMTSheet);
+        response = timesheetRest.postTimesheetHours(requestMock, jsonTimesheet, timesheetID);
         assertNotNull(response.getEntity());
     }
 
@@ -691,7 +689,6 @@ public class TimesheetRestTest {
     public void testPutTimesheetEntryAdminChangedEntry() throws Exception {
         int timesheetID = 1;
         int entryID = 1;
-        Boolean isMTSheet = false;
         String userKey = "USER_KEY";
 
         TimesheetEntry timesheetEntryMock = createTimesheetEntryMock();
@@ -731,18 +728,17 @@ public class TimesheetRestTest {
         when(ComponentAccessor.getUserManager().getUserByKey(any()).getEmailAddress()).thenReturn("user@test.at");
         when(categoryMock.getName()).thenReturn("category 1");
 
-        response = timesheetRestMock.putTimesheetEntry(requestMock, jsonTimesheetEntry, timesheetID, isMTSheet);
+        response = timesheetRestMock.putTimesheetEntry(requestMock, jsonTimesheetEntry, timesheetID);
         assertNotNull(response.getEntity());
     }
 
     @Test
     public void testDeleteTimesheetEntryNotFound() throws Exception {
         int entryID = 1;
-        Boolean isMTSheet = false;
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
-        response = timesheetRest.deleteTimesheetEntry(requestMock, entryID, isMTSheet);
+        response = timesheetRest.deleteTimesheetEntry(requestMock, entryID);
         assertNotNull(response.getEntity());
     }
 }

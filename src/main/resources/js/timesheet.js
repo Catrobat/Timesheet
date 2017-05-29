@@ -286,7 +286,7 @@ function updateTimesheetHours(existingTimesheetData) {
 
     AJS.$.ajax({
         type: 'POST',
-        url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID + '/' + existingTimesheetData.isMTSheet,
+        url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
         contentType: "application/json",
         data: JSON.stringify(timesheetUpdateData)
     })
