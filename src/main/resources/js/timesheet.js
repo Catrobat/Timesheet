@@ -258,7 +258,6 @@ function getExistingTimesheetHours(timesheetID) {
     });
     AJS.$.when(timesheetFetched)
         .done(updateTimesheetHours)
-        .done(location.reload())
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching existing timesheet data.',
@@ -284,7 +283,7 @@ function updateTimesheetHours(existingTimesheetData) {
         state: existingTimesheetData.state
     };
 
-    AJS.$.ajax({
+    var timesheetUpdated = AJS.$.ajax({
         type: 'POST',
         url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
         contentType: "application/json",
@@ -296,6 +295,7 @@ function updateTimesheetHours(existingTimesheetData) {
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
         });
+    AJS.$.when(timesheetUpdated).done(location.reload());
 }
 
 function fetchUsers() {

@@ -39,11 +39,9 @@ function getNameFromCategoryIndex(categoryID, timesheetData) {
 }
 
 function initUserSaveButton() {
-    AJS.$("#timesheet-information").submit(function (e) {
+    AJS.$("#timesheet-hours-save-button").click("click", function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
-            getExistingTimesheetHours(timesheetID);
-        }
+        getExistingTimesheetHours(timesheetID);
     });
 }
 
@@ -169,9 +167,9 @@ function initTimesheetInformationValues(timesheetData) {
         AJS.$("#substractTimesheetHours").append("<fieldset>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
         AJS.$("#substractTimesheetHours").append("<input class=\"text\" type=\"text\" id=\"timesheet-hours-substract\" name=\"timesheet-hours-substract\" title=\"timesheet-hours-substract\">");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your remaining timesheet hours.</div>");
+        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your subtracted timesheet hours.</div>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
-        AJS.$("#substractTimesheetHours").append("<textarea name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"You can add here what ever you want...\"></textarea>");
+        AJS.$("#substractTimesheetHours").append("<textarea name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"No timesheet hours have been subtracted yet.\"></textarea>");
         AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
         AJS.$("#substractTimesheetHours").append("</fieledset>");
 
@@ -182,10 +180,10 @@ function initTimesheetInformationValues(timesheetData) {
         AJS.$("#substractTimesheetHours").empty();
         AJS.$("#substractTimesheetHours").append("<fieldset>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
-        AJS.$("#substractTimesheetHours").append("<input class=\"text\" type=\"text\" id=\"timesheet-hours-substract\" name=\"timesheet-hours-substract\" title=\"timesheet-hours-substract\" readonly>");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your remaining timesheet hours.</div>");
+        AJS.$("#substractTimesheetHours").append("<input disabled=\"disabled\" class=\"text\" type=\"text\" id=\"timesheet-hours-substract\" name=\"timesheet-hours-substract\" title=\"timesheet-hours-substract\" readonly>");
+        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your subtracted timesheet hours.</div>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
-        AJS.$("#substractTimesheetHours").append("<textarea name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"You can add here what ever you want...\" readonly></textarea>");
+        AJS.$("#substractTimesheetHours").append("<textarea disabled=\"disabled\" name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"No timesheet hours have been subtracted yet.\" readonly></textarea>");
         AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
         AJS.$("#substractTimesheetHours").append("</fieledset>");
 
