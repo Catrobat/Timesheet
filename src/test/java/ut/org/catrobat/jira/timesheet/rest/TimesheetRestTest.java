@@ -649,7 +649,7 @@ public class TimesheetRestTest {
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
-        response = timesheetRest.postTimesheetEntries(requestMock, jsonTimesheetEntries, timesheetID, isMTSheet);
+        response = timesheetRest.postTimesheetEntries(requestMock, jsonTimesheetEntries, timesheetID);
         assertNotNull(response.getEntity());
     }
 
