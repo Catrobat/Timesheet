@@ -1,6 +1,6 @@
 <section role="dialog" class="import-dialog aui-layer aui-dialog2 aui-dialog2-large" aria-hidden="true">
   <header class="aui-dialog2-header">
-    <h2 class="aui-dialog2-header-main">Import from Google Docs</h2>
+    <h2 class="aui-dialog2-header-main">Import from Google Docs - Please read carefully</h2>
     <!-- Close icon -->
     <a class="aui-dialog2-header-close">
       <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
@@ -13,20 +13,20 @@
         Verify that the timesheet format is correct. Make sure that
         <ul>
           <li>
-            columns of your Google Doc Timesheet are in the following order:
-            <code>Date</code>, <code>From</code>, <code>To</code>, <code>Duration in h</code>,
-            <code>Pause</code>, <code>Category</code>, <code>Description</code>
+            columns of your Google Doc Timesheet are in the following order:<br>
+            <code>Date/Datum</code>, <code>From/Von</code>, <code>To/Bis</code>, <code>Duration/Dauer in h</code>,
+            <code>Pause</code>, <code>Category</code>, <code>Description/Tätigkeit</code>
           </li>
           <li>
             no entry has missing values (i.e. the end date of the current entry).
           </li>
           <li>
-            the entries have a header row that start with <strong>Datum</strong>
+            the entries have a header row that starts with <strong>Datum</strong>
             and a footer row that starts with <strong>BEGINN</strong>.
           </li>
           <li>
-            the values in column <code>Date</code> is formatted this way: <code>YYYY-MM-DD</code> or: <code>DD.MM.YYYY</code>
-            (e.g. <code>2015-09-21</code>). You can achieve this by
+            the values in column <code>Date/Datum</code> are formatted this way: <code>YYYY-MM-DD</code> or: <code>DD.MM.YYYY</code>
+            (e.g. <code>2015-09-21</code>). <br> To change the format in Google Docs, follow these steps:
             <ol>
               <li>Select Fields in column <code>Date</code></li>
               <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
@@ -35,10 +35,10 @@
             </ol>
           </li>
           <li>
-            the values in column <code>From</code> and <code>To</code> are formatted this way:
-            <code>HH:MM</code> (e.g. <code>12:00</code>). You can achieve this by
+            the values in column <code>From</code>, <code>To</code> and <code>Pause</code> are formatted this way:
+            <code>HH:MM</code> (e.g. <code>12:00</code>). <br> To change the format in Google Docs, follow these steps:
             <ol>
-              <li>Select Fields in column <code>From/To</code></li>
+              <li>Select Fields in column <code>From/To/Pause</code></li>
               <li>Click on <strong>Format</strong> > <strong>Number</strong> > <strong>More
                 Formats</strong> > <strong>Number Format</strong></li>
               <li>Paste <code>HH":"MM</code> and confirm</li>
@@ -58,7 +58,7 @@
     <strong>Example:</strong></br>
     <pre>
     ignored rows
-    Datum	Von	Bis	Dauer in h	Pause	Theorie? Ja => j	TÃ¤tigkeit
+    Datum	Von	Bis	Dauer in h	Pause	Theorie? Ja => j	Tätigkeit
     2017-03-24	11:30	18:15	06:45			Fixed stuff
     2017-03-23	12:00	13:15	01:15			Did some stuff
     BEGINN
