@@ -242,7 +242,14 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
             	faultyRows.push(row + wrongDateFormat);
             } else if (entry === beginEndDateNotValid) {
             	faultyRows.push(row + beginEndDateNotValid);
-            } else {
+            } else if (entry === vonTimeFormatNotValid) {
+            	faultyRows.push(row + vonTimeFormatNotValid);
+            } else if (entry === bisTimeFormatNotValid) {
+            	faultyRows.push(row + bisTimeFormatNotValid);
+            } else if (entry === pauseTimeFormatNotValid) {
+            	faultyRows.push(row + pauseTimeFormatNotValid);
+            }
+            else {
               entries.push(entry);
             }
             
@@ -250,7 +257,7 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
             if (pieces.length === 7){
             	var taskDescription = pieces[6];
             	if (taskDescription.length > 255) {
-            		trimmedTaskDescriptionRows.push("<span style=\"color:#BDBDBD\">" + row + "</span>");
+            		trimmedTaskDescriptionRows.push(row);
             	}
             }
         });
@@ -261,6 +268,9 @@ function parseEntriesFromGoogleDocTimesheet(googleDocContent, timesheetData) {
 var columnsMissing = "<strong> (Less than 7 columns)</strong>";
 var wrongDateFormat = "<strong> (Wrong Dateformat)</strong>";
 var beginEndDateNotValid = "<strong> (Begin- or Enddate not valid)</strong>";
+var pauseTimeFormatNotValid = "<strong> (Time Format not valid in column Pause)</strong>";
+var vonTimeFormatNotValid = "<strong> (Time Format not valid in column Von)</strong>";
+var bisTimeFormatNotValid = "<strong> (Time Format not valid in column Bis)</strong>";
  
 function parseEntryFromGoogleDocRow(row, timesheetData) {
     var pieces = row.split("\t");
@@ -269,6 +279,35 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     if (pieces.length < 7) {
         return columnsMissing;
     }
+    
+ // check if Von time is in the correct HH:MM format
+    if (pieces[1] != "") {
+    	console.log("pieces1 = von");
+    	isTimeFormatValid = validateHhMm(pieces[1]);
+
+    	if (!isTimeFormatValid) {
+    		return vonTimeFormatNotValid;
+    	}
+    }
+
+    // check if Bis time is in the correct HH:MM format
+    if (pieces[2] != "") {
+    	console.log("pieces2 = bis");
+    	isTimeFormatValid = validateHhMm(pieces[2]);
+
+    	if (!isTimeFormatValid) {
+    		return bisTimeFormatNotValid;
+    	}
+    }
+
+    // check if pause time is in the correct HH:MM format
+    if (pieces[4] != "") {
+    	isTimeFormatValid = validateHhMm(pieces[4]);
+
+    	if (!isTimeFormatValid)
+    		return pauseTimeFormatNotValid;
+    }
+    
     //if no pause is specified 0 minutes is given
     if (pieces[4] == "") {
         pieces[4] = "00:00";
@@ -356,17 +395,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
             return i;
         }
     	
-//        if (i == 5 && pieces[i].toLowerCase() == "j") {
-//            pieces[i] = "Theory";
-//            categoryID = -1;
-//        }
-//        else if (i == 5 && pieces[i] == "") {
-//            pieces[i] = "GoogleDocsImport";
-//            categoryID = -2;
-//        }
-//        else if (pieces[i] == "") {
-//            return i;
-//        }
+
     }
 
     var beginDateString = pieces[0] + " " + pieces[1];
