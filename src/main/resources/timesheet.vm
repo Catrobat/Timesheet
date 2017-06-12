@@ -243,8 +243,8 @@
                        title="timesheet-finish-date">
 
                 <div class="description">
-                    Shows your projected finished date based
-                    of your work in the last 30 days.
+                    Shows your projected finish date based
+                    on your work in the last 30 days.
                 </div>
             </div>
             <div class="field-group">

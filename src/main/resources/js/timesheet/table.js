@@ -874,11 +874,9 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         return;
     }
     else {
-
         form.descriptionField.css({
             "border-color": "#DCDCDC"
         });
-
     }
 
     timesheetEntry = {
@@ -910,7 +908,23 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         	removeSavingAndDeletingErrorMessages();
             var augmentedEntry = augmentEntry(timesheetData, entryData);
             saveOptions.callback(augmentedEntry, timesheetData, form);
-            AJS.$(".description_").val("");
+// TODO: empty the description field of the first empty entry only!
+            //AJS.$(".description_").val("");
+//            form.descriptionField.value = "";
+//            document.getElementById('userId').value = ''
+//            if ($(this).attr("data-id") == "new-id")
+            	
+//            var entrytable = document.getElementById('entry-table');
+//            var newid = entrytable.getAttribute('data-id'); // fruitCount = '12'
+//            console.log("data-id: " + newid);
+//            // 'Setting' data-attributes using setAttribute
+//            if (newid == "new-id") {
+//            	console.log("newid = " + newid);
+//            	AJS.$(".description_").val("");
+            	//entrytable.setAttribute('data-fruit','7'); // Pesky birds
+            }
+            	
+            	
         },
         error: function (error) {
             console.log(error);

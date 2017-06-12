@@ -155,10 +155,10 @@ function calculateTheoryTime(timesheetData) {
 }
 
 function initTimesheetInformationValues(timesheetData) {
-    AJS.$("#timesheet-hours-text").val(timesheetData.targetHours);
-    AJS.$("#timesheet-hours-remain").val(timesheetData.targetHours - timesheetData.targetHoursCompleted
-        + timesheetData.targetHoursRemoved);
-    AJS.$("#timesheet-target-hours-theory").val(timesheetData.targetHourTheory);
+    AJS.$("#timesheet-hours-text").val(toFixed(timesheetData.targetHours, 2));
+    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours, 2) - toFixed(timesheetData.targetHoursCompleted, 2)
+        + toFixed(timesheetData.targetHoursRemoved, 2));
+    AJS.$("#timesheet-target-hours-theory").val(toFixed(timesheetData.targetHourTheory, 2));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
     AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
 
@@ -167,7 +167,9 @@ function initTimesheetInformationValues(timesheetData) {
         AJS.$("#substractTimesheetHours").append("<fieldset>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
         AJS.$("#substractTimesheetHours").append("<input class=\"text\" type=\"text\" id=\"timesheet-hours-substract\" name=\"timesheet-hours-substract\" title=\"timesheet-hours-substract\">");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your subtracted timesheet hours.</div>");
+        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your subtracted timesheet hours" +
+        		"(only integers are supported)." +
+        		"<br>The Remaining Timesheet Hours are increased by the value entered above.</div>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
         AJS.$("#substractTimesheetHours").append("<textarea name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"No timesheet hours have been subtracted yet.\"></textarea>");
         AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
@@ -175,13 +177,15 @@ function initTimesheetInformationValues(timesheetData) {
 
         //load values
         AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
-        AJS.$("#timesheet-hours-substract").val(timesheetData.targetHoursRemoved);
+        AJS.$("#timesheet-hours-substract").val(toFixed(timesheetData.targetHoursRemoved, 2));
     } else {
         AJS.$("#substractTimesheetHours").empty();
         AJS.$("#substractTimesheetHours").append("<fieldset>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
         AJS.$("#substractTimesheetHours").append("<input disabled=\"disabled\" class=\"text\" type=\"text\" id=\"timesheet-hours-substract\" name=\"timesheet-hours-substract\" title=\"timesheet-hours-substract\" readonly>");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your subtracted timesheet hours.</div>");
+        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your subtracted timesheet hours" +
+        		"(only integers are supported)." +
+        		"<br>The Remaining Timesheet Hours are increased by the value entered above.</div>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
         AJS.$("#substractTimesheetHours").append("<textarea disabled=\"disabled\" name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"No timesheet hours have been subtracted yet.\" readonly></textarea>");
         AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
@@ -189,7 +193,7 @@ function initTimesheetInformationValues(timesheetData) {
 
         //load values
         AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
-        AJS.$("#timesheet-hours-substract").val(timesheetData.targetHoursRemoved);
+        AJS.$("#timesheet-hours-substract").val(toFixed(timesheetData.targetHoursRemoved, 2));
     }
 
 }
@@ -244,6 +248,17 @@ function calculateDuration(begin, end, pause) {
 function isValidDate(date) {
     if (Object.prototype.toString.call(date) === "[object Date]") {
         return !isNaN(date.getTime());
+    }
+    else {
+        return false;
+    }
+}
+
+function validateHhMm(time) {
+    var isValid = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/.test(time);
+
+    if (isValid) {
+        return true;
     }
     else {
         return false;
