@@ -15,7 +15,7 @@
           <li>
             columns of your Google Doc Timesheet are in the following order:<br>
             <code>Date/Datum</code>, <code>From/Von</code>, <code>To/Bis</code>, <code>Duration/Dauer in h</code>,
-            <code>Pause</code>, <code>Category</code>, <code>Description/Tätigkeit</code>
+            <code>Pause</code>, <code>Category</code>, <code>Description/Taetigkeit</code>
           </li>
           <li>
             no entry has missing values (i.e. the end date of the current entry).
@@ -58,7 +58,7 @@
     <strong>Example:</strong></br>
     <pre>
     ignored rows
-    Datum	Von	Bis	Dauer in h	Pause	Theorie? Ja => j	Tätigkeit
+    Datum	Von	Bis	Dauer in h	Pause	Theorie? Ja => j	Taetigkeit
     2017-03-24	11:30	18:15	06:45			Fixed stuff
     2017-03-23	12:00	13:15	01:15			Did some stuff
     BEGINN
