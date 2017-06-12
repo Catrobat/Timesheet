@@ -921,10 +921,8 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
 //            if (newid == "new-id") {
 //            	console.log("newid = " + newid);
 //            	AJS.$(".description_").val("");
-            	//entrytable.setAttribute('data-fruit','7'); // Pesky birds
-            }
-            	
-            	
+//				entrytable.setAttribute('data-fruit','7'); // Pesky birds
+//            }
         },
         error: function (error) {
             console.log(error);
