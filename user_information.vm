@@ -1,0 +1,87 @@
+<!--
+  ~ Copyright 2014 Stephan Fellhofer
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html>
+<head>
+    <title>User Information</title>
+    <meta name="decorator" content="atl.admin"/>
+    <meta name="application-base-url" content="$applicationProperties.getBaseUrl()">
+    $webResourceManager.requireResource("org.catrobat.jira.timesheet:user-information-resources")
+</head>
+<body class="aui-layout aui-theme-default">
+<div id="aui-message-bar"></div>
+<div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
+<div id="modify-user">
+    <header class="aui-page-header">
+        <div class="left-from-search-field">
+            <h2>Users</h2>
+        </div>
+        <div class="search-field">
+            <form class="aui" onsubmit="return false;">
+                <label for="search-filter-overview">Search Filter</label>
+                <input class="search text" type="text" id="search-filter-overview" name="search-filter-overview"
+                       title="search-filter-overview" autocomplete="off">
+            </form>
+        </div>
+    </header>
+    <div class="aui-page-panel">
+        <div class="aui-page-panel-inner">
+            <section class="aui-page-panel-content">
+                <p>
+                    This is a basic information overview of all available LDAP users. The basic implementation
+                    provides a search function and shows the project members timesheet states.
+                </p>
+                <!--div id="update-timesheet-button" class="field-group">
+                    <form id="update-timesheet-status">
+                        <input type="submit" value="Save User Information" class="aui-button aui-button-primary"
+                               style="float: right;">
+                    </form>
+                </div-->
+                <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
+                    <thead>
+                    <tr>
+                        <th id="ti-users">User</th>
+                        <th id="ti-email">E-Mail</th>
+                        <th id="ti-team">Team</th>
+                        <th id="ti-state">State</th>
+                        <th id="ti-inactive-end-date">Inactive End Date</th>
+                        
+                        <th id="ti-remaining-hours">Remaining Hours</th>
+
+                        <th id="ti-total-practice-hours">Total Practice Hours</th>
+                        <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                        <th id="ti-hours-per-month">Hours last Month</th>
+
+                        <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                        <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
+                        <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+
+                        <th id="ti-enabled">Timesheet Enabled</th>
+                    </tr>
+                    </thead>
+                    <tbody class="list" id="user-information-table-content">
+                    #* will be filled out by JavaScript *#
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+
+</body>
+</html>

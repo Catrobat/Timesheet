@@ -1,0 +1,409 @@
+<html>
+<head>
+    <title>Timesheet</title>
+    <meta name="decorator" content="atl.admin">
+    <meta name="decorator" content="atl.userprofile">
+    $webResourceManager.requireResource("org.catrobat.jira.timesheet:timesheet-resources")
+</head>
+
+<body>
+<script type="text/javascript">
+    var timesheetID = $timesheetID;
+    var isAdmin = $isAdmin;
+    var isCoordinator = $isCoordinator;
+    var isMasterThesisTimesheet = $isMasterThesisTimesheet;
+    var isSupervisor = $isReadOnlyUser;
+</script>
+
+<script type="application/javascript">
+    function showOverview() {
+        document.getElementById("visualization-table").style.visibility = "visible";
+        document.getElementById("piChartDiagram").style.visibility = "visible";
+        document.getElementById("piChartDiagramTag").style.visibility = "visible";
+    }
+</script>
+
+<script type="application/javascript">
+    function showLineDiagram() {
+        document.getElementById("lineDiagram").style.visibility = "visible";
+        document.getElementById("lineDiagramTag").style.visibility = "visible";
+        document.getElementById("categoryLineDiagram").style.visibility = "visible";
+        document.getElementById("categoryLineDiagramTag").style.visibility = "visible";
+    }
+</script>
+
+<script type="application/javascript">
+    function showTeamDiagram() {
+        AJS.tabs.setup();
+        document.getElementById("teamDiagramTag").style.visibility = "visible";
+        document.getElementById("teamDataDiagram").style.visibility = "visible";
+        document.getElementById("teamLineDiagram").style.visibility = "visible";
+        document.getElementById("teamLineDiagramTag").style.visibility = "visible";
+    }
+</script>
+
+<script type="application/javascript">
+	function clearContent() {
+  		document.getElementById("import-text").value = '';
+	}
+</script>
+
+<header id="inactive-header" role="banner"></header>
+
+<a name="top"></a>
+
+<div id="aui-message-bar"></div>
+
+<h1 id="timesheet-owner">Timesheet of: </h1>
+
+#*Tabs view*#
+<div class="aui-tabs horizontal-tabs" id="table-header">
+
+    <ul class="tabs-menu nav nav-tabs" id="tabs">
+        <li class="menu-item active-tab">
+            <a href="#tabs-timesheet"><strong>Timesheet</strong></a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-overview" onclick="showOverview();">Summary</a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-line" onclick="showLineDiagram();">Time - Visualization</a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-team" onclick="showTeamDiagram();">Team - Visualization</a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
+        </li>
+        <li class="menu-item" id="coord_private">
+            <a href="#tabs-timesheet-settings"><strong>View Other Timesheets</strong></a>
+        </li>
+        <li class="menu-item" id="coord_private_table">
+            <a href="#tabs-team-information"><strong>Team Information</strong></a>
+        </li>
+    </ul>
+
+#*content of the first tab "Timesheet"*#
+    <div class="tabs-pane active-pane" id="tabs-timesheet">
+
+        <div id="timesheet-owner-information"></div>
+
+        <div id="button-wrapper">
+            <button class="aui-button aui-button-subtle import-google-docs"><span
+                    class="aui-icon aui-icon-small aui-iconfont-devtools-checkout"></span> Import from Google Docs
+            </button>
+        </div>
+
+        #include("import.vm")
+
+    #*content of timesheet table*#
+        <div id="timesheet-table" class="aui aui-table-interactive aui-table-sortable table">
+            <div class="tr">
+                <span class="td">
+                    <span class="aui-icon aui-icon-wait">Loading...</span>
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+#*   content of the second tab "Summary"*#
+    <div class="tabs-pane" id="tabs-timesheet-settings">
+        <form id="timesheet-settings" class="aui">
+            <div id="coordinatorTimesheetSelect"></div>
+            <div id="approvedUserTimesheetSelect"></div>
+        </form>
+        <form id="reset-timesheet-settings" class="aui">
+            <input type="submit" value="View Own Timesheet" class="aui-button aui-button-primary">
+        </form>
+    </div>
+
+#*   content of the tab "Team Information"*#
+    <div class="tabs-pane" id="tabs-team-information">
+        <div class="aui-page-panel">
+            <div class="aui-page-panel-inner">
+                <section class="aui-page-panel-content">
+                    <table id="team-information-table" class="aui aui-table-interactive aui-table-sortable">
+                        <thead>
+                        <tr>
+                            <th id="ti-users">Member</th>
+                            <th id="ti-state">State</th>
+                            <th id="ti-inactive-end-date">Inactive End Date</th>
+                            
+                            <th id="ti-remaining-hours">Remaining Hours</th>
+
+                            <th id="ti-total-practice-hours">Total Practice Hours</th>
+                            <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                            <th id="ti-hours-per-month">Hours last Month</th>
+
+                            <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                            <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
+                            <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+                        </tr>
+                        </thead>
+                        <tbody class="list" id="team-information-table-content">
+
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </div>
+
+#*    content of the third tab "Time-Visualization"*#
+    <div class="tabs-pane" id="tabs-overview">
+        <table id="visualization-table" class="aui aui-table-interactive aui-table-sortable">
+            <thead>
+            <tr>
+                <th id="basic-date">Description</th>
+                <th id="basic-time">Value</th>
+            </tr>
+            </thead>
+            <tbody class="list" id="visualization-table-content">
+            #* will be filled out by JavaScript *#
+            </tbody>
+        </table>
+
+        #*TODO: do we need that header? *#
+        <h3 id="piChartDiagramTag" >Visualization of your theory - practical hours distribution</h3>
+        <div id="piChartDiagram" style="height: 200px;"></div>
+    </div>
+#*    content of the third tab "Time-Visualization"*#
+    <div class="tabs-pane" id="tabs-line">
+        <h3 id="lineDiagramTag">Visualization of your working time</h3>
+        <div id="lineDiagram" style="height:300px;"></div>
+
+        <h3 id="categoryLineDiagramTag">Visualization of your working time related on categories</h3>
+        <div id="categoryLineDiagram" style="height:400px;"></div>
+    </div>
+#*    content of the third tab "Team-Visualization"*#
+    <div class="tabs-pane" id="tabs-team">
+        <form id="team-visualization" class="aui">
+            <h3 id="teamDiagramTag">Team Visualization</h3>
+            <div id="teamDataDiagram" style="height: 300px;"></div>
+            <h3 id="teamLineDiagramTag">Team Category Visualization</h3>
+            <div id="teamLineDiagram" style="height: 400px;"></div>
+        </form>
+    </div>
+
+#*    content of the last tab "Key Data"*#
+    <div class="tabs-pane" id="tabs-timesheet-information">
+        <p>
+        <form id="timesheet-information" class="aui">
+            <div class="field-group" id="timesheet-export-csv-link">
+                <label>Export</label>
+                <div>Download timesheet as <a id="download-csv" href="download/timesheet">CSV</a> or only Entries as
+                <a id="download-json" href="download/timesheet/json">Json</a>.</div>
+                <div class="description">
+                    Link for downloading your timesheet.
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="timesheet-hours-remain">Remaining Timesheet Hours</label>
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-remain"
+                       name="timesheet-hours-remain"
+                       title="timesheet-hours-remain">
+
+                <div class="description">
+                    Shows your remaining timesheet hours.
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="timesheet-hours-practical">Finished Practical Hours</label>
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-practical"
+                       name="timesheet-hours-practical"
+                       title="timesheet-hours-practical">
+
+                <div class="description">
+                    Shows your finished practical hours.
+                </div>
+            </div>
+            <div class="field-group" id="theory-hour-key-data">
+                <label for="timesheet-hours-theory">Finished Theory Hours</label>
+                <input disabled="disabled" class="text" type="text" id="timesheet-hours-theory"
+                       name="timesheet-hours-theory"
+                       title="timesheet-hours-theory">
+
+                <div class="description">
+                    Shows your finished theory hours.
+                </div>
+                <label for="timesheet-target-hours-theory">Target Theory Hours</label>
+                <input class="text" type="text" id="timesheet-target-hours-theory"
+                       name="timesheet-target-hours-theory"
+                       title="timesheet-target-hours-theory">
+
+                <div class="description">
+                    Shows your target theory hours.
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="timesheet-finish-date">Projected Finish Date</label>
+                <input disabled="disabled" class="text" type="text" id="timesheet-finish-date"
+                       name="timesheet-finish-date"
+                       title="timesheet-finish-date">
+
+                <div class="description">
+                    Shows your projected finish date based
+                    on your work in the last 30 days.
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="timesheet-hours-text">Target Total Timesheet Hours</label>
+                <input class="text" type="text" id="timesheet-hours-text"
+                       name="timesheet-hours-text"
+                       title="timesheet-hours-text">
+
+                <div class="description">
+                    Shows your target total timesheet hours.
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="timesheet-hours-lectures">Lectures</label>
+                <input class="text" type="text" id="timesheet-hours-lectures" name="timesheet-hours-lectures"
+                       title="timesheet-hours-lectures">
+
+                <div class="description">
+                    Shows your lectures.
+                </div>
+            </div>
+
+            <div class="field-group" id="substractTimesheetHours"></div>
+
+            <div class="field-group">
+                <div class="timesheet-hours" id="timesheet-hours-update-button">
+                    <input type="submit" value="Update" class="aui-button aui-button-primary">
+                </div>
+
+                <div class="timesheet-hours" id="timesheet-hours-save-button">
+                    <input type="submit" value="Save" class="aui-button aui-button-primary">
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+
+<script>
+    function drawSelectedTeamDiagram(data) {
+        var selectedTeamDiagram = new Morris.Line({
+            // ID of the element in which to draw the chart.
+            element: 'teamDataDiagram',
+            // Chart data records -- each entry in this array corresponds to a point on
+            // the chart.
+            data: data,
+            // The name of the data record attribute that contains x-values.
+            xkey: 'year',
+            // A list of names of data record attributes that contain y-values.
+            ykeys: ['value'],
+            // Labels for the ykeys -- will be displayed when you hover over the
+            // chart.
+            labels: ['hours'],
+        });
+        return selectedTeamDiagram;
+    }
+</script>
+
+<script>
+    function drawTeamDiagram(data, labelData) {
+        var labelNames = [];
+        labelNames = getUsedCategoryNames(data);
+
+        var teamDiagram = new Morris.Area({
+            // ID of the element in which to draw the chart.
+            element: 'teamLineDiagram',
+            // Chart data records -- each entry in this array corresponds to a point on
+            // the chart.
+            data: data,
+            // The name of the data record attribute that contains x-values.
+            xkey: 'year',
+            // A list of names of data record attributes that contain y-values.
+            ykeys: labelNames,
+            // Labels for the ykeys -- will be displayed when you hover over the
+            // chart.
+            labels: labelData,
+        });
+        return teamDiagram;
+    }
+</script>
+
+<script>
+    function drawPiChart(data) {
+        var piChart = new Morris.Donut({
+            // ID of the element in which to draw the chart.
+            //element: 'piChartDiagram',
+            element: 'piChartDiagram',
+            // Chart data records -- each entry in this array corresponds to a point on
+            // the chart.
+            data: data,
+        });
+        return piChart;
+    }
+</script>
+
+<script>
+    function drawLineDiagram(data) {
+        var lineDiagram = new Morris.Line({
+            // ID of the element in which to draw the chart.
+            element: 'lineDiagram',
+            // Chart data records -- each entry in this array corresponds to a point on
+            // the chart.
+            data: data,
+            // The name of the data record attribute that contains x-values.
+            xkey: 'year',
+            // A list of names of data record attributes that contain y-values.
+            ykeys: ['value'],
+            // Labels for the ykeys -- will be displayed when you hover over the
+            // chart.
+            labels: ['hours'],
+        });
+        return lineDiagram;
+    }
+</script>
+
+<script>
+    function getUsedCategoryNames(data) {
+        var labelNames = [];
+
+    	  for (var i = 0; i < data.length; i++) {
+        	  for ( property in data[i] ) {
+  				      if ( property !== "year" ) {
+  					        if ( data[i][property] !== 0 && data[i][property] !== undefined ) {
+  						          if ( !labelNames.includes(property) ) {
+                          labelNames.push(property);
+                        }
+  					        }
+  				      }
+			      }
+		    }
+		    return labelNames;
+	  }
+</script>
+
+<script>
+    function drawCategoryDiagram(data, labelData) {
+ 	      var labelNames = [];
+ 	      labelNames = getUsedCategoryNames(data);
+
+        var categoryDiagram = new Morris.Area({
+            // ID of the element in which to draw the chart.
+            element: 'categoryLineDiagram',
+            // Chart data records -- each entry in this array corresponds to a point on
+            // the chart.
+            data: data,
+            // The name of the data record attribute that contains x-values.
+            xkey: 'year',
+            // A list of names of data record attributes that contain y-values.
+            ykeys: labelNames,
+            // Labels for the ykeys -- will be displayed when you hover over the
+            // chart.
+            labels: labelData,
+        });
+        return categoryDiagram;
+    }
+</script>
+</body>
+</html>
