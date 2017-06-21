@@ -129,6 +129,7 @@ public class UserRest {
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
             
+            jsonUserInformation.setIsMasterTimesheet(timesheet.getIsMasterThesisTimesheet());
             jsonUserInformation.setRemainingHours(timesheet.getTargetHours() - timesheet.getHoursCompleted() 
 					+ timesheet.getHoursDeducted());
 

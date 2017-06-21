@@ -24,15 +24,14 @@ AJS.toInit(function () {
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
     var timesheet = [];
-    var users = [];
     var errorMessage;
     var fetchingErrorMessage;
 
     function populateTable(userInformation) {
-        users = userInformation;
-
         AJS.$(".loadingDiv").show();
         AJS.$("#user-information-table-content").empty();
+        AJS.$("#user-information-table-master-content").empty();
+        
         for (var i = 0; i < userInformation.length; i++) {
             var latestEntryDate;
             if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
@@ -57,28 +56,31 @@ AJS.toInit(function () {
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
                 "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "'>" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
-                
                 "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
-                
                 "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
                 "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
                 "</td><td headers='ti-hours-per-month' class='hours-month'>" + userInformation[i].hoursPerMonth +
-
                 "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
                 "</td><td headers='ti-latest-entry-hours' class='latest-hours'>" + userInformation[i].latestEntryHours +
                 "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
                 enabledColumn +
                 "</td></tr>";
-            AJS.$("#user-information-table-content").append(row);
+            
+            if (userInformation[i].isMasterTimesheet === true)
+            	AJS.$("#user-information-table-master-content").append(row);
+            else
+            	AJS.$("#user-information-table-content").append(row);
 
             var timesheetID = userInformation[i].timesheetID;
             setEnableButton(timesheetID, enabled);
         }
 
         AJS.$("#user-information-table").trigger("update");
+        AJS.$("#user-information-table-master").trigger("update");
+        
         var userList = new List("modify-user", {
             page: Number.MAX_VALUE,
-            valueNames: ["users", "email", "team", "state", "inactive-end", "remaining-hours", "total-practice", "hours-half-year",
+            valueNames: ["users", "email", "team", "state", "inactive-end", "is-mastertimesheet", "remaining-hours", "total-practice", "hours-half-year",
             "hours-month", "latest-date", "latest-hours", "latest-description"]
         });
 
@@ -89,7 +91,57 @@ AJS.toInit(function () {
                 AJS.$("#update-timesheet-button").hide();
             }
             AJS.$("#user-information-table").trigger("update");
+            AJS.$("#user-information-table-master").trigger("update");
         });
+        
+        
+        AJS.$("#timesheet-user-statistics").empty();
+        
+        var numberTotal = 0;
+        var numberActive = 0;
+        var numberInActive = 0;
+        var numberAutoInActive = 0;
+        var numberInActiveOffline = 0;
+        var numberDisabled = 0;
+        var numberMasterTimesheets = 0;
+        
+        for (var i = 0; i < userInformation.length; i++) {
+        	
+        	numberTotal++;
+        	
+        	if (userInformation[i].state === "ACTIVE")
+        		numberActive++;
+        	else if (userInformation[i].state === "INACTIVE")
+        		numberInActive++;
+        	else if (userInformation[i].state === "AUTO_INACTIVE")
+        		numberAutoInActive++;
+        	else if (userInformation[i].state === "INACTIVE_OFFLINE")
+        		numberInActiveOffline++;
+        	else if (userInformation[i].state === "DISABLED")
+        		numberDisabled;
+        	
+        	if (userInformation[i].isMasterTimesheet === true)
+        		numberMasterTimesheets++;
+        }
+        
+        var row = "<tr><td headers='tus-description'>" + "Total Number of Timesheets" + "</td>" +
+        				"<td headers='tus-count>" + numberTotal + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Number of Active Timesheets" + "</td>" +
+                  		"<td headers='tus-count>" + numberActive + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Number of Inactive Timesheets" + "</td>" +
+                  		"<td headers='tus-count>" + numberInActive + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Number of Auto Inactive Timesheets" + "</td>" +
+                  		"<td headers='tus-count>" + numberAutoInActive + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Number of InactiveOffline Timesheets" + "</td>" +
+                  		"<td headers='tus-count>" + numberInActiveOffline + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Number of Disabled Timesheets" + "</td>" +
+                  		"<td headers='tus-count>" + numberDisabled + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Number of Master Timesheets" + "</td>" +
+                  		"<td headers='tus-count>" + numberMasterTimesheets + "</td></tr>";
+        
+        AJS.$("#timesheet-user-statistics").append(row);
+        
+        
         AJS.$(".loadingDiv").hide();
     }
 

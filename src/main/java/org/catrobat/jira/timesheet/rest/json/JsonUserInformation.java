@@ -42,6 +42,8 @@ public class JsonUserInformation {
     private int timesheetID;
     @XmlElement
     private boolean isEnabled;
+    @XmlElement
+    private boolean isMasterTimesheet;
 
 
     public String getUserName() {
@@ -154,5 +156,13 @@ public class JsonUserInformation {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+    
+    public boolean isMasterTimesheet() {
+        return isMasterTimesheet;
+    }
+
+    public void setIsMasterTimesheet(boolean isMaster) {
+    	isMasterTimesheet = isMaster;;
     }
 }
