@@ -57,7 +57,9 @@ AJS.toInit(function () {
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
                 "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "'>" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
-
+                
+                "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
+                
                 "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
                 "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
                 "</td><td headers='ti-hours-per-month' class='hours-month'>" + userInformation[i].hoursPerMonth +
@@ -76,7 +78,7 @@ AJS.toInit(function () {
         AJS.$("#user-information-table").trigger("update");
         var userList = new List("modify-user", {
             page: Number.MAX_VALUE,
-            valueNames: ["users", "email", "team", "state", "inactive-end", "total-practice", "hours-half-year",
+            valueNames: ["users", "email", "team", "state", "inactive-end", "remaining-hours", "total-practice", "hours-half-year",
             "hours-month", "latest-date", "latest-hours", "latest-description"]
         });
 

@@ -58,6 +58,8 @@
                         <th id="ti-team">Team</th>
                         <th id="ti-state">State</th>
                         <th id="ti-inactive-end-date">Inactive End Date</th>
+                        
+                        <th id="ti-remaining-hours">Remaining Hours</th>
 
                         <th id="ti-total-practice-hours">Total Practice Hours</th>
                         <th id="ti-hours-per-half-year">Hours last Half Year</th>
