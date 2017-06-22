@@ -71,6 +71,7 @@ AJS.toInit(function () {
             else
             	AJS.$("#user-information-table-content").append(row);
 
+            
             var timesheetID = userInformation[i].timesheetID;
             setEnableButton(timesheetID, enabled);
         }
@@ -125,19 +126,19 @@ AJS.toInit(function () {
         }
         
         var row = "<tr><td headers='tus-description'>" + "Total Number of Timesheets" + "</td>" +
-        				"<td headers='tus-count>" + numberTotal + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Number of Active Timesheets" + "</td>" +
-                  		"<td headers='tus-count>" + numberActive + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Number of Inactive Timesheets" + "</td>" +
-                  		"<td headers='tus-count>" + numberInActive + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Number of Auto Inactive Timesheets" + "</td>" +
-                  		"<td headers='tus-count>" + numberAutoInActive + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Number of InactiveOffline Timesheets" + "</td>" +
-                  		"<td headers='tus-count>" + numberInActiveOffline + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Number of Disabled Timesheets" + "</td>" +
-                  		"<td headers='tus-count>" + numberDisabled + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Number of Master Timesheets" + "</td>" +
-                  		"<td headers='tus-count>" + numberMasterTimesheets + "</td></tr>";
+        				"<td align='right' headers='tus-count'>" + numberTotal + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Active Timesheets" + "</td>" +
+                  		"<td align='right' headers='tus-count'>" + numberActive + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Inactive Timesheets" + "</td>" +
+                  		"<td align='right' headers='tus-count'>" + numberInActive + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Auto Inactive Timesheets" + "</td>" +
+                  		"<td align='right' headers='tus-count'>" + numberAutoInActive + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "InactiveOffline Timesheets" + "</td>" +
+                  		"<td align='right' headers='tus-count'>" + numberInActiveOffline + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Disabled Timesheets" + "</td>" +
+                  		"<td align='right' headers='tus-count'>" + numberDisabled + "</td></tr>" +
+                  "<tr><td headers='tus-description'>" + "Master Timesheets" + "</td>" +
+                  		"<td align='right' headers='tus-count'>" + numberMasterTimesheets + "</td></tr>";
         
         AJS.$("#timesheet-user-statistics").append(row);
         

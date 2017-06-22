@@ -107,11 +107,17 @@
 
     </div>
 
-#*   content of the second tab "Summary"*#
+#*   content of the tab "View Other Timesheets"*#
     <div class="tabs-pane" id="tabs-timesheet-settings">
         <form id="timesheet-settings" class="aui">
             <div id="coordinatorTimesheetSelect"></div>
             <div id="approvedUserTimesheetSelect"></div>
+            <div id="showAllAvailableTimesheetUsers">
+                <h3><b>All Timesheet Users</b></h3>
+            </div>
+            <div id="showAvailableTimesheetUsersForCoordinators">
+                <h3><b>Timesheet Users for you as the Coordinator</b></h3>
+            </div>
         </form>
         <form id="reset-timesheet-settings" class="aui">
             <input type="submit" value="View Own Timesheet" class="aui-button aui-button-primary">
@@ -129,20 +135,16 @@
                             <th id="ti-users">Member</th>
                             <th id="ti-state">State</th>
                             <th id="ti-inactive-end-date">Inactive End Date</th>
-                            
                             <th id="ti-remaining-hours">Remaining Hours</th>
-
                             <th id="ti-total-practice-hours">Total Practice Hours</th>
                             <th id="ti-hours-per-half-year">Hours last Half Year</th>
                             <th id="ti-hours-per-month">Hours last Month</th>
-
                             <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                             <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
                             <th id="ti-latest-entry-description">Description of the Latest Entry</th>
                         </tr>
                         </thead>
                         <tbody class="list" id="team-information-table-content">
-
                         </tbody>
                     </table>
                 </section>

@@ -316,6 +316,7 @@ function fetchUsers() {
         url: restBaseUrl + 'user/getUsers',
         contentType: "application/json"
     });
+    
     AJS.$.when(config, jsonUser, userList)
         .done(initCoordinatorTimesheetSelect)
         .done(initTimesheetAdminTimesheetSelect)
@@ -327,6 +328,23 @@ function fetchUsers() {
             console.log(error);
         });
 
+    var totalUserList = AJS.$.ajax({
+        type: 'GET',
+        url: restBaseUrl + 'user/getUserInformation',
+        contentType: "application/json"
+    });
+    
+    AJS.$.when(totalUserList)
+    .done(initTimesheetAdminUserList)
+    .fail(function (error) {
+        AJS.messages.error({
+            title: 'There was an error while fetching user data for timesheet admin.',
+            body: '<p>Reason: ' + error.responseText + '</p>'
+        });
+        console.log(error);
+    });
+    
+    
     var userInformation = AJS.$.ajax({
         type: 'GET',
         url: restBaseUrl + 'user/getUsersForCoordinator',

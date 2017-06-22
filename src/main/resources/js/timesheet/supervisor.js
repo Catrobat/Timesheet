@@ -1,11 +1,40 @@
 "use strict";
 
+function initTimesheetAdminUserList (totalUserList) {
+
+    var allActives = "";
+    var allDisabled = "";
+    var allMasterActives = "";
+    var allMasterDisabled = "";
+    
+    for (var i = 0; i < totalUserList.length; i++) {
+    	if (totalUserList[i].state === "ACTIVE" && totalUserList[i].isMasterTimesheet === true)
+    		allMasterActives = allMasterActives + "<div>" + totalUserList[i].userName + "</div>"; 
+    	else if (totalUserList[i].state === "ACTIVE" && totalUserList[i].isMasterTimesheet === false)
+        	allActives = allActives + "<div>" + totalUserList[i].userName + "</div>";
+    	else if (totalUserList[i].state === "DISABLED" && totalUserList[i].isMasterTimesheet === true)
+    		allMasterDisabled = allMasterDisabled + "<div>" + totalUserList[i].userName + "</div>";
+    	else if (totalUserList[i].state === "DISABLED" && totalUserList[i].isMasterTimesheet === false)
+    		allDisabled = allDisabled + "<div>" + totalUserList[i].userName + "</div>";	
+    }
+    
+    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Active Timesheets</b></h4>");
+    AJS.$("#showAllAvailableTimesheetUsers").append(allActives);
+    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Active Master Timesheets</b></h4>");
+    AJS.$("#showAllAvailableTimesheetUsers").append(allMasterActives);
+    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Disabled Timesheets</b></h4>");
+    AJS.$("#showAllAvailableTimesheetUsers").append(allDisabled);
+    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Disabled Master Timesheets</b></h4>");
+    AJS.$("#showAllAvailableTimesheetUsers").append(allMasterDisabled);
+}
+
 function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
     var config = jsonConfig[0];
     var userName = jsonUser[0]['userName'];
     var isSupervisedUser = isReadOnlyUser(userName, config);
     var listOfUsers = [];
 
+    
     //Select Username of Timesheet
     AJS.$("#approvedUserTimesheetSelect").append("<field-group>");
     AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><label for=\"approvedUserSelect\">Timesheet Of</label><input class=\"text approvedUserSelectTimesheetOfUserField\" type=\"text\" id=\"approved-user-select2-field\"></div>");
@@ -57,6 +86,8 @@ function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
         initSelectTimesheetButton();
         AJS.$("#approvedUserTimesheetSelect").show();
         AJS.$("#coordinatorTimesheetSelect").hide();
+        AJS.$("#showAllAvailableTimesheetUsers").show();
+        AJS.$("#showAvailableTimesheetUsersForCoordinators").hide();
     } else {
         AJS.$("#approvedUserTimesheetSelect").hide();
     }
