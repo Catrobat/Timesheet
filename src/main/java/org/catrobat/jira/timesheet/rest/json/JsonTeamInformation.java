@@ -21,6 +21,8 @@ public class JsonTeamInformation {
     @XmlElement
     private int hoursPerHalfYear;
     @XmlElement
+    private int remainingHours;
+    @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
@@ -64,6 +66,14 @@ public class JsonTeamInformation {
 
     public void setHoursPerHalfYear(int hoursPerHalfYear) {
         this.hoursPerHalfYear = hoursPerHalfYear;
+    }
+    
+    public int getRemainingHours() {
+        return remainingHours;
+    }
+
+    public void setRemainingHours(int remainingHours) {
+        this.remainingHours = remainingHours;
     }
 
     public Date getLatestEntryDate() {

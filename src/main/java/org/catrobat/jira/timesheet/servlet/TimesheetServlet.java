@@ -80,7 +80,7 @@ public class TimesheetServlet extends HttpServlet {
                 logger.info("Current user (user key: {}) has an active timesheet (timesheet id: {})", userKey, timesheet.getID());
             }
             if (timesheet == null) {
-                timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 150, 0, 0, "Bachelor Thesis",
+                timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 450, 0, 0, "Bachelor Thesis",
                         "", false, Timesheet.State.ACTIVE);
             }
 

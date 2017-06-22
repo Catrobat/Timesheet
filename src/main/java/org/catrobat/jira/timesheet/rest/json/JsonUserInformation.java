@@ -21,6 +21,8 @@ public class JsonUserInformation {
     @XmlElement
     private int hoursPerHalfYear;
     @XmlElement
+    private int remainingHours;
+    @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
@@ -40,6 +42,8 @@ public class JsonUserInformation {
     private int timesheetID;
     @XmlElement
     private boolean isEnabled;
+    @XmlElement
+    private boolean isMasterTimesheet;
 
 
     public String getUserName() {
@@ -74,6 +78,14 @@ public class JsonUserInformation {
         this.hoursPerHalfYear = hoursPerHalfYear;
     }
 
+    public int getRemainingHours() {
+        return remainingHours;
+    }
+
+    public void setRemainingHours(int remainingHours) {
+        this.remainingHours = remainingHours;
+    }
+    
     public Date getLatestEntryDate() {
         return latestEntryDate;
     }
@@ -144,5 +156,13 @@ public class JsonUserInformation {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+    
+    public boolean isMasterTimesheet() {
+        return isMasterTimesheet;
+    }
+
+    public void setIsMasterTimesheet(boolean isMaster) {
+    	isMasterTimesheet = isMaster;;
     }
 }

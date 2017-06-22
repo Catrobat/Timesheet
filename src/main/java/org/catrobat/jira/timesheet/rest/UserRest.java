@@ -128,6 +128,10 @@ public class UserRest {
             jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+            
+            jsonUserInformation.setIsMasterTimesheet(timesheet.getIsMasterThesisTimesheet());
+            jsonUserInformation.setRemainingHours(timesheet.getTargetHours() - timesheet.getHoursCompleted() 
+					+ timesheet.getHoursDeducted());
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
@@ -207,6 +211,9 @@ public class UserRest {
                 jsonTeamInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
                 jsonTeamInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
 
+                jsonTeamInformation.setRemainingHours(timesheet.getTargetHours() - timesheet.getHoursCompleted() 
+                										+ timesheet.getHoursDeducted());
+                
                 TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                         || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {

@@ -50,6 +50,7 @@
                                style="float: right;">
                     </form>
                 </div-->
+                <h3><b> Not-Master Timesheets</b></h3>
                 <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
                     <thead>
                     <tr>
@@ -58,21 +59,57 @@
                         <th id="ti-team">Team</th>
                         <th id="ti-state">State</th>
                         <th id="ti-inactive-end-date">Inactive End Date</th>
-
+                        <th id="ti-remaining-hours">Remaining Hours</th>
                         <th id="ti-total-practice-hours">Total Practice Hours</th>
                         <th id="ti-hours-per-half-year">Hours last Half Year</th>
                         <th id="ti-hours-per-month">Hours last Month</th>
-
                         <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                         <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
                         <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-
                         <th id="ti-enabled">Timesheet Enabled</th>
                     </tr>
                     </thead>
                     <tbody class="list" id="user-information-table-content">
                     #* will be filled out by JavaScript *#
                     </tbody>
+                </table>
+                
+                <h3><b> Master Timesheets</b></h3>
+                <table id="user-information-table-master" class="aui aui-table-interactive aui-table-sortable">
+                    <thead>
+                    <tr>
+                        <th id="ti-users">User</th>
+                        <th id="ti-email">E-Mail</th>
+                        <th id="ti-team">Team</th>
+                        <th id="ti-state">State</th>
+                        <th id="ti-inactive-end-date">Inactive End Date</th>
+                        <th id="ti-remaining-hours">Remaining Hours</th>
+                        <th id="ti-total-practice-hours">Total Practice Hours</th>
+                        <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                        <th id="ti-hours-per-month">Hours last Month</th>
+                        <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                        <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
+                        <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+                        <th id="ti-enabled">Timesheet Enabled</th>
+                    </tr>
+                    </thead>
+                    <tbody class="list" id="user-information-table-master-content">
+                    #* will be filled out by JavaScript *#
+                    </tbody>
+                </table>
+                
+                <h3><b> Timesheet User Statistics</b></h3>
+                <p>
+                <table>
+                  <thead>
+                  <tr>
+                    <th id="tus-description">Description</th>
+                    <th id="tus-count">Count</th>
+                  </tr>
+                  </thead>
+                  <tbody id="timesheet-user-statistics">
+                    #* will be filled out by JavaScript *#
+                  </tbody>
                 </table>
             </section>
         </div>
