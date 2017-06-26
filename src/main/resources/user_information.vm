@@ -27,7 +27,7 @@
 <div id="modify-user">
     <header class="aui-page-header">
         <div class="left-from-search-field">
-            <h2>Users</h2>
+            <h2>Timesheet - User Information</h2>
         </div>
         <div class="search-field">
             <form class="aui" onsubmit="return false;">
@@ -50,6 +50,19 @@
                                style="float: right;">
                     </form>
                 </div-->
+                <h3><b> Timesheet User Statistics</b></h3>
+                <p>
+                <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
+                  <!--thead>
+                  <tr>
+                    <th id="tus-description">Description</th>
+                    <th id="tus-count">Count</th>
+                  </tr>
+                  </thead-->
+                  <tbody id="timesheet-user-statistics">
+                    #* will be filled out by JavaScript *#
+                  </tbody>
+                </table>
                 <h3><b> Not-Master Timesheets</b></h3>
                 <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
                     <thead>
@@ -98,19 +111,7 @@
                     </tbody>
                 </table>
                 
-                <h3><b> Timesheet User Statistics</b></h3>
-                <p>
-                <table>
-                  <thead>
-                  <tr>
-                    <th id="tus-description">Description</th>
-                    <th id="tus-count">Count</th>
-                  </tr>
-                  </thead>
-                  <tbody id="timesheet-user-statistics">
-                    #* will be filled out by JavaScript *#
-                  </tbody>
-                </table>
+                
             </section>
         </div>
     </div>

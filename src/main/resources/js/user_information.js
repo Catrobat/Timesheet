@@ -119,30 +119,23 @@ AJS.toInit(function () {
         	else if (userInformation[i].state === "INACTIVE_OFFLINE")
         		numberInActiveOffline++;
         	else if (userInformation[i].state === "DISABLED")
-        		numberDisabled;
+        		numberDisabled++;
         	
         	if (userInformation[i].isMasterTimesheet === true)
         		numberMasterTimesheets++;
         }
         
-        var row = "<tr><td headers='tus-description'>" + "Total Number of Timesheets" + "</td>" +
-        				"<td align='right' headers='tus-count'>" + numberTotal + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Active Timesheets" + "</td>" +
-                  		"<td align='right' headers='tus-count'>" + numberActive + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Inactive Timesheets" + "</td>" +
-                  		"<td align='right' headers='tus-count'>" + numberInActive + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Auto Inactive Timesheets" + "</td>" +
-                  		"<td align='right' headers='tus-count'>" + numberAutoInActive + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "InactiveOffline Timesheets" + "</td>" +
-                  		"<td align='right' headers='tus-count'>" + numberInActiveOffline + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Disabled Timesheets" + "</td>" +
-                  		"<td align='right' headers='tus-count'>" + numberDisabled + "</td></tr>" +
-                  "<tr><td headers='tus-description'>" + "Master Timesheets" + "</td>" +
-                  		"<td align='right' headers='tus-count'>" + numberMasterTimesheets + "</td></tr>";
-        
+        var row = "<tr><td>" + "Total Number of Timesheets: " + numberTotal + "</td>" +
+        				"<td>" + "Active Timesheets: " + numberActive + "</td>" +
+                  		"<td>" + "Auto Inactive Timesheets: " + numberAutoInActive + "</td>" +
+                        "<td>" + "Master Timesheets: " + numberMasterTimesheets + "</td></tr>" +
+
+                  "<tr><td>" + "Disabled Timesheets: " + numberDisabled + "</td>" +
+                  		"<td>" + "Inactive Timesheets: " + numberInActive + "</td>" +
+                  		"<td>" + "InactiveOffline Timesheets: " + numberInActiveOffline + "</td></tr>";
+
         AJS.$("#timesheet-user-statistics").append(row);
-        
-        
+
         AJS.$(".loadingDiv").hide();
     }
 
