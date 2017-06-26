@@ -6,7 +6,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.util.Date;
+
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 
 @XmlRootElement
@@ -23,6 +25,8 @@ public class JsonTeamInformation {
     @XmlElement
     private int remainingHours;
     @XmlElement
+    private int targetTotalHours;
+    @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
@@ -34,6 +38,10 @@ public class JsonTeamInformation {
     private int latestEntryHours;
     @XmlElement
     private String latestEntryDescription;
+    @XmlElement
+    private boolean isMasterTimesheet;
+    @XmlElement
+    private String teams;
 
 
     public String getUserName() {
@@ -76,6 +84,14 @@ public class JsonTeamInformation {
         this.remainingHours = remainingHours;
     }
 
+    public int getTargetTotalHours() {
+        return targetTotalHours;
+    }
+
+    public void setTargetTotalHours(int targetTotalHours) {
+        this.targetTotalHours = targetTotalHours;
+    }
+    
     public Date getLatestEntryDate() {
         return latestEntryDate;
     }
@@ -114,5 +130,21 @@ public class JsonTeamInformation {
 
     public void setLatestEntryDescription(String latestEntryDescription) {
         this.latestEntryDescription = latestEntryDescription;
+    }
+    
+    public boolean isMasterTimesheet() {
+        return isMasterTimesheet;
+    }
+
+    public void setIsMasterTimesheet(boolean isMaster) {
+    	isMasterTimesheet = isMaster;;
+    }
+    
+    public String getTeams() {
+        return teams;
+    }
+
+    public void setTeams(String teams) {
+        this.teams = teams;
     }
 }

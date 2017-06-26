@@ -26,21 +26,21 @@
 
 .search-field {
     width: 50%;
-    float: right;
+    float: left;
     height: 50px;
-    text-align: right;
+    text-align: left;
 }
 
 .search-field label {
-    padding-right: 10px;
+    text-align: left;
 }
 
 .search-field-dialog {
     margin-top: 20px;
     width: 100%;
-    float: right;
+    float: left;
     height: 50px;
-    text-align: right;
+    text-align: left;
 }
 
 .search-field-dialog label {

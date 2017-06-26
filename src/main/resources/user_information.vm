@@ -20,20 +20,23 @@
     <meta name="decorator" content="atl.admin"/>
     <meta name="application-base-url" content="$applicationProperties.getBaseUrl()">
     $webResourceManager.requireResource("org.catrobat.jira.timesheet:user-information-resources")
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
+
 <body class="aui-layout aui-theme-default">
 <div id="aui-message-bar"></div>
 <div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
-<div id="modify-user">
+<div id="modify-user" class="mine-ui-content">
     <header class="aui-page-header">
         <div class="left-from-search-field">
             <h2>Timesheet - User Information</h2>
         </div>
         <div class="search-field">
-            <form class="aui" onsubmit="return false;">
+            <form class="ui" onsubmit="return false;">
                 <label for="search-filter-overview">Search Filter</label>
-                <input class="search text" type="text" id="search-filter-overview" name="search-filter-overview"
-                       title="search-filter-overview" autocomplete="off">
+                <input type="text" id="search-filter-overview" name="search-filter-overview" data-type="search"
+                       title="search-filter-overview">
             </form>
         </div>
     </header>
@@ -44,27 +47,16 @@
                     This is a basic information overview of all available LDAP users. The basic implementation
                     provides a search function and shows the project members timesheet states.
                 </p>
-                <!--div id="update-timesheet-button" class="field-group">
-                    <form id="update-timesheet-status">
-                        <input type="submit" value="Save User Information" class="aui-button aui-button-primary"
-                               style="float: right;">
-                    </form>
-                </div-->
+
                 <h3><b> Timesheet User Statistics</b></h3>
                 <p>
                 <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
-                  <!--thead>
-                  <tr>
-                    <th id="tus-description">Description</th>
-                    <th id="tus-count">Count</th>
-                  </tr>
-                  </thead-->
                   <tbody id="timesheet-user-statistics">
                     #* will be filled out by JavaScript *#
                   </tbody>
                 </table>
                 <h3><b> Not-Master Timesheets</b></h3>
-                <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
+                <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable" data-filter="true" data-input="#search-filter-overview">
                     <thead>
                     <tr>
                         <th id="ti-users">User</th>
@@ -73,6 +65,7 @@
                         <th id="ti-state">State</th>
                         <th id="ti-inactive-end-date">Inactive End Date</th>
                         <th id="ti-remaining-hours">Remaining Hours</th>
+                        <th id="ti-target-total-hours">Target Total Hours</th>
                         <th id="ti-total-practice-hours">Total Practice Hours</th>
                         <th id="ti-hours-per-half-year">Hours last Half Year</th>
                         <th id="ti-hours-per-month">Hours last Month</th>
@@ -88,22 +81,23 @@
                 </table>
                 
                 <h3><b> Master Timesheets</b></h3>
-                <table id="user-information-table-master" class="aui aui-table-interactive aui-table-sortable">
+                <table id="user-information-table-master" class="aui aui-table-interactive aui-table-sortable" data-filter="true" data-input="#search-filter-overview">
                     <thead>
                     <tr>
-                        <th id="ti-users">User</th>
-                        <th id="ti-email">E-Mail</th>
-                        <th id="ti-team">Team</th>
-                        <th id="ti-state">State</th>
-                        <th id="ti-inactive-end-date">Inactive End Date</th>
-                        <th id="ti-remaining-hours">Remaining Hours</th>
-                        <th id="ti-total-practice-hours">Total Practice Hours</th>
-                        <th id="ti-hours-per-half-year">Hours last Half Year</th>
-                        <th id="ti-hours-per-month">Hours last Month</th>
-                        <th id="ti-latest-entry-date">Date of the Latest Entry</th>
-                        <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
-                        <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-                        <th id="ti-enabled">Timesheet Enabled</th>
+                        <th id="ti-users-m">User</th>
+                        <th id="ti-email-m">E-Mail</th>
+                        <th id="ti-team-m">Team</th>
+                        <th id="ti-state-m">State</th>
+                        <th id="ti-inactive-end-date-m">Inactive End Date</th>
+                        <th id="ti-remaining-hours-m">Remaining Hours</th>
+                        <th id="ti-target-total-hours-m">Target Total Hours</th>
+                        <th id="ti-total-practice-hours-m">Total Practice Hours</th>
+                        <th id="ti-hours-per-half-year-m">Hours last Half Year</th>
+                        <th id="ti-hours-per-month-m">Hours last Month</th>
+                        <th id="ti-latest-entry-date-m">Date of the Latest Entry</th>
+                        <th id="ti-latest-entry-hours-m">Hours of the Latest Entry</th>
+                        <th id="ti-latest-entry-description-m">Description of the Latest Entry</th>
+                        <th id="ti-enabled-m">Timesheet Enabled</th>
                     </tr>
                     </thead>
                     <tbody class="list" id="user-information-table-master-content">
@@ -111,13 +105,12 @@
                     </tbody>
                 </table>
                 
-                
             </section>
         </div>
     </div>
 </div>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+
 
 </body>
 </html>

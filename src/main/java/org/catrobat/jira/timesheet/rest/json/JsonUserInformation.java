@@ -23,6 +23,8 @@ public class JsonUserInformation {
     @XmlElement
     private int remainingHours;
     @XmlElement
+    private int targetTotalHours;
+    @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
@@ -84,6 +86,14 @@ public class JsonUserInformation {
 
     public void setRemainingHours(int remainingHours) {
         this.remainingHours = remainingHours;
+    }
+    
+    public int getTargetTotalHours() {
+        return targetTotalHours;
+    }
+
+    public void setTargetTotalHours(int targetTotalHours) {
+        this.targetTotalHours = targetTotalHours;
     }
     
     public Date getLatestEntryDate() {

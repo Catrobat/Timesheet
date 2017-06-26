@@ -62,7 +62,7 @@ public interface Timesheet extends Entity {
     State getState();
 
     enum State {
-        ACTIVE, INACTIVE, AUTO_INACTIVE, INACTIVE_OFFLINE, DISABLED
+        ACTIVE, INACTIVE, AUTO_INACTIVE, INACTIVE_OFFLINE, DISABLED, DONE
     }
 
     @OneToMany(reverse = "getTimeSheet")

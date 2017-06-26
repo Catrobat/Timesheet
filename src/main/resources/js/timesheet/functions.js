@@ -38,25 +38,6 @@ function getNameFromCategoryIndex(categoryID, timesheetData) {
     return "";
 }
 
-function initUserSaveButton() {
-    AJS.$("#timesheet-hours-save-button").click("click", function (e) {
-        e.preventDefault();
-        getExistingTimesheetHours(timesheetID);
-    });
-}
-
-function initAdministratorButton() {
-    AJS.$("#timesheet-hours-save-button").hide();
-    AJS.$("#timesheet-hours-update-button").show();
-    AJS.$("#timesheet-hours-update-button").click('click', function (e) {
-        e.preventDefault();
-        if (timesheetIDOfUser) {
-            getExistingTimesheetHours(timesheetIDOfUser);
-        } else {
-            getExistingTimesheetHours(timesheetID);
-        }
-    });
-}
 
 function initSelectTimesheetButton() {
     AJS.$("#timesheet-settings").submit(function (e) {
@@ -71,7 +52,7 @@ function initSelectTimesheetButton() {
         });
 
         var selectedUser;
-        var isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
+        //var isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
 
         // TODO: why even 2 different fields??? simplify to 1
         if (AJS.$("#user-select2-field").val()) {
@@ -81,7 +62,7 @@ function initSelectTimesheetButton() {
         }
 
         if (selectedUser[0] !== "") {
-            saveTimesheetIDOfUserInSession(selectedUser, isMTSheetSelected);
+            saveTimesheetIDOfUserInSession(selectedUser);
         }
 
         //browser reload
@@ -90,6 +71,12 @@ function initSelectTimesheetButton() {
         }, 4000);
     });
     AJS.$("#reset-timesheet-settings").submit(function (e) {
+        e.preventDefault();
+
+        sessionStorage.removeItem('timesheetID');
+        location.reload();
+    });
+    AJS.$("#reset-timesheet-settings-coord").submit(function (e) {
         e.preventDefault();
 
         sessionStorage.removeItem('timesheetID');

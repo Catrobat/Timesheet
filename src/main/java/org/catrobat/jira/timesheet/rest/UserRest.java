@@ -132,6 +132,7 @@ public class UserRest {
             jsonUserInformation.setIsMasterTimesheet(timesheet.getIsMasterThesisTimesheet());
             jsonUserInformation.setRemainingHours(timesheet.getTargetHours() - timesheet.getHoursCompleted() 
 					+ timesheet.getHoursDeducted());
+            jsonUserInformation.setTargetTotalHours(timesheet.getTargetHours());
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
@@ -210,10 +211,10 @@ public class UserRest {
                 jsonTeamInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
                 jsonTeamInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
                 jsonTeamInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-
+                jsonTeamInformation.setIsMasterTimesheet(timesheet.getIsMasterThesisTimesheet());
                 jsonTeamInformation.setRemainingHours(timesheet.getTargetHours() - timesheet.getHoursCompleted() 
                 										+ timesheet.getHoursDeducted());
-                
+                jsonTeamInformation.setTargetTotalHours(timesheet.getTargetHours());
                 TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                         || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
@@ -229,6 +230,22 @@ public class UserRest {
                     jsonTeamInformation.setLatestEntryHours(0);
                     jsonTeamInformation.setLatestEntryDescription("");
                 }
+                
+                StringBuilder teamString = new StringBuilder();
+                Set<Team> developerSet = teamService.getTeamsOfUser(getUserNameOfUserKey(timesheet.getUserKey()));
+                Set<Team> coordinatorSet = teamService.getTeamsOfCoordinator(getUserNameOfUserKey(timesheet.getUserKey()));
+                Set<Team> allTeams = new HashSet<>();
+                allTeams.addAll(developerSet);
+                allTeams.addAll(coordinatorSet);
+                for (Team team : allTeams) {
+                    if (!teamString.toString().equals("")) {
+                        teamString.append(", ");
+                    }
+                    teamString.append(team.getTeamName());
+                }
+                jsonTeamInformation.setTeams(teamString.toString());
+                
+                
                 jsonTeamInformationList.add(jsonTeamInformation);
             }
         }

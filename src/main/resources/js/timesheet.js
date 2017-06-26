@@ -56,10 +56,21 @@ AJS.toInit(function () {
     if (isAdmin) {
         AJS.$("#timesheet-hours-save-button").hide();
         AJS.$("#timesheet-hours-update-button").show();
+        AJS.$("#timesheet-hours-update-button").click('click', function (e) {
+            e.preventDefault();
+            if (timesheetIDOfUser) {
+                getExistingTimesheetHours(timesheetIDOfUser);
+            } else {
+                getExistingTimesheetHours(timesheetID);
+            }
+        });
     } else {
-        initUserSaveButton();
         AJS.$("#timesheet-hours-save-button").show();
         AJS.$("#timesheet-hours-update-button").hide();
+        AJS.$("#timesheet-hours-save-button").click("click", function (e) {
+            e.preventDefault();
+            getExistingTimesheetHours(timesheetID);
+        });
     }
 
     timesheetIDOfUser = sessionStorage.getItem('timesheetID');
@@ -232,10 +243,23 @@ function fetchData(timesheetID) {
 
 }
 
-function saveTimesheetIDOfUserInSession(selectedUser, isMTSheet) {
+function saveTimesheetIDOfUserInSession(selectedUser) {
+	
+	var isMTSheet = false;
+	var user;
+	
+	if (selectedUser[0].includes(' (Master Timesheet)')) {
+		user = selectedUser[0].replace(' (Master Timesheet)','');
+		isMTSheet = true;
+	}
+	else {
+		user = selectedUser[0];
+		isMTSheet = false;
+	}	
+	
     AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'timesheet/timesheetID/' + selectedUser[0] + '/' + isMTSheet,
+        url: restBaseUrl + 'timesheet/timesheetID/' + user + '/' + isMTSheet,
         contentType: "application/json",
         success: function (timesheetID) {
             sessionStorage.setItem('timesheetID', timesheetID); // defining the session variable

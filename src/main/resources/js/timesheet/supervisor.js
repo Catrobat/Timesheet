@@ -1,5 +1,7 @@
 "use strict";
 
+var allUsersList = "";
+
 function initTimesheetAdminUserList (totalUserList) {
 
     var allActives = "";
@@ -8,6 +10,12 @@ function initTimesheetAdminUserList (totalUserList) {
     var allMasterDisabled = "";
     
     for (var i = 0; i < totalUserList.length; i++) {
+    	
+    	if (totalUserList[i].isMasterTimesheet === false && !(totalUserList[i].state === "DONE"))
+    		allUsersList = allUsersList + "<option value=\"" + totalUserList[i].userName + "\"/>";
+    	else if (totalUserList[i].isMasterTimesheet === true && !(totalUserList[i].state === "DONE"))
+    		allUsersList = allUsersList + "<option value=\"" + totalUserList[i].userName + " (Master Timesheet)\"/>";
+    	
     	if (totalUserList[i].state === "ACTIVE" && totalUserList[i].isMasterTimesheet === true)
     		allMasterActives = allMasterActives + "<div>" + totalUserList[i].userName + "</div>"; 
     	else if (totalUserList[i].state === "ACTIVE" && totalUserList[i].isMasterTimesheet === false)
@@ -18,43 +26,34 @@ function initTimesheetAdminUserList (totalUserList) {
     		allDisabled = allDisabled + "<div>" + totalUserList[i].userName + "</div>";	
     }
     
-    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Active Timesheets</b></h4>");
-    AJS.$("#showAllAvailableTimesheetUsers").append(allActives);
-    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Active Master Timesheets</b></h4>");
-    AJS.$("#showAllAvailableTimesheetUsers").append(allMasterActives);
-    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Disabled Timesheets</b></h4>");
-    AJS.$("#showAllAvailableTimesheetUsers").append(allDisabled);
-    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Disabled Master Timesheets</b></h4>");
-    AJS.$("#showAllAvailableTimesheetUsers").append(allMasterDisabled);
+//    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Active Timesheets</b></h4>");
+//    AJS.$("#showAllAvailableTimesheetUsers").append(allActives);
+//    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Active Master Timesheets</b></h4>");
+//    AJS.$("#showAllAvailableTimesheetUsers").append(allMasterActives);
+//    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Disabled Timesheets</b></h4>");
+//    AJS.$("#showAllAvailableTimesheetUsers").append(allDisabled);
+//    AJS.$("#showAllAvailableTimesheetUsers").append("<h4><b>Disabled Master Timesheets</b></h4>");
+//    AJS.$("#showAllAvailableTimesheetUsers").append(allMasterDisabled);
+    
+    console.log("ttttt allUsersList: " + allUsersList);
+
+    AJS.$("#approved-user-select-div").append("<label for=\"approvedUserSelect\">Timesheet Of</label>" +
+    		"<input class=\"text approvedUserSelectTimesheetOfUserField\" type=\"text\" id=\"approved-user-select2-field\" list=\"allusers\">" +
+    		"<datalist id=\"allusers\"><select style=\"display: none;\">" + allUsersList + "</select></datalist>");
 }
 
 function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
     var config = jsonConfig[0];
     var userName = jsonUser[0]['userName'];
     var isSupervisedUser = isReadOnlyUser(userName, config);
-    var listOfUsers = [];
 
-    
     //Select Username of Timesheet
-    AJS.$("#approvedUserTimesheetSelect").append("<field-group>");
-    AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><label for=\"approvedUserSelect\">Timesheet Of</label><input class=\"text approvedUserSelectTimesheetOfUserField\" type=\"text\" id=\"approved-user-select2-field\"></div>");
-    AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><label for=\"requestMTSheetCheckbox\">Get Master Thesis Timesheet</label><input class=\"checkbox\" type=\"checkbox\" name=\"requestMTSheetCheckbox\" id=\"requestMTSheetCheckbox\"></div>");
-    AJS.$("#approvedUserTimesheetSelect").append("<div class=\"field-group\"><input type=\"submit\" value=\"Display\" class=\"aui-button aui-button-primary\"></field-group>");
-    AJS.$("#approvedUserTimesheetSelect").append("</field-group>");
-
-    if (isAdmin || isSupervisedUser) {
-        for (var j = 0; j < userList[0].length; j++) {
-            listOfUsers.push(userList[0][j]['userName']);
-        }
-    }
-
-    listOfUsers = listOfUsers.filter(function (item, index, inputArray) {
-        return inputArray.indexOf(item) == index;
-    });
+    AJS.$("#display-button").append("<input type=\"submit\" value=\"Display\" class=\"aui-button aui-button-primary\">");
+    AJS.$("#approved-user-select-div-all-other-content").append("<form id=\"reset-timesheet-settings\">" +
+	"<input type=\"submit\" value=\"View Own Timesheet\" class=\"aui-button aui-button-primary\"></form>");
 
     AJS.$(".approvedUserSelectTimesheetOfUserField").auiSelect2({
         placeholder: "Select User",
-        tags: listOfUsers.sort(),
         tokenSeparators: [",", " "],
         maximumSelectionSize: 1
     });
@@ -80,14 +79,24 @@ function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
     */
 
     if(isAdmin) {
-        initAdministratorButton();
+        AJS.$("#timesheet-hours-save-button").hide();
+        AJS.$("#timesheet-hours-update-button").show();
+        AJS.$("#timesheet-hours-update-button").click('click', function (e) {
+            e.preventDefault();
+            if (timesheetIDOfUser) {
+                getExistingTimesheetHours(timesheetIDOfUser);
+            } else {
+                getExistingTimesheetHours(timesheetID);
+            }
+        });
     }
     if (isSupervisedUser || isAdmin) {
         initSelectTimesheetButton();
         AJS.$("#approvedUserTimesheetSelect").show();
+        //TODO: set back to hide!
         AJS.$("#coordinatorTimesheetSelect").hide();
-        AJS.$("#showAllAvailableTimesheetUsers").show();
-        AJS.$("#showAvailableTimesheetUsersForCoordinators").hide();
+
+
     } else {
         AJS.$("#approvedUserTimesheetSelect").hide();
     }
