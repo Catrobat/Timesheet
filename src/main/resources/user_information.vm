@@ -43,11 +43,6 @@
     <div class="aui-page-panel">
         <div class="aui-page-panel-inner">
             <section class="aui-page-panel-content">
-                <p>
-                    This is a basic information overview of all available LDAP users. The basic implementation
-                    provides a search function and shows the project members timesheet states.
-                </p>
-
                 <h3><b> Timesheet User Statistics</b></h3>
                 <p>
                 <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
