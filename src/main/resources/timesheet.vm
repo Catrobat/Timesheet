@@ -55,6 +55,7 @@
 <div id="aui-message-bar"></div>
 
 <h1 id="timesheet-owner">Timesheet of: </h1>
+<h1 id="timesheet-owner-private"></h1>
 
 #*Tabs view*#
 <div class="aui-tabs horizontal-tabs" id="table-header">
@@ -110,17 +111,21 @@
 #*   content of the tab "View Other Timesheets"*#
     <div class="tabs-pane" id="tabs-timesheet-settings">
         <form id="timesheet-settings" class="aui">
-            <div id="coordinatorTimesheetSelect"></div>
-            <div id="approvedUserTimesheetSelect"></div>
-            <div id="showAllAvailableTimesheetUsers">
-                <h3><b>All Timesheet Users</b></h3>
+            <div id="coordinatorTimesheetSelect">
+                <field-group>
+                    <div class="field-group" id="coordinatorTimesheetSelect-div"></div>
+                    <div class="field-group" id="coordinatorTimesheetSelect-div-all-other-content"></div>
+                    <div class="field-group" id="coordinatorTimesheetSelect-div-all-other-content-1"></div>
+                    <div class="field-group" id="coordinatorTimesheetSelect-div-all-other-content-2"></div>
+                </field-group>
             </div>
-            <div id="showAvailableTimesheetUsersForCoordinators">
-                <h3><b>Timesheet Users for you as the Coordinator</b></h3>
+            <div id="approvedUserTimesheetSelect">
+                <field-group>
+                    <div class="field-group" id="approved-user-select-div"></div>
+                    <div class="field-group" id="display-button"></div>
+                    <div class="field-group" id="approved-user-select-div-all-other-content"></div>
+                </field-group>
             </div>
-        </form>
-        <form id="reset-timesheet-settings" class="aui">
-            <input type="submit" value="View Own Timesheet" class="aui-button aui-button-primary">
         </form>
     </div>
 
@@ -133,9 +138,11 @@
                         <thead>
                         <tr>
                             <th id="ti-users">Member</th>
+                            <th id="ti-teams">Team</th>
                             <th id="ti-state">State</th>
                             <th id="ti-inactive-end-date">Inactive End Date</th>
                             <th id="ti-remaining-hours">Remaining Hours</th>
+                            <th id="ti-target-total-hours">Target Total Hours</th>
                             <th id="ti-total-practice-hours">Total Practice Hours</th>
                             <th id="ti-hours-per-half-year">Hours last Half Year</th>
                             <th id="ti-hours-per-month">Hours last Month</th>

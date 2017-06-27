@@ -34,11 +34,13 @@ AJS.toInit(function () {
         fetchUsers();
         AJS.$("#coord_private").show();
         AJS.$("#timesheet-owner").show();
+        AJS.$("#timesheet-owner-private").hide();
     } else {
         AJS.$("#coord_private").hide();
         AJS.$("#timesheet-owner").hide();
+        AJS.$("#timesheet-owner-private").show();
     }
-
+// TODO: This is always false if viewing a master thesis timesheet via View Other Timesheet!
     if (isMasterThesisTimesheet) {
         document.getElementById("tabs-timesheet-settings").style.display = "none";
         document.getElementById("tabs-team").style.display = "none";
@@ -56,10 +58,21 @@ AJS.toInit(function () {
     if (isAdmin) {
         AJS.$("#timesheet-hours-save-button").hide();
         AJS.$("#timesheet-hours-update-button").show();
+        AJS.$("#timesheet-hours-update-button").click('click', function (e) {
+            e.preventDefault();
+            if (timesheetIDOfUser) {
+                getExistingTimesheetHours(timesheetIDOfUser);
+            } else {
+                getExistingTimesheetHours(timesheetID);
+            }
+        });
     } else {
-        initUserSaveButton();
         AJS.$("#timesheet-hours-save-button").show();
         AJS.$("#timesheet-hours-update-button").hide();
+        AJS.$("#timesheet-hours-save-button").click("click", function (e) {
+            e.preventDefault();
+            getExistingTimesheetHours(timesheetID);
+        });
     }
 
     timesheetIDOfUser = sessionStorage.getItem('timesheetID');
@@ -153,7 +166,15 @@ function projectedFinishDate(timesheetData, entryData) {
 }
 
 function setOwnerLabel(timesheet) {
-    AJS.$("#timesheet-owner").append(timesheet.displayName);
+    
+    if (timesheet.isMTSheet) {
+    	AJS.$("#timesheet-owner").append(timesheet.displayName + " (Master Thesis Timesheet)");
+    	AJS.$("#timesheet-owner-private").append("My Master Thesis Timesheet (" + timesheet.displayName + ")");
+    }
+    else {
+    	AJS.$("#timesheet-owner").append(timesheet.displayName);
+    	AJS.$("#timesheet-owner-private").append("My Timesheet (" + timesheet.displayName + ")");
+    }
 }
 
 function fetchData(timesheetID) {
@@ -232,10 +253,23 @@ function fetchData(timesheetID) {
 
 }
 
-function saveTimesheetIDOfUserInSession(selectedUser, isMTSheet) {
+function saveTimesheetIDOfUserInSession(selectedUser) {
+	
+	var isMTSheet = false;
+	var user;
+	
+	if (selectedUser[0].includes(' (Master Timesheet)')) {
+		user = selectedUser[0].replace(' (Master Timesheet)','');
+		isMTSheet = true;
+	}
+	else {
+		user = selectedUser[0];
+		isMTSheet = false;
+	}	
+	
     AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'timesheet/timesheetID/' + selectedUser[0] + '/' + isMTSheet,
+        url: restBaseUrl + 'timesheet/timesheetID/' + user + '/' + isMTSheet,
         contentType: "application/json",
         success: function (timesheetID) {
             sessionStorage.setItem('timesheetID', timesheetID); // defining the session variable

@@ -258,6 +258,10 @@
                     </div>
                 </div>
             </fieldset>
+            
+            <div class="field-group">
+                <input type="submit" value="Save" class="aui-button aui-button-primary">
+            </div>
 
             <h2><font color="green">Export</font></h2>
             <p>Download 'All Timesheets' as <a href="download/timesheets">CSV</a> or as
@@ -273,10 +277,6 @@
             <input type="button" class="aui-button-primary aui-button" value="Delete Timesheet Data" id="reset-timesheets" style="background: red">
             <div class="description">
                 Deletes all Timesheet and Entries, but does not change the config (this action cannot be undone).
-            </div>
-
-            <div class="field-group">
-                <input type="submit" value="Save" class="aui-button aui-button-primary">
             </div>
         </form>
     </div>
