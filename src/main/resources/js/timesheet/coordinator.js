@@ -4,13 +4,15 @@ var coordUsersList = "";
 
 function initCoordinatorUserList(userInformation) {
 	
+    var userListToSort = [];
+    var userListToSortMaster = [];
+	
     for (var i = 0; i < userInformation.length; i++) {
     	
     	if (userInformation[i].isMasterTimesheet === false && !(userInformation[i].state === "DONE"))
-    		coordUsersList = coordUsersList + "<option value=\"" + userInformation[i].userName + "\"/>";
+    		userListToSort.push(userInformation[i].userName);
     	else if (userInformation[i].isMasterTimesheet === true && !(userInformation[i].state === "DONE"))
-    		coordUsersList = coordUsersList + "<option value=\"" + userInformation[i].userName + " (Master Timesheet)\"/>";
-    	
+    		userListToSortMaster.push(userInformation[i].userName);
     	
         var latestEntryDate;
         if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
@@ -39,14 +41,18 @@ function initCoordinatorUserList(userInformation) {
             "</td><td headers='ti-latest-entry-description'>" + userInformation[i].latestEntryDescription +
             "</td></tr>";
         AJS.$("#team-information-table-content").append(row);
-        
-//      Show Users for Coordinator in "View Other Timesheet" tab
-//        var userListe = "<div>" + userInformation[i].userName + "</div>";
-//        AJS.$("#showAvailableTimesheetUsersForCoordinators").append(userListe);
-        
     }
-    console.log("coordUsersList coordUsersList: " + coordUsersList);
+    
+    var sortedUserList = userListToSort.sort();
+    var sortedUserListMaster = userListToSortMaster.sort();
+    
+    for (var i = 0; i < sortedUserList.length; i++)
+    	coordUsersList = coordUsersList + "<option value=\"" + sortedUserList[i] + "\"/>";
+    
+    for (var i = 0; i < sortedUserListMaster.length; i++)
+    	coordUsersList = coordUsersList + "<option value=\"" + sortedUserListMaster[i] + " (Master Timesheet)\"/>";
 
+    // Provide a sorted List of UserNames for the View Other Timesheet Enter Box of Team-Coordinators
     AJS.$("#coordinatorTimesheetSelect-div").append("<label for=\"permission\">Timesheet Of</label>" +
     		"<input class=\"text selectTimesheetOfUserField\" type=\"text\" id=\"user-select2-field\" list=\"coordusers\">" +
     		"<datalist id=\"coordusers\"><select style=\"display: none;\">" + coordUsersList + "</select></datalist>");
