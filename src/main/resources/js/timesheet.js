@@ -4,7 +4,6 @@ var restBaseUrl;
 var hostname = location.hostname;
 var baseUrl;
 var timesheetData_;
-
 var timesheetIDOfUser;
 
 AJS.toInit(function () {
@@ -54,26 +53,83 @@ AJS.toInit(function () {
 
         AJS.$("#theory-hour-key-data").hide();
     }
+    
+// Don't touch the .submit function below - otherwise Firefox doesn't like it any more!
+    AJS.$("#timesheet-hours-save-button").show();
+    AJS.$("#timesheet-information").submit(function (e) {
+        e.preventDefault();
+        
+        require('aui/flag')({
+            type: 'info',
+            title: 'Page will be reloaded',
+            body: '<p>Page will be loaded soon. Please wait...</p>' +
+            'You can <a href="javascript:window.location.reload();">quick reload</a> by pressing the F5 key.',
+            close: 'auto'
+        });
+        var timeSheetIDtoUse;
+    	if (timesheetIDOfUser && isAdmin) 
+    		timeSheetIDtoUse = timesheetIDOfUser;
+         else 
+        	timeSheetIDtoUse = timesheetID; 
+        
+            	
+        var timesheetFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'timesheets/' + timeSheetIDtoUse,
+            contentType: "application/json"
+        });
+        
+      //browser reload
+        window.setTimeout(function () {
+            location.reload()
+        }, 4000);
+            
+        AJS.$.when(timesheetFetched)
+            .done(function (existingTimesheetData) {
+            	
+                var timesheetUpdateData = {
+                    timesheetID: existingTimesheetData.timesheetID,
+                    lectures: AJS.$("#timesheet-hours-lectures").val(),
+                    reason: AJS.$("#timesheet-substract-hours-text").val(),
+                    targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
+                    targetHourTheory: toFixed(AJS.$("#timesheet-target-hours-theory").val(), 2),
+                    targetHours: AJS.$("#timesheet-hours-text").val(),
+                    targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
+                    - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
+                    targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
+                    latestEntryDate: existingTimesheetData.latestEntryDate,
+                    isMTSheet: existingTimesheetData.isMTSheet,
+                    state: existingTimesheetData.state
+                };
 
-    if (isAdmin) {
-        AJS.$("#timesheet-hours-save-button").hide();
-        AJS.$("#timesheet-hours-update-button").show();
-        AJS.$("#timesheet-hours-update-button").click('click', function (e) {
-            e.preventDefault();
-            if (timesheetIDOfUser) {
-                getExistingTimesheetHours(timesheetIDOfUser);
-            } else {
-                getExistingTimesheetHours(timesheetID);
-            }
+                var timesheetUpdated = AJS.$.ajax({
+                    type: 'POST',
+                    url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
+                    contentType: "application/json",
+                    data: JSON.stringify(timesheetUpdateData)
+                });
+                
+              //browser reload
+                window.setTimeout(function () {
+                    location.reload()
+                }, 4000);
+                
+                AJS.$.when(timesheetUpdated)
+                    .fail(function (error) {
+                        AJS.messages.error({
+                            title: 'There was an error while updating the timesheet data.',
+                            body: '<p>Reason: ' + error.responseText + '</p>'
+                        });
+                    });
+            })
+            .fail(function () {
+                AJS.messages.error({
+                    title: 'There was an error while fetching existing timesheet data.',
+                    body: '<p>Reason: ' + "Please use Google Chrome or Orpera" + '</p>'
+                });
+            });
         });
-    } else {
-        AJS.$("#timesheet-hours-save-button").show();
-        AJS.$("#timesheet-hours-update-button").hide();
-        AJS.$("#timesheet-hours-save-button").click("click", function (e) {
-            e.preventDefault();
-            getExistingTimesheetHours(timesheetID);
-        });
-    }
+
 
     timesheetIDOfUser = sessionStorage.getItem('timesheetID');
     if (timesheetIDOfUser) {
@@ -283,39 +339,6 @@ function saveTimesheetIDOfUserInSession(selectedUser) {
         }
     });
 }
-
-function getExistingTimesheetHours(timesheetID) {
-    var timesheetFetched = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheets/' + timesheetID,
-        contentType: "application/json"
-    });
-    AJS.$.when(timesheetFetched)
-        .done(updateTimesheetHours)
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while fetching existing timesheet data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-            console.log(error);
-        });
-}
-
-function updateTimesheetHours(existingTimesheetData) {
-    var timesheetUpdateData = {
-        timesheetID: existingTimesheetData.timesheetID,
-        lectures: AJS.$("#timesheet-hours-lectures").val(),
-        reason: AJS.$("#timesheet-substract-hours-text").val(),
-        targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
-        targetHourTheory: toFixed(AJS.$("#timesheet-target-hours-theory").val(), 2),
-        targetHours: AJS.$("#timesheet-hours-text").val(),
-        targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
-        - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
-        targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
-        latestEntryDate: existingTimesheetData.latestEntryDate,
-        isMTSheet: existingTimesheetData.isMTSheet,
-        state: existingTimesheetData.state
-    };
 
     var timesheetUpdated = AJS.$.ajax({
         type: 'POST',

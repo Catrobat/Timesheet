@@ -281,14 +281,9 @@
             <div class="field-group" id="substractTimesheetHours"></div>
 
             <div class="field-group">
-                <div class="timesheet-hours" id="timesheet-hours-update-button">
-                    <input type="submit" value="Update" class="aui-button aui-button-primary">
-                </div>
-
                 <div class="timesheet-hours" id="timesheet-hours-save-button">
                     <input type="submit" value="Save" class="aui-button aui-button-primary">
                 </div>
-
             </div>
         </form>
     </div>
@@ -377,25 +372,25 @@
     function getUsedCategoryNames(data) {
         var labelNames = [];
 
-    	  for (var i = 0; i < data.length; i++) {
-        	  for ( property in data[i] ) {
-  				      if ( property !== "year" ) {
-  					        if ( data[i][property] !== 0 && data[i][property] !== undefined ) {
-  						          if ( !labelNames.includes(property) ) {
-                          labelNames.push(property);
-                        }
-  					        }
-  				      }
-			      }
+		for (var i = 0; i < data.length; i++) {
+			for ( property in data[i] ) {
+				if ( property !== "year" ) {
+					if ( data[i][property] !== 0 && data[i][property] !== undefined ) {
+						if ( !labelNames.includes(property) ) {
+		              		labelNames.push(property);
+		            	}
+				    }
+			    }
 		    }
-		    return labelNames;
+		}
+		return labelNames;
 	  }
 </script>
 
 <script>
     function drawCategoryDiagram(data, labelData) {
- 	      var labelNames = [];
- 	      labelNames = getUsedCategoryNames(data);
+ 	    var labelNames = [];
+ 	    labelNames = getUsedCategoryNames(data);
 
         var categoryDiagram = new Morris.Area({
             // ID of the element in which to draw the chart.
