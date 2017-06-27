@@ -306,7 +306,6 @@ function fetchData(timesheetID) {
             });
             console.log(error);
         });
-
 }
 
 function saveTimesheetIDOfUserInSession(selectedUser) {
@@ -340,20 +339,6 @@ function saveTimesheetIDOfUserInSession(selectedUser) {
     });
 }
 
-    var timesheetUpdated = AJS.$.ajax({
-        type: 'POST',
-        url: restBaseUrl + 'timesheets/update/' + existingTimesheetData.timesheetID,
-        contentType: "application/json",
-        data: JSON.stringify(timesheetUpdateData)
-    })
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while updating the timesheet data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-        });
-    AJS.$.when(timesheetUpdated).done(location.reload());
-}
 
 function fetchUsers() {
     var config = AJS.$.ajax({
