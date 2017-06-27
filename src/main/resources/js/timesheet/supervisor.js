@@ -79,18 +79,6 @@ function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
     });
     */
 
-    if(isAdmin) {
-        AJS.$("#timesheet-hours-save-button").hide();
-        AJS.$("#timesheet-hours-update-button").show();
-        AJS.$("#timesheet-hours-update-button").click('click', function (e) {
-            e.preventDefault();
-            if (timesheetIDOfUser) {
-                getExistingTimesheetHours(timesheetIDOfUser);
-            } else {
-                getExistingTimesheetHours(timesheetID);
-            }
-        });
-    }
     if (isSupervisedUser || isAdmin) {
         initSelectTimesheetButton();
         AJS.$("#approvedUserTimesheetSelect").show();
