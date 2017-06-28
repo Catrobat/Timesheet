@@ -397,7 +397,7 @@ function fetchUsers() {
         .done(initCoordinatorUserList)
         .fail(function (error) {
             AJS.messages.error({
-                title: 'There was an error while team user data.',
+                title: 'There was an error while fetching team user data.',
                 body: '<p>Reason: ' + error.responseText + '</p>'
             });
             console.log(error);

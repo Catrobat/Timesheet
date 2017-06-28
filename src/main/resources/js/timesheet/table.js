@@ -232,10 +232,27 @@ function renderFormRow(timesheetData, entry, saveOptions, isModified) {
 function prepareForm(entry, timesheetData, isModified) {
 
     var teams = timesheetData.teams;
+
+    // Let the Team "Master Thesis" NOT be shown in the drop down of normal Timesheets 
+    if (!isMasterThesisTimesheet) {
+    	for (var i = 0; i < teams.length; i++) {
+        	teamID = Object.keys(teams)[i];
+        	if (teamID) {
+        		thisTeamName = teams[teamID].teamName;
+        		if (thisTeamName.includes("Master Thesis")) {
+        			var index = teams.indexOf(teams[teamID]);
+        			if (index > -1) {
+        			    teams.splice(index, 1); //deletes this Team from the List (only for this load)
+        			}
+        		}
+        	}
+        }
+    }
+    
     var row = AJS.$(Jira.Templates.Timesheet.timesheetEntryForm(
         {entry: entry, teams: teams})
     );
-
+    
     var form = {
         row: row,
         loadingSpinner: row.find('span.aui-icon-wait').hide(),
