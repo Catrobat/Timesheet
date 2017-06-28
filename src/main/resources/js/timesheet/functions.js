@@ -1,6 +1,5 @@
 "use strict";
 
-var isMTSheetSelected;
 
 function isReadOnlyUser(userName, config) {
     if (config.readOnlyUsers) {
@@ -14,10 +13,17 @@ function isReadOnlyUser(userName, config) {
     return false;
 }
 
+
+// TODO: isMasterThesisTimesheet ONLY works for your own Timesheets! Not for the one you are currently viewing!
 function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
     var categoriesPerTeam = [];
     selectedTeam.teamCategories.filter(function (categoryID) {
-        if (!isMTSheetSelected && categories[categoryID].categoryName === "Theory") {
+//    	console.log("filterAndSortCategoriesPerTeam" + isMasterThesisTimesheet);
+        if (!isMasterThesisTimesheet && categories[categoryID].categoryName === "Theory (MT)") {
+            return false;
+        } else if (!isMasterThesisTimesheet && categories[categoryID].categoryName.includes("(MT)")) {
+            return false;
+        } else if (!isMasterThesisTimesheet && categories[categoryID].categoryName.includes("(TH)")) {
             return false;
         } else {
             return true;
@@ -113,8 +119,10 @@ function calculateTime(timesheetData) {
     return totalHours + totalMinutes / 60;
 }
 
+//TODO: isMasterThesisTimesheet ONLY works for your own Timesheets! Not for the one you are currently viewing!
 function calculateTheoryTime(timesheetData) {
-    if (!isMTSheetSelected)
+//	console.log("calculateTheoryTime" + isMasterThesisTimesheet);
+    if (!isMasterThesisTimesheet)
         return 0;
 
     var totalHours = 0;
@@ -129,7 +137,8 @@ function calculateTheoryTime(timesheetData) {
         var pause = availableEntries[i].pauseMinutes;
         var calculatedTime = hours * 60 + minutes - pause;
 
-        if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory")
+        if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory (MT)" ||
+        		timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName.includes("(TH)"))
             totalMinutes = totalMinutes + calculatedTime;
 
         if (totalMinutes >= 60) {
@@ -160,7 +169,7 @@ function initTimesheetInformationValues(timesheetData) {
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
         AJS.$("#substractTimesheetHours").append("<textarea name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"No timesheet hours have been subtracted yet.\"></textarea>");
         AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
-        AJS.$("#substractTimesheetHours").append("</fieledset>");
+        AJS.$("#substractTimesheetHours").append("</fieldset>");
 
         //load values
         AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
@@ -176,7 +185,7 @@ function initTimesheetInformationValues(timesheetData) {
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
         AJS.$("#substractTimesheetHours").append("<textarea disabled=\"disabled\" name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"No timesheet hours have been subtracted yet.\" readonly></textarea>");
         AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
-        AJS.$("#substractTimesheetHours").append("</fieledset>");
+        AJS.$("#substractTimesheetHours").append("</fieldset>");
 
         //load values
         AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);

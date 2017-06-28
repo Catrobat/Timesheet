@@ -142,13 +142,30 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         TimesheetEntry[] entries = ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ?", sheet.getID());
         int minutes = 0;
         for (TimesheetEntry entry : entries) {
-            if (!entry.getCategory().getName().equals(SpecialCategories.THEORY)) {
-                minutes += entry.getDurationMinutes();
+            if (!(entry.getCategory().getName().equals(SpecialCategories.THEORY_MT)) &&
+            		!(entry.getCategory().getName().contains("(TH)")) ) {
+            	minutes += entry.getDurationMinutes();
+            }	
+        }
+        return minutes / 60;
+    }
+    
+    private int getTheoryHoursOfTimesheet(Timesheet sheet) {
+        if (sheet == null)
+            return 0;
+        TimesheetEntry[] entries = ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ?", sheet.getID());
+        int minutes = 0;
+        for (TimesheetEntry entry : entries) {
+            if (entry.getCategory().getName().equals(SpecialCategories.THEORY_MT) ||
+            		entry.getCategory().getName().contains("(TH)")) {
+            	minutes += entry.getDurationMinutes();
             }
         }
         return minutes / 60;
     }
 
+    // TODO: Use the getTheoryHoursOfTimesheet where the getPracticeHoursOfTimesheet is used
+    
     @Override
     @Nullable
     public TimesheetEntry getEntryByID(int entryID) {

@@ -291,13 +291,11 @@ AJS.toInit(function () {
                     if (specialCategories.indexOf(categoryList[i]) != -1) {
                         AJS.$("#categories").append("<h3>" + categoryList[i] +
                             "<button class=\"aui-button aui-button-subtle\" disabled>" +
-                            "<span>This category cannot be renamed or deleted</span></button></h3><fieldset>");
-                        AJS.$("#categories").append("</fieldset>");
+                            "<span>This category cannot be renamed or deleted</span></button></h3>");
                     } else {
                         AJS.$("#categories").append("<h3>" + categoryList[i] +
                             "<button class=\"aui-button aui-button-subtle\" value=\"C-" + categoryList[i] + "\">" +
-                            "<span class=\"aui-icon aui-icon-small aui-iconfont-edit\">Editing</span> Edit Category Name </button></h3><fieldset>");
-                        AJS.$("#categories").append("</fieldset>");
+                            "<span class=\"aui-icon aui-icon-small aui-iconfont-edit\">Editing</span> Edit Category Name </button></h3>");
                     }
                 }
 
