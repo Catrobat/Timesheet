@@ -10,7 +10,7 @@ public class SpecialCategories {
     public static final String THEORY = "Theory";
     public static final String RESEARCH = "Research";
     public static final String GOOGLEDOCSIMPORT = "GoogleDocsImport";
-    public static final String THEORY_MT = "Theory (MT)";
+//    public static final String THEORY_MT = "Theory (MT)";
     public static final String MEETING = "Meeting";
     public static final String PAIR_PROGRAMMING = "Pair programming";
     public static final String PROGRAMMING = "Programming";
@@ -32,7 +32,7 @@ public class SpecialCategories {
     		ImmutableList.of(GOOGLEDOCSIMPORT, INACTIVE, INACTIVE_OFFLINE, THEORY, DEFAULT);
     
     public static final ImmutableList<String> PredefinedCategories = 
-    		ImmutableList.of(RESEARCH, THEORY_MT, MEETING, PAIR_PROGRAMMING, PROGRAMMING, PLANNING_GAME, 
+    		ImmutableList.of(RESEARCH, MEETING, PAIR_PROGRAMMING, PROGRAMMING, PLANNING_GAME, 
     				REFACTORING, REFACTORING_PP, CODE_ACCEPTANCE, ORGANISATIONAL_TASKS, 
     				DISCUSSING_ISSUES_SUPPORTING_CONSULTING, OTHER, BUG_FIXING_PP, BUG_FIXING);
 }

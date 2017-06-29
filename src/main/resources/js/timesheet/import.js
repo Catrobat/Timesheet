@@ -324,10 +324,6 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     				pieces[i] = "Theory";
     				categoryID = -1;
     				break;
-    			case "Theory (MT)":
-    				pieces[i] = "Theory (MT)";
-    				categoryID = -3;
-    				break;
     			case "Meeting":
     				pieces[i] = "Meeting";
     				categoryID = -4;
@@ -422,6 +418,9 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     }
 
     var firstTeamID = Object.keys(timesheetData.teams)[0];
+    
+    if (isMasterThesisTimesheet)
+    	firstTeamID = null;
 
     if (beginDate > endDate) {
         endDate.setDate(endDate.getDate() + 1)

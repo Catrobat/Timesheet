@@ -297,8 +297,14 @@
     <div class="tabs-pane" id="tabs-category-configuration">
         <p></p>
         <h2>Categories Management</h2>
-        <p>Categories can be renamed within this tab.</p>
-        <p><font color="red">Important Note: Do not forget to 'save' your changes.</font>
+        <p>
+            <ul>
+                <li>Categories can be renamed within this tab.</li>
+                <li>By default, "Theory" is ONLY shown in Master Thesis Timesheets.</li>
+                <li>By default, only entries with the Category "Theory" are counted as "Theoretical Hours".</li>
+                <li><font color="red"><b>Important Note: Do not forget to 'save' your changes.</b></font></li>
+            </ul>
+        
         <form id="category-general" class="aui">
             <div id="categories"></div>
 

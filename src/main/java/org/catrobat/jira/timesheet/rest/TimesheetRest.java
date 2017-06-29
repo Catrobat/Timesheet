@@ -531,9 +531,6 @@ public class TimesheetRest {
             			case -1:
             				category = categoryService.getCategoryByName(SpecialCategories.THEORY);
             				break;
-            			case -3:
-            				category = categoryService.getCategoryByName(SpecialCategories.THEORY_MT);
-            				break;
             			case -4:
             				category = categoryService.getCategoryByName(SpecialCategories.MEETING);
             				break;
@@ -582,12 +579,6 @@ public class TimesheetRest {
             		}
             	}
                 
-                
-//                if (entry.IsGoogleDocImport() && entry.getCategoryID() == -1) {
-//                    category = categoryService.getCategoryByName(SpecialCategories.THEORY);
-//                } else if (entry.IsGoogleDocImport() && entry.getCategoryID() == -2) {
-//                    category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
-//                }
                 // Category cannot be associated with team, check null only
                 // teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
 

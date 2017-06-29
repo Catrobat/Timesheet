@@ -25,6 +25,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
+
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
@@ -32,6 +33,8 @@ import org.catrobat.jira.timesheet.rest.json.JsonUser;
 import org.catrobat.jira.timesheet.rest.json.JsonTeamInformation;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
 import org.catrobat.jira.timesheet.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -40,7 +43,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Path("/user")
 public class UserRest {
@@ -53,6 +58,8 @@ public class UserRest {
 
     private final UserSearchService userSearchService;
     private final GroupPickerSearchService groupPickerSearchService;
+    
+    private static final Logger logger = LoggerFactory.getLogger(UserRest.class);
 
     public UserRest(ConfigService configService, PermissionService permissionService,
                     TimesheetService timesheetService, TimesheetEntryService timesheetEntryService, TeamService teamService,
@@ -113,13 +120,17 @@ public class UserRest {
     @Path("/getUserInformation")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserInformation(@Context HttpServletRequest request) {
+    	
+    	logger.error("1 /getUserInformation reached");
+    	Date date = new Date();
+    	
         Response response = permissionService.checkRootPermission();
         if (response != null) {
             return response;
         }
 
         List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
-
+        
         for (Timesheet timesheet : timesheetService.all()) {
             JsonUserInformation jsonUserInformation = new JsonUserInformation();
             // TODO: check whether user key == name
@@ -137,7 +148,7 @@ public class UserRest {
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                     || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
-                Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
+                Date inactiveEndDate = latestInactiveEntry.getInactiveEndDate();
                 jsonUserInformation.setInactiveEndDate(inactiveEndDate);
             }
             jsonUserInformation.setTotalPracticeHours(timesheet.getHoursPracticeCompleted());
@@ -168,6 +179,12 @@ public class UserRest {
 
             jsonUserInformationList.add(jsonUserInformation);
         }
+        
+        logger.error("2 /getUserInformation just before Response");
+    	Date date1 = new Date();
+    	long diffInMillies = date1.getTime() - date.getTime();
+    	TimeUnit timeUnit = TimeUnit.SECONDS;
+    	logger.error("3 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS));
 
         return Response.ok(jsonUserInformationList).build();
     }
@@ -188,10 +205,11 @@ public class UserRest {
         if (response != null) {
             return response;
         }
-
-        if (permissionService.timesheetAdminExists() && permissionService.isTimesheetAdmin(user)) {
+        
+        boolean adminExists = permissionService.timesheetAdminExists();
+        if (adminExists && permissionService.isTimesheetAdmin(user)) {
             isAdmin = true;
-        } else if (!permissionService.timesheetAdminExists() && permissionService.isJiraAdministrator(user)) {
+        } else if (!adminExists && permissionService.isJiraAdministrator(user)) {
             isAdmin = true;
         }
 
@@ -218,7 +236,7 @@ public class UserRest {
                 TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                         || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
-                    Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
+                    Date inactiveEndDate = latestInactiveEntry.getInactiveEndDate();
                     jsonTeamInformation.setInactiveEndDate(inactiveEndDate);
                 }
                 jsonTeamInformation.setTotalPracticeHours(timesheet.getHoursPracticeCompleted());
