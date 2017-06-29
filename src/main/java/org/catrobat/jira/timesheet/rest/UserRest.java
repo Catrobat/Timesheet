@@ -205,10 +205,11 @@ public class UserRest {
         if (response != null) {
             return response;
         }
-
-        if (permissionService.timesheetAdminExists() && permissionService.isTimesheetAdmin(user)) {
+        
+        boolean adminExists = permissionService.timesheetAdminExists();
+        if (adminExists && permissionService.isTimesheetAdmin(user)) {
             isAdmin = true;
-        } else if (!permissionService.timesheetAdminExists() && permissionService.isJiraAdministrator(user)) {
+        } else if (!adminExists && permissionService.isJiraAdministrator(user)) {
             isAdmin = true;
         }
 
@@ -235,7 +236,7 @@ public class UserRest {
                 TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                         || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
-                    Date inactiveEndDate = timesheetEntryService.getLatestInactiveEntry(timesheet).getInactiveEndDate();
+                    Date inactiveEndDate = latestInactiveEntry.getInactiveEndDate();
                     jsonTeamInformation.setInactiveEndDate(inactiveEndDate);
                 }
                 jsonTeamInformation.setTotalPracticeHours(timesheet.getHoursPracticeCompleted());

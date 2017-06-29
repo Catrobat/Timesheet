@@ -142,8 +142,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         TimesheetEntry[] entries = ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ?", sheet.getID());
         int minutes = 0;
         for (TimesheetEntry entry : entries) {
-            if (!(entry.getCategory().getName().equals(SpecialCategories.THEORY_MT)) &&
-            		!(entry.getCategory().getName().contains("(TH)")) ) {
+            if (!(entry.getCategory().getName().equals(SpecialCategories.THEORY)) ) {
             	minutes += entry.getDurationMinutes();
             }	
         }
@@ -156,8 +155,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         TimesheetEntry[] entries = ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ?", sheet.getID());
         int minutes = 0;
         for (TimesheetEntry entry : entries) {
-            if (entry.getCategory().getName().equals(SpecialCategories.THEORY_MT) ||
-            		entry.getCategory().getName().contains("(TH)")) {
+            if (entry.getCategory().getName().equals(SpecialCategories.THEORY)) {
             	minutes += entry.getDurationMinutes();
             }
         }

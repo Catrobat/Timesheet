@@ -234,20 +234,38 @@ function prepareForm(entry, timesheetData, isModified) {
     var teams = timesheetData.teams;
 
     // Let the Team "Master Thesis" NOT be shown in the drop down of normal Timesheets 
-    if (!isMasterThesisTimesheet) {
-    	for (var i = 0; i < teams.length; i++) {
-        	teamID = Object.keys(teams)[i];
-        	if (teamID) {
-        		thisTeamName = teams[teamID].teamName;
-        		if (thisTeamName.includes("Master Thesis")) {
-        			var index = teams.indexOf(teams[teamID]);
-        			if (index > -1) {
-        			    teams.splice(index, 1); //deletes this Team from the List (only for this load)
-        			}
-        		}
-        	}
-        }
-    }
+    
+//    Patch2: einkommentieren
+//    if (!isMasterThesisTimesheet) {
+//    	for (var i = 0; i < teams.length; i++) {
+//        	teamID = Object.keys(teams)[i];
+//        	if (teamID) {
+//        		thisTeamName = teams[teamID].teamName;
+//        		if (thisTeamName.includes("Master Thesis")) {
+//        			var index = teams.indexOf(teams[teamID]);
+//        			if (index > -1) {
+//        			    teams.splice(index, 1); //deletes this Team from the List (only for this load)
+//        			}
+//        		}
+//        	}
+//        }
+//    }
+//    // Let NO OTHER Team but "Master Thesis" be shown in the drop down Master Thesis Timesheets
+//    else {
+//    	for (var i = 0; i < teams.length; i++) {
+//        	teamID = Object.keys(teams)[i];
+//        	if (teamID) {
+//        		thisTeamName = teams[teamID].teamName;
+//        		if (!thisTeamName.includes("Master Thesis")) {
+//        			var index = teams.indexOf(teams[teamID]);
+//        			if (index > -1) {
+//        			    teams.splice(index, 1); //deletes all Teams from the List (only for this load) except "Master Thesis"
+//        			    i--;
+//        			}
+//        		}
+//        	}
+//        }
+//    }
     
     var row = AJS.$(Jira.Templates.Timesheet.timesheetEntryForm(
         {entry: entry, teams: teams})
@@ -334,7 +352,7 @@ function prepareForm(entry, timesheetData, isModified) {
 
             // define special behaviour
             setTimeout(function () { //little hack we have to do
-                if (getLengthOfArray(timesheetData.teams) > 1) {
+                if (getLengthOfArray(teams) > 1) {
                     AJS.$(".team").show();
                 } else {
                     AJS.$(".team").hide();
@@ -690,9 +708,6 @@ function augmentEntry(timesheetData, entry) {
     case -2:
     	categoryName = "GoogleDocsImport";
     	break;
-    case -3:
-    	categoryName = "Theory (MT)";
-		break;
 	case -4:
 		categoryName = "Meeting";
 		break;
@@ -738,13 +753,7 @@ function augmentEntry(timesheetData, entry) {
     default:
     	categoryName = timesheetData.categoryIDs[entry.categoryID].categoryName;
     }
-//    if (entry.categoryID === -1) {
-//        categoryName = "Theory";
-//    } else if (entry.categoryID === -2) {
-//        categoryName = "GoogleDocsImport";
-//    } else {
-//        categoryName = timesheetData.categoryIDs[entry.categoryID].categoryName;
-//    }
+
 
     var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
 

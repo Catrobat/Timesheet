@@ -19,12 +19,8 @@ function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
     var categoriesPerTeam = [];
     selectedTeam.teamCategories.filter(function (categoryID) {
 //    	console.log("filterAndSortCategoriesPerTeam" + isMasterThesisTimesheet);
-        if (!isMasterThesisTimesheet && categories[categoryID].categoryName === "Theory (MT)") {
-            return false;
-        } else if (!isMasterThesisTimesheet && categories[categoryID].categoryName.includes("(MT)")) {
-            return false;
-        } else if (!isMasterThesisTimesheet && categories[categoryID].categoryName.includes("(TH)")) {
-            return false;
+        if (!isMasterThesisTimesheet && categories[categoryID].categoryName === "Theory") {
+            return true; //TODO: Patch2: set to false again
         } else {
             return true;
         }
@@ -137,8 +133,7 @@ function calculateTheoryTime(timesheetData) {
         var pause = availableEntries[i].pauseMinutes;
         var calculatedTime = hours * 60 + minutes - pause;
 
-        if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory (MT)" ||
-        		timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName.includes("(TH)"))
+        if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory")
             totalMinutes = totalMinutes + calculatedTime;
 
         if (totalMinutes >= 60) {

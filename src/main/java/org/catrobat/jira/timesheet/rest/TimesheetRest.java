@@ -531,9 +531,6 @@ public class TimesheetRest {
             			case -1:
             				category = categoryService.getCategoryByName(SpecialCategories.THEORY);
             				break;
-            			case -3:
-            				category = categoryService.getCategoryByName(SpecialCategories.THEORY_MT);
-            				break;
             			case -4:
             				category = categoryService.getCategoryByName(SpecialCategories.MEETING);
             				break;

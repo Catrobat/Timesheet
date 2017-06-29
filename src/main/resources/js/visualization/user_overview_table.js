@@ -47,8 +47,7 @@ function appendEntriesToVisTable(timesheetData) {
             }
 
             //calculate theory time in minutes
-            if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory (MT)" ||
-            		timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName.includes("(TH)"))
+            if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory")
                 theoryHours = theoryHours + calculatedTime;
 
             //date within the last six months

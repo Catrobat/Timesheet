@@ -300,13 +300,8 @@
         <p>
             <ul>
                 <li>Categories can be renamed within this tab.</li>
-                <li>To create a Category, which is shown in Master Thesis Timesheets ONLY, 
-                    add "(MT)" to the name of the Category, just like: Theory (MT).</li>
-                <li>To create a Category, whos hours are counted as "Theoretical Hours" ONLY, 
-                    add "(TH)" to the name of the Category, just like: Research (TH).
-                    Obviously this one is only shown in Master Thesis Timesheets too.</li>
-                <li>By default, "Theory (MT)" is ONLY shown in Master Thesis Timesheets.</li>
-                <li>By default, only entries with the Category "Theory (MT)" are counted as "Theoretical Hours".</li>
+                <li>By default, "Theory" is ONLY shown in Master Thesis Timesheets.</li>
+                <li>By default, only entries with the Category "Theory" are counted as "Theoretical Hours".</li>
                 <li><font color="red"><b>Important Note: Do not forget to 'save' your changes.</b></font></li>
             </ul>
         

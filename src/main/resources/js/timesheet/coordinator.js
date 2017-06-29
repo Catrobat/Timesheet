@@ -76,7 +76,9 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
         //check if user is coordinator of a team
         for (var j = 0; j < team['coordinatorGroups'].length; j++) {
             if (team['coordinatorGroups'][j].localeCompare(userName) == 0) {
-            	AJS.$("#coordinatorTimesheetSelect-div-all-other-content-2").append("<h3>Coordinator of Team: " + team.teamName +"</h3>");
+            	var teamNameForTeamInformation = team.teamName;
+            	AJS.$("#team-information-teamname").append(teamNameForTeamInformation);
+            	AJS.$("#coordinatorTimesheetSelect-div-all-other-content-2").append("<h3>Coordinator of Team: " + teamNameForTeamInformation +"</h3>");
                 isTeamCoordinator = true;
             }
         }
