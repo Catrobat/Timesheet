@@ -20,7 +20,7 @@ function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
     selectedTeam.teamCategories.filter(function (categoryID) {
 //    	console.log("filterAndSortCategoriesPerTeam" + isMasterThesisTimesheet);
         if (!isMasterThesisTimesheet && categories[categoryID].categoryName === "Theory") {
-            return true; //TODO: Patch2: set to false again
+            return false; // Patch2: set to false again
         } else {
             return true;
         }

@@ -42,7 +42,7 @@ public class PermissionServiceImpl implements PermissionService {
     private final TeamService teamService;
     private final ConfigService configService;
     private final String BASE_URL = ComponentAccessor.getApplicationProperties().getString(APKeys.JIRA_BASEURL);
-    private boolean GOOGLE_DOCS_IMPORT_ENABLED = false;
+    private boolean GOOGLE_DOCS_IMPORT_ENABLED = false; // Patch2: set to false!
 
     public PermissionServiceImpl(TeamService teamService, ConfigService configService) {
         this.teamService = teamService;
