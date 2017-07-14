@@ -234,8 +234,6 @@ function prepareForm(entry, timesheetData, isModified) {
     var teams = timesheetData.teams;
 
     // Let the Team "Master Thesis" NOT be shown in the drop down of normal Timesheets 
-    
-//    Patch2: einkommentieren
     if (!isMasterThesisTimesheet) {
     	for (var i = 0; i < teams.length; i++) {
         	teamID = Object.keys(teams)[i];

@@ -30,7 +30,6 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.rest.json.JsonUser;
-import org.catrobat.jira.timesheet.rest.json.JsonTeamInformation;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
 import org.catrobat.jira.timesheet.services.*;
 import org.slf4j.Logger;
@@ -219,33 +218,33 @@ public class UserRest {
                     "coordinator nor a read only user nor a administrator!").build();
         }
 
-        List<JsonTeamInformation> jsonTeamInformationList = new ArrayList<>();
+        List<JsonUserInformation> jsonUserInformationListForCoordinator = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetService.all()) {
             if (permissionService.isUserCoordinatorOfTimesheet(user, timesheet)) {
             	
-            	JsonTeamInformation jsonTeamInformation = new JsonTeamInformation(timesheet);
+            	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
             	
-                jsonTeamInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
-                jsonTeamInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+            	jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
+            	jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
 
                 TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                         || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
                     Date inactiveEndDate = latestInactiveEntry.getInactiveEndDate();
-                    jsonTeamInformation.setInactiveEndDate(inactiveEndDate);
+                    jsonUserInformation.setInactiveEndDate(inactiveEndDate);
                 }
 
                 TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
                 if (latestEntry != null) {
-                    jsonTeamInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
-                    jsonTeamInformation.setLatestEntryDescription(latestEntry.getDescription());
+                	jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
+                	jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
                 } else {
-                    jsonTeamInformation.setLatestEntryHours(0);
-                    jsonTeamInformation.setLatestEntryDescription("");
+                	jsonUserInformation.setLatestEntryHours(0);
+                	jsonUserInformation.setLatestEntryDescription("");
                 }
                 
-                String userName = jsonTeamInformation.getUserName();
+                String userName = jsonUserInformation.getUserName();
                 ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
                 StringBuilder teamString = new StringBuilder();
                 
@@ -264,9 +263,9 @@ public class UserRest {
                 		}
                 	}
                 }
-                jsonTeamInformation.setTeams(teamString.toString());
+                jsonUserInformation.setTeams(teamString.toString());
                 
-                jsonTeamInformationList.add(jsonTeamInformation);
+                jsonUserInformationListForCoordinator.add(jsonUserInformation);
             }
         }
 
@@ -275,7 +274,7 @@ public class UserRest {
     	TimeUnit timeUnit1 = TimeUnit.SECONDS;
     	logger.error("3 /getUsersForCoordinator diffInMillies/diffInSeconds: " + diffInMillies1 + "/" + timeUnit1.convert(diffInMillies1,TimeUnit.MILLISECONDS));
         
-        return Response.ok(jsonTeamInformationList).build();
+        return Response.ok(jsonUserInformationListForCoordinator).build();
     }
 
 
