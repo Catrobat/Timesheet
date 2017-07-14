@@ -39,20 +39,7 @@ AJS.toInit(function () {
         AJS.$("#timesheet-owner").hide();
         AJS.$("#timesheet-owner-private").show();
     }
-// TODO: This is always false if viewing a master thesis timesheet via View Other Timesheet!
-    if (isMasterThesisTimesheet) {
-        document.getElementById("tabs-timesheet-settings").style.display = "none";
-        document.getElementById("tabs-team").style.display = "none";
-        AJS.$("#download-csv").attr("href", "download/timesheet/masterthesis");
-        AJS.$("#download-json").attr("href", "download/timesheet/json/masterthesis");
 
-        AJS.$("#theory-hour-key-data").show();
-    } else {
-        AJS.$("#download-csv").attr("href", "download/timesheet");
-        AJS.$("#download-json").attr("href", "download/timesheet/json");
-
-        AJS.$("#theory-hour-key-data").hide();
-    }
     
 // Don't touch the .submit function below - otherwise Firefox doesn't like it any more!
     AJS.$("#timesheet-hours-save-button").show();
@@ -222,7 +209,7 @@ function projectedFinishDate(timesheetData, entryData) {
 }
 
 function setOwnerLabel(timesheet) {
-    
+
     if (timesheet.isMTSheet) {
     	AJS.$("#timesheet-owner").append(timesheet.displayName + " (Master Thesis Timesheet)");
     	AJS.$("#timesheet-owner-private").append("My Master Thesis Timesheet (" + timesheet.displayName + ")");
@@ -230,6 +217,22 @@ function setOwnerLabel(timesheet) {
     else {
     	AJS.$("#timesheet-owner").append(timesheet.displayName);
     	AJS.$("#timesheet-owner-private").append("My Timesheet (" + timesheet.displayName + ")");
+    }
+}
+
+function checkIfMasterThesisTimesheet(timesheet) {
+
+// Now it is ok (via VOT too), taking always the value from the Timesheet, which is currently shown to you. 
+    if (timesheet.isMTSheet) {
+//        document.getElementById("tabs-timesheet-settings").style.display = "none"; ("View Other Timesheets" Tab)
+//        document.getElementById("tabs-team").style.display = "none";
+        AJS.$("#download-csv").attr("href", "download/timesheet/masterthesis");
+        AJS.$("#download-json").attr("href", "download/timesheet/json/masterthesis");
+        AJS.$("#theory-hour-key-data").show();
+    } else {
+        AJS.$("#download-csv").attr("href", "download/timesheet");
+        AJS.$("#download-json").attr("href", "download/timesheet/json");
+        AJS.$("#theory-hour-key-data").hide();
     }
 }
 
@@ -274,7 +277,8 @@ function fetchData(timesheetID) {
     });
 
     AJS.$.when(timesheetFetched)
-        .done(setOwnerLabel);
+        .done(setOwnerLabel)
+    	.done(checkIfMasterThesisTimesheet);
 
     AJS.$.when(timesheetFetched, entriesFetched)
         .done(projectedFinishDate);

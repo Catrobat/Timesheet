@@ -26,8 +26,13 @@ function initCoordinatorUserList(userInformation) {
         } else {
             inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
         }
+        thisUsersName = userInformation[i].userName;
+        if (userInformation[i].isMasterTimesheet === true) {
+        	thisUsersName = thisUsersName + " (MT)"
+        }
+        
         var row = "<tr>" +
-            "<td headers='ti-users'>" + userInformation[i].userName +
+            "<td headers='ti-users'>" + thisUsersName +
             "</td><td headers='ti-teams'>" + userInformation[i].teams +
             "</td><td headers='ti-state'>" + userInformation[i].state +
             "</td><td headers='ti-inactive-end-date'>" + inactiveEndDate +

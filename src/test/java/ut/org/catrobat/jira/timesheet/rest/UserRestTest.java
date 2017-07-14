@@ -14,7 +14,6 @@ import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.rest.json.JsonTeamInformation;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.rest.UserRest;
@@ -175,7 +174,7 @@ public class UserRestTest {
         when(permissionServiceMock.isUserCoordinatorOfTimesheet(userMock, ao.find(Timesheet.class,
                 "USER_KEY = ?", "joh")[0])).thenReturn(false);
         Response response = spyUserRest.getUsersForCoordinator(httpRequestMock);
-        assertEquals(1, ((List<JsonTeamInformation>)response.getEntity()).size());
+        assertEquals(1, ((List<JsonUserInformation>)response.getEntity()).size());
     }
 
     @Test
