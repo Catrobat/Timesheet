@@ -54,8 +54,8 @@ AJS.toInit(function () {
             if (userInformation[i].isMasterTimesheet === true) {
             	var enabledColumn = "</td><td headers='ti-enabled-m'>" + enableButton;
             	var rowm = "<tr>" +
-                "<td headers='ti-users-m' class='musers'>" + userInformation[i].userName +
-                "</td><td headers='ti-email-m' class='memail'>" + userInformation[i].email +
+                "<td headers='ti-users-m' class='musers'>" + userInformation[i].userName + "<br/><div style=\"font-size:12px;\">(" + userInformation[i].email + ")</div>" +
+//                "</td><td headers='ti-email-m' class='memail'>" + userInformation[i].email +
                 "</td><td headers='ti-team-m' class='mteam'>" + userInformation[i].teams +
                 "</td><td headers='ti-state-m' class='mstate' id='state"+ userInformation[i].timesheetID + "'>" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date-m' class='minactive-end'>" + inactiveEndDate +
@@ -75,8 +75,8 @@ AJS.toInit(function () {
             else {
             	var enabledColumn = "</td><td headers='ti-enabled'>" + enableButton;
             	var row = "<tr>" +
-                "<td headers='ti-users' class='users'>" + userInformation[i].userName +
-                "</td><td headers='ti-email' class='email'>" + userInformation[i].email +
+                "<td headers='ti-users' class='users'>" + userInformation[i].userName + "<br/><div style=\"font-size:12px;\">(" + userInformation[i].email + ")</div>" +
+//                "</td><td headers='ti-email' class='email'>" + userInformation[i].email +
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
                 "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "'>" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +

@@ -225,7 +225,7 @@ function checkIfMasterThesisTimesheet(timesheet) {
 // Now it is ok (via VOT too), taking always the value from the Timesheet, which is currently shown to you. 
     if (timesheet.isMTSheet) {
 //        document.getElementById("tabs-timesheet-settings").style.display = "none"; ("View Other Timesheets" Tab)
-        document.getElementById("tabs-team").style.display = "none";
+//        document.getElementById("tabs-team").style.display = "none";
         AJS.$("#download-csv").attr("href", "download/timesheet/masterthesis");
         AJS.$("#download-json").attr("href", "download/timesheet/json/masterthesis");
         AJS.$("#theory-hour-key-data").show();
