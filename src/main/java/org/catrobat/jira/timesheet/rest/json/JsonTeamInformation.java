@@ -11,6 +11,8 @@ import java.util.Date;
 
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 
+import com.atlassian.jira.component.ComponentAccessor;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonTeamInformation {
@@ -27,6 +29,8 @@ public class JsonTeamInformation {
     @XmlElement
     private int targetTotalHours;
     @XmlElement
+    private int targetTheoryHours;
+    @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
@@ -42,6 +46,18 @@ public class JsonTeamInformation {
     private boolean isMasterTimesheet;
     @XmlElement
     private String teams;
+    
+    public JsonTeamInformation(Timesheet timesheet) {
+    	this.userName = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getName();
+        this.state = timesheet.getState();
+        this.latestEntryDate = timesheet.getLatestEntryBeginDate();
+        this.isMasterTimesheet = timesheet.getIsMasterThesisTimesheet();
+        this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted() 
+				+ timesheet.getHoursDeducted());
+        this.targetTotalHours = timesheet.getTargetHours();
+        this.targetTheoryHours = timesheet.getTargetHoursTheory();
+        this.totalPracticeHours = timesheet.getHoursPracticeCompleted();
+    }
 
 
     public String getUserName() {

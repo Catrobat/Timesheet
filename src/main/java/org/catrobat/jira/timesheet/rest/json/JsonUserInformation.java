@@ -6,8 +6,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.util.Date;
+
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import com.atlassian.jira.component.ComponentAccessor;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -24,6 +27,8 @@ public class JsonUserInformation {
     private int remainingHours;
     @XmlElement
     private int targetTotalHours;
+    @XmlElement
+    private int targetTheoryHours;
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
@@ -46,6 +51,22 @@ public class JsonUserInformation {
     private boolean isEnabled;
     @XmlElement
     private boolean isMasterTimesheet;
+    
+    
+    public JsonUserInformation (Timesheet timesheet) {
+    	
+    	this.userName = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getName();
+    	this.state = timesheet.getState();
+        this.latestEntryDate = timesheet.getLatestEntryBeginDate();
+        this.isMasterTimesheet = timesheet.getIsMasterThesisTimesheet();
+        this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted() 
+				+ timesheet.getHoursDeducted());
+        this.targetTotalHours = timesheet.getTargetHours();
+        this.targetTheoryHours = timesheet.getTargetHoursTheory();
+        this.totalPracticeHours = timesheet.getHoursPracticeCompleted();
+        this.email = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getEmailAddress();
+        this.timesheetID = timesheet.getID();
+    }
 
 
     public String getUserName() {

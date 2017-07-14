@@ -132,18 +132,11 @@ public class UserRest {
         List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
         
         for (Timesheet timesheet : timesheetService.all()) {
-            JsonUserInformation jsonUserInformation = new JsonUserInformation();
-            // TODO: check whether user key == name
-            jsonUserInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
-            jsonUserInformation.setState(timesheet.getState());
-            jsonUserInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
+            
+        	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
+        	
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-            
-            jsonUserInformation.setIsMasterTimesheet(timesheet.getIsMasterThesisTimesheet());
-            jsonUserInformation.setRemainingHours(timesheet.getTargetHours() - timesheet.getHoursCompleted() 
-					+ timesheet.getHoursDeducted());
-            jsonUserInformation.setTargetTotalHours(timesheet.getTargetHours());
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
@@ -151,7 +144,7 @@ public class UserRest {
                 Date inactiveEndDate = latestInactiveEntry.getInactiveEndDate();
                 jsonUserInformation.setInactiveEndDate(inactiveEndDate);
             }
-            jsonUserInformation.setTotalPracticeHours(timesheet.getHoursPracticeCompleted());
+
             TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
             if (latestEntry != null) {
                 jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
@@ -161,30 +154,34 @@ public class UserRest {
                 jsonUserInformation.setLatestEntryDescription("");
             }
 
-            jsonUserInformation.setEmail(getEmailOfUserKey(timesheet.getUserKey()));
+            String userName = jsonUserInformation.getUserName();
+            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
             StringBuilder teamString = new StringBuilder();
-            Set<Team> developerSet = teamService.getTeamsOfUser(getUserNameOfUserKey(timesheet.getUserKey()));
-            Set<Team> coordinatorSet = teamService.getTeamsOfCoordinator(getUserNameOfUserKey(timesheet.getUserKey()));
-            Set<Team> allTeams = new HashSet<>();
-            allTeams.addAll(developerSet);
-            allTeams.addAll(coordinatorSet);
-            for (Team team : allTeams) {
-                if (!teamString.toString().equals("")) {
-                    teamString.append(", ");
-                }
-                teamString.append(team.getTeamName());
+            
+            for (Team jsonteam : teamService.all()) {
+            	org.catrobat.jira.timesheet.activeobjects.Group[] teamGroups = jsonteam.getGroups();
+            	for (org.catrobat.jira.timesheet.activeobjects.Group groupName : teamGroups) {
+            		if (groupName.getGroupName().equalsIgnoreCase(userName) ||
+                            ComponentAccessor.getGroupManager().isUserInGroup(applicationUser,groupName.getGroupName())) {
+            			if (!teamString.toString().equals("")) {
+                          teamString.append(", ");
+            			}
+	            		if (!teamString.toString().contains(jsonteam.getTeamName())) {
+	            			teamString.append(jsonteam.getTeamName());
+	                		break;
+	            		}
+            		}
+            	}
             }
             jsonUserInformation.setTeams(teamString.toString());
-            jsonUserInformation.setTimesheetID(timesheet.getID());
 
             jsonUserInformationList.add(jsonUserInformation);
         }
         
-        logger.error("2 /getUserInformation just before Response");
     	Date date1 = new Date();
     	long diffInMillies = date1.getTime() - date.getTime();
     	TimeUnit timeUnit = TimeUnit.SECONDS;
-    	logger.error("3 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS));
+    	logger.error("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS));
 
         return Response.ok(jsonUserInformationList).build();
     }
@@ -193,6 +190,10 @@ public class UserRest {
     @Path("/getUsersForCoordinator")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsersForCoordinator(@Context HttpServletRequest request) {
+    	
+    	logger.error("1 /getUsersForCoordinator reached");
+    	Date date = new Date();
+    	
         ApplicationUser user;
         boolean isAdmin = false;
         try {
@@ -222,24 +223,19 @@ public class UserRest {
 
         for (Timesheet timesheet : timesheetService.all()) {
             if (permissionService.isUserCoordinatorOfTimesheet(user, timesheet)) {
-                JsonTeamInformation jsonTeamInformation = new JsonTeamInformation();
-                // TODO: check whether user key == name
-                jsonTeamInformation.setUserName(getUserNameOfUserKey(timesheet.getUserKey()));
-                jsonTeamInformation.setState(timesheet.getState());
-                jsonTeamInformation.setLatestEntryDate(timesheet.getLatestEntryBeginDate());
+            	
+            	JsonTeamInformation jsonTeamInformation = new JsonTeamInformation(timesheet);
+            	
                 jsonTeamInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
                 jsonTeamInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-                jsonTeamInformation.setIsMasterTimesheet(timesheet.getIsMasterThesisTimesheet());
-                jsonTeamInformation.setRemainingHours(timesheet.getTargetHours() - timesheet.getHoursCompleted() 
-                										+ timesheet.getHoursDeducted());
-                jsonTeamInformation.setTargetTotalHours(timesheet.getTargetHours());
+
                 TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                         || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
                     Date inactiveEndDate = latestInactiveEntry.getInactiveEndDate();
                     jsonTeamInformation.setInactiveEndDate(inactiveEndDate);
                 }
-                jsonTeamInformation.setTotalPracticeHours(timesheet.getHoursPracticeCompleted());
+
                 TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
                 if (latestEntry != null) {
                     jsonTeamInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
@@ -249,35 +245,39 @@ public class UserRest {
                     jsonTeamInformation.setLatestEntryDescription("");
                 }
                 
+                String userName = jsonTeamInformation.getUserName();
+                ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
                 StringBuilder teamString = new StringBuilder();
-                Set<Team> developerSet = teamService.getTeamsOfUser(getUserNameOfUserKey(timesheet.getUserKey()));
-                Set<Team> coordinatorSet = teamService.getTeamsOfCoordinator(getUserNameOfUserKey(timesheet.getUserKey()));
-                Set<Team> allTeams = new HashSet<>();
-                allTeams.addAll(developerSet);
-                allTeams.addAll(coordinatorSet);
-                for (Team team : allTeams) {
-                    if (!teamString.toString().equals("")) {
-                        teamString.append(", ");
-                    }
-                    teamString.append(team.getTeamName());
+                
+                for (Team jsonteam : teamService.all()) {
+                	org.catrobat.jira.timesheet.activeobjects.Group[] teamGroups = jsonteam.getGroups();
+                	for (org.catrobat.jira.timesheet.activeobjects.Group groupName : teamGroups) {
+                		if (groupName.getGroupName().equalsIgnoreCase(userName) ||
+                                ComponentAccessor.getGroupManager().isUserInGroup(applicationUser,groupName.getGroupName())) {
+                			if (!teamString.toString().equals("")) {
+                              teamString.append(", ");
+                			}
+	                		if (!teamString.toString().contains(jsonteam.getTeamName())) {
+	                			teamString.append(jsonteam.getTeamName());
+	                			break;
+	                		}
+                		}
+                	}
                 }
                 jsonTeamInformation.setTeams(teamString.toString());
-                
                 
                 jsonTeamInformationList.add(jsonTeamInformation);
             }
         }
 
+        Date date1 = new Date();
+    	long diffInMillies1 = date1.getTime() - date.getTime();
+    	TimeUnit timeUnit1 = TimeUnit.SECONDS;
+    	logger.error("3 /getUsersForCoordinator diffInMillies/diffInSeconds: " + diffInMillies1 + "/" + timeUnit1.convert(diffInMillies1,TimeUnit.MILLISECONDS));
+        
         return Response.ok(jsonTeamInformationList).build();
     }
 
-    private String getUserNameOfUserKey(String userKey) {
-        return ComponentAccessor.getUserManager().getUserByKey(userKey).getName();
-    }
-
-    private String getEmailOfUserKey(String userKey) {
-        return ComponentAccessor.getUserManager().getUserByKey(userKey).getEmailAddress();
-    }
 
     @GET
     @Path("/getPairProgrammingUsers")

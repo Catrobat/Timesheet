@@ -639,7 +639,6 @@ public class TimesheetRestTest {
     @Test
     public void testPostTimesheetEntriesOk() throws Exception {
         int timesheetID = 1;
-        Boolean isMTSheet = false;
 
         TimesheetEntry timesheetEntryMock = createTimesheetEntryMock();
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(timesheetEntryMock);
@@ -656,7 +655,6 @@ public class TimesheetRestTest {
     public void testPostTimesheetHoursOk() throws Exception {
         int timesheetID = 1;
         String userKey = "USER_KEY";
-        Boolean isMTSheet = false;
 
         Timesheet sheet = createTimesheetMock();
         JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
