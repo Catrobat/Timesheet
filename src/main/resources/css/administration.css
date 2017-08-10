@@ -117,3 +117,12 @@ div.change-details {
 #mail-body-entry-change{
     border: solid;
 }
+
+#administration-content{
+    margin-top: 25px;
+    padding: 15px;
+}
+
+#delete-user-select{
+    margin: 15px;
+}

@@ -823,6 +823,13 @@ AJS.toInit(function () {
         scrollToAnchor('top');
     });
 
+    AJS.$("#delete-user-select").auiSelect2({
+        placeholder:"Select the User to delete",
+        width : '50%'
+    });
+
+    initDeleteOptions();
+
     AJS.$("#modify-scheduling").submit(function (e) {
         e.preventDefault();
         if (AJS.$(document.activeElement).val() === 'Activity Verification') {
@@ -840,6 +847,37 @@ AJS.toInit(function () {
         e.preventDefault();
         showTimesheetsDeletionDialog();
     });
+
+    function initDeleteOptions(){
+       AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'user/getUserInformation',
+            contentType: "application/json",
+            success : function (data) {
+                console.log("we go our data");
+                setDeleteOptions(data);
+            },
+            fail : function (err) {
+                AJS.messages.error({
+                    title : "Error!",
+                    body : "Something went wrong on Delete Timesheet info retrieval"
+                })
+            }
+        });
+
+    }
+
+    function setDeleteOptions(data) {
+        var select = document.getElementById("delete-user-select");
+        select.options.length = 0;
+
+        data.forEach(function(item, index){
+            var display;
+
+            item.isMasterTimesheet === false ? display = item.userName : display = (item.userName + " (Master Timesheet)");
+            select[select.options.length] = new Option(display, item.timesheetID);
+        });
+    }
 
     function showTimesheetsDeletionDialog() {
         var dialog = new AJS.Dialog({
