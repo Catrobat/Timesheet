@@ -140,6 +140,14 @@ public class TimesheetRest {
 
         Timesheet ownerSheet;
         ownerSheet = sheetService.getTimesheetByID(timesheetID);
+        //retrieving owner of timesheet to watch
+        String owner_key = ownerSheet.getUserKey();
+        String owner_name = ComponentAccessor.getUserManager().getUserByKey(owner_key).getName();
+
+        if(owner_key == null || owner_name == null){
+            return Response.serverError().entity("Now user was found for timesheet id: " + timesheetID).build();
+        }
+
         if (!permissionService.userCanViewTimesheet(loggedInUser, ownerSheet)) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
@@ -147,7 +155,7 @@ public class TimesheetRest {
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
         Vector<String> TeamMembers = new Vector<>();
 
-        for (Team team : teamService.getTeamsOfUser(loggedInUser.getName())) {
+        for (Team team : teamService.getTeamsOfUser(owner_name)) {
             for (String teamMembersAndGroups : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
                 if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
                     Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);

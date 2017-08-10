@@ -58,8 +58,7 @@ AJS.toInit(function () {
     		timeSheetIDtoUse = timesheetIDOfUser;
          else 
         	timeSheetIDtoUse = timesheetID; 
-        
-            	
+
         var timesheetFetched = AJS.$.ajax({
             type: 'GET',
             url: restBaseUrl + 'timesheets/' + timeSheetIDtoUse,

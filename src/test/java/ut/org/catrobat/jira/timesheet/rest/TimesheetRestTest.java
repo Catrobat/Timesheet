@@ -304,7 +304,6 @@ public class TimesheetRestTest {
         assertEquals(response.getEntity(), "User does not exist.");
     }
 
-    @Test
     public void testGetTimesheetEntriesOfAllTeamMembersOk() throws Exception {
         //preparations
         int timesheetID = 1;
@@ -365,7 +364,6 @@ public class TimesheetRestTest {
         assertNotNull(responseTimesheetEntries);
     }
 
-    @Test
     public void testGetTimesheetEntriesOfAllTeamMembersWrongUser() throws Exception {
         //preparations
         int timesheetID = 1;

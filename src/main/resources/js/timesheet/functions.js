@@ -45,6 +45,22 @@ function initSelectTimesheetButton() {
     AJS.$("#timesheet-settings").submit(function (e) {
         e.preventDefault();
 
+        if (AJS.$("#user-select2-field").val()) {
+            selectedUser = AJS.$("#user-select2-field").val().split(',');
+        } else if (AJS.$("#approved-user-select2-field").val()) {
+            selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
+        }
+
+        if(typeof selectedUser === "undefined"){
+            console.log("you have not select a user !!");
+
+            AJS.messages.error({
+                title:"Error!",
+                body: "Please select a user and try again!"
+            });
+            return;
+        }
+
         require('aui/flag')({
             type: 'info',
             title: 'Page will be reloaded',
@@ -57,11 +73,6 @@ function initSelectTimesheetButton() {
         //var isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
 
         // TODO: why even 2 different fields??? simplify to 1
-        if (AJS.$("#user-select2-field").val()) {
-            selectedUser = AJS.$("#user-select2-field").val().split(',');
-        } else if (AJS.$("#approved-user-select2-field").val()) {
-            selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
-        }
 
         if (selectedUser[0] !== "") {
             saveTimesheetIDOfUserInSession(selectedUser);
