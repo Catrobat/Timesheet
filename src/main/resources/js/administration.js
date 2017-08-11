@@ -848,6 +848,21 @@ AJS.toInit(function () {
         showTimesheetsDeletionDialog();
     });
 
+    AJS.$("#delete-timesheet-for-user").on("click", function (e) {
+        try{
+            var timesheet_id = AJS.$("#delete-user-select").select2("data").id;
+            var username = AJS.$("#delete-user-select").select2("data").text;
+
+            console.log("about to delete timesheet: " + timesheet_id);
+            showTimesheetDeletionDialog(username, timesheet_id);
+        } catch (e){
+            AJS.messages.error({
+                title : "Error: Incomplte Selection",
+                body : "Please select the Timesheet you want to delete and click on DELETE!"
+            })
+        }
+    });
+
     function initDeleteOptions(){
        AJS.$.ajax({
             type: 'GET',
@@ -879,6 +894,26 @@ AJS.toInit(function () {
         });
     }
 
+    function deleteTimesheet(timesheet_id, username){
+        AJS.$.ajax({
+            type : "DELETE",
+            url : restBaseUrl + "delete/" + timesheet_id,
+            success : function () {
+                AJS.messages.success({
+                    title : "Success!",
+                    body : "The Timesheet of : " + username + " has successfully been deleted!"
+                })
+            },
+            fail : function (err) {
+                console.log("we hav goa a fail here");
+                AJS.messages.error({
+                    title: "Error: Deletion error!",
+                    body : "Your request could not be processed!"
+                })
+            }
+        })
+    }
+
     function showTimesheetsDeletionDialog() {
         var dialog = new AJS.Dialog({
             width: 520,
@@ -900,6 +935,36 @@ AJS.toInit(function () {
 
         dialog.addButton("OK", function () {
             resetTimesheets();
+            dialog.remove();
+        });
+
+        dialog.gotoPage(0);
+        dialog.gotoPanel(0);
+
+        dialog.show();
+    }
+
+    function showTimesheetDeletionDialog(username, timesheet_id) {
+        var dialog = new AJS.Dialog({
+            width: 520,
+            height: 390,
+            id: "timesheet-deletion-dialog",
+            closeOnOutsideClick: true
+        });
+
+        var content = "<h1>You are about to Delete the timesheet of : " + username + " </h1> <br>" +
+            "<h2>This action cannot be undone, only proceed, if you know what you are doing!</h2>" +
+            "<h2 style='color: red'><center><strong>Please confirm your action!</strong></center></h2>";
+
+        dialog.addHeader("Timesheet Deletion");
+        dialog.addPanel("Confirm", content, "panel-body");
+
+        dialog.addButton("Cancel", function () {
+            dialog.remove();
+        });
+
+        dialog.addButton("OK", function () {
+            deleteTimesheet(timesheet_id, username);
             dialog.remove();
         });
 

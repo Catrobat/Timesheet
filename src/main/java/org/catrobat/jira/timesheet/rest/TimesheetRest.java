@@ -934,4 +934,31 @@ public class TimesheetRest {
         String jsonList = new Gson().toJson(users);
         return Response.ok(jsonList).build();
     }
+
+    @DELETE
+    @Path("/delete/{timesheetId}")
+    public Response deleteTimesheet(@PathParam("timesheetId") int timesheet_id){
+        Response unauthorized = permissionService.checkRootPermission();
+        if (unauthorized != null) {
+            return unauthorized;
+        }
+        Timesheet sheet = sheetService.getTimesheetByID(timesheet_id);
+        if(sheet == null){
+            return Response.status(Response.Status.CONFLICT).entity("The given sheet with id: " + timesheet_id + " does not exist!").build();
+        }
+        ApplicationUser current_user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+
+        if(permissionService.isUserEligibleForTimesheet(current_user)){
+            try {
+                sheetService.remove(sheet);
+                return Response.ok().build();
+
+            } catch (ServiceException e){
+                return Response.serverError().entity(e.getMessage()).build();
+            }
+        }else{
+            return Response.status(Response.Status.UNAUTHORIZED).entity("The current user does not have the required access" +
+                    " rights to delete the timesheet with id: " + timesheet_id).build();
+        }
+    }
 }

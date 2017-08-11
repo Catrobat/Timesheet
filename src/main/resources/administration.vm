@@ -467,11 +467,12 @@
             <input type="button" value="Delete" class="aui-button-primary aui-button" id="delete-timesheet-for-user"
                 style="margin-bottom: 15px">
             <div class="description">
-                Deletes all Timesheet and Entries, but does not change the config (this action cannot be undone).
+                Deletes the given Timesheet, this action cannot be undone!
             </div>
 
             <h2><font color="red">Reset</font></h2>
-            <input type="button" class="aui-button-primary aui-button" value="Delete Timesheet Data" id="reset-timesheets" style="background: red">
+            <input type="button" class="aui-button-primary aui-button" value="Delete Timesheet Data" id="reset-timesheets" style="background: red;
+                margin-top:15px; margin-bottom: 15px;">
             <div class="description">
                 Deletes all Timesheet and Entries, but does not change the config (this action cannot be undone).
             </div>
