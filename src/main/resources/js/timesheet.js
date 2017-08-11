@@ -208,7 +208,6 @@ function projectedFinishDate(timesheetData, entryData) {
 }
 
 function setOwnerLabel(timesheet) {
-
     if (timesheet.isMTSheet) {
     	AJS.$("#timesheet-owner").append(timesheet.displayName + " (Master Thesis Timesheet)");
     	AJS.$("#timesheet-owner-private").append("My Master Thesis Timesheet (" + timesheet.displayName + ")");

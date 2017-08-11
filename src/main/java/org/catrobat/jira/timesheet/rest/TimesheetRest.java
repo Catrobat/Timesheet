@@ -66,6 +66,7 @@ public class TimesheetRest {
     private final TimesheetPermissionCondition permissionCondition;
     private final EmailUtil emailUtil;
     private static final Logger logger = LoggerFactory.getLogger(TimesheetRest.class);
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TimesheetRest.class);
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
             final TeamService ts, PermissionService ps, final ConfigService ahcs, TimesheetPermissionCondition permissionCondition) {
@@ -431,7 +432,7 @@ public class TimesheetRest {
         if (response != null) {
             return response;
         }
-
+        LOGGER.error("We want to save an entry...");
         try {
             RestUtils.checkJsonTimesheetEntryAndCategory(entry, categoryService);
             // TODO: how to remove the old error message if the done stuff was yet successful?? 

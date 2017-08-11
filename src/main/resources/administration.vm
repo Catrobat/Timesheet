@@ -465,7 +465,7 @@
                 </select>
             </div>
             <input type="button" value="Delete" class="aui-button-primary aui-button" id="delete-timesheet-for-user"
-                style="margin-bottom: 15px">
+                style="margin-bottom: 15px; background-color: darkslategray">
             <div class="description">
                 Deletes the given Timesheet, this action cannot be undone!
             </div>
