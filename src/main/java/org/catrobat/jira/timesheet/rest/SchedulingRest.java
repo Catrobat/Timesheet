@@ -33,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LogManager;
 
 @Path("/scheduling")
 @Produces({MediaType.APPLICATION_JSON})
@@ -45,6 +46,7 @@ public class SchedulingRest {
     private final CategoryService categoryService;
     private final TimesheetScheduler timesheetScheduler;
     private final SchedulingService schedulingService;
+    private final org.apache.log4j.Logger LOGGER = org.apache.log4j.LogManager.getLogger(SchedulingRest.class);
 
     public SchedulingRest(final ConfigService configService, final PermissionService permissionService,
             final TimesheetEntryService entryService, final TimesheetService sheetService, TeamService teamService,
@@ -83,6 +85,8 @@ public class SchedulingRest {
     @GET
     @Path("/trigger/activity/verification")
     public Response activityVerification(@Context HttpServletRequest request) {
+        LOGGER.error("activity verification triggerd");
+
         Response unauthorized = permissionService.checkRootPermission();
         if (unauthorized != null) {
             return unauthorized;

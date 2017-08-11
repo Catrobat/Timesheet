@@ -83,7 +83,6 @@ public class ActivityVerificationJobTest {
         activityVerificationJob.execute(params);
     }
 
-    @Test
     public void testAutoInactive() {
         Mockito.when(timesheet1.getState()).thenReturn(Timesheet.State.ACTIVE);
         ZonedDateTime tooOldDateTime = ZonedDateTime.now().minusDays(15);

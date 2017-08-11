@@ -857,7 +857,7 @@ AJS.toInit(function () {
             showTimesheetDeletionDialog(username, timesheet_id);
         } catch (e){
             AJS.messages.error({
-                title : "Error: Incomplte Selection",
+                title : "Error: Incomplete Selection",
                 body : "Please select the Timesheet you want to delete and click on DELETE!"
             })
         }
@@ -905,7 +905,6 @@ AJS.toInit(function () {
                 })
             },
             fail : function (err) {
-                console.log("we hav goa a fail here");
                 AJS.messages.error({
                     title: "Error: Deletion error!",
                     body : "Your request could not be processed!"

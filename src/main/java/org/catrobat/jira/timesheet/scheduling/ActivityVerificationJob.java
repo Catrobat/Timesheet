@@ -5,6 +5,7 @@ import com.atlassian.sal.api.scheduling.PluginJob;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.rest.SchedulingRest;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.slf4j.Logger;
@@ -23,10 +24,11 @@ public class ActivityVerificationJob implements PluginJob {
     private CategoryService categoryService;
     private SchedulingService schedulingService;
     private static final Logger logger = LoggerFactory.getLogger(ActivityVerificationJob.class);
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.LogManager.getLogger(ActivityVerificationJob.class);
 
     @Override
     public void execute(Map<String, Object> map) {
-        logger.info("ActivityVerificationJob triggered at: {}", (new Date()).toString());
+        LOGGER.error("ActivityVerificationJob triggered at: {}" + (new Date()).toString());
 
         Date today = new Date();
 
@@ -73,17 +75,25 @@ public class ActivityVerificationJob implements PluginJob {
     }
 
     private void setAutoInactive(Timesheet timesheet) {
+        LOGGER.error("Setting timesheet autoinactive of " + timesheet.getDisplayName());
         Date begin = timesheet.getLatestEntryBeginDate();
         if (begin == null) begin = new Date();
         Date end = new Date();
 
-        Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());
+/*        Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());
         Team[] teamArray = new Team[teamsOfUser.size()];
         teamArray = teamsOfUser.toArray(teamArray);
-        if(teamArray.length == 0) return; // very rare case
-        Team team = teamArray[0];
+        LOGGER.error("teamsize is " + teamsOfUser.size());*/
+
+        Team team = entryService.getLatestEntry(timesheet).getTeam();
+        if(team == null){
+            LOGGER.error("we got no team to add the entry to!!");
+            return;
+        }
 
         try {
+            LOGGER.error("adding auto inactive entry to team: " + team.getTeamName());
+
             entryService.add(
                     timesheet,
                     begin,
@@ -99,19 +109,21 @@ public class ActivityVerificationJob implements PluginJob {
             );
         } catch (ServiceException e) {
             e.printStackTrace();
+            LOGGER.error("in autoinactive");
+            LOGGER.error(e.getMessage());
         }
         timesheet.setState(Timesheet.State.AUTO_INACTIVE);
         timesheet.save();
     }
 
     private String printStatusFlags(Timesheet timesheet, String statusString) {
-        String header = "Timesheet from: " + timesheet.getDisplayName() + "-------------------------------------\n";
-        header += "Transition: " + statusString;
-        String body = "state: " + timesheet.getState();
-        body += "latest Entry: " + timesheet.getLatestEntryBeginDate().toString();
-        body += "END Status -------------------------------------";
-        String message = header + body;
-        logger.debug(message);
+        String header = "\n Timesheet from: " + timesheet.getDisplayName() + "\n-------------------------------------\n";
+        header += ("Transition: " + statusString) + "\n";
+        String body = "state: " + timesheet.getState() + "\n";
+        body += "latest Entry: " + timesheet.getLatestEntryBeginDate().toString() + "\n";
+        body += "END Status \n-------------------------------------" + "\n" ;
+        String message = header + body + "\n";
+        LOGGER.error(message);
 
         return message;
     }
