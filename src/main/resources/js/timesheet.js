@@ -387,6 +387,12 @@ function fetchUsers() {
         });
         console.log(error);
     });
+
+/*    if(document.getElementById("approvedUserTimesheetSelect").style.display != "none" &&
+        document.getElementById("coordinatorTimesheetSelect").style.display != "none"){
+        console.log("really bad design, setting coordinator tab to invisible...");
+        AJS.$("#coordinatorTimesheetSelect").hide();
+    }*/
     
     
     var userInformation = AJS.$.ajax({

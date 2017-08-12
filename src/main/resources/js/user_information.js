@@ -49,15 +49,32 @@ AJS.toInit(function () {
             var enabled = userInformation[i].state !== "DISABLED";
 
             var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
-            
-            
+
+            var current_state = userInformation[i].state;
+            var current_state_color = "black";
+
+            switch(current_state){
+                case "ACTIVE":
+                    current_state_color = "green";
+                    break;
+                case "DISABLED":
+                    current_state_color = "red";
+                    break;
+                case "INACTIVE" :
+                    current_state_color = "goldenRod";
+                    break;
+                case "AUTO_INACTIVE":
+                    current_state_color = "goldenRod";
+                    break;
+            }
+
             if (userInformation[i].isMasterTimesheet === true) {
             	var enabledColumn = "</td><td headers='ti-enabled-m'>" + enableButton;
             	var rowm = "<tr>" +
                 "<td headers='ti-users-m' class='musers'>" + userInformation[i].userName + "<br/><div style=\"font-size:12px;\">(" + userInformation[i].email + ")</div>" +
 //                "</td><td headers='ti-email-m' class='memail'>" + userInformation[i].email +
                 "</td><td headers='ti-team-m' class='mteam'>" + userInformation[i].teams +
-                "</td><td headers='ti-state-m' class='mstate' id='state"+ userInformation[i].timesheetID + "'>" + userInformation[i].state +
+                "</td><td headers='ti-state-m' class='mstate' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "'; >" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date-m' class='minactive-end'>" + inactiveEndDate +
                 "</td><td headers='ti-remaining-hours-m' class='mremaining-hours'>" + userInformation[i].remainingHours +
                 "</td><td headers='ti-target-total-hours-m' class='mtarget-total-hours'>" + userInformation[i].targetTotalHours +
@@ -78,7 +95,7 @@ AJS.toInit(function () {
                 "<td headers='ti-users' class='users'>" + userInformation[i].userName + "<br/><div style=\"font-size:12px;\">(" + userInformation[i].email + ")</div>" +
 //                "</td><td headers='ti-email' class='email'>" + userInformation[i].email +
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
-                "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "'>" + userInformation[i].state +
+                "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
                 "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
                 "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
