@@ -496,6 +496,8 @@ public class TimesheetRest {
         return Response.ok(entry).build();
     }
 
+
+
     @POST
     @Path("timesheets/{timesheetID}/entries")
     public Response postTimesheetEntries(@Context HttpServletRequest request,
@@ -960,6 +962,33 @@ public class TimesheetRest {
         }else{
             return Response.status(Response.Status.UNAUTHORIZED).entity("The current user does not have the required access" +
                     " rights to delete the timesheet with id: " + timesheet_id).build();
+        }
+    }
+
+    @PUT
+    @Path("/reactivate/{timesheetId}")
+    public Response reactivateTimsheet(@PathParam("timesheetId") int timesheet_id){
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
+            return response;
+        }
+        Timesheet timesheet = sheetService.getTimesheetByID(timesheet_id);
+        if(timesheet == null){
+            return Response.status(Response.Status.CONFLICT).entity("No timehseet with id: " + timesheet_id + " was found.").build();
+        }
+        Timesheet.State current_state = timesheet.getState();
+
+        if(current_state == Timesheet.State.INACTIVE || current_state == Timesheet.State.INACTIVE_OFFLINE){
+            LOGGER.error("we got an inactive timesheet processing...");
+            try {
+                timesheet.setState(Timesheet.State.ACTIVE);
+                timesheet.save();
+            }catch (Exception e){
+                return Response.serverError().entity(e.getMessage()).build();
+            }
+            return Response.ok().entity("Timesheet has been set to Active").build();
+        }else{
+            return Response.ok().entity("Timesheet is allready in an ACTIVE state.").build();
         }
     }
 }

@@ -53,11 +53,19 @@ function populateTable(timesheetDataReply) {
                 });
             });
         } else if (timesheetData.state !== "ACTIVE") {
-          AJS.messages.warning({
-            title: 'Timesheet Warning.',
-            closeable: true,
-            body: '<p>Your Timesheet is marked as <em>' + timesheetData.state + '</em>.</p>'
-          });
+            var to_display = timesheetData.state;
+
+            if(to_display === "INACTIVE"){
+                var inactive_end_date = new Date(timesheetData.entries[0].inactiveEndDate);
+                to_display += "until: " + "<strong>" + inactive_end_date.toDateString() + "</strong>";
+            }
+
+            AJS.messages.warning({
+                title: 'Timesheet Warning.',
+                closeable: true,
+                body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
+            });
+
         } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
 
             // FIXME: is this banner needed?
@@ -187,7 +195,7 @@ function editEntryCallback(entry, timesheetData, form) {
     });
 
     newViewRow.find("button.delete").click(function () {
-      showEntryDeletionDialog(newViewRow, entry.entryID);
+        showEntryDeletionDialog(newViewRow, entry.entryID);
     });
 
     oldViewRow.after(newViewRow);
@@ -215,8 +223,12 @@ function renderFormRow(timesheetData, entry, saveOptions, isModified) {
 
     form.saveButton.click(function (event) {
         event.preventDefault();
-        submit(timesheetData, saveOptions, form, entry.entryID,
-            entry.isGoogleDocImport);
+        if(timesheetData.state === "INACTIVE" || timesheetData.state =="INACTIVE_OFFLINE") {
+            showInactiveHint("CREATE");
+        }else {
+            submit(timesheetData, saveOptions, form, entry.entryID,
+                entry.isGoogleDocImport);
+        }
         //AJS.$(".entry-form").show();
     });
 
@@ -589,14 +601,61 @@ function renderViewRow(timesheetData, entry) {
 
     viewRow.find("button.edit").click(function () {
         //augmentedEntry.isGoogleDocImport = false;
-        editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewRow);
+        if(timesheetData.state === "INACTIVE" || timesheetData.state =="INACTIVE_OFFLINE"){
+           showInactiveHint("EDIT");
+        }else{
+            editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewRow);
+        }
     });
 
     viewRow.find("button.delete").click(function () {
-      showEntryDeletionDialog(viewRow, entry.entryID);
+        if(timesheetData.state === "INACTIVE" || timesheetData.state =="INACTIVE_OFFLINE"){
+            showInactiveHint("DELETE");
+        }else {
+            showEntryDeletionDialog(viewRow, entry.entryID);
+        }
     });
 
     return viewRow;
+}
+
+function showInactiveHint(action){
+    AJS.messages.hint({
+        title: "INACTIVITY HINT",
+        body : "<br> You are " + timesheetData_.state + ", if you want to " + action + " one of your entries either wait till the End of your " +
+        "inactivity or <a class='reactivate-timesheet' href=\"#\"'>enable</a> it again. <br> " +
+        "If you enable your sheet, the end date of your inactivity will be set to <strong>" + new Date().toDateString() +"</strong>"
+    });
+
+    AJS.$(".reactivate-timesheet").on("click", function(){
+        reactivateTimesheet();
+    });
+}
+
+function reactivateTimesheet(){
+    console.log("reactivating timesheet: " + timesheetID);
+
+    AJS.$.ajax({
+        type : "PUT",
+        url : restBaseUrl + "reactivate/" + timesheetID,
+        fail : function (err) {
+            AJS.messages.error({
+                title : "Error!",
+                body : "Something went wrong in the enabling process! <br> " +
+                "message : " + err.responseText
+            })
+        },
+        error : function (err) {
+            alert(err.responseText);
+        }
+    }).done(function() {
+        AJS.messages.success({
+            title: "Success!",
+            message: "You have sucessfully reactivated your timesheet!"
+        });
+        timesheetData_.state = "ACTIVE";
+    });
+
 }
 
 function editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewRow) {
