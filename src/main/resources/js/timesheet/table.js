@@ -672,6 +672,8 @@ function reactivateTimesheet(){
 
         timesheetData_.state = "ACTIVE";
         document.getElementById("reactivate-link").style.display = "none";
+
+        fetchData(timesheetID);
     });
 
 }
