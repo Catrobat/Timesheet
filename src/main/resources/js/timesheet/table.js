@@ -55,17 +55,15 @@ function populateTable(timesheetDataReply) {
         } else if (timesheetData.state !== "ACTIVE") {
             var to_display = timesheetData.state;
 
-            if(to_display === "INACTIVE"){
-                var inactive_end_date = new Date(timesheetData.entries[0].inactiveEndDate);
-                to_display += " until: " + "<strong>" + inactive_end_date.toDateString() + "</strong>";
+            if(to_display === "INACTIVE") {
+                showInavtivityInfo(new Date(timesheetData.entries[0].inactiveEndDate));
+            }else{
+                AJS.messages.warning({
+                    title: 'Timesheet Warning.',
+                    closeable: true,
+                    body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
+                });
             }
-
-            AJS.messages.warning({
-                title: 'Timesheet Warning.',
-                closeable: true,
-                body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
-            });
-
         } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
 
             // FIXME: is this banner needed?
@@ -124,6 +122,24 @@ function populateTable(timesheetDataReply) {
     timesheetTable.append(emptyForm);
 
     appendEntriesToTable(timesheetData);
+}
+
+function showInavtivityInfo(endate){
+    var to_display = "INACTIVE";
+    to_display += " until: " + "<strong>" + endate.toDateString() + "</strong>";
+
+    AJS.messages.warning({
+        title: 'Timesheet Warning.',
+        closeable: true,
+        body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
+    });
+
+    showTimesheetReactivationLink();
+}
+
+function showTimesheetReactivationLink(){
+    console.log("showing reactication link");
+    document.getElementById("reactivate-link").style.display = "block";
 }
 
 function appendEntriesToTable(timesheetData) {
@@ -653,7 +669,9 @@ function reactivateTimesheet(){
             title: "Success!",
             body: "<br>You have sucessfully reactivated your timesheet!"
         });
+
         timesheetData_.state = "ACTIVE";
+        document.getElementById("reactivate-link").style.display = "none";
     });
 
 }
@@ -870,6 +888,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     var date = form.dateField.val();
     var validDateFormat = new Date(date);
     var categoryIndex = form.categorySelect.val();
+    var is_inactive_entry = false;
 
     if ((date == "") || (!isValidDate(validDateFormat))) {
         date = new Date().toJSON().slice(0, 10);
@@ -916,6 +935,9 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
             close: 'auto'
         });
         return;
+    }
+    else if (categoryIndex == getIDFromCategoryName("inactive", timesheetData) && form.inactiveEndDateField.val() !== "") {
+        is_inactive_entry = true;
     }
 
     if (categoryIndex == getIDFromCategoryName("inactive & offline", timesheetData) && form.inactiveEndDateField.val() == "") {
@@ -988,6 +1010,11 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         contentType: "application/json",
         data: JSON.stringify(timesheetEntry),
         success: function (entryData) {
+            if(is_inactive_entry){
+                console.log("we saved an Inactive entry setting state to inactive");
+                timesheetData.state = "INACTIVE";
+                showInavtivityInfo(timesheetEntry.inactiveEndDate);
+            }
         	removeSavingAndDeletingErrorMessages();
             var augmentedEntry = augmentEntry(timesheetData, entryData);
             saveOptions.callback(augmentedEntry, timesheetData, form);
