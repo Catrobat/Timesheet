@@ -57,7 +57,7 @@ function populateTable(timesheetDataReply) {
 
             if(to_display === "INACTIVE"){
                 var inactive_end_date = new Date(timesheetData.entries[0].inactiveEndDate);
-                to_display += "until: " + "<strong>" + inactive_end_date.toDateString() + "</strong>";
+                to_display += " until: " + "<strong>" + inactive_end_date.toDateString() + "</strong>";
             }
 
             AJS.messages.warning({
@@ -651,7 +651,7 @@ function reactivateTimesheet(){
     }).done(function() {
         AJS.messages.success({
             title: "Success!",
-            message: "You have sucessfully reactivated your timesheet!"
+            body: "<br>You have sucessfully reactivated your timesheet!"
         });
         timesheetData_.state = "ACTIVE";
     });

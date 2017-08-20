@@ -43,6 +43,7 @@ import org.catrobat.jira.timesheet.utility.EmailUtil;
 import org.catrobat.jira.timesheet.utility.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.datetime.joda.JodaTimeContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -981,14 +982,38 @@ public class TimesheetRest {
         if(current_state == Timesheet.State.INACTIVE || current_state == Timesheet.State.INACTIVE_OFFLINE){
             LOGGER.error("we got an inactive timesheet processing...");
             try {
+                TimesheetEntry latest_entry = entryService.getLatestEntry(timesheet);
+
                 timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
+
+                //in this inactive workflow the last entry must be the inactive one
+                Date inactive_begin_date = latest_entry.getBeginDate();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(inactive_begin_date);
+                //today
+                Calendar cal1 = Calendar.getInstance();
+                cal1.setTime(new Date());
+
+                boolean is_same_day = cal.get(Calendar.YEAR) == cal1.get(Calendar.YEAR) &&
+                        cal.get(Calendar.DAY_OF_YEAR) == cal1.get(Calendar.DAY_OF_YEAR);
+
+                if(is_same_day){
+                    LOGGER.error("We want to edit a date which was created today and therefore we delete it");
+
+                    entryService.delete(latest_entry);
+                }else {
+                    LOGGER.error("Setting endDate to today");
+                    latest_entry.setInactiveEndDate(new Date());
+                }
+                latest_entry.save();
+
             }catch (Exception e){
                 return Response.serverError().entity(e.getMessage()).build();
             }
-            return Response.ok().entity("Timesheet has been set to Active").build();
+            return Response.ok().build();
         }else{
-            return Response.ok().entity("Timesheet is allready in an ACTIVE state.").build();
+            return Response.status(Response.Status.NOT_MODIFIED).entity("Timesheet is already in active state").build();
         }
     }
 }
