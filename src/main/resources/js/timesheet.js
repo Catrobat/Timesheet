@@ -210,13 +210,13 @@ function projectedFinishDate(timesheetData, entryData) {
 function setOwnerLabel(timesheet) {
     if (timesheet.isMTSheet) {
         AJS.$("#timesheet-owner").empty();
-    	AJS.$("#timesheet-owner").append(timesheet.displayName + " (Master Thesis Timesheet)");
+    	AJS.$("#timesheet-owner").append("Timesheet of " + timesheet.displayName + " (Master Thesis Timesheet)");
         AJS.$("#timesheet-owner-private").empty();
     	AJS.$("#timesheet-owner-private").append("My Master Thesis Timesheet (" + timesheet.displayName + ")");
     }
     else {
     	AJS.$("#timesheet-owner").empty();
-    	AJS.$("#timesheet-owner").append(timesheet.displayName);
+    	AJS.$("#timesheet-owner").append("Timesheet of: " + timesheet.displayName);
         AJS.$("#timesheet-owner-private").empty();
     	AJS.$("#timesheet-owner-private").append("My Timesheet (" + timesheet.displayName + ")");
     }
