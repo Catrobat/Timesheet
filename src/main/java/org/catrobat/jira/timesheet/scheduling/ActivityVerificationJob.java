@@ -11,10 +11,7 @@ import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ActivityVerificationJob implements PluginJob {
 
@@ -76,14 +73,12 @@ public class ActivityVerificationJob implements PluginJob {
 
     private void setAutoInactive(Timesheet timesheet) {
         LOGGER.error("Setting timesheet autoinactive of " + timesheet.getDisplayName());
-        Date begin = timesheet.getLatestEntryBeginDate();
-        if (begin == null) begin = new Date();
-        Date end = new Date();
 
-/*        Set<Team> teamsOfUser = teamService.getTeamsOfUser(timesheet.getUserKey());
-        Team[] teamArray = new Team[teamsOfUser.size()];
-        teamArray = teamsOfUser.toArray(teamArray);
-        LOGGER.error("teamsize is " + teamsOfUser.size());*/
+        Date begin = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, 7);
+        Date end = cal.getTime();
 
         Team team = entryService.getLatestEntry(timesheet).getTeam();
         if(team == null){
@@ -97,7 +92,7 @@ public class ActivityVerificationJob implements PluginJob {
             entryService.add(
                     timesheet,
                     begin,
-                    begin,
+                    end,
                     categoryService.getCategoryByName("Inactive"),
                     "Auto generated inactivity entry",
                     0,

@@ -15,77 +15,78 @@ var descrFlag;
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
 
-    if (!isAdmin) {
-        //activate html banner
-        AJS.$("#inactive-header").show();
-        //Information at the first use
-        if (timesheetData.entries.length == 0) {
-            AJS.messages.generic({
-                title: 'Timesheet Information.',
-                closeable: true,
-                body: '<p> Congratulations you sucessfully created your own ' +
-                'Timesheet. The Timesheet add-on provides tracking your time ' +
-                'data in a comfortable way and offers several visualizations ' +
-                'for your data. An Import-function for existing timesheet entries ' +
-                'from CSV / Google Doc Timesheets is provided in addition. ' +
-                'The required import steps are shown within the ' +
-                '"Import from Google Docs - Dialog".</p>' +
-                '<p> If you notice any uncommon plugin behaviour, or need support feel free to ' +
-                'contact one of the project "Coordinators", or an "Administrator".</p>'
-            });
-        } else if (timesheetData.state === "AUTO_INACTIVE") {
-            require(['aui/banner'], function (banner) {
-                banner({
-                    body: 'Your Timesheet is marked as <strong>' + timesheetData.state + '</strong>.'
-                });
-            });
-        } else if (timesheetData.state === "DISABLED") {
-            AJS.messages.warning({
-                title: 'Timesheet Warning.',
-                closeable: true,
-                body: '<p> Your Timesheet is marked as <em>disabled</em>.</p>' +
-                '<p> You are not able to apply any changes until it is "enabled" again by an Administrator.</p>'
-            });
+    //activate html banner
+    AJS.$("#inactive-header").show();
+    //Information at the first use
+    if (timesheetData.entries.length == 0) {
+        AJS.messages.generic({
+            title: 'Timesheet Information.',
+            closeable: true,
+            body: '<p> Congratulations you sucessfully created your own ' +
+            'Timesheet. The Timesheet add-on provides tracking your time ' +
+            'data in a comfortable way and offers several visualizations ' +
+            'for your data. An Import-function for existing timesheet entries ' +
+            'from CSV / Google Doc Timesheets is provided in addition. ' +
+            'The required import steps are shown within the ' +
+            '"Import from Google Docs - Dialog".</p>' +
+            '<p> If you notice any uncommon plugin behaviour, or need support feel free to ' +
+            'contact one of the project "Coordinators", or an "Administrator".</p>'
+        });
+    } else if (timesheetData.state === "DISABLED") {
+        AJS.messages.warning({
+            title: 'Timesheet Warning.',
+            closeable: true,
+            body: '<p> Your Timesheet is marked as <em>disabled</em>.</p>' +
+            '<p> You are not able to apply any changes until it is "enabled" again by an Administrator.</p>'
+        });
 
-            require(['aui/banner'], function (banner) {
-                banner({
-                    body: 'Your Timesheet is marked as <strong>disabled</strong>.'
-                });
+        require(['aui/banner'], function (banner) {
+            banner({
+                body: 'Your Timesheet is marked as <strong>disabled</strong>.'
             });
-        } else if (timesheetData.state !== "ACTIVE") {
-            var to_display = timesheetData.state;
+        });
+    } else if (timesheetData.state !== "ACTIVE") {
+        var to_display = timesheetData.state;
 
-            if(to_display === "INACTIVE") {
-                showInavtivityInfo(new Date(timesheetData.entries[0].inactiveEndDate));
-            }else{
-                AJS.messages.warning({
-                    title: 'Timesheet Warning.',
-                    closeable: true,
-                    body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
+        if(to_display.includes("INACTIVE")) {
+            if (timesheetData.state === "AUTO_INACTIVE") {
+                require(['aui/banner'], function (banner) {
+                    banner({
+                        body: 'Your Timesheet is marked as <strong>' + timesheetData.state + '</strong>.'
+                    });
                 });
             }
-        } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
-
-            // FIXME: is this banner needed?
-
+            console.log("WE have an inactive state: " + timesheetData.state + " showing info...");
+            showInavtivityInfo(new Date(timesheetData.entries[0].inactiveEndDate));
+        }else{
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
-                body: '<p> Congratulations you almost did it. Please contact an "Administrator", or your ' +
-                '"Coordinator" for further steps.</p>'
+                body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
             });
+        }
+    } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
 
-            require(['aui/banner'], function (banner) {
-                banner({
-                    body: 'You have <strong>less than 80 hours</strong> left, please contact ' +
-                    'your Team - Coordinator and/or an Administrator.'
-                });
+        // FIXME: is this banner needed?
+
+        AJS.messages.warning({
+            title: 'Timesheet Warning.',
+            closeable: true,
+            body: '<p> Congratulations you almost did it. Please contact an "Administrator", or your ' +
+            '"Coordinator" for further steps.</p>'
+        });
+
+        require(['aui/banner'], function (banner) {
+            banner({
+                body: 'You have <strong>less than 80 hours</strong> left, please contact ' +
+                'your Team - Coordinator and/or an Administrator.'
             });
-        }
-        else {
-            AJS.$("#inactive-header").hide();
-        }
+        });
     }
+    else {
+        AJS.$("#inactive-header").hide();
+    }
+
 
     var timesheetTable = AJS.$("#timesheet-table");
     timesheetTable.empty();
@@ -239,7 +240,7 @@ function renderFormRow(timesheetData, entry, saveOptions, isModified) {
 
     form.saveButton.click(function (event) {
         event.preventDefault();
-        if(timesheetData.state === "INACTIVE" || timesheetData.state =="INACTIVE_OFFLINE") {
+        if(timesheetData.state.includes("INACTIVE")) {
             showInactiveHint("CREATE");
         }else {
             submit(timesheetData, saveOptions, form, entry.entryID,
@@ -617,7 +618,7 @@ function renderViewRow(timesheetData, entry) {
 
     viewRow.find("button.edit").click(function () {
         //augmentedEntry.isGoogleDocImport = false;
-        if(timesheetData.state === "INACTIVE" || timesheetData.state =="INACTIVE_OFFLINE"){
+        if(timesheetData.state.includes("INACTIVE")){
            showInactiveHint("EDIT");
         }else{
             editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewRow);
@@ -625,7 +626,7 @@ function renderViewRow(timesheetData, entry) {
     });
 
     viewRow.find("button.delete").click(function () {
-        if(timesheetData.state === "INACTIVE" || timesheetData.state =="INACTIVE_OFFLINE"){
+        if(timesheetData.state.includes("INACTIVE")){
             showInactiveHint("DELETE");
         }else {
             showEntryDeletionDialog(viewRow, entry.entryID);
@@ -951,6 +952,8 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
             close: 'auto'
         });
         return;
+    }else if(categoryIndex == getIDFromCategoryName("inactive & offline", timesheetData) && form.inactiveEndDateField.val() !== ""){
+        is_inactive_entry = true;
     }
 
     if (isPairProgrammingCategorySelected(timesheetData, form)) {

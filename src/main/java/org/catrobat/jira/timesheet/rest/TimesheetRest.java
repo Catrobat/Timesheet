@@ -969,6 +969,8 @@ public class TimesheetRest {
     @PUT
     @Path("/reactivate/{timesheetId}")
     public Response reactivateTimsheet(@PathParam("timesheetId") int timesheet_id){
+        LOGGER.error("trying to reactivate timesheet with id: " + timesheet_id);
+
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
@@ -979,11 +981,11 @@ public class TimesheetRest {
         }
         Timesheet.State current_state = timesheet.getState();
 
-        if(current_state == Timesheet.State.INACTIVE || current_state == Timesheet.State.INACTIVE_OFFLINE){
+        if(current_state == Timesheet.State.INACTIVE || current_state == Timesheet.State.INACTIVE_OFFLINE ||
+                current_state == Timesheet.State.AUTO_INACTIVE){
             LOGGER.error("we got an inactive timesheet processing...");
             try {
-                TimesheetEntry latest_entry = entryService.getLatestEntry(timesheet);
-
+                TimesheetEntry latest_entry = entryService.getLatestInactiveEntry(timesheet);
                 timesheet.setState(Timesheet.State.ACTIVE);
                 timesheet.save();
 
