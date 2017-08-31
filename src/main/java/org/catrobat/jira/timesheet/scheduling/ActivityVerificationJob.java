@@ -76,8 +76,10 @@ public class ActivityVerificationJob implements PluginJob {
 
         Date begin = new Date();
         Calendar cal = Calendar.getInstance();
+
         cal.setTime(new Date());
         cal.add(Calendar.DAY_OF_YEAR, 7);
+
         Date end = cal.getTime();
 
         Team team = entryService.getLatestEntry(timesheet).getTeam();
@@ -92,7 +94,7 @@ public class ActivityVerificationJob implements PluginJob {
             entryService.add(
                     timesheet,
                     begin,
-                    end,
+                    begin,
                     categoryService.getCategoryByName("Inactive"),
                     "Auto generated inactivity entry",
                     0,

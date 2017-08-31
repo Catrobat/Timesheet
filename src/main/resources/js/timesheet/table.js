@@ -126,7 +126,7 @@ function populateTable(timesheetDataReply) {
 }
 
 function showInavtivityInfo(endate){
-    var to_display = "INACTIVE";
+    var to_display = timesheetData_.state;
     to_display += " until: " + "<strong>" + endate.toDateString() + "</strong>";
 
     AJS.messages.warning({
@@ -645,8 +645,37 @@ function showInactiveHint(action){
     });
 
     AJS.$(".reactivate-timesheet").on("click", function(){
-        reactivateTimesheet();
+        showReactivateTimesheetDialog();
     });
+}
+
+function showReactivateTimesheetDialog(){
+    var dialog = new AJS.Dialog({
+        width: 520,
+        height: 250,
+        id: "timesheet-reactivation-dialog",
+        closeOnOutsideClick: true
+    });
+
+    var content = "<h3 style='text-align: center'>Do you really want to reactivate your Timesheet ?</h3>" +
+        "<h2 style='color: red; text-align: center'><strong>Please confirm your action!</strong></h2>";
+
+    dialog.addHeader("Reactivate Your Timesheet");
+    dialog.addPanel("Confirm", content, "panel-body");
+
+    dialog.addButton("Cancel", function () {
+        dialog.remove();
+    });
+
+    dialog.addButton("Reactivate", function () {
+        reactivateTimesheet();
+        dialog.remove();
+    });
+
+    dialog.gotoPage(0);
+    dialog.gotoPanel(0);
+
+    dialog.show();
 }
 
 function reactivateTimesheet(){

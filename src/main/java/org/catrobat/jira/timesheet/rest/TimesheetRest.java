@@ -1007,9 +1007,8 @@ public class TimesheetRest {
                 }else {
                     LOGGER.error("Setting endDate to today");
                     latest_entry.setInactiveEndDate(new Date());
+                    latest_entry.save();
                 }
-                latest_entry.save();
-
             }catch (Exception e){
                 return Response.serverError().entity(e.getMessage()).build();
             }
