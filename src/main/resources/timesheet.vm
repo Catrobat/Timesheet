@@ -166,6 +166,10 @@
 
 #*    content of the third tab "Time-Visualization"*#
     <div class="tabs-pane" id="tabs-overview">
+        <div class="progress">
+            <div class="progress-bar">
+            </div>
+        </div>
         <table id="visualization-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
