@@ -70,7 +70,7 @@ public class TimesheetRest {
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TimesheetRest.class);
 
     public TimesheetRest(final TimesheetEntryService es, final TimesheetService ss, final CategoryService cs,
-            final TeamService ts, PermissionService ps, final ConfigService ahcs, TimesheetPermissionCondition permissionCondition) {
+                         final TeamService ts, PermissionService ps, final ConfigService ahcs, TimesheetPermissionCondition permissionCondition) {
         this.teamService = ts;
         this.entryService = es;
         this.sheetService = ss;
@@ -96,7 +96,7 @@ public class TimesheetRest {
     @GET
     @Path("teams/{timesheetID}")
     public Response getTeamsForTimesheetID(@Context HttpServletRequest request,
-            @PathParam("timesheetID") int timesheetID) {
+                                           @PathParam("timesheetID") int timesheetID) {
         ApplicationUser loggedInUser;
         try {
             loggedInUser = permissionService.checkIfUserExists();
@@ -127,7 +127,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/{timesheetID}/teamEntries")
     public Response getTimesheetEntriesOfAllTeamMembers(@Context HttpServletRequest request,
-            @PathParam("timesheetID") int timesheetID) {
+                                                        @PathParam("timesheetID") int timesheetID) {
         ApplicationUser loggedInUser;
         try {
             loggedInUser = permissionService.checkIfUserExists();
@@ -146,7 +146,7 @@ public class TimesheetRest {
         String owner_key = ownerSheet.getUserKey();
         String owner_name = ComponentAccessor.getUserManager().getUserByKey(owner_key).getName();
 
-        if(owner_key == null || owner_name == null){
+        if (owner_key == null || owner_name == null) {
             return Response.serverError().entity("Now user was found for timesheet id: " + timesheetID).build();
         }
 
@@ -200,7 +200,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/{teamName}/entries")
     public Response getAllTimesheetEntriesForTeam(@Context HttpServletRequest request,
-            @PathParam("teamName") String teamName) {
+                                                  @PathParam("teamName") String teamName) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -254,8 +254,8 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/timesheetID/{userName}/{getMTSheet}")
     public Response getTimesheetIDOFUser(@Context HttpServletRequest request,
-            @PathParam("userName") String userName,
-            @PathParam("getMTSheet") Boolean getMTSheet) {
+                                         @PathParam("userName") String userName,
+                                         @PathParam("getMTSheet") Boolean getMTSheet) {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         Response response = permissionService.checkUserPermission();
         if (response != null) {
@@ -286,7 +286,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/owner/{timesheetID}")
     public Response getOwnerOfTimesheet(@Context HttpServletRequest request,
-            @PathParam("timesheetID") int timesheetID) {
+                                        @PathParam("timesheetID") int timesheetID) {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         Response response = permissionService.checkUserPermission();
         if (response != null) {
@@ -309,8 +309,8 @@ public class TimesheetRest {
     @GET
     @Path("timesheet/of/{userName}/{isMTSheet}")
     public Response getTimesheetForUsername(@Context HttpServletRequest request,
-            @PathParam("userName") String userName,
-            @PathParam("isMTSheet") Boolean isMTSheet) {
+                                            @PathParam("userName") String userName,
+                                            @PathParam("isMTSheet") Boolean isMTSheet) {
         Timesheet sheet;
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
@@ -338,7 +338,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/{timesheetID}")
     public Response getTimesheet(@Context HttpServletRequest request,
-            @PathParam("timesheetID") int timesheetID) {
+                                 @PathParam("timesheetID") int timesheetID) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -380,7 +380,7 @@ public class TimesheetRest {
     @GET
     @Path("timesheets/{timesheetID}/entries")
     public Response getTimesheetEntries(@Context HttpServletRequest request,
-            @PathParam("timesheetID") int timesheetID) {
+                                        @PathParam("timesheetID") int timesheetID) {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         Response response = permissionService.checkUserPermission();
         if (response != null) {
@@ -427,8 +427,8 @@ public class TimesheetRest {
     @POST
     @Path("timesheets/{timesheetID}/entry")
     public Response postTimesheetEntry(@Context HttpServletRequest request,
-            final JsonTimesheetEntry entry,
-            @PathParam("timesheetID") int timesheetID) {
+                                       final JsonTimesheetEntry entry,
+                                       @PathParam("timesheetID") int timesheetID) {
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
@@ -498,12 +498,11 @@ public class TimesheetRest {
     }
 
 
-
     @POST
     @Path("timesheets/{timesheetID}/entries")
     public Response postTimesheetEntries(@Context HttpServletRequest request,
-            final JsonTimesheetEntry[] entries,
-            @PathParam("timesheetID") int timesheetID) {
+                                         final JsonTimesheetEntry[] entries,
+                                         @PathParam("timesheetID") int timesheetID) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -536,61 +535,61 @@ public class TimesheetRest {
                 permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
                 Category category = categoryService.getCategoryByID(entry.getCategoryID());
                 Team team = teamService.getTeamByID(entry.getTeamID());
-                
+
                 if (entry.IsGoogleDocImport()) {
-            		int categoryID = entry.getCategoryID();
-            		switch (categoryID) {
-            			case -1:
-            				category = categoryService.getCategoryByName(SpecialCategories.THEORY);
-            				break;
-            			case -4:
-            				category = categoryService.getCategoryByName(SpecialCategories.MEETING);
-            				break;
-            			case -5:
-            				category = categoryService.getCategoryByName(SpecialCategories.PAIR_PROGRAMMING);
-            				break;
-            			case -6:
-            				category = categoryService.getCategoryByName(SpecialCategories.PROGRAMMING);
-            				break;
-            			case -7:
-            				category = categoryService.getCategoryByName(SpecialCategories.RESEARCH);
-            				break;
-            			case -8:
-            				category = categoryService.getCategoryByName(SpecialCategories.PLANNING_GAME);
-            				break;
-            			case -9:
-            				category = categoryService.getCategoryByName(SpecialCategories.REFACTORING);
-            				break;
-            			case -10:
-            				category = categoryService.getCategoryByName(SpecialCategories.REFACTORING_PP);
-            				break;
-            			case -11:
-            				category = categoryService.getCategoryByName(SpecialCategories.CODE_ACCEPTANCE);
-            				break;
-            			case -12:
-            				category = categoryService.getCategoryByName(SpecialCategories.ORGANISATIONAL_TASKS);
-            				break;
-            			case -13:
-            				category = categoryService.getCategoryByName(SpecialCategories.DISCUSSING_ISSUES_SUPPORTING_CONSULTING);
-            				break;
-            			case -14:
-            				category = categoryService.getCategoryByName(SpecialCategories.INACTIVE);
-            				break;
-            			case -15:
-            				category = categoryService.getCategoryByName(SpecialCategories.OTHER);
-            				break;
-            			case -16:
-            				category = categoryService.getCategoryByName(SpecialCategories.BUG_FIXING_PP);
-            				break;
-            			case -17:
-            				category = categoryService.getCategoryByName(SpecialCategories.BUG_FIXING);
-            				break;
-            			case -2:
-            			default:
-            				category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
-            		}
-            	}
-                
+                    int categoryID = entry.getCategoryID();
+                    switch (categoryID) {
+                        case -1:
+                            category = categoryService.getCategoryByName(SpecialCategories.THEORY);
+                            break;
+                        case -4:
+                            category = categoryService.getCategoryByName(SpecialCategories.MEETING);
+                            break;
+                        case -5:
+                            category = categoryService.getCategoryByName(SpecialCategories.PAIR_PROGRAMMING);
+                            break;
+                        case -6:
+                            category = categoryService.getCategoryByName(SpecialCategories.PROGRAMMING);
+                            break;
+                        case -7:
+                            category = categoryService.getCategoryByName(SpecialCategories.RESEARCH);
+                            break;
+                        case -8:
+                            category = categoryService.getCategoryByName(SpecialCategories.PLANNING_GAME);
+                            break;
+                        case -9:
+                            category = categoryService.getCategoryByName(SpecialCategories.REFACTORING);
+                            break;
+                        case -10:
+                            category = categoryService.getCategoryByName(SpecialCategories.REFACTORING_PP);
+                            break;
+                        case -11:
+                            category = categoryService.getCategoryByName(SpecialCategories.CODE_ACCEPTANCE);
+                            break;
+                        case -12:
+                            category = categoryService.getCategoryByName(SpecialCategories.ORGANISATIONAL_TASKS);
+                            break;
+                        case -13:
+                            category = categoryService.getCategoryByName(SpecialCategories.DISCUSSING_ISSUES_SUPPORTING_CONSULTING);
+                            break;
+                        case -14:
+                            category = categoryService.getCategoryByName(SpecialCategories.INACTIVE);
+                            break;
+                        case -15:
+                            category = categoryService.getCategoryByName(SpecialCategories.OTHER);
+                            break;
+                        case -16:
+                            category = categoryService.getCategoryByName(SpecialCategories.BUG_FIXING_PP);
+                            break;
+                        case -17:
+                            category = categoryService.getCategoryByName(SpecialCategories.BUG_FIXING);
+                            break;
+                        case -2:
+                        default:
+                            category = categoryService.getCategoryByName(SpecialCategories.GOOGLEDOCSIMPORT);
+                    }
+                }
+
                 // Category cannot be associated with team, check null only
                 // teamService.checkIfCategoryIsAssociatedWithTeam(team, category);
 
@@ -617,8 +616,8 @@ public class TimesheetRest {
     @POST
     @Path("timesheets/update/{timesheetID}")
     public Response postTimesheetHours(@Context HttpServletRequest request,
-            final JsonTimesheet jsonTimesheet,
-            @PathParam("timesheetID") int timesheetID) {
+                                       final JsonTimesheet jsonTimesheet,
+                                       @PathParam("timesheetID") int timesheetID) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -663,7 +662,7 @@ public class TimesheetRest {
     @POST
     @Path("timesheets/updateEnableStates")
     public Response postTimesheetEnableStates(@Context HttpServletRequest request,
-            final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
+                                              final JsonTimesheet[] jsonTimesheetList) throws ServiceException {
         Response response = permissionService.checkRootPermission();
         if (response != null) {
             return response;
@@ -710,8 +709,8 @@ public class TimesheetRest {
     @PUT
     @Path("entries/{entryID}")
     public Response putTimesheetEntry(@Context HttpServletRequest request,
-            final JsonTimesheetEntry jsonEntry,
-            @PathParam("entryID") int entryID) {
+                                      final JsonTimesheetEntry jsonEntry,
+                                      @PathParam("entryID") int entryID) {
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
@@ -780,7 +779,7 @@ public class TimesheetRest {
     @DELETE
     @Path("entries/{entryID}")
     public Response deleteTimesheetEntry(@Context HttpServletRequest request,
-            @PathParam("entryID") int entryID) {
+                                         @PathParam("entryID") int entryID) {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -826,6 +825,8 @@ public class TimesheetRest {
             state = Timesheet.State.ACTIVE;
         }
 
+        int deducted_hours = sheet.getHoursCompleted() - entry.getDurationMinutes() / 60;
+
         entryService.delete(entry);
 
         //update latest timesheet entry date if latest entry date is < new latest entry in the table
@@ -834,9 +835,9 @@ public class TimesheetRest {
                 try {
                     sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
-                            sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getHoursCompleted(),
+                            sheet.getTargetHoursTheory(), sheet.getTargetHours(), deducted_hours,
                             sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getEntriesBySheet(sheet)[0].getBeginDate(), sheet.getIsMasterThesisTimesheet(), state);
+                            entryService.getLatestEntry(sheet).getBeginDate(), sheet.getIsMasterThesisTimesheet(), state);
                 } catch (ServiceException e) {
                     return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
                 }
@@ -845,7 +846,7 @@ public class TimesheetRest {
             try {
                 sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
-                        sheet.getTargetHoursTheory(), sheet.getTargetHours(), sheet.getHoursCompleted(),
+                        sheet.getTargetHoursTheory(), sheet.getTargetHours(), deducted_hours,
                         sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                         new Date(), sheet.getIsMasterThesisTimesheet(), sheet.getState());
             } catch (ServiceException e) {
@@ -941,26 +942,26 @@ public class TimesheetRest {
 
     @DELETE
     @Path("/delete/{timesheetId}")
-    public Response deleteTimesheet(@PathParam("timesheetId") int timesheet_id){
+    public Response deleteTimesheet(@PathParam("timesheetId") int timesheet_id) {
         Response unauthorized = permissionService.checkRootPermission();
         if (unauthorized != null) {
             return unauthorized;
         }
         Timesheet sheet = sheetService.getTimesheetByID(timesheet_id);
-        if(sheet == null){
+        if (sheet == null) {
             return Response.status(Response.Status.CONFLICT).entity("The given sheet with id: " + timesheet_id + " does not exist!").build();
         }
         ApplicationUser current_user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
-        if(permissionService.isUserEligibleForTimesheet(current_user)){
+        if (permissionService.isUserEligibleForTimesheet(current_user)) {
             try {
                 sheetService.remove(sheet);
                 return Response.ok().build();
 
-            } catch (ServiceException e){
+            } catch (ServiceException e) {
                 return Response.serverError().entity(e.getMessage()).build();
             }
-        }else{
+        } else {
             return Response.status(Response.Status.UNAUTHORIZED).entity("The current user does not have the required access" +
                     " rights to delete the timesheet with id: " + timesheet_id).build();
         }
@@ -968,7 +969,7 @@ public class TimesheetRest {
 
     @PUT
     @Path("/reactivate/{timesheetId}")
-    public Response reactivateTimsheet(@PathParam("timesheetId") int timesheet_id){
+    public Response reactivateTimsheet(@PathParam("timesheetId") int timesheet_id) {
         LOGGER.error("trying to reactivate timesheet with id: " + timesheet_id);
 
         Response response = permissionService.checkUserPermission();
@@ -976,13 +977,13 @@ public class TimesheetRest {
             return response;
         }
         Timesheet timesheet = sheetService.getTimesheetByID(timesheet_id);
-        if(timesheet == null){
+        if (timesheet == null) {
             return Response.status(Response.Status.CONFLICT).entity("No timehseet with id: " + timesheet_id + " was found.").build();
         }
         Timesheet.State current_state = timesheet.getState();
 
-        if(current_state == Timesheet.State.INACTIVE || current_state == Timesheet.State.INACTIVE_OFFLINE ||
-                current_state == Timesheet.State.AUTO_INACTIVE){
+        if (current_state == Timesheet.State.INACTIVE || current_state == Timesheet.State.INACTIVE_OFFLINE ||
+                current_state == Timesheet.State.AUTO_INACTIVE) {
             LOGGER.error("we got an inactive timesheet processing...");
             try {
                 TimesheetEntry latest_entry = entryService.getLatestInactiveEntry(timesheet);
@@ -1000,20 +1001,20 @@ public class TimesheetRest {
                 boolean is_same_day = cal.get(Calendar.YEAR) == cal1.get(Calendar.YEAR) &&
                         cal.get(Calendar.DAY_OF_YEAR) == cal1.get(Calendar.DAY_OF_YEAR);
 
-                if(is_same_day){
+                if (is_same_day) {
                     LOGGER.error("We want to edit a date which was created today and therefore we delete it");
 
                     entryService.delete(latest_entry);
-                }else {
+                } else {
                     LOGGER.error("Setting endDate to today");
                     latest_entry.setInactiveEndDate(new Date());
                     latest_entry.save();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 return Response.serverError().entity(e.getMessage()).build();
             }
             return Response.ok().build();
-        }else{
+        } else {
             return Response.status(Response.Status.NOT_MODIFIED).entity("Timesheet is already in active state").build();
         }
     }

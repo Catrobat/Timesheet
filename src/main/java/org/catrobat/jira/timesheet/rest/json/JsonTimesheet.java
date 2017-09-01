@@ -69,7 +69,7 @@ public final class JsonTimesheet {
     @XmlElement
     private String displayName;
 
-    public JsonTimesheet(Timesheet timesheet) {
+    public  JsonTimesheet(Timesheet timesheet) {
         this.timesheetID = timesheet.getID();
         this.userKey = timesheet.getUserKey();
         this.lectures = timesheet.getLectures();

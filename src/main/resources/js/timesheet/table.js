@@ -87,6 +87,9 @@ function populateTable(timesheetDataReply) {
         AJS.$("#inactive-header").hide();
     }
 
+    if(sessionStorage.getItem("timesheetID") !== null){
+        showViewOwnTimesheetLink();
+    }
 
     var timesheetTable = AJS.$("#timesheet-table");
     timesheetTable.empty();
@@ -138,9 +141,19 @@ function showInavtivityInfo(endate){
     showTimesheetReactivationLink();
 }
 
-function showTimesheetReactivationLink(){
-    console.log("showing reactication link");
-    document.getElementById("reactivate-link").style.display = "block";
+function showTimesheetReactivationLink() {
+    if (sessionStorage.getItem("timesheetID") === null) {
+        document.getElementById("reactivate-link").style.display = "block";
+    }
+}
+
+function showViewOwnTimesheetLink(){
+    document.getElementById("own-timesheet-link").style.display = "block";
+}
+
+function viewOwnTimesheet(){
+    sessionStorage.removeItem('timesheetID');
+    location.reload();
 }
 
 function appendEntriesToTable(timesheetData) {
@@ -703,6 +716,7 @@ function reactivateTimesheet(){
         timesheetData_.state = "ACTIVE";
         document.getElementById("reactivate-link").style.display = "none";
 
+        AJS.$(".aui-banner").hide();
         fetchData(timesheetID);
     });
 
@@ -767,6 +781,7 @@ function deleteEntryClicked(viewRow, entryID) {
             var formRow = getFormRow(viewRow);
             if (formRow !== undefined) formRow.remove();
             viewRow.remove();
+            updateProgressBar();
         })
         .fail(function (error) {
         	removeSavingAndDeletingErrorMessages();
@@ -1049,6 +1064,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
                 timesheetData.state = "INACTIVE";
                 showInavtivityInfo(timesheetEntry.inactiveEndDate);
             }
+            updateProgressBar();
         	removeSavingAndDeletingErrorMessages();
             var augmentedEntry = augmentEntry(timesheetData, entryData);
             saveOptions.callback(augmentedEntry, timesheetData, form);

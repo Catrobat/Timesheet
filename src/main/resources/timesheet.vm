@@ -61,6 +61,10 @@
    <p><strong><a href="#" onclick="showReactivateTimesheetDialog()">Click to Reactivate your Timesheet</a></strong></p>
 </div>
 
+<div id="own-timesheet-link" style="display: none; margin-bottom: 15px; margin-top: 10px;">
+    <p><strong><a href="#" onclick="viewOwnTimesheet()">View own Timesheet</a></strong></p>
+</div>
+
 #*Tabs view*#
 <div class="aui-tabs horizontal-tabs" id="table-header">
 
@@ -90,6 +94,11 @@
 
 #*content of the first tab "Timesheet"*#
     <div class="tabs-pane active-pane" id="tabs-timesheet">
+        <div class="progress-bar">
+            <div class="progress">
+                <strong class="progress-percentage-text"></strong>
+            </div>
+        </div>
 
         <div id="timesheet-owner-information"></div>
 
@@ -166,8 +175,9 @@
 
 #*    content of the third tab "Time-Visualization"*#
     <div class="tabs-pane" id="tabs-overview">
-        <div class="progress">
-            <div class="progress-bar">
+        <div class="progress-bar" >
+            <div class="progress" >
+                <strong class="progress-percentage-text"></strong>
             </div>
         </div>
         <table id="visualization-table" class="aui aui-table-interactive aui-table-sortable">

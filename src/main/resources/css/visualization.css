@@ -61,7 +61,6 @@ code {
 }
 
 #visualization-table {
-    margin-top: 25px;
     visibility: hidden;
 }
 
@@ -118,4 +117,8 @@ code {
 #teamLineDiagramTag {
     margin-top: 25px;
     visibility: hidden;
+}
+
+#team-visualization{
+    margin-top : 15px;
 }
