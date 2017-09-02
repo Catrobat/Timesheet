@@ -120,5 +120,15 @@ code {
 }
 
 #team-visualization{
+    margin-top : 10px;
+    margin-left : 15px;
+}
+
+#team-vis-select-container{
     margin-top : 15px;
+    margin-left : 15px;
+}
+
+#display-selected-team{
+    margin-left: 15px;
 }

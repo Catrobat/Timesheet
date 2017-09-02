@@ -1018,4 +1018,23 @@ public class TimesheetRest {
             return Response.status(Response.Status.NOT_MODIFIED).entity("Timesheet is already in active state").build();
         }
     }
+
+    @GET
+    @Path("/getTeamEntries/{teamId}")
+    public Response getTeamEntries(@PathParam("teamId") int teamId){
+        LOGGER.error("getting entries for team with id: " + teamId);
+        Gson gson = new Gson();
+        TimesheetEntry[] entries = teamService.getTeamEntriesById(teamId);
+
+        if(entries.length == 0){
+            return Response.status(Response.Status.CONFLICT).entity("NO entries were found!").build();
+        }
+
+        ArrayList<JsonTimesheetEntry> response = new ArrayList<>();
+        for(TimesheetEntry entry : entries){
+            response.add(new JsonTimesheetEntry(entry));
+        }
+
+        return Response.ok(gson.toJson(response)).build();
+    }
 }

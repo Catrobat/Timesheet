@@ -25,6 +25,7 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
+import org.ofbiz.core.entity.jdbc.SQLProcessor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;

@@ -68,7 +68,6 @@ function populateTable(timesheetDataReply) {
     } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
 
         // FIXME: is this banner needed?
-
         AJS.messages.warning({
             title: 'Timesheet Warning.',
             closeable: true,
@@ -89,6 +88,11 @@ function populateTable(timesheetDataReply) {
 
     if(sessionStorage.getItem("timesheetID") !== null){
         showViewOwnTimesheetLink();
+    }
+
+    if(isAdmin){
+        console.log("we got an admin, initiating team vis options");
+        initTeamVisSelect();
     }
 
     var timesheetTable = AJS.$("#timesheet-table");

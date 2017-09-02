@@ -206,6 +206,12 @@
     </div>
 #*    content of the third tab "Team-Visualization"*#
     <div class="tabs-pane" id="tabs-team">
+        <div id="team-vis-select-container" style="display: none;">
+            <select class="select" id="team-vis-select"
+                    placeholder="Select the Team to Display">
+            </select>
+            <input type="button" class="aui-button aui-button-primary" id="display-selected-team" value="Display">
+        </div>
         <form id="team-visualization" class="aui">
             <h3 id="teamDiagramTag">Team Visualization</h3>
             <div id="teamDataDiagram" style="height: 300px;"></div>

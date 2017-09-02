@@ -21,6 +21,7 @@ import com.atlassian.jira.service.ServiceException;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
+import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -50,4 +51,6 @@ public interface TeamService {
     void editTeam(String teamName, List<String> coordinatorGroups, List<String> developerGroups, List<String> teamCategoryNames) throws ServiceException;
 
     void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws ServiceException;
+
+    TimesheetEntry[] getTeamEntriesById(int teamId);
 }

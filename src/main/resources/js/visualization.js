@@ -63,3 +63,54 @@ function containsElement(array, element) {
             return true;
     return false;
 }
+
+function showTeamVisSelect(){
+    document.getElementById("team-vis-select-container").style.display = "block";
+}
+
+function initTeamVisOptions(teams){
+    var select = document.getElementById("team-vis-select");
+    select.options.length = 0;
+
+    AJS.$("#team-vis-select").select2({
+        width : "25%"
+    });
+
+    teams.forEach(function (item) {
+        select[select.options.length] = new Option(item.teamName, item.teamID);
+    });
+
+    AJS.$("#display-selected-team").on("click", function () {
+        console.log("displaying team with id: " + AJS.$("#team-vis-select").val());
+
+        AJS.$.ajax({
+            type : "GET",
+            url : restBaseUrl + "/getTeamEntries/" + AJS.$("#team-vis-select").val(),
+            success : function (entries) {
+                console.log("request was successfull");
+                console.log(JSON.stringify(entries));
+                assignTeamVisDiagramData(entries);
+                assignTeamVisCategoryDiagramData(entries);
+            },
+            fail : function (err) {
+                console.error(err.responseText);
+            }
+        })
+    });
+
+    showTeamVisSelect();
+}
+
+function initTeamVisSelect(){
+    AJS.$.ajax({
+        type : "GET",
+        url : restBaseUrl + "/config/getTeams",
+        success: function (data) {
+            console.log("Team request was successfull");
+            initTeamVisOptions(data);
+        },
+        fail : function (err) {
+            console.error(err.responseText);
+        }
+    })
+}
