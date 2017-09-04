@@ -3,7 +3,9 @@
 function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, entriesReply) {
     var timesheetData = timesheetReply[0];
 
-    timesheetData.entries = entriesReply[0];
+    if (typeof entriesReply != "undefined")
+        timesheetData.entries = entriesReply[0];
+
     timesheetData.categoryIDs = [];
     timesheetData.teams = [];
     timesheetData.categoryNames = [];
@@ -72,7 +74,10 @@ function initTeamVisOptions(teams){
     var select = document.getElementById("team-vis-select");
     select.options.length = 0;
 
+    showTeamVisSelect();
+
     AJS.$("#team-vis-select").select2({
+        placeholder: "Select gulasch",
         width : "25%"
     });
 
@@ -80,25 +85,47 @@ function initTeamVisOptions(teams){
         select[select.options.length] = new Option(item.teamName, item.teamID);
     });
 
+    setTeamVisListeners();
+}
+
+function setTeamVisListeners(){
     AJS.$("#display-selected-team").on("click", function () {
         console.log("displaying team with id: " + AJS.$("#team-vis-select").val());
 
-        AJS.$.ajax({
-            type : "GET",
-            url : restBaseUrl + "/getTeamEntries/" + AJS.$("#team-vis-select").val(),
-            success : function (entries) {
-                console.log("request was successfull");
-                console.log(JSON.stringify(entries));
-                assignTeamVisDiagramData(entries);
-                assignTeamVisCategoryDiagramData(entries);
-            },
-            fail : function (err) {
-                console.error(err.responseText);
-            }
-        })
+        var teamEntries = AJS.$.ajax({
+            type: 'GET',
+            url:  restBaseUrl + "/getTeamEntries/" + AJS.$("#team-vis-select").val(),
+            contentType: "application/json"
+        });
+
+        var categoriesFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'config/getCategories',
+            contentType: "application/json"
+        });
+
+        var teamsFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'teams/' + timesheetID,
+            contentType: "application/json"
+        });
+
+        AJS.$.when(teamEntries, categoriesFetched, teamsFetched)
+            .done(assembleTimesheetVisData)
+            .done(computeTeamDiagramData)
+
+            .fail(function (error) {
+                AJS.messages.error({
+                    title: 'There was an error while fetching Team data for: ' + AJS.$("#team-vis-select").select2("data").text,
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
+            });
     });
 
-    showTeamVisSelect();
+    AJS.$("#reset-teamvis-selection").on("click", function (e) {
+        fetchData(timesheetData_.timesheetID);
+    })
 }
 
 function initTeamVisSelect(){

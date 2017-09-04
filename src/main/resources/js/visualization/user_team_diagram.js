@@ -2,6 +2,7 @@
 
 //reverse order of the table from bottom to top
 function assignTeamVisCategoryDiagramData(teamEntries) {
+    AJS.$("#teamLineDiagram").empty();
 
     var availableEntries = teamEntries;
 

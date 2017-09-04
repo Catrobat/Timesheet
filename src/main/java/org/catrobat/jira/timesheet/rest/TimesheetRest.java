@@ -31,6 +31,7 @@ import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.query.Query;
 import com.google.gson.Gson;
+import org.apache.regexp.RE;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
@@ -156,9 +157,10 @@ public class TimesheetRest {
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
         Vector<String> TeamMembers = new Vector<>();
-
+        LOGGER.error("We want to extract team entries from timesheet: " + timesheetID);
         for (Team team : teamService.getTeamsOfUser(owner_name)) {
             for (String teamMembersAndGroups : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
+                LOGGER.error("currently to validate is : " + teamMembersAndGroups);
                 if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
                     Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);
                     for (String member : usersInGroup) {
@@ -174,6 +176,7 @@ public class TimesheetRest {
             }
         }
 
+        LOGGER.error("after extraction list is: " + TeamMembers.toString());
         for (String member : TeamMembers) {
             //collect all timesheet entries of all team members
             try {
@@ -215,9 +218,9 @@ public class TimesheetRest {
 
         try {
             Team team = teamService.getTeamByName(teamName);
-            if (!permissionService.isUserCoordinatorOfTeam(user, team) ||
-                    !permissionService.isTimesheetAdmin(user) ||
-                    !permissionService.isReadOnlyUser(user)) {
+            if (!(permissionService.isUserCoordinatorOfTeam(user, team) ||
+                    permissionService.isTimesheetAdmin(user) ||
+                    permissionService.isReadOnlyUser(user))) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to access the timesheet!").build();
             }
         } catch (ServiceException e) {
@@ -1022,19 +1025,35 @@ public class TimesheetRest {
     @GET
     @Path("/getTeamEntries/{teamId}")
     public Response getTeamEntries(@PathParam("teamId") int teamId){
+        ApplicationUser user;
+        try {
+           user = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
+            return response;
+        }
+        if(!(permissionService.isUserTeamCoordinator(user) || permissionService.isTimesheetAdmin(user) ||
+                permissionService.isReadOnlyUser(user))){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         LOGGER.error("getting entries for team with id: " + teamId);
-        Gson gson = new Gson();
         TimesheetEntry[] entries = teamService.getTeamEntriesById(teamId);
 
         if(entries.length == 0){
             return Response.status(Response.Status.CONFLICT).entity("NO entries were found!").build();
         }
 
-        ArrayList<JsonTimesheetEntry> response = new ArrayList<>();
+        ArrayList<JsonTimesheetEntry> response_set = new ArrayList<>();
         for(TimesheetEntry entry : entries){
-            response.add(new JsonTimesheetEntry(entry));
+            response_set.add(new JsonTimesheetEntry(entry, true));
         }
 
-        return Response.ok(gson.toJson(response)).build();
+        Collections.reverse(response_set);
+
+        return Response.ok(response_set).build();
     }
 }

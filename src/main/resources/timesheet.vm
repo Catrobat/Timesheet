@@ -206,11 +206,12 @@
     </div>
 #*    content of the third tab "Team-Visualization"*#
     <div class="tabs-pane" id="tabs-team">
-        <div id="team-vis-select-container" style="display: none;">
-            <select class="select" id="team-vis-select"
-                    placeholder="Select the Team to Display">
+        <div id="team-vis-select-container" multible="">
+            <select class="select" id="team-vis-select" placeholder="Select Gulasch">
+                <option></option>
             </select>
             <input type="button" class="aui-button aui-button-primary" id="display-selected-team" value="Display">
+            <input type="button" class="aui-button aui-button-primary" id="reset-teamvis-selection" value="Reset">
         </div>
         <form id="team-visualization" class="aui">
             <h3 id="teamDiagramTag">Team Visualization</h3>
