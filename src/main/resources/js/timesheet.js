@@ -237,6 +237,7 @@ function checkIfMasterThesisTimesheet(timesheet) {
 }
 
 function fetchData(timesheetID) {
+    spin();
 
     clearDiagramSelections();
 
@@ -276,6 +277,11 @@ function fetchData(timesheetID) {
         contentType: "application/json"
     });
 
+    var mostActiveTeamName = AJS.$.ajax({
+        type : "GET",
+        url : restBaseUrl + "getMostActiveTeamForUser"
+    });
+
     AJS.$.when(timesheetFetched)
         .done(setOwnerLabel)
     	.done(checkIfMasterThesisTimesheet);
@@ -310,6 +316,13 @@ function fetchData(timesheetID) {
             });
             console.log(error);
         });
+
+    AJS.$.when(mostActiveTeamName).done(function (data) {
+        console.log("Team fetched: " + data.teamName);
+        setTeamVisInfoHeaders(data.teamName);
+    });
+
+    stopSpin();
 }
 
 function saveTimesheetIDOfUserInSession(selectedUser) {
@@ -437,7 +450,6 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
 
 // first we have to clear the lineDiagram sections before we can repaint the lineDiagram.
 function clearDiagramSelections() {
-
     //summary lineDiagram
     AJS.$("#piChartDiagram").empty();
 

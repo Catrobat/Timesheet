@@ -158,20 +158,23 @@ public class TimesheetRest {
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
         Vector<String> TeamMembers = new Vector<>();
         LOGGER.error("We want to extract team entries from timesheet: " + timesheetID);
-        for (Team team : teamService.getTeamsOfUser(owner_name)) {
-            for (String teamMembersAndGroups : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
-                LOGGER.error("currently to validate is : " + teamMembersAndGroups);
-                if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
-                    Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);
-                    for (String member : usersInGroup) {
-                        if (!TeamMembers.contains(member)) {
-                            TeamMembers.add(member);
-                        }
+
+        //calculating data only for most active team
+        Team team = teamService.getMostActiveTeamForUser(owner_name, ownerSheet);
+        LOGGER.error("In getTeamEntries calculating for team: " + team.getTeamName());
+
+        for (String teamMembersAndGroups : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
+            LOGGER.error("currently to validate is : " + teamMembersAndGroups);
+            if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
+                Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);
+                for (String member : usersInGroup) {
+                    if (!TeamMembers.contains(member)) {
+                        TeamMembers.add(member);
                     }
-                } else {
-                    if (!TeamMembers.contains(teamMembersAndGroups)) {
-                        TeamMembers.add(teamMembersAndGroups);
-                    }
+                }
+            } else {
+                if (!TeamMembers.contains(teamMembersAndGroups)) {
+                    TeamMembers.add(teamMembersAndGroups);
                 }
             }
         }
@@ -1055,5 +1058,34 @@ public class TimesheetRest {
         Collections.reverse(response_set);
 
         return Response.ok(response_set).build();
+    }
+
+    @GET
+    @Path("getMostActiveTeamForUser")
+    public Response getMostActiveTeamForUser(){
+        ApplicationUser user;
+        try {
+            user = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
+            return response;
+        }
+        String username = user.getUsername();
+        try {
+            Timesheet sheet_of_user = sheetService.getTimesheetByUser(user.getKey(), false);
+            Map<String, Object> result = new HashMap<>();
+            Team most_active_team = teamService.getMostActiveTeamForUser(username, sheet_of_user);
+
+            result.put("teamName", most_active_team.getTeamName());
+            result.put("teamID", most_active_team.getID());
+
+            return Response.ok().entity(result).build();
+        }catch (Exception e){
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 }

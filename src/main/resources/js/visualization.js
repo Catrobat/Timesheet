@@ -49,6 +49,11 @@ function populateVisTable(timesheetDataReply) {
     appendEntriesToVisTable(timesheetData);
 }
 
+function setTeamVisInfoHeaders(team_name){
+    document.getElementById("teamDiagramTag").innerHTML = "<strong>" + team_name + " Time Visualization</strong>";
+    document.getElementById("teamLineDiagramTag").innerHTML = "<strong>" + team_name + " Category Visualization</strong>";
+}
+
 function computeTeamDiagramData(teamEntries) {
     assignTeamVisDiagramData(teamEntries[0]);
     assignTeamVisCategoryDiagramData(teamEntries[0]);
@@ -67,7 +72,15 @@ function containsElement(array, element) {
 }
 
 function showTeamVisSelect(){
-    document.getElementById("team-vis-select-container").style.display = "block";
+    document.getElementById("team-vis-select-container").style.display = "flex";
+}
+
+function spin(){
+    document.getElementById("team-vis-spinner").style.visibility="visible";
+}
+
+function stopSpin(){
+    document.getElementById("team-vis-spinner").style.visibility="hidden";
 }
 
 function initTeamVisOptions(teams){
@@ -89,12 +102,19 @@ function initTeamVisOptions(teams){
 }
 
 function setTeamVisListeners(){
+    //clear the listeners first, at multible calls function will be called multible times and listeners will be appended
+    AJS.$("#display-selected-team").off();
+
     AJS.$("#display-selected-team").on("click", function () {
+        spin();
+
         console.log("displaying team with id: " + AJS.$("#team-vis-select").val());
+
+        var selected_team = AJS.$("#team-vis-select").select2("data");
 
         var teamEntries = AJS.$.ajax({
             type: 'GET',
-            url:  restBaseUrl + "/getTeamEntries/" + AJS.$("#team-vis-select").val(),
+            url:  restBaseUrl + "/getTeamEntries/" + selected_team.id,
             contentType: "application/json"
         });
 
@@ -113,13 +133,17 @@ function setTeamVisListeners(){
         AJS.$.when(teamEntries, categoriesFetched, teamsFetched)
             .done(assembleTimesheetVisData)
             .done(computeTeamDiagramData)
-
+            .done(function () {
+                setTeamVisInfoHeaders(selected_team.text);
+                stopSpin();
+            })
             .fail(function (error) {
                 AJS.messages.error({
                     title: 'There was an error while fetching Team data for: ' + AJS.$("#team-vis-select").select2("data").text,
                     body: '<p>Reason: ' + error.responseText + '</p>'
                 });
                 console.log(error);
+                stopSpin();
             });
     });
 
@@ -128,16 +152,18 @@ function setTeamVisListeners(){
     })
 }
 
-function initTeamVisSelect(){
-    AJS.$.ajax({
-        type : "GET",
-        url : restBaseUrl + "/config/getTeams",
-        success: function (data) {
-            console.log("Team request was successfull");
-            initTeamVisOptions(data);
-        },
-        fail : function (err) {
-            console.error(err.responseText);
-        }
-    })
+function initTeamVisSelect(userType){
+    if(userType === "admin") {
+        AJS.$.ajax({
+            type: "GET",
+            url: restBaseUrl + "/config/getTeams",
+            success: function (data) {
+                console.log("Team request was successfull");
+                initTeamVisOptions(data);
+            },
+            fail: function (err) {
+                console.error(err.responseText);
+            }
+        })
+    }
 }

@@ -18,10 +18,7 @@ package org.catrobat.jira.timesheet.services;
 
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.service.ServiceException;
-import org.catrobat.jira.timesheet.activeobjects.Category;
-import org.catrobat.jira.timesheet.activeobjects.Team;
-import org.catrobat.jira.timesheet.activeobjects.TeamToGroup;
-import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.activeobjects.*;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -53,4 +50,6 @@ public interface TeamService {
     void checkIfCategoryIsAssociatedWithTeam(@Nullable Team team, @Nullable Category category) throws ServiceException;
 
     TimesheetEntry[] getTeamEntriesById(int teamId);
+
+    Team getMostActiveTeamForUser(String username, Timesheet sheet);
 }

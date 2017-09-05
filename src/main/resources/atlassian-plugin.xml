@@ -23,6 +23,7 @@
         <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
         <dependency>com.atlassian.auiplugin:message</dependency>
         <dependency>com.atlassian.auiplugin:aui-table-sortable</dependency>
+        <dependency>com.atlassian.auiplugin:aui-spinner</dependency>
 
         <!-- CSS -->
         <resource type="download" name="timesheet.css" location="/css/timesheet.css"/>

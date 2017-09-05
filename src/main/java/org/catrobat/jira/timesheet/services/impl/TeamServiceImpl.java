@@ -25,6 +25,7 @@ import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import org.catrobat.jira.timesheet.activeobjects.*;
+import org.catrobat.jira.timesheet.rest.TimesheetRest;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.validation.constraints.Null;
 
+import java.sql.ResultSet;
 import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -47,6 +49,7 @@ public class TeamServiceImpl implements TeamService {
 
     private boolean isInitialised = false;
     private static final String DEFAULT_TEAM = "Default";
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TeamServiceImpl.class);
 
     public TeamServiceImpl(ActiveObjects ao, CategoryService categoryService, TimesheetEntryService entryService) {
         this.ao = ao;
@@ -306,5 +309,33 @@ public class TeamServiceImpl implements TeamService {
         Team team = getTeamByID(teamId);
 
         return team.getEntries();
+    }
+
+    @Override
+    public Team getMostActiveTeamForUser(String username, Timesheet sheet){
+        Team result = null;
+        int max_duration = 0;
+
+        Set<Team> teams = getTeamsOfUser(username);
+        LOGGER.error("Team size: " + teams.size());
+        for(Team current_team : teams) {
+            LOGGER.error("Currently evaluating team: " + current_team.getTeamName());
+            if(result == null)
+                result = current_team;
+            else{
+                TimesheetEntry[] entries = ao.find(TimesheetEntry.class, Query.select().where("TIME_SHEET_ID = ? AND TEAM_ID = ?",
+                        sheet.getID(), current_team.getID()));
+                int duration = 0;
+
+                for(TimesheetEntry entry : entries){
+                    duration += (entry.getDurationMinutes() - entry.getPauseMinutes());
+                }
+                if(duration > max_duration) {
+                    LOGGER.error("We have e new most acive team: " + current_team.getTeamName());
+                    result = current_team;
+                }
+            }
+        }
+        return result;
     }
 }

@@ -198,25 +198,33 @@
     </div>
 #*    content of the third tab "Time-Visualization"*#
     <div class="tabs-pane" id="tabs-line">
-        <h3 id="lineDiagramTag">Visualization of your working time</h3>
+        <div class="diagram-header-container">
+            <h2 id="lineDiagramTag"><strong>Visualization of your working time</strong></h2>
+        </div>
         <div id="lineDiagram" style="height:300px;"></div>
-
-        <h3 id="categoryLineDiagramTag">Visualization of your working time related on categories</h3>
+        <div class="diagram-header-container">
+            <h2 id="categoryLineDiagramTag"><strong>Visualization of your working time related on categories</strong></h2>
+        </div>
         <div id="categoryLineDiagram" style="height:400px;"></div>
     </div>
 #*    content of the third tab "Team-Visualization"*#
     <div class="tabs-pane" id="tabs-team">
-        <div id="team-vis-select-container" multible="">
-            <select class="select" id="team-vis-select" placeholder="Select Gulasch">
+        <div id="team-vis-select-container" style="align-items:center; display:none;" >
+            <select class="select" id="team-vis-select" placeholder="Select Gulasch" >
                 <option></option>
             </select>
             <input type="button" class="aui-button aui-button-primary" id="display-selected-team" value="Display">
             <input type="button" class="aui-button aui-button-primary" id="reset-teamvis-selection" value="Reset">
+            <div class="loader" id="team-vis-spinner"></div>
         </div>
         <form id="team-visualization" class="aui">
-            <h3 id="teamDiagramTag">Team Visualization</h3>
+            <div class="diagram-header-container">
+                <h2 id="teamDiagramTag"></h2>
+            </div>
             <div id="teamDataDiagram" style="height: 300px;"></div>
-            <h3 id="teamLineDiagramTag">Team Category Visualization</h3>
+            <div class="diagram-header-container">
+                <h2 id="teamLineDiagramTag"></h2>
+            </div>
             <div id="teamLineDiagram" style="height: 400px;"></div>
         </form>
     </div>

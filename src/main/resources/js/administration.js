@@ -1138,20 +1138,6 @@ AJS.toInit(function () {
             }
             AJS.$(".aui-dialog2-content").html(content);
         });
-//     // Hide event - this is triggered when the dialog is hidden
-//     AJS.dialog2("#hidden-dialog").on("hide", function () {
-//         AJS.log("hidden-dialog was hidden");
-//     });
-//
-// // Global show event - this is triggered when any dialog is show
-//     AJS.dialog2.on("show", function () {
-//         AJS.log("a dialog was shown");
-//     });
-//
-// // Global hide event - this is triggered when any dialog is hidden
-//     AJS.dialog2.on("hide", function () {
-//         AJS.log("a dialog was hidden");
-//     });
     }
 });
 
