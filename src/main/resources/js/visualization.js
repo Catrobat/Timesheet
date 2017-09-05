@@ -106,11 +106,18 @@ function setTeamVisListeners(){
     AJS.$("#display-selected-team").off();
 
     AJS.$("#display-selected-team").on("click", function () {
-        spin();
-
         console.log("displaying team with id: " + AJS.$("#team-vis-select").val());
-
         var selected_team = AJS.$("#team-vis-select").select2("data");
+
+        if(selected_team == null){
+            AJS.messages.error({
+                title : "Error: Invalid Selection",
+                body : "Please select a Team and click Display"
+            });
+            return;
+        }
+
+        spin();
 
         var teamEntries = AJS.$.ajax({
             type: 'GET',
@@ -160,6 +167,22 @@ function initTeamVisSelect(userType){
             success: function (data) {
                 console.log("Team request was successfull");
                 initTeamVisOptions(data);
+            },
+            fail: function (err) {
+                console.error(err.responseText);
+            }
+        })
+    }else{
+        AJS.$.ajax({
+            type: "GET",
+            url: restBaseUrl + "/getTeamsOfUser",
+            success: function (data) {
+                console.log("Team request was successfull");
+                if(data.length > 1) {
+                    initTeamVisOptions(data);
+                }else{
+                    console.log("We got no options except one team so no dropdown needed");
+                }
             },
             fail: function (err) {
                 console.error(err.responseText);

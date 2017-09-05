@@ -332,7 +332,6 @@ function loadMostActiveTeamForUser(){
 }
 
 function saveTimesheetIDOfUserInSession(selectedUser) {
-	
 	var isMTSheet = false;
 	var user;
 	
@@ -393,37 +392,41 @@ function fetchUsers() {
             console.log(error);
         });
 
-    var totalUserList = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'user/getUserInformation',
-        contentType: "application/json"
-    });
-    
-    AJS.$.when(totalUserList)
-    .done(initTimesheetAdminUserList)
-    .fail(function (error) {
-        AJS.messages.error({
-            title: 'There was an error while fetching user data for timesheet admin.',
-            body: '<p>Reason: ' + error.responseText + '</p>'
+    if(isAdmin) {
+        var totalUserList = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'user/getUserInformation',
+            contentType: "application/json"
         });
-        console.log(error);
-    });
 
-    var userInformation = AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'user/getUsersForCoordinator',
-        contentType: "application/json"
-    });
-
-    AJS.$.when(userInformation)
-        .done(initCoordinatorUserList)
-        .fail(function (error) {
-            AJS.messages.error({
-                title: 'There was an error while fetching team user data.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
+        AJS.$.when(totalUserList)
+            .done(initTimesheetAdminUserList)
+            .fail(function (error) {
+                AJS.messages.error({
+                    title: 'There was an error while fetching user data for timesheet admin.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
             });
-            console.log(error);
+    }
+
+    if(isCoordinator) {
+        var userInformation = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'user/getUsersForCoordinator',
+            contentType: "application/json"
         });
+
+        AJS.$.when(userInformation)
+            .done(initCoordinatorUserList)
+            .fail(function (error) {
+                AJS.messages.error({
+                    title: 'There was an error while fetching team user data.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
+            });
+    }
 }
 
 function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entriesReply, pairProgrammingReply) {

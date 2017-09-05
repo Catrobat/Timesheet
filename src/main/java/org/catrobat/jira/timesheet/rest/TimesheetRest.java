@@ -31,6 +31,7 @@ import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.query.Query;
 import com.google.gson.Gson;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.regexp.RE;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition;
@@ -1090,5 +1091,53 @@ public class TimesheetRest {
         }catch (Exception e){
             return Response.serverError().entity(e.getMessage()).build();
         }
+    }
+
+    @GET
+    @Path("getTeamsOfUser")
+    public Response getTeamsOfUser(){
+        ApplicationUser user;
+        ArrayList<Object> response_list = new ArrayList<>();
+        ArrayList<String> team_names = new ArrayList<>();
+        try {
+            user = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
+            return response;
+        }
+        if(permissionService.isUserTeamCoordinator(user)){
+            Set<Team> teams = teamService.getTeamsOfCoordinator(user.getUsername());
+            for(Team team : teams){
+                team_names.add(team.getTeamName());
+            }
+
+            response_list.addAll(generateTeamResponse(teams, null));
+        }
+
+        Set<Team> teams = teamService.getTeamsOfUser(user.getUsername());
+
+        response_list.addAll(generateTeamResponse(teams, team_names));
+
+        return Response.ok().entity(response_list).build();
+    }
+
+    private ArrayList<Object> generateTeamResponse(Set<Team> teams, ArrayList<String> team_names){
+        ArrayList<Object> response_teams = new ArrayList<>();
+        for(Team team : teams){
+            if(team_names != null){
+                if(team_names.contains(team.getTeamName()))
+                    continue;
+            }
+            Map<String, Object> current_team_json = new HashMap<>();
+            current_team_json.put("teamName", team.getTeamName());
+            current_team_json.put("teamID", team.getID());
+
+            response_teams.add(current_team_json);
+        }
+        return response_teams;
     }
 }

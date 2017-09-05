@@ -93,6 +93,8 @@ function populateTable(timesheetDataReply) {
     if(isAdmin){
         console.log("we got an admin, initiating team vis options");
         initTeamVisSelect("admin");
+    }else {
+        initTeamVisSelect("user");
     }
 
     var timesheetTable = AJS.$("#timesheet-table");
