@@ -21,6 +21,7 @@ import com.atlassian.jira.service.ServiceException;
 import org.catrobat.jira.timesheet.activeobjects.*;
 
 import javax.annotation.Nullable;
+import java.sql.Time;
 import java.util.List;
 import java.util.Set;
 
@@ -52,4 +53,6 @@ public interface TeamService {
     TimesheetEntry[] getTeamEntriesById(int teamId);
 
     Team getMostActiveTeamForUser(String username, Timesheet sheet);
+
+    boolean isUserInTeam(Team to_check, String username);
 }

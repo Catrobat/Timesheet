@@ -1030,6 +1030,10 @@ public class TimesheetRest {
     @Path("/getTeamEntries/{teamId}")
     public Response getTeamEntries(@PathParam("teamId") int teamId){
         ApplicationUser user;
+        Team team = teamService.getTeamByID(teamId);
+        if(team == null){
+           return Response.status(Response.Status.CONFLICT).entity("Team with ID " + teamId + " does not Exist").build();
+        }
         try {
            user = permissionService.checkIfUserExists();
         } catch (PermissionException e) {
@@ -1040,10 +1044,12 @@ public class TimesheetRest {
         if (response != null) {
             return response;
         }
+
         if(!(permissionService.isUserTeamCoordinator(user) || permissionService.isTimesheetAdmin(user) ||
-                permissionService.isReadOnlyUser(user))){
+                permissionService.isReadOnlyUser(user) || teamService.isUserInTeam(team, user.getUsername()))){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+
         LOGGER.error("getting entries for team with id: " + teamId);
         TimesheetEntry[] entries = teamService.getTeamEntriesById(teamId);
 

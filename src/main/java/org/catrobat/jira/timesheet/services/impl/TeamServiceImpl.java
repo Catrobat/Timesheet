@@ -338,4 +338,14 @@ public class TeamServiceImpl implements TeamService {
         }
         return result;
     }
+
+    @Override
+    public boolean isUserInTeam(Team to_check, String username){
+        Set<Team> teams = getTeamsOfUser(username);
+        for(Team team : teams){
+            if(team.getTeamName().equals(to_check.getTeamName()))
+                return true;
+        }
+        return false;
+    }
 }
