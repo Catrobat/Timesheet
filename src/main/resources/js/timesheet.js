@@ -237,7 +237,6 @@ function checkIfMasterThesisTimesheet(timesheet) {
 }
 
 function fetchData(timesheetID) {
-    spin();
 
     clearDiagramSelections();
 
@@ -277,11 +276,6 @@ function fetchData(timesheetID) {
         contentType: "application/json"
     });
 
-    var mostActiveTeamName = AJS.$.ajax({
-        type : "GET",
-        url : restBaseUrl + "getMostActiveTeamForUser"
-    });
-
     AJS.$.when(timesheetFetched)
         .done(setOwnerLabel)
     	.done(checkIfMasterThesisTimesheet);
@@ -308,7 +302,6 @@ function fetchData(timesheetID) {
     AJS.$.when(teamEntries, categoriesFetched, teamsFetched, entriesFetched)
         .done(assembleTimesheetVisData)
         .done(computeTeamDiagramData)
-
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching timesheet data.',
@@ -317,12 +310,25 @@ function fetchData(timesheetID) {
             console.log(error);
         });
 
-    AJS.$.when(mostActiveTeamName).done(function (data) {
-        console.log("Team fetched: " + data.teamName);
-        setTeamVisInfoHeaders(data.teamName);
-    });
+    var interval_id = setInterval(function () {
+        if(typeof timesheetData_ !== "undefined"){
+            clearInterval(interval_id);
+            loadMostActiveTeamForUser();
+        }
+    }, 200);
 
     stopSpin();
+}
+
+function loadMostActiveTeamForUser(){
+    AJS.$.ajax({
+        type : "GET",
+        url : restBaseUrl + "getMostActiveTeamForUser/" + timesheetData_.userKey,
+        success : function (data) {
+            console.log("Team fetched: " + data.teamName);
+            setTeamVisInfoHeaders(data.teamName);
+        }
+    });
 }
 
 function saveTimesheetIDOfUserInSession(selectedUser) {

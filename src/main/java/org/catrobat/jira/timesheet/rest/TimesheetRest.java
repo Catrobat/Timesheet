@@ -1061,8 +1061,8 @@ public class TimesheetRest {
     }
 
     @GET
-    @Path("getMostActiveTeamForUser")
-    public Response getMostActiveTeamForUser(){
+    @Path("getMostActiveTeamForUser/{userKey}")
+    public Response getMostActiveTeamForUser(@PathParam("userKey") String user_key){
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -1074,11 +1074,14 @@ public class TimesheetRest {
         if (response != null) {
             return response;
         }
-        String username = user.getUsername();
+        ApplicationUser to_query = ComponentAccessor.getUserManager().getUserByKey(user_key);
+        if(to_query == null){
+            return Response.status(Response.Status.CONFLICT).entity("The user does not exist").build();
+        }
         try {
-            Timesheet sheet_of_user = sheetService.getTimesheetByUser(user.getKey(), false);
+            Timesheet sheet_of_user = sheetService.getTimesheetByUser(user_key, false);
             Map<String, Object> result = new HashMap<>();
-            Team most_active_team = teamService.getMostActiveTeamForUser(username, sheet_of_user);
+            Team most_active_team = teamService.getMostActiveTeamForUser(to_query.getUsername(), sheet_of_user);
 
             result.put("teamName", most_active_team.getTeamName());
             result.put("teamID", most_active_team.getID());
