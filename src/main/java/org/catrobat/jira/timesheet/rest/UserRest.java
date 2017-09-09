@@ -24,6 +24,7 @@ import com.atlassian.jira.bc.user.search.UserSearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 
 import org.catrobat.jira.timesheet.activeobjects.Team;
@@ -54,6 +55,7 @@ public class UserRest {
     private final TimesheetService timesheetService;
     private final TimesheetEntryService timesheetEntryService;
     private final TeamService teamService;
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(UserRest.class);
 
     private final UserSearchService userSearchService;
     private final GroupPickerSearchService groupPickerSearchService;
@@ -81,17 +83,19 @@ public class UserRest {
         if (response != null) {
             return response;
         }
-
+        LOGGER.error("Retrieving all users from system");
         UserUtil userUtil = ComponentAccessor.getUserUtil();
         List<JsonUser> jsonUserList = new ArrayList<>();
         JiraServiceContext jiraServiceContext = new JiraServiceContextImpl(permissionService.getLoggedInUser());
         List<ApplicationUser> allUsers = userSearchService.findUsersAllowEmptyQuery(jiraServiceContext, "");
+
         for (ApplicationUser user : allUsers) {
             JsonUser jsonUser = new JsonUser();
             jsonUser.setEmail(user.getEmailAddress());
             jsonUser.setUserName(user.getName());
 
             String displayName = user.getDisplayName();
+            LOGGER.error("Got User: " + displayName);
             int lastSpaceIndex = displayName.lastIndexOf(' ');
             if (lastSpaceIndex >= 0) {
                 jsonUser.setFirstName(displayName.substring(0, lastSpaceIndex));
@@ -325,5 +329,39 @@ public class UserRest {
         }
 
         return Response.ok(groupList).build();
+    }
+
+    @GET
+    @Path("/getActiveTimesheetUsers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getActiveTimesheetUsers(@Context HttpServletRequest request){
+        UserManager userManager = ComponentAccessor.getUserManager();
+        ArrayList<String> queried_user_key = new ArrayList<>();
+        ArrayList<Object> active_user_list = new ArrayList<>();
+
+        for(Timesheet sheet : timesheetService.all()){
+            Map<String, String> result = new HashMap<>();
+            ApplicationUser current_user = userManager.getUserByKey(sheet.getUserKey());
+
+            if(current_user == null){
+                return Response.status(Response.Status.CONFLICT).entity("No User Was found!").build();
+            }
+
+            if(queried_user_key.contains(current_user.getKey())){
+                LOGGER.error("User has already been queried continue");
+                continue;
+            }
+            if(sheet.getState() != Timesheet.State.ACTIVE){
+                LOGGER.error("Current Timesheet is not active continue");
+                continue;
+            }
+
+            result.put("userKey", sheet.getUserKey());
+            result.put("displayName", sheet.getDisplayName());
+            queried_user_key.add(sheet.getUserKey());
+            active_user_list.add(result);
+        }
+
+        return Response.ok().entity(active_user_list).build();
     }
 }

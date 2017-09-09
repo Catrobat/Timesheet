@@ -973,6 +973,35 @@ AJS.toInit(function () {
         dialog.show();
     }
 
+    (function initUserPermissionOptions(){
+        console.log("inititating user permission options");
+        AJS.$.ajax({
+            url : restBaseUrl + "/user/getActiveTimesheetUsers",
+            type : "GET",
+            success : function (data) {
+                console.log("we have got our data");
+                console.log(JSON.stringify(data));
+                setUserPermissionOptions(data);
+            },
+            fail : function (err) {
+                console.error(err.responseText);
+            }
+        })
+    })();
+
+    function setUserPermissionOptions(users){
+        AJS.$("#permitted-users-modify").auiSelect2({
+            placeholder : "Unlimited Modification Users"
+        });
+
+        var select_list = document.getElementById("permitted-users-modify");
+        select_list.options.length = 0;
+
+        users.forEach(function (item) {
+            select_list[select_list.options.length] = new Option(item.displayName, item.userKey);
+        })
+    }
+
     function resetTimesheets() {
         AJS.$.ajax({
             type:"DELETE",

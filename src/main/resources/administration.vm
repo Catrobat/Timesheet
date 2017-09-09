@@ -361,6 +361,40 @@
     </div>
     <div class="tabs-pane" id="tabs-scheduling">
         <p></p>
+        <h2>User Specific Settings</h2>
+        <form class="aui">
+            <fieldset>
+                ##<p class="input-header">Unlimted Time Modification Permissions</p>
+                <div class="field-group form-group">
+                    <label for="permitted-users-modify">
+                       Allowed mod Users
+                    </label>
+                    <div class="form-element-container"  name="permitted-users-modify">
+                        <select class="select" id="permitted-users-modify"
+                                placeholder="Unlimited Modification Access" style="margin-bottom: 15px; margin-top: 15px" multiple="multiple">
+                            <option></option>
+                        </select>
+                        <input type="button" value="Save" class="aui-button-primary aui-button">
+                    </div>
+                    <div class="description">
+                        The Dropdown only shows Users which have a Timesheet and are currently active.
+                    </div>
+                </div>
+                <div class="field-group form-group">
+                    <label for="modification-day-limit">
+                        Modification Day Limit
+                    </label>
+                    <div class="form-element-container" name="modification-day-limit">
+                        <input type="number" class="text" id="modification-day-limit" placeholder="Modification Limit in Days">
+                        <input type="button" value="Save" class="aui-button-primary aui-button">
+                    </div>
+                    <div class="description">
+                        Give the Number of Days in which TimehseetEntry Modifications (Delete, Edit, Add) should be allowed.
+                        Default : 30 Days.
+                    </div>
+                </div>
+            </fieldset>
+        </form>
         <h2>Task Scheduling</h2>
         <form id="modify-scheduling" class="aui">
             <h3>Inactive Settings</h3>

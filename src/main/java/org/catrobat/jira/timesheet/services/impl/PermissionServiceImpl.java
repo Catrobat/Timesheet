@@ -284,7 +284,7 @@ public class PermissionServiceImpl implements PermissionService {
             throw new PermissionException("GoogleDocsImport has been Disabled. " +
                     "Talk to a Timesheet Admin if you still need to import a timesheet.");
         }
-        checkTimesheetAccess("add", user, sheet, beginDate, isGoogleDocsImport);
+        //checkTimesheetAccess("add", user, sheet, beginDate, isGoogleDocsImport);
     }
 
     @Override

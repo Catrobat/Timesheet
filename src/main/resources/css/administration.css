@@ -126,3 +126,22 @@ div.change-details {
 #delete-user-select{
     margin: 15px;
 }
+
+.input-header{
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom : 8px;
+}
+
+.form-element-container{
+    display : flex;
+    align-items : center;
+}
+
+.form-element-container > input {
+    margin-left: 10px;
+}
+
+.form-group{
+    margin-bottom: 10px;
+}
