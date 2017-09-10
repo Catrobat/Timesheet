@@ -50,6 +50,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
         ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
+
         if (found.length > 2) {
             throw new ServiceException("Found more than two Timesheets with the same UserKey.");
         } else if (found.length == 0) {

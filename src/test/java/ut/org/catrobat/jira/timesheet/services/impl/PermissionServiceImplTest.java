@@ -11,6 +11,7 @@ import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserManager;
+import electric.xml.io.model.All;
 import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
@@ -70,6 +71,8 @@ public class PermissionServiceImplTest {
 
         teamService = mock(TeamService.class);
         ConfigService configService = mock(ConfigService.class);
+        SchedulingService schedulingService = mock(SchedulingService.class);
+        AllowedModUsersService allowedModUsersService = mock(AllowedModUsersService.class);
         GroupManager groupManager = mock(GroupManager.class);
         UserManager jiraUserManager = mock(UserManager.class);
         JiraAuthenticationContext jiraAuthenticationContext = mock(JiraAuthenticationContext.class);
@@ -81,7 +84,7 @@ public class PermissionServiceImplTest {
         PowerMockito.when(ComponentAccessor.getApplicationProperties()).thenReturn(applicationProperties);
         when(applicationProperties.getString(APKeys.JIRA_BASEURL)).thenReturn("jira.catrob.at");
 
-        permissionService = new PermissionServiceImpl(teamService, configService);
+        permissionService = new PermissionServiceImpl(teamService, configService, schedulingService, allowedModUsersService);
 
         //users / roles
         coord = mock(ApplicationUser.class);

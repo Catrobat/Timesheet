@@ -126,7 +126,9 @@ public class SchedulingServiceImpl implements SchedulingService {
             ao.create(Scheduling.class).save();
             scheduling = ao.find(Scheduling.class);
         }
-
+        if(scheduling[0].getMaxModificationdDays() == 0){
+            return 30;
+        }
         return scheduling[0].getMaxModificationdDays();
     }
 

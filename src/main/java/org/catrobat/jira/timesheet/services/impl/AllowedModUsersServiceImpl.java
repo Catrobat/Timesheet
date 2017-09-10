@@ -24,6 +24,7 @@ public class AllowedModUsersServiceImpl implements AllowedModUsersService {
     @Override
     public boolean checkIfUserIsInList(String user_key){
         LOGGER.error("checking if user with key: " + user_key + " exists");
+
         return ao.find(AllowedModUsers.class, Query.select().where("USER_KEY = ?", user_key)).length == 1;
     }
 

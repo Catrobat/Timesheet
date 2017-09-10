@@ -333,6 +333,7 @@ public class TeamServiceImpl implements TeamService {
                 if(duration > max_duration) {
                     LOGGER.error("We have e new most acive team: " + current_team.getTeamName());
                     result = current_team;
+                    max_duration = duration;
                 }
             }
         }

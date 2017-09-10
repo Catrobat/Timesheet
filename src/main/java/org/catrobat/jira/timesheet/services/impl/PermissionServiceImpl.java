@@ -20,10 +20,9 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.scheduler.SchedulerService;
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
+import org.catrobat.jira.timesheet.services.*;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,12 +40,19 @@ public class PermissionServiceImpl implements PermissionService {
     private static final boolean DEBUG_MODE = true;
     private final TeamService teamService;
     private final ConfigService configService;
+    private final SchedulingService schedulingService;
+    private final AllowedModUsersService allowedModUsersService;
     private final String BASE_URL = ComponentAccessor.getApplicationProperties().getString(APKeys.JIRA_BASEURL);
     private boolean GOOGLE_DOCS_IMPORT_ENABLED = false; // Patch2: set to false!
 
-    public PermissionServiceImpl(TeamService teamService, ConfigService configService) {
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(PermissionService.class);
+
+    public PermissionServiceImpl(TeamService teamService, ConfigService configService, SchedulingService schedulerService,
+                                 AllowedModUsersService allowedModUsersService) {
         this.teamService = teamService;
         this.configService = configService;
+        this.schedulingService = schedulerService;
+        this.allowedModUsersService = allowedModUsersService;
     }
 
     @Override
@@ -311,10 +317,15 @@ public class PermissionServiceImpl implements PermissionService {
 
     private void checkTimesheetAccess(String method, ApplicationUser user, Timesheet sheet, Date beginDate, boolean isGoogleDocsImport) throws PermissionException {
         if (userOwnsSheet(user, sheet)) {
-            if (!isGoogleDocsImport) {
-                if (dateIsOlderThanAMonth(beginDate)) {
-                    throw new PermissionException("You can not " + method + " an entry that is older than 30 days.");
-                }
+            if(allowedModUsersService.checkIfUserIsInList(user.getKey())){
+                LOGGER.error("User is in Unlimited Mod List so this action is allowed!");
+                return;
+            }
+            if (dateIsOlderThanMaxModTime(beginDate)) {
+                int tolerant_days = schedulingService.getMaxModificationDays();
+
+                throw new PermissionException("You can not " + method + " an entry that is older than " +
+                        tolerant_days + " days.");
             } else {
                 if (dateIsOlderThanFiveYears(beginDate)) {
                     throw new PermissionException("You can not " + method + " an imported entry that is older than 5 years.");
@@ -325,12 +336,15 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
-    private boolean dateIsOlderThanAMonth(Date date) {
+    private boolean dateIsOlderThanMaxModTime(Date date) {
         Instant instant = date.toInstant();
         ZonedDateTime dataTime = instant.atZone(ZoneId.systemDefault());
-        ZonedDateTime aMonthAgo = ZonedDateTime.now().minusDays(30);
 
-        return dataTime.isBefore(aMonthAgo);
+        int tolerant_days = schedulingService.getMaxModificationDays();
+
+        ZonedDateTime latest_possible_date = ZonedDateTime.now().minusDays(tolerant_days);
+
+        return dataTime.isBefore(latest_possible_date);
     }
 
     private boolean dateIsOlderThanFiveYears(Date date) {
