@@ -19,4 +19,8 @@ public interface SchedulingService {
     boolean isDateOlderThanXWeeks(Date date, int weeks);
 
     boolean isOlderThanRemainingTime(Date date);
+
+    int getMaxModificationDays();
+
+    void setMaxModificationDays(int days);
 }

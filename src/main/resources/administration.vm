@@ -377,7 +377,7 @@
                         <input type="button" value="Save" class="aui-button-primary aui-button" id="save-allowed-mod-users">
                     </div>
                     <div class="description">
-                        List Of Users who have no Modification restriction.
+                        List Of Users who have no Modification restriction.<br>
                         The Dropdown only shows Users which have a Timesheet and are currently active.
                     </div>
                 </div>
@@ -387,7 +387,7 @@
                     </label>
                     <div class="form-element-container" name="modification-day-limit">
                         <input type="number" class="text" id="modification-day-limit" placeholder="Modification Limit in Days">
-                        <input type="button" value="Save" class="aui-button-primary aui-button">
+                        <input type="button" value="Save" class="aui-button-primary aui-button" id="save-modification-day-limit">
                     </div>
                     <div class="description">
                         Give the Number of Days in which TimehseetEntry Modifications (Delete, Edit, Add) should be allowed.

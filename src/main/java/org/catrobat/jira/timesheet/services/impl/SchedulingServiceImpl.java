@@ -117,4 +117,29 @@ public class SchedulingServiceImpl implements SchedulingService {
 
         return dataTime.isBefore(xWeeksAgo);
     }
+
+    @Override
+    public int getMaxModificationDays(){
+        Scheduling[] scheduling = ao.find(Scheduling.class);
+
+        if (scheduling.length == 0) {
+            ao.create(Scheduling.class).save();
+            scheduling = ao.find(Scheduling.class);
+        }
+
+        return scheduling[0].getMaxModificationdDays();
+    }
+
+    @Override
+    public void setMaxModificationDays(int days){
+        Scheduling[] scheduling = ao.find(Scheduling.class);
+
+        if (scheduling.length == 0) {
+            ao.create(Scheduling.class).save();
+            scheduling = ao.find(Scheduling.class);
+        }
+
+        scheduling[0].setMaxModificationdDays(days);
+        scheduling[0].save();
+    }
 }

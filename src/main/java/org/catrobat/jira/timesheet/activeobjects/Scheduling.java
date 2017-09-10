@@ -17,5 +17,5 @@ public interface Scheduling extends Entity {
     void setOutOfTime(int outOfTime);
 
     int getMaxModificationdDays();
-    void setMaxModificationdDays();
+    void setMaxModificationdDays(int days);
 }

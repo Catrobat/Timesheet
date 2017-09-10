@@ -154,4 +154,25 @@ public class SchedulingRest {
 
         return Response.noContent().build();
     }
+
+    @POST
+    @Path("/saveMaxModificationDays/{maxModDays}")
+    public Response saveMaxModificationDays(@Context HttpServletRequest request, final @PathParam("maxModDays") int max_mod_days){
+        try {
+            schedulingService.setMaxModificationDays(max_mod_days);
+        }catch (Exception e){
+           return Response.serverError().entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("/getMaxModificationDays")
+    public Response getMaxModificationDays(@Context HttpServletRequest request){
+        try{
+            return Response.ok().entity(schedulingService.getMaxModificationDays()).build();
+        }catch (Exception e){
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+    }
 }

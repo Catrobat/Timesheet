@@ -1066,6 +1066,54 @@ AJS.toInit(function () {
         })
     });
 
+    (function initMaxModificationDays(){
+        AJS.$.ajax({
+            url : restBaseUrl + "/scheduling/getMaxModificationDays",
+            type : "GET",
+            success : function (data) {
+                setMaxModificationDays(data);
+            },
+            fail : function (err) {
+                console.error(err.responseText);
+            }
+        })
+    })();
+
+    function setMaxModificationDays(days){
+        console.log("days to set: " + days);
+        if(days !== 0)
+            AJS.$("#modification-day-limit").val(days);
+    }
+
+    AJS.$("#save-modification-day-limit").on("click", function (e) {
+        var days_to_save = AJS.$("#modification-day-limit").val() === "" ? 0 : AJS.$("#modification-day-limit").val();
+        console.log("days to save: " + days_to_save);
+
+        AJS.$.ajax({
+            url : restBaseUrl + "/scheduling/saveMaxModificationDays/" + days_to_save,
+            type : "POST",
+            success : function () {
+                AJS.messages.success({
+                    title : "Success!",
+                    body : "Max Modification Days have successfully been saved.",
+                    fadeout : true,
+                    delay: 3000,
+                    duration: 3000
+                });
+            },
+            fail : function (err) {
+                AJS.messages.error({
+                    title : "Error!",
+                    body : "Something went wrong while processing your Request<br> " +
+                        "Reason :" + err.responseText,
+                    fadeout : true,
+                    delay: 3000,
+                    duration: 3000
+                })
+            }
+        })
+    });
+
     function resetTimesheets() {
         AJS.$.ajax({
             type:"DELETE",
