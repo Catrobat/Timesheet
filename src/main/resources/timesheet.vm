@@ -58,7 +58,8 @@
 <h1 id="timesheet-owner-private"></h1>
 
 <div id="reactivate-link" style="display: none; margin-bottom: 15px; margin-top: 10px;">
-   <p><strong><a href="#" onclick="showReactivateTimesheetDialog()">Click to Reactivate your Timesheet</a></strong></p>
+   <p ><strong><a id="reactivation-link-text"
+                  href="#" onclick="showReactivateTimesheetDialog()">Click to Reactivate your Timesheet</a></strong></p>
 </div>
 
 <div id="own-timesheet-link" style="display: none; margin-bottom: 15px; margin-top: 10px;">

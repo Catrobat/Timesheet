@@ -1124,8 +1124,8 @@ AJS.toInit(function () {
                     title:"Success",
                     body:"All Timesheets & Entries have been deleted!",
                     fadeout: true,
-                    delay: 5000,
-                    duration: 5000
+                    delay: 3000,
+                    duration: 3000
                     })
             },
             error:function () {

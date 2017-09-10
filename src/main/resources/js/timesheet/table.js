@@ -716,7 +716,9 @@ function reactivateTimesheet(){
     }).done(function() {
         AJS.messages.success({
             title: "Success!",
-            body: "<br>You have sucessfully reactivated your timesheet!"
+            body: "<br>You have sucessfully reactivated your timesheet!",
+            delay: 3000,
+            duration: 3000
         });
 
         timesheetData_.state = "ACTIVE";
