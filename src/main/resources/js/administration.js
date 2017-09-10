@@ -999,8 +999,72 @@ AJS.toInit(function () {
 
         users.forEach(function (item) {
             select_list[select_list.options.length] = new Option(item.displayName, item.userKey);
-        })
+        });
+
+        getCurrentAllowedModUsers();
     }
+
+    function getCurrentAllowedModUsers(){
+        console.log("retrieving allowed mod users");
+        AJS.$.ajax({
+            url : restBaseUrl + "/config/getAllowedModUsers",
+            type : "GET",
+            success : function (data) {
+                console.log("we got our Allowed Mod users");
+                console.log(data);
+                setCurrentAllowedModUsers(data);
+            },
+            fail : function (error) {
+                console.error(error.responseText);
+            }
+        });
+    }
+
+    function setCurrentAllowedModUsers(users) {
+        var user_list = [];
+
+        users.forEach(function (item) {
+            user_list.push({
+                id : item.userKey,
+                text : item.displayName
+            })
+        });
+
+        AJS.$("#permitted-users-modify").select2("data", user_list);
+    }
+
+    AJS.$("#save-allowed-mod-users").on("click", function (e) {
+        console.log("saving allowed Mod users");
+
+        var list = AJS.$("#permitted-users-modify").select2("data");
+        var data = [];
+
+        list.forEach(function (item) {
+            data.push(item.id);
+        });
+
+        console.log("data to save is");
+        console.log(JSON.stringify(data));
+
+        AJS.$.ajax({
+            url : restBaseUrl + "/config/updateAllowedModUsers",
+            type : "Post",
+            contentType: "application/json",
+            data : JSON.stringify(data),
+            success : function () {
+                AJS.messages.success({
+                    title : "Success",
+                    body : "Allowed Mod users have successfully been saved!",
+                    fadeout : true,
+                    delay: 2000,
+                    duration: 2000
+                })
+            },
+            fail : function (err) {
+                console.error(err.responseText);
+            }
+        })
+    });
 
     function resetTimesheets() {
         AJS.$.ajax({

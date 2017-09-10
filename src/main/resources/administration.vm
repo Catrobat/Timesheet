@@ -374,9 +374,10 @@
                                 placeholder="Unlimited Modification Access" style="margin-bottom: 15px; margin-top: 15px" multiple="multiple">
                             <option></option>
                         </select>
-                        <input type="button" value="Save" class="aui-button-primary aui-button">
+                        <input type="button" value="Save" class="aui-button-primary aui-button" id="save-allowed-mod-users">
                     </div>
                     <div class="description">
+                        List Of Users who have no Modification restriction.
                         The Dropdown only shows Users which have a Timesheet and are currently active.
                     </div>
                 </div>

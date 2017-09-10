@@ -213,6 +213,7 @@
         <entity>org.catrobat.jira.timesheet.activeobjects.Group</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin</entity>
         <entity>org.catrobat.jira.timesheet.activeobjects.Scheduling</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.AllowedModUsers</entity>
     </ao>
 
     <!-- rest-resources -->

@@ -26,10 +26,7 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonCategory;
 import org.catrobat.jira.timesheet.rest.json.JsonConfig;
 import org.catrobat.jira.timesheet.rest.json.JsonTeam;
-import org.catrobat.jira.timesheet.services.CategoryService;
-import org.catrobat.jira.timesheet.services.ConfigService;
-import org.catrobat.jira.timesheet.services.PermissionService;
-import org.catrobat.jira.timesheet.services.TeamService;
+import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.catrobat.jira.timesheet.utility.DatabaseUtil;
 
@@ -49,15 +46,19 @@ public class ConfigResourceRest {
     private final TeamService teamService;
     private final CategoryService categoryService;
     private final PermissionService permissionService;
+    private final AllowedModUsersService allowedModUsersService;
     private final ActiveObjects ao;
 
+
     public ConfigResourceRest(final ConfigService configService, final TeamService teamService,
-            final CategoryService categoryService, final PermissionService permissionService, ActiveObjects ao) {
+            final CategoryService categoryService, final PermissionService permissionService, ActiveObjects ao,
+            final AllowedModUsersService allowedModUsersService) {
         this.configService = configService;
         this.teamService = teamService;
         this.categoryService = categoryService;
         this.permissionService = permissionService;
         this.ao = ao;
+        this.allowedModUsersService = allowedModUsersService;
     }
 
     @GET
@@ -428,4 +429,31 @@ public class ConfigResourceRest {
         return Response.noContent().build();
     }
 
+    @POST
+    @Path("/updateAllowedModUsers")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateAllowedModUsers(final ArrayList<String> user_keys, @Context HttpServletRequest request){
+        try{
+            allowedModUsersService.update(user_keys);
+        }catch (Exception e){
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("checkIfUserIsInAllowedModGroup/{userKey}")
+    public Response checkIfUserIsInAllowedModGroup(@Context HttpServletRequest request, final @PathParam("userKey") String user_key){
+        try{
+            return Response.ok().entity(allowedModUsersService.checkIfUserIsInList(user_key)).build();
+        }catch (Exception e){
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("getAllowedModUsers")
+    public Response getAllowedModUsers(@Context HttpServletRequest request){
+        return Response.ok().entity(allowedModUsersService.getAllowedModUsers()).build();
+    }
 }
