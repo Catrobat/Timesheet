@@ -13,6 +13,7 @@
     var isCoordinator = $isCoordinator;
     var isMasterThesisTimesheet = $isMasterThesisTimesheet;
     var isSupervisor = $isReadOnlyUser;
+    var isInit = $isInit;
 </script>
 
 <script type="application/javascript">
@@ -295,7 +296,7 @@
             </div>
             <div class="field-group">
                 <label for="timesheet-hours-text">Target Total Timesheet Hours</label>
-                <input class="text" type="text" id="timesheet-hours-text"
+                <input class="text" type="text" id="timesheet-hours-text" disabled="disabled"
                        name="timesheet-hours-text"
                        title="timesheet-hours-text">
 
@@ -305,11 +306,15 @@
             </div>
             <div class="field-group">
                 <label for="timesheet-hours-lectures">Lectures</label>
-                <input class="text" type="text" id="timesheet-hours-lectures" name="timesheet-hours-lectures"
-                       title="timesheet-hours-lectures">
+                <div id="lectures-container">
+                    ##filled out by javascript
+                </div>
+                <!--input class="text" type="text" id="timesheet-hours-lectures" name="timesheet-hours-lectures"
+                       disabled="disabled"
+                       title="timesheet-hours-lectures"-->
 
                 <div class="description">
-                    Shows your lectures.
+                    Shows your lectures. Click on the + symbol to add an additional Lecture.
                 </div>
             </div>
 

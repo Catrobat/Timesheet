@@ -1,6 +1,5 @@
 "use strict";
 
-
 function isReadOnlyUser(userName, config) {
     if (config.readOnlyUsers) {
         var readOnlyUsers = config.readOnlyUsers.split(',');
@@ -12,7 +11,6 @@ function isReadOnlyUser(userName, config) {
     }
     return false;
 }
-
 
 // TODO: isMasterThesisTimesheet ONLY works for your own Timesheets! Not for the one you are currently viewing!
 function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
@@ -157,6 +155,7 @@ function calculateTheoryTime(timesheetData) {
 }
 
 function initTimesheetInformationValues(timesheetData) {
+
     var target_hours_rounded = toFixed(timesheetData.targetHours, 2);
     var hours_done_rounded = toFixed(timesheetData.targetHoursCompleted, 2)
         + toFixed(timesheetData.targetHoursRemoved, 2);
@@ -167,7 +166,26 @@ function initTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours, 2) - hours_done_rounded);
     AJS.$("#timesheet-target-hours-theory").val(toFixed(timesheetData.targetHourTheory, 2));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
-    AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
+
+    console.log("appending lectures");
+
+    AJS.$("#lectures-container").empty();
+    var lecutures = timesheetData.lectures;
+    var splitted = lecutures.split("@/@");
+
+    splitted.forEach(function (item, index) {
+        var element;
+        index === 0 ? element = "<div>" : element = "<div class='lecture-element'>";
+
+        element += "<input class='text' type='text' name='timesheet-hours-lectures' disabled='disabled' value='" + item + "'>";
+
+        if(index === 0)
+            element += "<span id='add-lecture' class='aui-icon aui-icon-small aui-iconfont-add'>Add new Lecture to Account</span>";
+
+        element += "</div>";
+
+        AJS.$("#lectures-container").append(element)
+    });
 
     if (isAdmin) {
         AJS.$("#substractTimesheetHours").empty();
@@ -206,6 +224,10 @@ function initTimesheetInformationValues(timesheetData) {
 
 function setProgressBar(total, done){
     console.log("initiating progress bar: total: " + total + " done: " + done);
+
+    if(total == 0)
+        return;
+
     var percent = Math.round(done * 100 / total);
     var percent_string = "" + percent + "%";
 
@@ -231,12 +253,31 @@ function updateProgressBar(){
             setProgressBar(target_hours_rounded, hours_done_rounded);
         },
         fail : function (err) {
-            alert("somethign went wrong here");
+            alert("something went wrong here " + err.responseText);
         }
     })
 }
 
 function updateTimesheetInformationValues(timesheetData) {
+    AJS.$("#lectures-container").empty();
+
+    var lecutures = timesheetData.lectures;
+    var splitted = lecutures.split("@/@");
+
+    splitted.forEach(function (item, index) {
+        var element;
+        index === 0 ? element = "<div>" : element = "<div class='lecture-element'>";
+
+        element += "<input class='text' type='text' name='timesheet-hours-lectures' disabled='disabled' value='" + item + "'>";
+
+        if(index === 0)
+            element += "<span id='add-lecture' class='aui-icon aui-icon-small aui-iconfont-add'>Add new Lecture to Account</span>";
+
+        element += "</div>";
+
+        AJS.$("#lectures-container").append(element)
+    });
+
     AJS.$("#timesheet-hours-substract").val(toFixed(timesheetData.targetHoursRemoved, 2));
     AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
     AJS.$("#timesheet-hours-text").val(toFixed(timesheetData.targetHours, 2));
@@ -245,7 +286,15 @@ function updateTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-remain").val(toFixed(AJS.$("#timesheet-hours-text").val() - AJS.$("#timesheet-hours-theory").val()
         - AJS.$("#timesheet-hours-practical").val() - (-AJS.$("#timesheet-hours-substract").val()), 2));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
-    AJS.$("#timesheet-hours-lectures").val(timesheetData.lectures);
+
+    AJS.$("#add-lecture").off();
+
+    AJS.$("#add-lecture").on("click.timesheet", function (e) {
+        e.preventDefault();
+
+        console.log("add lecture was clicked");
+        showInitTimesheetReasonDialog(false);
+    });
 }
 
 function toUTCTimeString(date) {

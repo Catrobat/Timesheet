@@ -1,6 +1,4 @@
 "use strict";
-
-//global field
 var timesheetEntry;
 
 // variables to handle how error messages and flags appear/disappear
@@ -22,7 +20,7 @@ function populateTable(timesheetDataReply) {
         AJS.messages.generic({
             title: 'Timesheet Information.',
             closeable: true,
-            body: '<p> Congratulations you sucessfully created your own ' +
+            body: '<p> Congratulations you successfully created your own ' +
             'Timesheet. The Timesheet add-on provides tracking your time ' +
             'data in a comfortable way and offers several visualizations ' +
             'for your data. An Import-function for existing timesheet entries ' +
@@ -65,7 +63,7 @@ function populateTable(timesheetDataReply) {
                 body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
             });
         }
-    } else if ((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) {
+    } else if (((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) && !isInit) {
 
         // FIXME: is this banner needed?
         AJS.messages.warning({
@@ -85,6 +83,18 @@ function populateTable(timesheetDataReply) {
     else {
         AJS.$("#inactive-header").hide();
     }
+
+    if(isInit && timesheetData_.targetHours == 0){
+        console.log("We created a new Dialog showing Init Dialog");
+        showInitTimesheetReasonDialog(true);
+    }
+
+    AJS.$("#add-lecture").on("click.timesheet", function (e) {
+        e.preventDefault();
+
+        console.log("add lecture was clicked");
+        showInitTimesheetReasonDialog(false);
+    });
 
     if(sessionStorage.getItem("timesheetID") !== null){
         showViewOwnTimesheetLink();
@@ -261,7 +271,20 @@ function renderFormRow(timesheetData, entry, saveOptions, isModified) {
         event.preventDefault();
         if(timesheetData.state.includes("INACTIVE")) {
             showInactiveHint("CREATE");
-        }else {
+        }else if(timesheetData.targetHours === 0) {
+            AJS.messages.warning({
+                title : "Warning!",
+                body : "You have not given any Lectures yet, please init Your data!<br>" +
+                    "Init Dialog will be shown",
+                fadeout: true,
+                delay: 3000,
+                duration: 3000
+            });
+
+            setTimeout(showInitTimesheetReasonDialog(true), 1500);
+        }
+        else
+        {
             submit(timesheetData, saveOptions, form, entry.entryID,
                 entry.isGoogleDocImport);
         }
@@ -660,7 +683,10 @@ function showInactiveHint(action){
         title: "INACTIVITY HINT",
         body : "<br> You are " + timesheetData_.state + ", if you want to " + action + " one of your entries either wait till the End of your " +
         "inactivity or <a class='reactivate-timesheet' href=\"#\"'>enable</a> it again. <br> " +
-        "If you enable your sheet, the end date of your inactivity will be set to <strong>" + new Date().toDateString() +"</strong>"
+        "If you enable your sheet, the end date of your inactivity will be set to <strong>" + new Date().toDateString() +"</strong>",
+        fadeout: true,
+        delay: 3000,
+        duration: 3000
     });
 
     AJS.$(".reactivate-timesheet").on("click", function(){
@@ -697,6 +723,143 @@ function showReactivateTimesheetDialog(){
     dialog.show();
 }
 
+function showInitTimesheetReasonDialog(isInit){
+    var dialog = new AJS.Dialog({
+        width: 570,
+        height: 370,
+        id: "timesheet-init-dialog",
+        closeOnOutsideClick: false
+    });
+
+    var content_header;
+    isInit ? content_header = "Please Give the Reason for Your Timesheet" :
+        content_header = "Please give the Lecture and Hours";
+
+    var content =
+        "<h3 style='color:#1980EC' >" + content_header + "</h3>" +
+        "<form class='aui'>" +
+                "<div class='field-group'>" +
+                    "<input type='text' class='text' id ='timesheet-reason' name='timesheet-reason' placeholder='Reason'>" +
+                    "<label for='timesheet-reason'>" +
+                        "Lecture <span class='aui-icon icon-required'>Required</span>" +
+                    "</label>" +
+                    "<div class='description'>" +
+                        "Please give the Lecture for your Timesheet (Bachelor Thesis, Master Thesis, Mobile Applications etc."+
+                    "</div>" +
+                    "<div class='error' style='display:none' id='reason-error'>" +
+                        "You need to give a Reason for your Timesheet!" +
+                    "</div>" +
+                "</div>" +
+                "<div class='field-group'>" +
+                    "<input type='number' class='text' id='timesheet-ects' name='timsheet-ects' placeholder='Hours of Your Lecture'>" +
+                    "<label for='timesheet-ects'>" +
+                        "Hours (ECTS * 30) <span class='aui-icon icon-required'>Required</span>"+
+                    "</label>" +
+                    "<div class='description'>" +
+                        "Give the amount of Hours the lecture takes to complete (ECTS * 30)" +
+                    "</div>" +
+                    "<div class='error' style='display:none' id='hours-error'>" +
+                        "You need to give the desired Hours for your lecture!" +
+                    "</div>" +
+                "</div>" +
+        "</form>";
+
+    if(isInit)
+        dialog.addHeader("Init Your Timesheet");
+    else
+        dialog.addHeader("Add a new Lecture");
+
+    dialog.addPanel("Confirm", content, "panel-body");
+
+    dialog.addButton("Submit", function () {
+        checkLectureInputAndSendDataToServer(dialog)
+    });
+
+    if(!isInit){
+        dialog.addButton("Cancel", function () {
+            dialog.remove();
+        });
+    }
+
+    dialog.gotoPage(0);
+    dialog.gotoPanel(0);
+
+    dialog.show();
+}
+
+function checkLectureInputAndSendDataToServer(dialog){
+    var reason = AJS.$("#timesheet-reason").val();
+    var hours = AJS.$("#timesheet-ects").val();
+
+    if(reason !== "" && hours !== ""){
+        sendLectureDataToServer(reason, hours, dialog);
+    }else{
+        if(reason == "")
+            document.getElementById("reason-error").style.display = "block";
+        if(hours == "")
+            document.getElementById("hours-error").style.display = "block";
+    }
+}
+
+function sendLectureDataToServer(reason, hours, dialog) {
+    var data = {
+        reason : reason + " (" + hours + " h)",
+        hours : hours
+    };
+
+    AJS.$.ajax({
+        url : restBaseUrl + "/updateTimesheetReasonData",
+        type : "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success : function (data) {
+            console.log("Data has successfully been saved");
+
+            dialog.remove();
+            handleTimesheetReasonDataSuccess(data)
+        },
+        fail : function (err) {
+            console.error(err.responseText);
+
+            AJS.message.error({
+                tile : "Error!",
+                body : "Reason: " + err.responseText
+            });
+        }
+    })
+}
+
+function handleTimesheetReasonDataSuccess(data){
+    var success_body = "<br> Your Data Has successfully been saved!";
+    var additional_info = "<br><strong>Have Fun during Your Time in the Catrobat Project</strong>";
+
+    if(isInit)
+        success_body += additional_info;
+
+    updateCurrentTimesheetData(data);
+    updateProgressBar();
+    updateTimesheetInformationValues(timesheetData_);
+
+    console.log("handling init Success");
+
+    setTimeout(function(){
+        AJS.messages.success({
+            title : "Success!",
+            body : success_body,
+            fadeout: true,
+            delay: 3000,
+            duration: 3000
+        })
+    }, 500)
+}
+
+function updateCurrentTimesheetData(data){
+    Object.keys(data).forEach(function (key) {
+        console.log("setting: " + key);
+        timesheetData_[key] = data[key];
+    });
+}
+
 function reactivateTimesheet(){
     console.log("reactivating timesheet: " + timesheetID);
 
@@ -717,6 +880,7 @@ function reactivateTimesheet(){
         AJS.messages.success({
             title: "Success!",
             body: "<br>You have sucessfully reactivated your timesheet!",
+            fadeout: true,
             delay: 3000,
             duration: 3000
         });

@@ -40,9 +40,11 @@ AJS.toInit(function () {
         AJS.$("#timesheet-owner-private").show();
     }
 
-    
+    if(isAdmin)
+        AJS.$("#timesheet-hours-save-button").show();
+
 // Don't touch the .submit function below - otherwise Firefox doesn't like it any more!
-    AJS.$("#timesheet-hours-save-button").show();
+
     AJS.$("#timesheet-information").submit(function (e) {
         e.preventDefault();
         
@@ -72,10 +74,23 @@ AJS.toInit(function () {
             
         AJS.$.when(timesheetFetched)
             .done(function (existingTimesheetData) {
-            	
+            	var lectures = "";
+
+                console.log("elements");
+                console.log(AJS.$("[name=timesheet-hours-lectures]"));
+
+                for(var i = 0; i < AJS.$("[name=timesheet-hours-lectures]").length; i++){
+                    var item = AJS.$("[name=timesheet-hours-lectures]")[i];
+
+                    if(i == 0)
+                        lectures += AJS.$(item).val();
+                    else
+                        lectures += "@/@" +  AJS.$(item).val();
+                }
+
                 var timesheetUpdateData = {
                     timesheetID: existingTimesheetData.timesheetID,
-                    lectures: AJS.$("#timesheet-hours-lectures").val(),
+                    lectures: lectures,
                     reason: AJS.$("#timesheet-substract-hours-text").val(),
                     targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
                     targetHourTheory: toFixed(AJS.$("#timesheet-target-hours-theory").val(), 2),
@@ -121,8 +136,10 @@ AJS.toInit(function () {
     if (timesheetIDOfUser) {
         fetchData(timesheetIDOfUser);
         var param = "?id=" + timesheetIDOfUser;
+
         var url_json = AJS.$("#download-json").attr("href");
         var url_csv = AJS.$("#download-csv").attr("href");
+
         AJS.$("#download-json").attr("href", url_json + param);
         AJS.$("#download-csv").attr("href", url_csv + param);
     }
@@ -452,7 +469,7 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     });
 
     initTimesheetInformationValues(timesheetData_);
-    updateTimesheetInformationValues(timesheetData_);
+    //updateTimesheetInformationValues(timesheetData_);
 
     return timesheetData_;
 }

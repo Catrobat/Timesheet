@@ -24,6 +24,8 @@ import net.java.ao.DBParam;
 import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.rest.TimesheetRest;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheetReasonData;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +39,7 @@ import static com.google.common.collect.Lists.newArrayList;
 public class TimesheetServiceImpl implements TimesheetService {
 
     private final ActiveObjects ao;
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TimesheetServiceImpl.class);
 
     public TimesheetServiceImpl(ActiveObjects ao) {
         this.ao = ao;
@@ -210,5 +213,36 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public Timesheet getTimesheetByID(int id) {
         return ao.get(Timesheet.class, id);
+    }
+
+    @Override
+    public JsonTimesheetReasonData updateTimesheetReasonData(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData){
+        LOGGER.error("in Update TimesheetReasonData");
+
+        JsonTimesheetReasonData ret = new JsonTimesheetReasonData();
+
+        int current_hours = sheet.getTargetHours();
+        String current_lectures = sheet.getLectures();
+
+        LOGGER.error("current_hours: " + current_hours);
+        LOGGER.error("current_lectures: " + current_lectures);
+
+        LOGGER.error("update reason: " + jsonTimesheetReasonData.getReason());
+        LOGGER.error("update hours: " + jsonTimesheetReasonData.getHours());
+
+        sheet.setTargetHours(current_hours + jsonTimesheetReasonData.getHours());
+        ret.setHours(current_hours + jsonTimesheetReasonData.getHours());
+
+        if(current_lectures.isEmpty()){
+            sheet.setLectures(jsonTimesheetReasonData.getReason());
+            ret.setReason(jsonTimesheetReasonData.getReason());
+        }else{
+            sheet.setLectures(current_lectures + "@/@" + jsonTimesheetReasonData.getReason());
+            ret.setReason(current_lectures + "@/@" + jsonTimesheetReasonData.getReason());
+        }
+
+        sheet.save();
+
+        return ret;
     }
 }

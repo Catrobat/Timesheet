@@ -191,3 +191,14 @@ code {
     font-size: 16px;
     color: forestgreen;
 }
+
+#add-lecture{
+    cursor : pointer;
+    color : #1980EC;
+    margin-left: 8px;
+}
+
+.lecture-element{
+    margin-top : 12px;
+}
+

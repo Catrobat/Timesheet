@@ -23,6 +23,7 @@ import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.rest.TimesheetRest;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class TimesheetServlet extends HttpServlet {
     private final TimesheetService sheetService;
     private final PermissionService permissionService;
     private static final Logger logger = LoggerFactory.getLogger(TimesheetServlet.class);
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TimesheetServlet.class);
 
     public TimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
             final TimesheetService sheetService, final PermissionService permissionService) {
@@ -78,10 +80,18 @@ public class TimesheetServlet extends HttpServlet {
             if (sheetService.userHasTimesheet(userKey, false)) {
                 timesheet = sheetService.getTimesheetByUser(userKey, false);
                 logger.info("Current user (user key: {}) has an active timesheet (timesheet id: {})", userKey, timesheet.getID());
+                LOGGER.error("We created a new Timesheet for user with key: " + userKey);
+
+                if(timesheet.getTargetHours() == 0 && timesheet.getLectures().isEmpty())
+                    paramMap.put("isInit", true);
+                else
+                    paramMap.put("isInit", false);
             }
             if (timesheet == null) {
-                timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 450, 0, 0, "Bachelor Thesis",
+                timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 0, 0, 0, "",
                         "", false, Timesheet.State.ACTIVE);
+
+                paramMap.put("isInit", true);
             }
 
             if (permissionService.timesheetAdminExists()) {

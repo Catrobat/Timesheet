@@ -20,6 +20,8 @@ import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.service.ServiceException;
 import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheetReasonData;
 
 import javax.annotation.Nullable;
 import java.util.Date;
@@ -65,6 +67,8 @@ public interface TimesheetService {
 
     @Nullable
     Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException;
+
+    JsonTimesheetReasonData updateTimesheetReasonData(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData);
 
     /**
      * Returns Timesheet corresponding to a User

@@ -35,10 +35,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.regexp.RE;
 import org.catrobat.jira.timesheet.activeobjects.*;
 import org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition;
-import org.catrobat.jira.timesheet.rest.json.JsonTeam;
-import org.catrobat.jira.timesheet.rest.json.JsonTimesheet;
-import org.catrobat.jira.timesheet.rest.json.JsonTimesheetEntry;
-import org.catrobat.jira.timesheet.rest.json.JsonUser;
+import org.catrobat.jira.timesheet.rest.json.*;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
 import org.catrobat.jira.timesheet.utility.EmailUtil;
@@ -1145,5 +1142,34 @@ public class TimesheetRest {
             response_teams.add(current_team_json);
         }
         return response_teams;
+    }
+
+    @POST
+    @Path("updateTimesheetReasonData")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response setTimesheetReasonData(@Context HttpServletRequest request,
+                                           final JsonTimesheetReasonData jsonTimesheetReasonData){
+        ApplicationUser user;
+
+        try {
+            user = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        Response response = permissionService.checkUserPermission();
+        if (response != null) {
+            return response;
+        }
+
+        LOGGER.error("We want to save data: " + jsonTimesheetReasonData);
+        try{
+            Timesheet sheet = sheetService.getTimesheetByUser(user.getKey(), false);
+            sheetService.updateTimesheetReasonData(sheet, jsonTimesheetReasonData);
+
+            return Response.ok(new JsonTimesheet(sheet)).build();
+        }catch (ServiceException e){
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
     }
 }
