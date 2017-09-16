@@ -166,6 +166,7 @@ function initTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours, 2) - hours_done_rounded);
     AJS.$("#timesheet-target-hours-theory").val(toFixed(timesheetData.targetHourTheory, 2));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
+    AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData) - calculateTheoryTime(timesheetData), 2));
 
     console.log("appending lectures");
 
@@ -176,8 +177,8 @@ function initTimesheetInformationValues(timesheetData) {
     splitted.forEach(function (item, index) {
         var element;
         index === 0 ? element = "<div>" : element = "<div class='lecture-element'>";
-
         element += "<input class='text' type='text' name='timesheet-hours-lectures' disabled='disabled' value='" + item + "'>";
+        element += "<span data-lecture='" + item + "' class='aui-icon aui-icon-small aui-iconfont-delete delete-lecture'>Delete Lecture</span>";
 
         if(index === 0)
             element += "<span id='add-lecture' class='aui-icon aui-icon-small aui-iconfont-add'>Add new Lecture to Account</span>";
@@ -267,8 +268,8 @@ function updateTimesheetInformationValues(timesheetData) {
     splitted.forEach(function (item, index) {
         var element;
         index === 0 ? element = "<div>" : element = "<div class='lecture-element'>";
-
         element += "<input class='text' type='text' name='timesheet-hours-lectures' disabled='disabled' value='" + item + "'>";
+        element += "<span class='aui-icon aui-icon-small aui-iconfont-delete delete-lecture'>Delete Lecture</span>";
 
         if(index === 0)
             element += "<span id='add-lecture' class='aui-icon aui-icon-small aui-iconfont-add'>Add new Lecture to Account</span>";
@@ -288,12 +289,21 @@ function updateTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
 
     AJS.$("#add-lecture").off();
+    AJS.$(".delete-lecture");
 
     AJS.$("#add-lecture").on("click.timesheet", function (e) {
         e.preventDefault();
 
         console.log("add lecture was clicked");
         showInitTimesheetReasonDialog(false);
+    });
+
+    AJS.$(".delete-lecture").on("click.timesheet", function (e) {
+        e.preventDefault();
+        var data = e.target.getAttribute("data-lecture");
+
+        console.log("we want to delete a lecture");
+        showLectureDeletionDialog(data);
     });
 }
 

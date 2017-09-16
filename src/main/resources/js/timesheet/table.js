@@ -96,7 +96,15 @@ function populateTable(timesheetDataReply) {
         showInitTimesheetReasonDialog(false);
     });
 
-    if(sessionStorage.getItem("timesheetID") !== null){
+    AJS.$(".delete-lecture").on("click.timesheet", function (e) {
+        e.preventDefault();
+        var data = e.target.getAttribute("data-lecture");
+
+        console.log("we want to delete a lecture");
+        showLectureDeletionDialog(data);
+    });
+
+    if(sessionStorage.getItem("timesheetID") !== null || external_view){
         showViewOwnTimesheetLink();
     }
 
@@ -167,9 +175,13 @@ function showViewOwnTimesheetLink(){
     document.getElementById("own-timesheet-link").style.display = "block";
 }
 
-function viewOwnTimesheet(){
-    sessionStorage.removeItem('timesheetID');
-    location.reload();
+function viewOwnTimesheet() {
+    if (external_view) {
+        window.location = AJS.params.baseURL + "/plugins/servlet/timesheet";
+    } else {
+        sessionStorage.removeItem('timesheetID');
+        location.reload();
+    }
 }
 
 function appendEntriesToTable(timesheetData) {
@@ -697,13 +709,13 @@ function showInactiveHint(action){
 function showReactivateTimesheetDialog(){
     var dialog = new AJS.Dialog({
         width: 520,
-        height: 250,
+        height: 260,
         id: "timesheet-reactivation-dialog",
         closeOnOutsideClick: true
     });
 
-    var content = "<h3 style='text-align: center'>Do you really want to reactivate your Timesheet ?</h3>" +
-        "<h2 style='color: red; text-align: center'><strong>Please confirm your action!</strong></h2>";
+    var content = "<h3 style='text-align:center'>Do you really want to reactivate your Timesheet ?</h3>" +
+        "<h2 style='color:red;text-align:center'><strong>Please confirm your action!</strong></h2>";
 
     dialog.addHeader("Reactivate Your Timesheet");
     dialog.addPanel("Confirm", content, "panel-body");
@@ -714,6 +726,36 @@ function showReactivateTimesheetDialog(){
 
     dialog.addButton("Reactivate", function () {
         reactivateTimesheet();
+        dialog.remove();
+    });
+
+    dialog.gotoPage(0);
+    dialog.gotoPanel(0);
+
+    dialog.show();
+}
+
+function showLectureDeletionDialog(lecture){
+    var dialog = new AJS.Dialog({
+        width: 520,
+        height: 250,
+        id: "lecture-deletion-dialog",
+        closeOnOutsideClick: true
+    });
+
+    var content = "<h3 style='text-align: center'>Do you really want to delete Lecture: " + lecture + " ? <br>"+
+        "This Action cannot be undone!</h3>"+
+        "<h2 style='color: red; text-align: center'><strong>Please confirm your action!</strong></h2>";
+
+    dialog.addHeader("Delete Lecture");
+    dialog.addPanel("Confirm", content, "panel-body");
+
+    dialog.addButton("Cancel", function () {
+        dialog.remove();
+    });
+
+    dialog.addButton("Delete", function () {
+        console.log("about to delete Lecture");
         dialog.remove();
     });
 

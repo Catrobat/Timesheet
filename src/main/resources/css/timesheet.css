@@ -195,10 +195,15 @@ code {
 #add-lecture{
     cursor : pointer;
     color : #1980EC;
-    margin-left: 8px;
+    margin-left: 6px;
 }
 
 .lecture-element{
     margin-top : 12px;
+}
+
+.delete-lecture{
+    cursor: pointer;
+    margin-left: 6px;
 }
 

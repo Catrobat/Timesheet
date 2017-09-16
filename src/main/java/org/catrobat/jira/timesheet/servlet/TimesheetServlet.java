@@ -77,21 +77,58 @@ public class TimesheetServlet extends HttpServlet {
             Map<String, Object> paramMap = Maps.newHashMap();
             Timesheet timesheet = null;
 
-            if (sheetService.userHasTimesheet(userKey, false)) {
-                timesheet = sheetService.getTimesheetByUser(userKey, false);
-                logger.info("Current user (user key: {}) has an active timesheet (timesheet id: {})", userKey, timesheet.getID());
-                LOGGER.error("We created a new Timesheet for user with key: " + userKey);
+            //request with parameter getting sheet
+            if(request.getParameterMap().get("timesheetID") != null){
+                if(!permissionService.isUserEligibleForTimesheet(user)){
+                    response.setStatus(Response.Status.UNAUTHORIZED.getStatusCode());
+                    return;
+                }
+                if(request.getParameterMap().get("timesheetID").length != 1) {
+                    response.setStatus(Response.Status.CONFLICT.getStatusCode());
+                    return;
+                }
+                try{
+                    LOGGER.error("we have got a timesheet Request for: " + request.getParameterMap().get("timesheetID")[0]);
+                    timesheet = sheetService.getTimesheetByID(Integer.parseInt(request.getParameterMap().get("timesheetID")[0]));
 
-                if(timesheet.getTargetHours() == 0 && timesheet.getLectures().isEmpty())
+                    if(timesheet == null){
+                        response.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
+                        return;
+                    }if (!permissionService.userCanViewTimesheet(user,timesheet)){
+                        response.setStatus(Response.Status.UNAUTHORIZED.getStatusCode());
+                        return;
+                    }
+
+                    if (timesheet.getTargetHours() == 0 && timesheet.getLectures().isEmpty())
+                        paramMap.put("isInit", true);
+                    else
+                        paramMap.put("isInit", false);
+
+                    paramMap.put("external", true);
+
+                }catch (NumberFormatException e){
+                    response.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
+                    return;
+                }
+            }else {
+                //getting sheet for current user
+                if (sheetService.userHasTimesheet(userKey, false)) {
+                    timesheet = sheetService.getTimesheetByUser(userKey, false);
+                    logger.info("Current user (user key: {}) has an active timesheet (timesheet id: {})", userKey, timesheet.getID());
+                    LOGGER.error("We created a new Timesheet for user with key: " + userKey);
+
+                    if (timesheet.getTargetHours() == 0 && timesheet.getLectures().isEmpty())
+                        paramMap.put("isInit", true);
+                    else
+                        paramMap.put("isInit", false);
+                }
+                if (timesheet == null) {
+                    timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 0, 0, 0, "",
+                            "", false, Timesheet.State.ACTIVE);
+
                     paramMap.put("isInit", true);
-                else
-                    paramMap.put("isInit", false);
-            }
-            if (timesheet == null) {
-                timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 0, 0, 0, "",
-                        "", false, Timesheet.State.ACTIVE);
-
-                paramMap.put("isInit", true);
+                }
+                paramMap.put("external", false);
             }
 
             if (permissionService.timesheetAdminExists()) {

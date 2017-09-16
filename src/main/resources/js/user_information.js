@@ -50,6 +50,9 @@ AJS.toInit(function () {
 
             var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
 
+            var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
+                "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
+
             var current_state = userInformation[i].state;
             var current_state_color = "black";
 
@@ -68,10 +71,13 @@ AJS.toInit(function () {
                     break;
             }
 
+            var profile_link = AJS.params.baseURL + "\/secure\/ViewProfile.jspa?name=" ;
+
             if (userInformation[i].isMasterTimesheet === true) {
             	var enabledColumn = "</td><td headers='ti-enabled-m'>" + enableButton;
             	var rowm = "<tr>" +
-                "<td headers='ti-users-m' class='musers'>" + userInformation[i].userName + "<br/><div style=\"font-size:12px;\">(" + userInformation[i].email + ")</div>" +
+                "<td headers='ti-users-m' class='musers'>" +
+                    "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
 //                "</td><td headers='ti-email-m' class='memail'>" + userInformation[i].email +
                 "</td><td headers='ti-team-m' class='mteam'>" + userInformation[i].teams +
                 "</td><td headers='ti-state-m' class='mstate' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "'; >" + userInformation[i].state +
@@ -80,10 +86,9 @@ AJS.toInit(function () {
                 "</td><td headers='ti-target-total-hours-m' class='mtarget-total-hours'>" + userInformation[i].targetTotalHours +
                 "</td><td headers='ti-total-practice-hours-m' class='mtotal-practice'>" + userInformation[i].totalPracticeHours +
                 "</td><td headers='ti-hours-per-half-year-m' class='mhours-half-year'>" + userInformation[i].hoursPerHalfYear +
-                "</td><td headers='ti-hours-per-month-m' class='mhours-month'>" + userInformation[i].hoursPerMonth +
                 "</td><td headers='ti-latest-entry-date-m' class='mlatest-date'>" + latestEntryDate +
-                "</td><td headers='ti-latest-entry-hours-m' class='mlatest-hours'>" + userInformation[i].latestEntryHours +
                 "</td><td headers='ti-latest-entry-description-m' class='mlatest-description'>" + userInformation[i].latestEntryDescription +
+                "</td><td headers='ti-view-timesheet-m'>"+ view_timesheet_button +"</td>"+
                 enabledColumn +
                 "</td></tr>";
             	
@@ -92,7 +97,8 @@ AJS.toInit(function () {
             else {
             	var enabledColumn = "</td><td headers='ti-enabled'>" + enableButton;
             	var row = "<tr>" +
-                "<td headers='ti-users' class='users'>" + userInformation[i].userName + "<br/><div style=\"font-size:12px;\">(" + userInformation[i].email + ")</div>" +
+                "<td headers='ti-users' class='users'>" +
+                    "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
 //                "</td><td headers='ti-email' class='email'>" + userInformation[i].email +
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
                 "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
@@ -101,10 +107,9 @@ AJS.toInit(function () {
                 "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
                 "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
                 "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
-                "</td><td headers='ti-hours-per-month' class='hours-month'>" + userInformation[i].hoursPerMonth +
                 "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
-                "</td><td headers='ti-latest-entry-hours' class='latest-hours'>" + userInformation[i].latestEntryHours +
                 "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
+                "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
                 enabledColumn +
                 "</td></tr>";
             	
@@ -113,12 +118,28 @@ AJS.toInit(function () {
             	
             var timesheetID = userInformation[i].timesheetID;
             setEnableButton(timesheetID, enabled);
+
+            AJS.$("[name=user-" + userInformation[i].userName + "-profile]").attr("href" , profile_link);
         }
+
+        AJS.$(".view-timesheet-button").on("click", function (e) {
+            var timesheet_id = e.target.getAttribute("data-timesheet-id");
+
+            window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheet_id, "_blank");
+        });
+
+        AJS.$(".view-profile-link").on("click", function (e) {
+            var user_name = e.target.getAttribute("data-user-name");
+
+            window.open(AJS.params.baseURL + "/secure/ViewProfile.jspa?name=" + user_name, "_blank");
+        });
+
         AJS.$("#user-information-table").trigger("update");
         AJS.$("#user-information-table-master").trigger("update");
 
 
         AJS.$("#timesheet-user-statistics").empty();
+
         var numberTotal = 0;
         var numberActive = 0;
         var numberInActive = 0;

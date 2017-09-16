@@ -145,3 +145,7 @@ div.change-details {
 .form-group{
     margin-bottom: 10px;
 }
+
+.view-profile-link{
+    cursor: pointer;
+}

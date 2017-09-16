@@ -14,6 +14,7 @@
     var isMasterThesisTimesheet = $isMasterThesisTimesheet;
     var isSupervisor = $isReadOnlyUser;
     var isInit = $isInit;
+    var external_view = $external
 </script>
 
 <script type="application/javascript">
