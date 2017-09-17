@@ -207,3 +207,13 @@ code {
     margin-left: 6px;
 }
 
+#edit-total-hours{
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+#submit-total-hours{
+    cursor: pointer;
+    color: forestgreen;
+    margin-left: 6px;
+}

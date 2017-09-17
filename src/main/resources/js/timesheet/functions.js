@@ -121,6 +121,8 @@ function calculateTime(timesheetData) {
             totalMinutes = totalMinutes - minutesToFullHours * 60;
         }
     }
+    console.log("time to return: " + totalHours + totalMinutes / 60);
+
     return totalHours + totalMinutes / 60;
 }
 
@@ -155,7 +157,6 @@ function calculateTheoryTime(timesheetData) {
 }
 
 function initTimesheetInformationValues(timesheetData) {
-
     var target_hours_rounded = toFixed(timesheetData.targetHours, 2);
     var hours_done_rounded = toFixed(timesheetData.targetHoursCompleted, 2)
         + toFixed(timesheetData.targetHoursRemoved, 2);
@@ -163,16 +164,57 @@ function initTimesheetInformationValues(timesheetData) {
     setProgressBar(target_hours_rounded, hours_done_rounded);
 
     AJS.$("#timesheet-hours-text").val(target_hours_rounded);
-    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours, 2) - hours_done_rounded);
     AJS.$("#timesheet-target-hours-theory").val(toFixed(timesheetData.targetHourTheory, 2));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
     AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData) - calculateTheoryTime(timesheetData), 2));
 
-    console.log("appending lectures");
+    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours - AJS.$("#timesheet-hours-theory").val()
+        - AJS.$("#timesheet-hours-practical").val() - timesheetData.targetHoursRemoved, 2));
+
+    AJS.$("#edit-total-hours").on("click", function (e) {
+        AJS.$("#timesheet-hours-text").removeAttr("disabled");
+        AJS.$("#submit-total-hours").css("visibility" , "visible");
+    });
+
+    AJS.$("#submit-total-hours").on("click", function (e) {
+        console.log("submitting new total hours");
+        var value;
+        AJS.$("#timesheet-hours-text").val() === "" ? value = 0 : value = AJS.$("#timesheet-hours-text").val();
+
+        AJS.$.ajax({
+            url : restBaseUrl + "/updateTotalTargetHours/" + value,
+            type : "POST",
+            success : function (data) {
+                AJS.messages.success({
+                    title : "Success",
+                    body :"<br> Your data has been updated",
+                    fadeout: true,
+                    delay: 3000,
+                    duration: 3000
+                });
+
+                updateCurrentTimesheetData(data);
+                updateProgressBar();
+                updateTimesheetInformationValues(timesheetData_);
+
+                AJS.$("#timesheet-hours-text").attr("disabled", "disabled");
+                AJS.$("#submit-total-hours").css("visibility" , "hidden");
+            },
+            fail : function (err) {
+                AJS.messages.error({
+                    title : "Error",
+                    body : "Reason: " + err.responseText,
+                    fadeout: true,
+                    delay: 3000,
+                    duration: 3000
+                })
+            }
+        });
+    });
 
     AJS.$("#lectures-container").empty();
-    var lecutures = timesheetData.lectures;
-    var splitted = lecutures.split("@/@");
+    var lectures = timesheetData.lectures;
+    var splitted = lectures.split("@/@");
 
     splitted.forEach(function (item, index) {
         var element;
@@ -186,6 +228,21 @@ function initTimesheetInformationValues(timesheetData) {
         element += "</div>";
 
         AJS.$("#lectures-container").append(element)
+    });
+
+    AJS.$("#add-lecture").on("click.timesheet", function (e) {
+        e.preventDefault();
+
+        console.log("add lecture was clicked");
+        showInitTimesheetReasonDialog(false);
+    });
+
+    AJS.$(".delete-lecture").on("click.timesheet", function (e) {
+        e.preventDefault();
+        var data = e.target.getAttribute("data-lecture");
+
+        console.log("we want to delete a lecture");
+        showLectureDeletionDialog(data);
     });
 
     if (isAdmin) {
@@ -221,6 +278,84 @@ function initTimesheetInformationValues(timesheetData) {
         AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
         AJS.$("#timesheet-hours-substract").val(toFixed(timesheetData.targetHoursRemoved, 2));
     }
+}
+
+
+function showLectureDeletionDialog(lecture){
+    var dialog = new AJS.Dialog({
+        width: 520,
+        height: 255,
+        id: "lecture-deletion-dialog",
+        closeOnOutsideClick: true
+    });
+
+    var content = "<h3 style='text-align: center'>Do you really want to delete Lecture: " + lecture + " ?<br>"+
+        "This Action cannot be undone!</h3>"+
+        "<h2 style='color: red; text-align: center'><strong>Please confirm your action!</strong></h2>";
+
+    dialog.addHeader("Delete Lecture");
+    dialog.addPanel("Confirm", content, "panel-body");
+
+    dialog.addButton("Cancel", function () {
+        dialog.remove();
+    });
+
+    dialog.addButton("Delete", function () {
+        console.log("about to delete Lecture");
+        deleteLecture(lecture, dialog)
+    });
+
+    dialog.gotoPage(0);
+    dialog.gotoPanel(0);
+
+    dialog.show();
+}
+
+function deleteLecture(lecture, dialog){
+    var hours_string = lecture.replace(/[^0-9\.]/g, '');
+    console.log("hours_string: " + hours_string);
+    var hours;
+
+    hours = (hours_string === "" ? 0 : parseInt(hours_string));
+
+    var data ={
+        reason : lecture,
+        hours : hours
+    };
+
+    AJS.$.ajax({
+        url : restBaseUrl + "deleteLecture",
+        type : "DELETE",
+        data : JSON.stringify(data),
+        contentType : "application/json",
+        success : function (data) {
+            AJS.messages.success({
+                title : "Success!",
+                body : "Your data has been updated",
+                fadeout: true,
+                delay: 3000,
+                duration: 3000
+            });
+
+            updateCurrentTimesheetData(data);
+            updateProgressBar();
+            updateTimesheetInformationValues(timesheetData_);
+
+            dialog.remove();
+            console.log("that worked");
+        },
+        fail : function (err) {
+            AJS.messages.error({
+                title : "Error",
+                body : "<br> Reason: " + err.responseText,
+                fadeout: true,
+                delay: 3000,
+                duration: 3000
+            })
+        }
+    });
+
+    console.log(data);
 }
 
 function setProgressBar(total, done){
@@ -259,7 +394,29 @@ function updateProgressBar(){
     })
 }
 
+function updateTimesheetInfoData(){
+    AJS.$.ajax({
+        url : restBaseUrl + "timesheets/" + timesheetData_.timesheetID,
+        type : "GET",
+        success : function(data){
+            updateCurrentTimesheetData(data);
+            AJS.$.ajax({
+                url : restBaseUrl + 'timesheets/' + timesheetID + '/entries',
+                type : "GET",
+                success : function (data) {
+                    timesheetData_.entries = data;
+                    updateTimesheetInformationValues(timesheetData_);
+                }
+            });
+        }
+    })
+}
+
 function updateTimesheetInformationValues(timesheetData) {
+
+    console.log("updating timesheetInfo");
+    console.log(timesheetData);
+
     AJS.$("#lectures-container").empty();
 
     var lecutures = timesheetData.lectures;
@@ -269,7 +426,7 @@ function updateTimesheetInformationValues(timesheetData) {
         var element;
         index === 0 ? element = "<div>" : element = "<div class='lecture-element'>";
         element += "<input class='text' type='text' name='timesheet-hours-lectures' disabled='disabled' value='" + item + "'>";
-        element += "<span class='aui-icon aui-icon-small aui-iconfont-delete delete-lecture'>Delete Lecture</span>";
+        element += "<span data-lecture='" + item + "' class='aui-icon aui-icon-small aui-iconfont-delete delete-lecture'>Delete Lecture</span>";
 
         if(index === 0)
             element += "<span id='add-lecture' class='aui-icon aui-icon-small aui-iconfont-add'>Add new Lecture to Account</span>";
@@ -284,8 +441,10 @@ function updateTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-text").val(toFixed(timesheetData.targetHours, 2));
     AJS.$("#timesheet-hours-theory").val(toFixed(calculateTheoryTime(timesheetData), 2));
     AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData) - calculateTheoryTime(timesheetData), 2));
-    AJS.$("#timesheet-hours-remain").val(toFixed(AJS.$("#timesheet-hours-text").val() - AJS.$("#timesheet-hours-theory").val()
-        - AJS.$("#timesheet-hours-practical").val() - (-AJS.$("#timesheet-hours-substract").val()), 2));
+
+    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours - AJS.$("#timesheet-hours-theory").val()
+        - AJS.$("#timesheet-hours-practical").val() - timesheetData.targetHoursRemoved, 2));
+
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
 
     AJS.$("#add-lecture").off();

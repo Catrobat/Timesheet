@@ -30,8 +30,7 @@ import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -216,33 +215,56 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public JsonTimesheetReasonData updateTimesheetReasonData(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData){
+    public void updateTimesheetReasonData(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData){
         LOGGER.error("in Update TimesheetReasonData");
-
-        JsonTimesheetReasonData ret = new JsonTimesheetReasonData();
 
         int current_hours = sheet.getTargetHours();
         String current_lectures = sheet.getLectures();
 
-        LOGGER.error("current_hours: " + current_hours);
-        LOGGER.error("current_lectures: " + current_lectures);
-
-        LOGGER.error("update reason: " + jsonTimesheetReasonData.getReason());
-        LOGGER.error("update hours: " + jsonTimesheetReasonData.getHours());
-
         sheet.setTargetHours(current_hours + jsonTimesheetReasonData.getHours());
-        ret.setHours(current_hours + jsonTimesheetReasonData.getHours());
 
-        if(current_lectures.isEmpty()){
+        if(current_lectures.isEmpty())
             sheet.setLectures(jsonTimesheetReasonData.getReason());
-            ret.setReason(jsonTimesheetReasonData.getReason());
-        }else{
+        else
             sheet.setLectures(current_lectures + "@/@" + jsonTimesheetReasonData.getReason());
-            ret.setReason(current_lectures + "@/@" + jsonTimesheetReasonData.getReason());
-        }
 
         sheet.save();
+    }
 
-        return ret;
+    @Override
+    public void deleteLecture(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData){
+
+        String current_lectures = sheet.getLectures();
+        String to_delete = jsonTimesheetReasonData.getReason();
+
+        LOGGER.error("We want to delete lecture: " + to_delete);
+
+        ArrayList<String> lectures = new ArrayList<>(Arrays.asList(current_lectures.split("@/@")));
+
+        boolean deleted = false;
+        for(int i = 0; i < lectures.size(); i++){
+            if(lectures.get(i).contains(to_delete)) {
+                lectures.remove(i);
+                deleted = true;
+            }
+        }
+
+        if(!deleted){
+            LOGGER.error("lecture did not exist continue");
+            return;
+        }
+        String new_lectures = "";
+
+        for(int i = 0; i < lectures.size(); i++){
+            if(i > 0)
+                new_lectures += "@/@" + lectures.get(i);
+            else
+                new_lectures += lectures.get(i);
+        }
+
+        sheet.setLectures(new_lectures);
+        sheet.setTargetHours(sheet.getTargetHours() - jsonTimesheetReasonData.getHours());
+
+        sheet.save();
     }
 }

@@ -68,7 +68,9 @@ public interface TimesheetService {
     @Nullable
     Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException;
 
-    JsonTimesheetReasonData updateTimesheetReasonData(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData);
+    void updateTimesheetReasonData(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData);
+
+    void deleteLecture(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData);
 
     /**
      * Returns Timesheet corresponding to a User

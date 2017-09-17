@@ -89,21 +89,6 @@ function populateTable(timesheetDataReply) {
         showInitTimesheetReasonDialog(true);
     }
 
-    AJS.$("#add-lecture").on("click.timesheet", function (e) {
-        e.preventDefault();
-
-        console.log("add lecture was clicked");
-        showInitTimesheetReasonDialog(false);
-    });
-
-    AJS.$(".delete-lecture").on("click.timesheet", function (e) {
-        e.preventDefault();
-        var data = e.target.getAttribute("data-lecture");
-
-        console.log("we want to delete a lecture");
-        showLectureDeletionDialog(data);
-    });
-
     if(sessionStorage.getItem("timesheetID") !== null || external_view){
         showViewOwnTimesheetLink();
     }
@@ -735,35 +720,6 @@ function showReactivateTimesheetDialog(){
     dialog.show();
 }
 
-function showLectureDeletionDialog(lecture){
-    var dialog = new AJS.Dialog({
-        width: 520,
-        height: 250,
-        id: "lecture-deletion-dialog",
-        closeOnOutsideClick: true
-    });
-
-    var content = "<h3 style='text-align: center'>Do you really want to delete Lecture: " + lecture + " ? <br>"+
-        "This Action cannot be undone!</h3>"+
-        "<h2 style='color: red; text-align: center'><strong>Please confirm your action!</strong></h2>";
-
-    dialog.addHeader("Delete Lecture");
-    dialog.addPanel("Confirm", content, "panel-body");
-
-    dialog.addButton("Cancel", function () {
-        dialog.remove();
-    });
-
-    dialog.addButton("Delete", function () {
-        console.log("about to delete Lecture");
-        dialog.remove();
-    });
-
-    dialog.gotoPage(0);
-    dialog.gotoPanel(0);
-
-    dialog.show();
-}
 
 function showInitTimesheetReasonDialog(isInit){
     var dialog = new AJS.Dialog({
@@ -790,6 +746,9 @@ function showInitTimesheetReasonDialog(isInit){
                     "</div>" +
                     "<div class='error' style='display:none' id='reason-error'>" +
                         "You need to give a Reason for your Timesheet!" +
+                    "</div>" +
+                    "<div class='error' style='display:none' id='reason-input-error'>" +
+                        "Only Use Simple alphabetic Values [a-Z]!" +
                     "</div>" +
                 "</div>" +
                 "<div class='field-group'>" +
@@ -834,13 +793,22 @@ function checkLectureInputAndSendDataToServer(dialog){
     var hours = AJS.$("#timesheet-ects").val();
 
     if(reason !== "" && hours !== ""){
-        sendLectureDataToServer(reason, hours, dialog);
+        if(checkLectureInput(reason))
+            sendLectureDataToServer(reason, hours, dialog);
+        else
+            document.getElementById("reason-input-error").style.display = "block";
     }else{
         if(reason == "")
             document.getElementById("reason-error").style.display = "block";
         if(hours == "")
             document.getElementById("hours-error").style.display = "block";
     }
+}
+
+function checkLectureInput(reason){
+    var pattern = new RegExp(/[~`!()#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/);
+
+    return !pattern.test(reason);
 }
 
 function sendLectureDataToServer(reason, hours, dialog) {
@@ -897,7 +865,7 @@ function handleTimesheetReasonDataSuccess(data){
 
 function updateCurrentTimesheetData(data){
     Object.keys(data).forEach(function (key) {
-        console.log("setting: " + key);
+        console.log("setting: " + key + " to: " + data[key]);
         timesheetData_[key] = data[key];
     });
 }
@@ -912,7 +880,7 @@ function reactivateTimesheet(){
             AJS.messages.error({
                 title : "Error!",
                 body : "Something went wrong in the enabling process! <br> " +
-                "message : " + err.responseText
+                "message: " + err.responseText
             })
         },
         error : function (err) {
@@ -995,7 +963,9 @@ function deleteEntryClicked(viewRow, entryID) {
             var formRow = getFormRow(viewRow);
             if (formRow !== undefined) formRow.remove();
             viewRow.remove();
+
             updateProgressBar();
+            updateTimesheetInfoData();
         })
         .fail(function (error) {
         	removeSavingAndDeletingErrorMessages();
@@ -1279,6 +1249,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
                 showInavtivityInfo(timesheetEntry.inactiveEndDate);
             }
             updateProgressBar();
+            updateTimesheetInfoData();
         	removeSavingAndDeletingErrorMessages();
             var augmentedEntry = augmentEntry(timesheetData, entryData);
             saveOptions.callback(augmentedEntry, timesheetData, form);

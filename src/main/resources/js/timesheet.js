@@ -42,6 +42,8 @@ AJS.toInit(function () {
 
     if(isAdmin)
         AJS.$("#timesheet-hours-save-button").show();
+    else
+        AJS.$("#timesheet-hours-save-button").hide();
 
 // Don't touch the .submit function below - otherwise Firefox doesn't like it any more!
 

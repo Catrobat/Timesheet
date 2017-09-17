@@ -300,6 +300,9 @@
                 <input class="text" type="text" id="timesheet-hours-text" disabled="disabled"
                        name="timesheet-hours-text"
                        title="timesheet-hours-text">
+                
+                <span id="edit-total-hours" class="aui-icon aui-icon-small aui-iconfont-edit">Edit Total hours</span>
+                <span style="visibility: hidden;" id="submit-total-hours" class="aui-icon aui-icon-small aui-iconfont-approve">Submit changes</span>
 
                 <div class="description">
                     Shows your target total timesheet hours.

@@ -20,7 +20,6 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
         timesheetData.categoryNames[category.categoryName] = category.categoryID;
     });
 
-
     /*  timesheetData.categoryIDs.forEach(function (value, index) {
      console.log(value, index);
      });*/
