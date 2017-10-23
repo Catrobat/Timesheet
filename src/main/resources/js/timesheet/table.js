@@ -23,10 +23,7 @@ function populateTable(timesheetDataReply) {
             body: '<p> Congratulations you successfully created your own ' +
             'Timesheet. The Timesheet add-on provides tracking your time ' +
             'data in a comfortable way and offers several visualizations ' +
-            'for your data. An Import-function for existing timesheet entries ' +
-            'from CSV / Google Doc Timesheets is provided in addition. ' +
-            'The required import steps are shown within the ' +
-            '"Import from Google Docs - Dialog".</p>' +
+            'for your data.</p>' +
             '<p> If you notice any uncommon plugin behaviour, or need support feel free to ' +
             'contact one of the project "Coordinators", or an "Administrator".</p>'
         });
@@ -34,13 +31,13 @@ function populateTable(timesheetDataReply) {
         AJS.messages.warning({
             title: 'Timesheet Warning.',
             closeable: true,
-            body: '<p> Your Timesheet is marked as <em>disabled</em>.</p>' +
+            body: '<p> This Timesheet is marked as <em>disabled</em>.</p>' +
             '<p> You are not able to apply any changes until it is "enabled" again by an Administrator.</p>'
         });
 
         require(['aui/banner'], function (banner) {
             banner({
-                body: 'Your Timesheet is marked as <strong>disabled</strong>.'
+                body: 'This Timesheet is marked as <strong>disabled</strong>.'
             });
         });
     } else if (timesheetData.state !== "ACTIVE") {
@@ -50,7 +47,7 @@ function populateTable(timesheetDataReply) {
             if (timesheetData.state === "AUTO_INACTIVE") {
                 require(['aui/banner'], function (banner) {
                     banner({
-                        body: 'Your Timesheet is marked as <strong>' + timesheetData.state + '</strong>.'
+                        body: 'This Timesheet is marked as <strong>' + timesheetData.state + '</strong>.'
                     });
                 });
             }
@@ -60,7 +57,7 @@ function populateTable(timesheetDataReply) {
             AJS.messages.warning({
                 title: 'Timesheet Warning.',
                 closeable: true,
-                body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
+                body: '<p>This Timesheet is marked as ' + to_display + '.</p>'
             });
         }
     } else if (((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) && !isInit) {
@@ -144,7 +141,7 @@ function showInavtivityInfo(endate){
     AJS.messages.warning({
         title: 'Timesheet Warning.',
         closeable: true,
-        body: '<p>Your Timesheet is marked as ' + to_display + '.</p>'
+        body: '<p>This Timesheet is marked as ' + to_display + '.</p>'
     });
 
     showTimesheetReactivationLink();
@@ -599,12 +596,7 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
 //    console.log(selectedTeam);
 //    console.log(selectedTeamID);
     
-    /**
-
-    
-    var categoriesPerTeam;
-    
-    categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categoryIDs, timesheetData_.isMTSheet);
+    var categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categoryIDs, timesheetData_.isMTSheet);
 
     categorySelect.auiSelect2({data: categoriesPerTeam});
 
