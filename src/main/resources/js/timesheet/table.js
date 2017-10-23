@@ -466,19 +466,15 @@ function prepareForm(entry, timesheetData, isModified) {
     var initTeamID = (entry.teamID !== undefined)
         ? entry.teamID : Object.keys(teams)[0];
 
-    if (!isMasterThesisTimesheet) {
-	    form.teamSelect.auiSelect2()
-	        .change(function () {
-	            var selectedTeamID = this.value;
-	            updateCategorySelect(form.categorySelect, selectedTeamID, entry, timesheetData, isModified, form);
-	        })
-	        .auiSelect2("val", initTeamID)
-	        .trigger("change");
-    }
-    else
-	{
-    	updateCategorySelect(form.categorySelect, 9, entry, timesheetData, isModified, form);
-	}
+
+    form.teamSelect.auiSelect2()
+        .change(function () {
+            var selectedTeamID = this.value;
+            updateCategorySelect(form.categorySelect, selectedTeamID, entry, timesheetData, isModified, form);
+        })
+        .auiSelect2("val", initTeamID)
+        .trigger("change");
+
 
     form.partnerSelect.auiSelect2({
         tags: timesheetData.pairProgrammingGroup.sort(),
