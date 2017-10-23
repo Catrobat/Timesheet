@@ -446,6 +446,7 @@ public class TimesheetRest {
         }
 
         Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
+        logger.error("is master thesis timesheet: " +sheet.getIsMasterThesisTimesheet());
         try {
             RestUtils.checkTimesheetIsEnabled(sheet);
         } catch (PermissionException e) {
@@ -455,7 +456,18 @@ public class TimesheetRest {
         ApplicationUser user;
         Category category = categoryService.getCategoryByID(entry.getCategoryID());
         Team team = teamService.getTeamByID(entry.getTeamID());
-
+//        logger.error("team is: " + team.getTeamName());
+        
+        if (sheet.getIsMasterThesisTimesheet()) {
+        	try {
+				team = teamService.getTeamByName("Master Thesis");
+			} catch (ServiceException e) {
+				logger.error("Could not find Team Master Thesis!");
+				e.printStackTrace();
+			}
+        }
+        
+//        logger.error("team is: " + team.getTeamName());
         try {
             user = permissionService.checkIfUserExists();
             permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());

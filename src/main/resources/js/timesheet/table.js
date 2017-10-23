@@ -469,13 +469,19 @@ function prepareForm(entry, timesheetData, isModified) {
     var initTeamID = (entry.teamID !== undefined)
         ? entry.teamID : Object.keys(teams)[0];
 
-    form.teamSelect.auiSelect2()
-        .change(function () {
-            var selectedTeamID = this.value;
-            updateCategorySelect(form.categorySelect, selectedTeamID, entry, timesheetData, isModified, form);
-        })
-        .auiSelect2("val", initTeamID)
-        .trigger("change");
+    if (!isMasterThesisTimesheet) {
+	    form.teamSelect.auiSelect2()
+	        .change(function () {
+	            var selectedTeamID = this.value;
+	            updateCategorySelect(form.categorySelect, selectedTeamID, entry, timesheetData, isModified, form);
+	        })
+	        .auiSelect2("val", initTeamID)
+	        .trigger("change");
+    }
+    else
+	{
+    	updateCategorySelect(form.categorySelect, 9, entry, timesheetData, isModified, form);
+	}
 
     form.partnerSelect.auiSelect2({
         tags: timesheetData.pairProgrammingGroup.sort(),
@@ -587,7 +593,18 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
     if (selectedTeam == null || selectedTeam.teamCategories == null) {
         return;
     }
-    var categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categoryIDs);
+    
+//    console.log("---------------- IS IT A MASTERTIMESHEET ??????????????????????");
+//    console.log(timesheetData_.isMTSheet);
+//    console.log(selectedTeam);
+//    console.log(selectedTeamID);
+    
+    /**
+
+    
+    var categoriesPerTeam;
+    
+    categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categoryIDs, timesheetData_.isMTSheet);
 
     categorySelect.auiSelect2({data: categoriesPerTeam});
 
@@ -600,7 +617,6 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
         var suitableIndex = getSuitableCatIndex(categoriesPerTeam);
         categorySelect.val(suitableIndex).trigger("change");
     }
-
 }
 
 function getSuitableCatIndex(categoriesPerTeam) {

@@ -13,12 +13,12 @@ function isReadOnlyUser(userName, config) {
 }
 
 // TODO: isMasterThesisTimesheet ONLY works for your own Timesheets! Not for the one you are currently viewing!
-function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
+function filterAndSortCategoriesPerTeam(selectedTeam, categories, isMTSheet) {
     var categoriesPerTeam = [];
     selectedTeam.teamCategories.filter(function (categoryID) {
 //    	console.log("filterAndSortCategoriesPerTeam" + isMasterThesisTimesheet);
-        if (!isMasterThesisTimesheet && categories[categoryID].categoryName === "Theory") {
-            return false; // Patch2: set to false again
+        if (!isMTSheet && categories[categoryID].categoryName === "Theory") {
+            return false;
         } else {
             return true;
         }
