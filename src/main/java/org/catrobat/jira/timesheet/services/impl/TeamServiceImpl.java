@@ -25,17 +25,13 @@ import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import org.catrobat.jira.timesheet.activeobjects.*;
-import org.catrobat.jira.timesheet.rest.TimesheetRest;
 import org.catrobat.jira.timesheet.services.CategoryService;
 import org.catrobat.jira.timesheet.services.TeamService;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
-import org.ofbiz.core.entity.jdbc.SQLProcessor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Null;
 
-import java.sql.ResultSet;
 import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;

@@ -2,13 +2,11 @@ package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.plugin.webresource.impl.support.http.Response;
 import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.AllowedModUsers;
 import org.catrobat.jira.timesheet.services.AllowedModUsersService;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

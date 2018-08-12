@@ -11,7 +11,6 @@ import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.jira.user.util.UserManager;
-import electric.xml.io.model.All;
 import net.java.ao.DBParam;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;

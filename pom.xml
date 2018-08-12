@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.catrobat.jira</groupId>
     <artifactId>timesheet</artifactId>
-    <version>2.0</version>
+    <version>2.1-SNAPSHOT</version>
 
     <organization>
         <name>Catrobat</name>
@@ -271,7 +271,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.8.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -281,7 +281,7 @@
     </build>
 
     <properties>
-        <jira.version>7.2.4</jira.version>
+        <jira.version>7.11.2</jira.version>
         <amps.version>6.2.6</amps.version>
         <ao.version>1.2.0</ao.version>
         <plugin.testrunner.version>1.2.3</plugin.testrunner.version>

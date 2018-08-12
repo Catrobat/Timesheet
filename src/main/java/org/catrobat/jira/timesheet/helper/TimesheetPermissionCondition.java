@@ -20,13 +20,15 @@ import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCond
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.plugin.web.Condition;
+
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
-public class TimesheetPermissionCondition extends JiraGlobalPermissionCondition {
+public class TimesheetPermissionCondition extends JiraGlobalPermissionCondition implements Condition{
 
     private final PermissionService permissionService;
 
