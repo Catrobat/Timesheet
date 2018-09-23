@@ -119,6 +119,7 @@ public class PermissionServiceImpl implements PermissionService {
         if (BASE_URL.contains("test")) {
             if (!((!timesheetAdminExists() && checkIfUserIsGroupMember(JIRA_TEST_ADMINISTRATORS))
                     || checkIfUserIsGroupMember("Timesheet")
+                    || checkIfUserIsGroupMember("Disabled")
                     || isReadOnlyUser(user)
                     || isTimesheetAdmin(user)
                     || isUserAssignedToTeam(user))) {
@@ -128,6 +129,7 @@ public class PermissionServiceImpl implements PermissionService {
         } else {
             if (!((!timesheetAdminExists() && checkIfUserIsGroupMember(JIRA_ADMINISTRATORS))
                     || checkIfUserIsGroupMember("Timesheet")
+                    || checkIfUserIsGroupMember("Disabled")
                     || isReadOnlyUser(user)
                     || isTimesheetAdmin(user)
                     || isUserAssignedToTeam(user))) {
@@ -374,4 +376,9 @@ public class PermissionServiceImpl implements PermissionService {
 
         return isUserAssignedToTeam(user);
     }
+    @Override
+    public boolean isUserInUserGroupDisabled(ApplicationUser user) {
+    	
+        return ComponentAccessor.getGroupManager().isUserInGroup(user, "Disabled");         
+    }   
 }

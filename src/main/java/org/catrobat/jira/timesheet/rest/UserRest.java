@@ -83,7 +83,7 @@ public class UserRest {
         if (response != null) {
             return response;
         }
-        LOGGER.error("Retrieving all users from system");
+        LOGGER.debug("Retrieving all users from system");
         UserUtil userUtil = ComponentAccessor.getUserUtil();
         List<JsonUser> jsonUserList = new ArrayList<>();
         JiraServiceContext jiraServiceContext = new JiraServiceContextImpl(permissionService.getLoggedInUser());
@@ -95,7 +95,7 @@ public class UserRest {
             jsonUser.setUserName(user.getName());
 
             String displayName = user.getDisplayName();
-            LOGGER.error("Got User: " + displayName);
+            LOGGER.info("Got User: " + displayName);
             int lastSpaceIndex = displayName.lastIndexOf(' ');
             if (lastSpaceIndex >= 0) {
                 jsonUser.setFirstName(displayName.substring(0, lastSpaceIndex));
@@ -348,11 +348,11 @@ public class UserRest {
             }
 
             if(queried_user_key.contains(current_user.getKey())){
-                LOGGER.error("User has already been queried continue");
+                LOGGER.info("User has already been queried continue");
                 continue;
             }
             if(sheet.getState() != Timesheet.State.ACTIVE){
-                LOGGER.error("Current Timesheet is not active continue");
+                LOGGER.info("Current Timesheet is not active continue");
                 continue;
             }
 

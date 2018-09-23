@@ -40,6 +40,7 @@ public class ActivityNotificationJob implements PluginJob {
         for (Timesheet timesheet : timesheetList) {
             String userKey = timesheet.getUserKey();
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
+            
             if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
                 continue;
             }

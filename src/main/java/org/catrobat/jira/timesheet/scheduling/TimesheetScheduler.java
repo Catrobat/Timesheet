@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class TimesheetScheduler implements LifecycleAware {
 
+	private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.LogManager.getLogger(TimesheetScheduler.class);
+	
     private final PluginScheduler pluginScheduler;
     private static final String ACTIVITY_VERIFICATION_JOB = TimesheetScheduler.class.getName() + "ActivityVerificationJob";
     private static final String ACTIVITY_NOTIFICATION_JOB = TimesheetScheduler.class.getName() + "ActivityNotificationJob";
@@ -25,10 +27,11 @@ public class TimesheetScheduler implements LifecycleAware {
     private final CategoryService categoryService;
     private final ConfigService configService;
     private final SchedulingService schedulingService;
+    private final PermissionService permissionService;
 
     public TimesheetScheduler(PluginScheduler pluginScheduler, TimesheetService sheetService,
             TimesheetEntryService entryService, TeamService teamService, CategoryService categoryService,
-            ConfigService configService, SchedulingService schedulingService) {
+            ConfigService configService, SchedulingService schedulingService, PermissionService permissionService) {
         this.pluginScheduler = pluginScheduler;
         this.sheetService = sheetService;
         this.entryService = entryService;
@@ -36,6 +39,7 @@ public class TimesheetScheduler implements LifecycleAware {
         this.categoryService = categoryService;
         this.configService = configService;
         this.schedulingService = schedulingService;
+        this.permissionService = permissionService;
     }
 
     public void reschedule() {
@@ -46,6 +50,7 @@ public class TimesheetScheduler implements LifecycleAware {
         params.put("categoryService", categoryService);
         params.put("configService", configService);
         params.put("schedulingService", schedulingService);
+        params.put("permissionService", permissionService);
 
         pluginScheduler.scheduleJob(
                 ACTIVITY_VERIFICATION_JOB,
@@ -76,7 +81,9 @@ public class TimesheetScheduler implements LifecycleAware {
     }
 
     private long jobInterval() {
-        return 1000*60*60*24; // Everyday
+    	
+        return 1000*60*60; // Every hour
+//        return 1000*60*60*24; // Everyday
     }
 
     @Override

@@ -75,4 +75,6 @@ public interface PermissionService {
     Collection<String> getGroupNames(HttpServletRequest request);
 
     boolean isUserEligibleForTimesheet(ApplicationUser user);
+    
+    boolean isUserInUserGroupDisabled(ApplicationUser user);
 }

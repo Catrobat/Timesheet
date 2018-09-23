@@ -25,82 +25,121 @@
 
 <body class="aui-layout aui-theme-default">
 
-<script type="application/javascript">
-    function showDoneUsers() {
-        document.getElementById("done-users-table").style.visibility = "visible";
-    }
-</script>
+	<script type="application/javascript">
+	    function showDoneUsers() {
+	        document.getElementById("done-users-table").style.visibility = "visible";
+	    }
+	</script>
+	
+	<script type="application/javascript">
+	    function showDisabledUsers() {
+	        document.getElementById("disabled-users-table").style.visibility = "visible";
+	    }
+	</script>
+	
+	<script type="application/javascript">
+	    function showMasterUsers() {
+	        document.getElementById("user-information-table-master").style.visibility = "visible";
+	    }
+	</script>
+	
+	<script type="application/javascript">
+	    function showActiveInactiveUsers() {
+	        document.getElementById("user-information-table").style.visibility = "visible";
+	    }
+	</script>
+	
 
-<script type="application/javascript">
-    function showDisabledUsers() {
-        document.getElementById("disabled-users-table").style.visibility = "visible";
-    }
-</script>
-
-<script type="application/javascript">
-    function showMasterUsers() {
-        document.getElementById("user-information-table-master").style.visibility = "visible";
-    }
-</script>
-
-<script>
-function searchFunction() {
-  var input, filter, table, tr, td, i;
-  input = document.getElementById("searchInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("user-information-table-master");
-  tr = table.getElementsByTagName("tr");
-
-  #* Loop through all table rows, and hide those who don't match the search query *#
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
-      if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-}
-</script>
-
-<h2>Timesheet - User Information</h2>
+	<h1><b>Timesheet - User Information</b></h1>
+	<div id="aui-message-bar"></div>
+	<div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
+		
 #*Tabs view*#
+
 <div class="aui-tabs horizontal-tabs" id="table-header">
 
     <ul class="tabs-menu nav nav-tabs" id="tabs">
-        <li class="menu-item active-tab">
-            <a href="#tabs-users"><strong>Users</strong></a>
+    	<li class="menu-item active-tab">
+            <a href="#tabs-statistic"><strong>Statistic</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-disabled-users" onclick="showDisabledUsers();">Disabled Users</a>
+            <a href="#tabs-users" onclick="showActiveInactiveUsers();"><strong>Active & Inactive</strong></a>
         </li>
         <li class="menu-item">
-            <a href="#tabs-done-users" onclick="showDoneUsers();">Done Users</a>
+            <a href="#tabs-disabled-users" onclick="showDisabledUsers();">Disabled Timesheets</a>
+        </li>
+        <li class="menu-item">
+            <a href="#tabs-done-users" onclick="showDoneUsers();">Done Timesheets</a>
         </li>
         <li class="menu-item">
             <a href="#tabs-master" onclick="showMasterUsers();"><strong>Master Timesheets</strong></a>
         </li>
     </ul>
 
-#*    content of the 2nd tab "Disabled Users"*#
-    <div class="tabs-pane" id="tabs-disabled-users">
+#*content of the first tab User Statistics*#
+    <div class="tabs-pane active-pane" id="tabs-statistic">     
+        
+            <h3><b> Timesheet User Statistics</b></h3>
+            
+            <p>
+            <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
+              <tbody id="timesheet-user-statistics">
+                #* will be filled out by JavaScript *#
+              </tbody>
+            </table>
+
+   </div>
+
+
+#*content of the tab Active & Inactive*#
+    <div class="tabs-pane" id="tabs-users">     
+		                
+        <h3><b> Active and Inactive Timesheets</b></h3>
+        
+        <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
+            <thead>
+            <tr>
+                <th id="ti-users">User</th>                        
+                <th id="ti-team">Team</th>
+                <th id="ti-state">State</th>
+                <th id="ti-inactive-end-date">Inactive End Date</th>
+                <th id="ti-remaining-hours">Remaining Hours</th>
+                <th id="ti-target-total-hours">Target Total Hours</th>
+                <th id="ti-total-practice-hours">Total Practice Hours</th>
+                <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+                <th id="ti-view-timesheet">Timesheet Link</th>
+                <th id="ti-enabled">Timesheet Enabled</th>
+            </tr>
+            </thead>
+            <tbody class="list" id="user-information-table-content">
+            #* will be filled out by JavaScript *#
+            </tbody>
+        </table>		                		                	                
+   </div>
+
+
+#* content of the 2nd tab "Disabled Users"*#
+
+    <div class="tabs-pane" id="tabs-disabled-users">   
 		<h3><b>Disabled Users</b></h3>
+
         <table id="disabled-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
-                <th id="ti-users-m">User</th>
-                <th id="ti-team-m">Team</th>
-                <th id="ti-state-m">State</th>
-                <th id="ti-remaining-hours-m">Remaining Hours</th>
-                <th id="ti-target-total-hours-m">Target Total Hours</th>
-                <th id="ti-total-practice-hours-m">Total Practice Hours</th>
-                <th id="ti-hours-per-half-year-m">Hours last Half Year</th>
-                <th id="ti-latest-entry-date-m">Date of the Latest Entry</th>
-                <th id="ti-latest-entry-description-m">Description of the Latest Entry</th>
-                <th id="ti-view-timesheet-m">Timesheet Link</th>
-                <th id="ti-enabled-m">Timesheet Enabled</th>
+                <th id="ti-users">User</th>                        
+                <th id="ti-team">Team</th>
+                <th id="ti-state">State</th>
+                <th id="ti-inactive-end-date">Inactive End Date</th>
+                <th id="ti-remaining-hours">Remaining Hours</th>
+                <th id="ti-target-total-hours">Target Total Hours</th>
+                <th id="ti-total-practice-hours">Total Practice Hours</th>
+                <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+                <th id="ti-view-timesheet">Timesheet Link</th>
+                <th id="ti-enabled">Timesheet Enabled</th>
             </tr>
             </thead>
             <tbody class="list" id="disabled-user-info-table-content">
@@ -109,23 +148,27 @@ function searchFunction() {
         </table>
     </div>
 
+
 #*    content of the 3rd tab "Done Users"*#
     <div class="tabs-pane" id="tabs-done-users">
+    
 		<h3><b>Done Users </b></h3>
+
         <table id="done-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
-                <th id="ti-users-m">User</th>
-                <th id="ti-team-m">Team</th>
-                <th id="ti-state-m">State</th>
-                <th id="ti-remaining-hours-m">Remaining Hours</th>
-                <th id="ti-target-total-hours-m">Target Total Hours</th>
-                <th id="ti-total-practice-hours-m">Total Practice Hours</th>
-                <th id="ti-hours-per-half-year-m">Hours last Half Year</th>
-                <th id="ti-latest-entry-date-m">Date of the Latest Entry</th>
-                <th id="ti-latest-entry-description-m">Description of the Latest Entry</th>
-                <th id="ti-view-timesheet-m">Timesheet Link</th>
-                <th id="ti-enabled-m">Timesheet Enabled</th>
+                <th id="ti-users">User</th>                        
+                <th id="ti-team">Team</th>
+                <th id="ti-state">State</th>
+                <th id="ti-inactive-end-date">Inactive End Date</th>
+                <th id="ti-remaining-hours">Remaining Hours</th>
+                <th id="ti-target-total-hours">Target Total Hours</th>
+                <th id="ti-total-practice-hours">Total Practice Hours</th>
+                <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+                <th id="ti-view-timesheet">Timesheet Link</th>
+                <th id="ti-enabled">Timesheet Enabled</th>
             </tr>
             </thead>
             <tbody class="list" id="done-user-info-table-content">
@@ -134,10 +177,12 @@ function searchFunction() {
         </table>
     </div>
 
-#*    content of the 3rd tab "Master Timesheets"*#
+
+#*    content of the 4th tab "Master Timesheets"*#
     <div class="tabs-pane" id="tabs-master">
+    
 		<h3><b> Master Timesheets</b></h3>
-		<input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Type to start searching for a user...">
+
         <table id="user-information-table-master" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
@@ -160,54 +205,6 @@ function searchFunction() {
             </tbody>
         </table>
     </div>
-
-
-#*content of the first tab "Timesheet"*#
-    <div class="tabs-pane active-pane" id="tabs-users">
-       
-		<div id="aui-message-bar"></div>
-		<div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
-		
-		<div id="modify-user" class="mine-ui-content">
-
-		    <div class="aui-page-panel">
-		        <div class="aui-page-panel-inner">
-		            <section class="aui-page-panel-content">
-		                <h3><b> Timesheet User Statistics</b></h3>
-		                <p>
-		                <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
-		                  <tbody id="timesheet-user-statistics">
-		                    #* will be filled out by JavaScript *#
-		                  </tbody>
-		                </table>
-		                <h3><b> Not-Master Timesheets</b></h3>
-		                <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable" data-filter="true" data-input="#search-filter-overview">
-		                    <thead>
-		                    <tr>
-		                        <th id="ti-users">User</th>
-		                        
-		                        <th id="ti-team">Team</th>
-		                        <th id="ti-state">State</th>
-		                        <th id="ti-inactive-end-date">Inactive End Date</th>
-		                        <th id="ti-remaining-hours">Remaining Hours</th>
-		                        <th id="ti-target-total-hours">Target Total Hours</th>
-		                        <th id="ti-total-practice-hours">Total Practice Hours</th>
-		                        <th id="ti-hours-per-half-year">Hours last Half Year</th>
-		                        <th id="ti-latest-entry-date">Date of the Latest Entry</th>
-		                        <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-		                        <th id="ti-view-timesheet">Timesheet Link</th>
-		                        <th id="ti-enabled">Timesheet Enabled</th>
-		                    </tr>
-		                    </thead>
-		                    <tbody class="list" id="user-information-table-content">
-		                    #* will be filled out by JavaScript *#
-		                    </tbody>
-		                </table>		                		                	                
-		            </section>
-		        </div>
-		    </div>
-		</div>
-   </div>
 </div>
 </body>
 </html>

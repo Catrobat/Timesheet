@@ -1,15 +1,14 @@
 package org.catrobat.jira.timesheet.scheduling;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.ServiceException;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.scheduling.PluginJob;
+
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
-import org.catrobat.jira.timesheet.rest.SchedulingRest;
 import org.catrobat.jira.timesheet.services.*;
-import org.catrobat.jira.timesheet.services.impl.SpecialCategories;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -17,10 +16,9 @@ public class ActivityVerificationJob implements PluginJob {
 
     private TimesheetService sheetService;
     private TimesheetEntryService entryService;
-    private TeamService teamService;
     private CategoryService categoryService;
     private SchedulingService schedulingService;
-    private static final Logger logger = LoggerFactory.getLogger(ActivityVerificationJob.class);
+    private PermissionService permissionService;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.LogManager.getLogger(ActivityVerificationJob.class);
 
     @Override
@@ -31,18 +29,39 @@ public class ActivityVerificationJob implements PluginJob {
 
         sheetService = (TimesheetService) map.get("sheetService");
         entryService = (TimesheetEntryService) map.get("entryService");
-        teamService = (TeamService) map.get("teamService");
         categoryService = (CategoryService) map.get("categoryService");
         schedulingService = (SchedulingService) map.get("schedulingService");
+        permissionService = (PermissionService) map.get("permissionService");
 
         List<Timesheet> timesheetList = sheetService.all();
         for (Timesheet timesheet : timesheetList) {
+        	
+        	String userKey = timesheet.getUserKey();
+            ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
+            String statusFlagMessage = "nothing changed";
+            
+//            LOGGER.error("USER: " + user.getDisplayName() + " / STATE: " + timesheet.getState());
+//            LOGGER.error("equals Timesheet.State.DONE: " + timesheet.getState().equals(Timesheet.State.DONE));
+//            LOGGER.error("isUserInUserGroupDisabled(user): " + permissionService.isUserInUserGroupDisabled(user));
+            
+            if (!timesheet.getState().equals(Timesheet.State.DONE) && permissionService.isUserInUserGroupDisabled(user)) {
+            	LOGGER.info("setting Timesheet to DONE for: " + user.getDisplayName());
+            	timesheet.setState(Timesheet.State.DONE);
+            	timesheet.save();
+            	statusFlagMessage = "Timesheet set to DONE";
+            }
+            
+            if (timesheet.getState().equals(Timesheet.State.DONE) && !permissionService.isUserInUserGroupDisabled(user)) {
+            	LOGGER.info("setting Timesheet to ACTIVE from DONE for: " + user.getDisplayName());
+            	timesheet.setState(Timesheet.State.ACTIVE);
+            	timesheet.save();
+            	statusFlagMessage = "Timesheet set to ACTIVE";
+            }
+        	
             TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
             if (entries.length == 0) {
                 continue;
             }
-
-            String statusFlagMessage = "nothing changed";
 
             Date latestEntryDate = timesheet.getLatestEntryBeginDate();
             TimesheetEntry latestInactiveEntry = entryService.getLatestInactiveEntry(timesheet);
@@ -120,6 +139,7 @@ public class ActivityVerificationJob implements PluginJob {
         body += "latest Entry: " + timesheet.getLatestEntryBeginDate().toString() + "\n";
         body += "END Status \n-------------------------------------" + "\n" ;
         String message = header + body + "\n";
+        
         LOGGER.error(message);
 
         return message;
