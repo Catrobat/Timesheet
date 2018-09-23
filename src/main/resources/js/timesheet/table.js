@@ -86,9 +86,6 @@ function populateTable(timesheetDataReply) {
         showInitTimesheetReasonDialog(true);
     }
 
-    if(sessionStorage.getItem("timesheetID") !== null || external_view){
-        showViewOwnTimesheetLink();
-    }
 
     if(isAdmin){
         console.log("we got an admin, initiating team vis options");
@@ -153,18 +150,6 @@ function showTimesheetReactivationLink() {
     }
 }
 
-function showViewOwnTimesheetLink(){
-    document.getElementById("own-timesheet-link").style.display = "block";
-}
-
-function viewOwnTimesheet() {
-    if (external_view) {
-        window.location = AJS.params.baseURL + "/plugins/servlet/timesheet";
-    } else {
-        sessionStorage.removeItem('timesheetID');
-        location.reload();
-    }
-}
 
 function appendEntriesToTable(timesheetData) {
     //append timesheet entries to table

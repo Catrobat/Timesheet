@@ -115,13 +115,6 @@ code {
     overflow-x: scroll;
 }
 
-#approvedUserTimesheetSelect {
-    margin-top: 25px;
-}
-
-#coordinatorTimesheetSelect {
-    margin-top: 25px;
-}
 
 /* Fixes for rescaling of morris.js charts */
 

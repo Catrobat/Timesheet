@@ -64,9 +64,6 @@
                   href="#" onclick="showReactivateTimesheetDialog()">Click to Reactivate your Timesheet</a></strong></p>
 </div>
 
-<div id="own-timesheet-link" style="display: none; margin-bottom: 15px; margin-top: 10px;">
-    <p><strong><a href="#" onclick="viewOwnTimesheet()">View own Timesheet</a></strong></p>
-</div>
 
 #*Tabs view*#
 <div class="aui-tabs horizontal-tabs" id="table-header">
@@ -86,9 +83,6 @@
         </li>
         <li class="menu-item">
             <a href="#tabs-timesheet-information"><strong>Key Data</strong></a>
-        </li>
-        <li class="menu-item" id="coord_private">
-            <a href="#tabs-timesheet-settings"><strong>View Other Timesheets</strong></a>
         </li>
         <li class="menu-item" id="coord_private_table">
             <a href="#tabs-team-information"><strong>Team Information</strong></a>
@@ -124,27 +118,6 @@
 
     </div>
 
-#*   content of the tab "View Other Timesheets"*#
-    <div class="tabs-pane" id="tabs-timesheet-settings">
-        <form id="timesheet-settings" class="aui">
-            <div id="coordinatorTimesheetSelect">
-                <field-group>
-                    <div class="field-group" id="coordinatorTimesheetSelect-div"></div>
-                    <div class="field-group" id="coordinatorTimesheetSelect-div-all-other-content"></div>
-                    <div class="field-group" id="coordinatorTimesheetSelect-div-all-other-content-1"></div>
-                    <div class="field-group" id="coordinatorTimesheetSelect-div-all-other-content-2"></div>
-                </field-group>
-            </div>
-            <div id="approvedUserTimesheetSelect">
-                <field-group>
-                    <div class="field-group" id="approved-user-select-div"></div>
-                    <div class="field-group" id="display-button"></div>
-                    <div class="field-group" id="approved-user-select-div-all-other-content"></div>
-                </field-group>
-            </div>
-        </form>
-    </div>
-
 #*   content of the tab "Team Information"*#
     <div class="tabs-pane" id="tabs-team-information">
         <div class="aui-page-panel">
@@ -164,7 +137,7 @@
                             <th id="ti-hours-per-half-year">Hours last Half Year</th>
                             <th id="ti-hours-per-month">Hours last Month</th>
                             <th id="ti-latest-entry-date">Date of the Latest Entry</th>
-                            <th id="ti-latest-entry-hours">Hours of the Latest Entry</th>
+                            <th id="ti-view-timesheet">Timesheet Link</th>
                             <th id="ti-latest-entry-description">Description of the Latest Entry</th>
                         </tr>
                         </thead>

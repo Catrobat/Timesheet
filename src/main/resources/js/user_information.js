@@ -85,7 +85,6 @@ AJS.toInit(function () {
             	var rowm = "<tr>" +
                 "<td headers='ti-users-m' class='musers'>" +
                     "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
-//                "</td><td headers='ti-email-m' class='memail'>" + userInformation[i].email +
                 "</td><td headers='ti-team-m' class='mteam'>" + userInformation[i].teams +
                 "</td><td headers='ti-state-m' class='mstate' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "'; >" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date-m' class='minactive-end'>" + inactiveEndDate +

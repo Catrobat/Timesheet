@@ -31,6 +31,9 @@ function initCoordinatorUserList(userInformation) {
         	thisUsersName = thisUsersName + " (MT)"
         }
         
+        var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
+        "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
+        
         var row = "<tr>" +
             "<td headers='ti-users'>" + thisUsersName +
             "</td><td headers='ti-teams'>" + userInformation[i].teams +
@@ -42,8 +45,8 @@ function initCoordinatorUserList(userInformation) {
             "</td><td headers='ti-hours-per-half-year'>" + userInformation[i].hoursPerHalfYear +
             "</td><td headers='ti-hours-per-month'>" + userInformation[i].hoursPerMonth +
             "</td><td headers='ti-latest-entry-date'>" + latestEntryDate +
-            "</td><td headers='ti-latest-entry-hours'>" + userInformation[i].latestEntryHours +
             "</td><td headers='ti-latest-entry-description'>" + userInformation[i].latestEntryDescription +
+            "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +
             "</td></tr>";
         AJS.$("#team-information-table-content").append(row);
     }
@@ -56,13 +59,14 @@ function initCoordinatorUserList(userInformation) {
     
     for (var i = 0; i < sortedUserListMaster.length; i++)
     	coordUsersList = coordUsersList + "<option value=\"" + sortedUserListMaster[i] + " (Master Timesheet)\"/>";
-
-    // Provide a sorted List of UserNames for the View Other Timesheet Enter Box of Team-Coordinators
-    AJS.$("#coordinatorTimesheetSelect-div").append("<label for=\"permission\">Timesheet Of</label>" +
-    		"<input class=\"text selectTimesheetOfUserField\" type=\"text\" id=\"user-select2-field\" list=\"coordusers\">" +
-    		"<datalist id=\"coordusers\"><select style=\"display: none;\">" + coordUsersList + "</select></datalist>");
     
     AJS.$("#team-information-table").trigger("update");
+    
+    AJS.$(".view-timesheet-button").on("click", function (e) {
+        var timesheet_id = e.target.getAttribute("data-timesheet-id");
+
+        window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheet_id, "_blank");
+    });
 }
 
 function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
@@ -72,10 +76,6 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
     var isSupervisedUser = isReadOnlyUser(userName, config);
     var listOfUsers = [];
 
-    AJS.$("#coordinatorTimesheetSelect-div-all-other-content").append("<input type=\"submit\" value=\"Show\" class=\"aui-button aui-button-primary\">");
-    AJS.$("#coordinatorTimesheetSelect-div-all-other-content-1").append("<form id=\"reset-timesheet-settings-coord\">" +
-	"<input type=\"submit\" value=\"View Own Timesheet\" class=\"aui-button aui-button-primary\"></form>");
-
     for (var i = 0; i < config.teams.length; i++) {
         var team = config.teams[i];
         //check if user is coordinator of a team
@@ -83,29 +83,17 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
             if (team['coordinatorGroups'][j].localeCompare(userName) == 0) {
             	var teamNameForTeamInformation = team.teamName;
             	AJS.$("#team-information-teamname").append(teamNameForTeamInformation);
-            	AJS.$("#coordinatorTimesheetSelect-div-all-other-content-2").append("<h3>Coordinator of Team: " + teamNameForTeamInformation +"</h3>");
                 isTeamCoordinator = true;
             }
         }
     }
 
-    AJS.$(".selectTimesheetOfUserField").auiSelect2({
-        placeholder: "Select User",
-        tokenSeparators: [",", " "],
-        maximumSelectionSize: 1
-    });
-
     if (isTeamCoordinator && !isSupervisedUser && !isAdmin) {
         initSelectTimesheetButton();
-        AJS.$("#coordinatorTimesheetSelect").show();
-        AJS.$("#approvedUserTimesheetSelect").hide();
         AJS.$("#visualizationTeamSelect").show();
     } else if(isSupervisedUser && !isTeamCoordinator) {
-        AJS.$("#coordinatorTimesheetSelect").hide();
-        AJS.$("#approvedUserTimesheetSelect").show();
         AJS.$("#visualizationTeamSelect").show();
     } else if(!isTeamCoordinator) {
-        AJS.$("#coordinatorTimesheetSelect").hide();
         AJS.$("#visualizationTeamSelect").hide();
     }
 }
