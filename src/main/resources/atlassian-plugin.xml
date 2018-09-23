@@ -101,7 +101,7 @@
 
         <resource type="download" name="user_information.js" location="/js/user_information.js"/>
         <resource type="download" name="administration.css" location="/css/administration.css"/>
-        <resource type="download" name="myjquery.mobile-1.4.5.min.css" location="/css/myjquery.mobile-1.4.5.min.css"/>
+        <!-- <resource type="download" name="myjquery.mobile-1.4.5.min.css" location="/css/myjquery.mobile-1.4.5.min.css"/> -->
         <context>modify</context>
     </web-resource>
 

@@ -31,6 +31,8 @@ AJS.toInit(function () {
         AJS.$(".loadingDiv").show();
         AJS.$("#user-information-table-content").empty();
         AJS.$("#user-information-table-master-content").empty();
+        AJS.$("#done-user-info-table-content").empty();
+        AJS.$("#disabled-user-info-table-content").empty();
         
         for (var i = 0; i < userInformation.length; i++) {
             var latestEntryDate;
@@ -47,7 +49,9 @@ AJS.toInit(function () {
             }
 
             var enabled = userInformation[i].state !== "DISABLED";
-
+            
+            var done = userInformation[i].state === "DONE";
+            console.log("DONE is: ", done);
             var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
 
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
@@ -68,6 +72,9 @@ AJS.toInit(function () {
                     break;
                 case "AUTO_INACTIVE":
                     current_state_color = "goldenRod";
+                    break;
+                case "DONE":
+                    current_state_color = "grey";
                     break;
             }
 
@@ -113,7 +120,15 @@ AJS.toInit(function () {
                 enabledColumn +
                 "</td></tr>";
             	
-            	AJS.$("#user-information-table-content").append(row);
+            	if (userInformation[i].state === "DONE") {
+            		AJS.$("#done-user-info-table-content").append(row);
+            	}
+            	else if (userInformation[i].state === "DISABLED") {
+            		AJS.$("#disabled-user-info-table-content").append(row);
+            	}
+            	else {
+            		AJS.$("#user-information-table-content").append(row);
+            	}
             }
             	
             var timesheetID = userInformation[i].timesheetID;
