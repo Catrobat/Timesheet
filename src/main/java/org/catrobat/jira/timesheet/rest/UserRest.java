@@ -124,7 +124,7 @@ public class UserRest {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserInformation(@Context HttpServletRequest request) {
     	
-    	logger.error("1 /getUserInformation reached");
+    	logger.debug("1 /getUserInformation reached");
     	Date date = new Date();
     	
         Response response = permissionService.checkRootPermission();
@@ -194,7 +194,7 @@ public class UserRest {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsersForCoordinator(@Context HttpServletRequest request) {
     	
-    	logger.error("1 /getUsersForCoordinator reached");
+    	logger.debug("1 /getUsersForCoordinator reached");
     	Date date = new Date();
     	
         ApplicationUser user;
@@ -222,55 +222,78 @@ public class UserRest {
                     "coordinator nor a read only user nor a administrator!").build();
         }
 
+        Set<Team> teamsOfCoordinator = teamService.getTeamsOfCoordinator(user.getUsername());
+        ArrayList<String> teamsOfCoordArray = new ArrayList<String>();
+        for (Team t : teamsOfCoordinator) {
+        	teamsOfCoordArray.add(t.getTeamName());
+        }
+        
+        
         List<JsonUserInformation> jsonUserInformationListForCoordinator = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetService.all()) {
-            if (permissionService.isUserCoordinatorOfTimesheet(user, timesheet)) {
             	
-            	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
-            	
-            	jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
-            	jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-
-                TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
-                if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
-                        || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
-                    Date inactiveEndDate = latestInactiveEntry.getInactiveEndDate();
-                    jsonUserInformation.setInactiveEndDate(inactiveEndDate);
-                }
-
-                TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
-                if (latestEntry != null) {
-                	jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
-                	jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
-                } else {
-                	jsonUserInformation.setLatestEntryHours(0);
-                	jsonUserInformation.setLatestEntryDescription("");
-                }
-                
-                String userName = jsonUserInformation.getUserName();
-                ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
-                StringBuilder teamString = new StringBuilder();
-                
-                for (Team jsonteam : teamService.all()) {
-                	org.catrobat.jira.timesheet.activeobjects.Group[] teamGroups = jsonteam.getGroups();
-                	for (org.catrobat.jira.timesheet.activeobjects.Group groupName : teamGroups) {
-                		if (groupName.getGroupName().equalsIgnoreCase(userName) ||
-                                ComponentAccessor.getGroupManager().isUserInGroup(applicationUser,groupName.getGroupName())) {
-                			if (!teamString.toString().equals("")) {
-                              teamString.append(", ");
+        	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
+        	
+            String userName = jsonUserInformation.getUserName();
+            ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
+            StringBuilder teamString = new StringBuilder();
+            ArrayList<String> teamArray = new ArrayList<String>();
+            
+            for (Team jsonteam : teamService.all()) {
+            	org.catrobat.jira.timesheet.activeobjects.Group[] teamGroups = jsonteam.getGroups();
+            	for (org.catrobat.jira.timesheet.activeobjects.Group groupName : teamGroups) {
+            		if (groupName.getGroupName().equalsIgnoreCase(userName) ||
+                            ComponentAccessor.getGroupManager().isUserInGroup(applicationUser,groupName.getGroupName())) {
+            			if (!teamString.toString().equals("")) {
+                          teamString.append(", ");
+            			}
+                		if (!teamString.toString().contains(jsonteam.getTeamName())) {
+                			teamString.append(jsonteam.getTeamName());
+                			
+                			if (!teamArray.contains(jsonteam.getTeamName())) {
+                				teamArray.add(jsonteam.getTeamName());
                 			}
-	                		if (!teamString.toString().contains(jsonteam.getTeamName())) {
-	                			teamString.append(jsonteam.getTeamName());
-	                			break;
-	                		}
+                			
+                			break;
                 		}
-                	}
-                }
-                jsonUserInformation.setTeams(teamString.toString());
-                
-                jsonUserInformationListForCoordinator.add(jsonUserInformation);
+            		}
+            	}
             }
+            
+            teamArray.retainAll(teamsOfCoordArray);
+            if (teamArray.size() > 0) {
+            	LOGGER.error("User is COORD of: " + teamArray.toString());
+            	
+            }
+            else {
+            	LOGGER.trace("CONTINUE REACHED...");
+            	continue;
+            }
+
+            
+            jsonUserInformation.setTeams(teamString.toString());
+        	
+        	jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
+        	jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+
+            TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
+            if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
+                    || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
+                Date inactiveEndDate = latestInactiveEntry.getInactiveEndDate();
+                jsonUserInformation.setInactiveEndDate(inactiveEndDate);
+            }
+
+            TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
+            if (latestEntry != null) {
+            	jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
+            	jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
+            } else {
+            	jsonUserInformation.setLatestEntryHours(0);
+            	jsonUserInformation.setLatestEntryDescription("");
+            }
+            
+            jsonUserInformationListForCoordinator.add(jsonUserInformation);
         }
 
         Date date1 = new Date();

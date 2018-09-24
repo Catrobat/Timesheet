@@ -313,9 +313,9 @@ public class TeamServiceImpl implements TeamService {
         int max_duration = 0;
 
         Set<Team> teams = getTeamsOfUser(username);
-        LOGGER.error("Team size: " + teams.size());
+        LOGGER.debug("Team size: " + teams.size());
         for(Team current_team : teams) {
-            LOGGER.error("Currently evaluating team: " + current_team.getTeamName());
+            LOGGER.debug("Currently evaluating team: " + current_team.getTeamName());
             if(result == null)
                 result = current_team;
             else{
@@ -327,7 +327,7 @@ public class TeamServiceImpl implements TeamService {
                     duration += (entry.getDurationMinutes() - entry.getPauseMinutes());
                 }
                 if(duration > max_duration) {
-                    LOGGER.error("We have e new most acive team: " + current_team.getTeamName());
+                    LOGGER.debug("We have a new most active team: " + current_team.getTeamName());
                     result = current_team;
                     max_duration = duration;
                 }
