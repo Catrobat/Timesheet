@@ -737,7 +737,7 @@ function showInitTimesheetReasonDialog(isInit){
                         "You need to give a Reason for your Timesheet!" +
                     "</div>" +
                     "<div class='error' style='display:none' id='reason-input-error'>" +
-                        "Only Use Simple alphabetic Values [a-Z]!" +
+                        "Please don't use any of the following special characters: ?!~[]()#$%&*+=-/\';,{}|\":<>`" +
                     "</div>" +
                 "</div>" +
                 "<div class='field-group'>" +
@@ -807,7 +807,7 @@ function sendLectureDataToServer(reason, hours, dialog) {
     };
 
     AJS.$.ajax({
-        url : restBaseUrl + "/updateTimesheetReasonData",
+        url : restBaseUrl + "updateTimesheetReasonData",
         type : "POST",
         contentType: "application/json",
         data: JSON.stringify(data),
@@ -854,7 +854,7 @@ function handleTimesheetReasonDataSuccess(data){
 
 function updateCurrentTimesheetData(data){
     Object.keys(data).forEach(function (key) {
-        console.log("setting: " + key + " to: " + data[key]);
+        //console.log("setting: " + key + " to: " + data[key]);
         timesheetData_[key] = data[key];
     });
 }
@@ -1218,13 +1218,15 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         partner: form.partnerSelect.val(),
         ticketID: form.ticketSelect.val()
     };
+    
+    // empty description after submitting the entry
+    form.descriptionField.val("");
 
     if (existingEntryID !== "new-id") {
         timesheetEntry.entryID = existingEntryID;
     }
 
     form.loadingSpinner.show();
-
 
     AJS.$.ajax({
         type: saveOptions.httpMethod,
@@ -1242,21 +1244,6 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         	removeSavingAndDeletingErrorMessages();
             var augmentedEntry = augmentEntry(timesheetData, entryData);
             saveOptions.callback(augmentedEntry, timesheetData, form);
-// TODO: empty the description field of the first empty entry only!
-            //AJS.$(".description_").val("");
-//            form.descriptionField.value = "";
-//            document.getElementById('userId').value = ''
-//            if ($(this).attr("data-id") == "new-id")
-            	
-//            var entrytable = document.getElementById('entry-table');
-//            var newid = entrytable.getAttribute('data-id'); // fruitCount = '12'
-//            console.log("data-id: " + newid);
-//            // 'Setting' data-attributes using setAttribute
-//            if (newid == "new-id") {
-//            	console.log("newid = " + newid);
-//            	AJS.$(".description_").val("");
-//				entrytable.setAttribute('data-fruit','7'); // Pesky birds
-//            }
         },
         error: function (error) {
             console.log(error);
