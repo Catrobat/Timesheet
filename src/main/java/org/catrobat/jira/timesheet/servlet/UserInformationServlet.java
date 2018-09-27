@@ -19,27 +19,62 @@ package org.catrobat.jira.timesheet.servlet;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
+
 import java.io.IOException;
+import java.net.URI;
 
-public class UserInformationServlet extends HighPrivilegeServlet {
+public class UserInformationServlet extends HttpServlet {
 
-    private final TemplateRenderer renderer;
+	private final LoginUriProvider loginUriProvider;
+    private final TemplateRenderer templateRenderer;
+    private final TimesheetService sheetService;
+    private final PermissionService permissionService;
 
-    public UserInformationServlet(LoginUriProvider loginUriProvider, TemplateRenderer renderer,
-            WebSudoManager webSudoManager, PermissionService permissionService, ConfigService configService) {
-        super(loginUriProvider, webSudoManager, permissionService, configService);
-        this.renderer = renderer;
+    public UserInformationServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
+            final TimesheetService sheetService, final PermissionService permissionService) {
+        super();
+        this.loginUriProvider = loginUriProvider;
+        this.templateRenderer = templateRenderer;
+        this.sheetService = sheetService;
+        this.permissionService = permissionService;
+    }
+    
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Response unauthorized = permissionService.checkUserPermission();
+        if (unauthorized != null) {
+            redirectToLogin(request, response);
+            return;
+        }
+        super.service(request, response);
+    }
+    
+    private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.sendRedirect(loginUriProvider.getLoginUri(getUri(request)).toASCIIString());
+    }
+    
+    private URI getUri(HttpServletRequest request) {
+        StringBuffer builder = request.getRequestURL();
+        if (request.getQueryString() != null) {
+            builder.append("?");
+            builder.append(request.getQueryString());
+        }
+        return URI.create(builder.toString());
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        super.doGet(request, response);
-        renderer.render("user_information.vm", response.getWriter());
+        
+        templateRenderer.render("user_information.vm", response.getWriter());
     }
 }
