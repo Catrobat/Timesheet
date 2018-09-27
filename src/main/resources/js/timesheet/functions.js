@@ -182,7 +182,7 @@ function initTimesheetInformationValues(timesheetData) {
         AJS.$("#timesheet-hours-text").val() === "" ? value = 0 : value = AJS.$("#timesheet-hours-text").val();
 
         AJS.$.ajax({
-            url : restBaseUrl + "/updateTotalTargetHours/" + value,
+            url : restBaseUrl + "updateTotalTargetHours/" + value,
             type : "POST",
             success : function (data) {
                 AJS.messages.success({
@@ -312,7 +312,9 @@ function showLectureDeletionDialog(lecture){
 }
 
 function deleteLecture(lecture, dialog){
-    var hours_string = lecture.replace(/[^0-9\.]/g, '');
+	var hours_part = lecture.split("(")[1];
+	console.log("hours_part: " + hours_part);
+    var hours_string = hours_part.replace(/[^0-9\.]/g, '');
     console.log("hours_string: " + hours_string);
     var hours;
 

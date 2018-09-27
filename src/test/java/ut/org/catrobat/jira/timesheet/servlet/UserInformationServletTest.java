@@ -6,10 +6,12 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.services.ConfigService;
 import org.catrobat.jira.timesheet.services.PermissionService;
+import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.UserInformationServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +39,7 @@ public class UserInformationServletTest {
 
         LoginUriProvider loginUriProvider = mock(LoginUriProvider.class);
         TemplateRenderer templateRenderer = mock(TemplateRenderer.class);
+        TimesheetService sheetService = mock(TimesheetService.class);
         WebSudoManager webSudoManager = mock(WebSudoManager.class);
         PermissionService permissionService = mock(PermissionService.class);
         PowerMockito.mockStatic(ComponentAccessor.class);
@@ -47,8 +50,7 @@ public class UserInformationServletTest {
         Config config = Mockito.mock(Config.class);
         JiraAuthenticationContext jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
 
-        userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, webSudoManager, permissionService, configService);
-
+        userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, sheetService, permissionService);
         when(user.getUsername()).thenReturn("test");
         String test_key = "test_key";
         when(user.getKey()).thenReturn(test_key);

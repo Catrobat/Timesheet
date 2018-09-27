@@ -976,7 +976,7 @@ AJS.toInit(function () {
     (function initUserPermissionOptions(){
         console.log("inititating user permission options");
         AJS.$.ajax({
-            url : restBaseUrl + "/user/getActiveTimesheetUsers",
+            url : restBaseUrl + "user/getActiveTimesheetUsers",
             type : "GET",
             success : function (data) {
                 console.log("we have got our data");
@@ -1007,7 +1007,7 @@ AJS.toInit(function () {
     function getCurrentAllowedModUsers(){
         console.log("retrieving allowed mod users");
         AJS.$.ajax({
-            url : restBaseUrl + "/config/getAllowedModUsers",
+            url : restBaseUrl + "config/getAllowedModUsers",
             type : "GET",
             success : function (data) {
                 console.log("we got our Allowed Mod users");
@@ -1047,7 +1047,7 @@ AJS.toInit(function () {
         console.log(JSON.stringify(data));
 
         AJS.$.ajax({
-            url : restBaseUrl + "/config/updateAllowedModUsers",
+            url : restBaseUrl + "config/updateAllowedModUsers",
             type : "Post",
             contentType: "application/json",
             data : JSON.stringify(data),
@@ -1068,7 +1068,7 @@ AJS.toInit(function () {
 
     (function initMaxModificationDays(){
         AJS.$.ajax({
-            url : restBaseUrl + "/scheduling/getMaxModificationDays",
+            url : restBaseUrl + "scheduling/getMaxModificationDays",
             type : "GET",
             success : function (data) {
                 setMaxModificationDays(data);
@@ -1090,7 +1090,7 @@ AJS.toInit(function () {
         console.log("days to save: " + days_to_save);
 
         AJS.$.ajax({
-            url : restBaseUrl + "/scheduling/saveMaxModificationDays/" + days_to_save,
+            url : restBaseUrl + "scheduling/saveMaxModificationDays/" + days_to_save,
             type : "POST",
             success : function () {
                 AJS.messages.success({

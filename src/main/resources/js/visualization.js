@@ -120,7 +120,7 @@ function setTeamVisListeners(){
 
         var teamEntries = AJS.$.ajax({
             type: 'GET',
-            url:  restBaseUrl + "/getTeamEntries/" + selected_team.id,
+            url:  restBaseUrl + "getTeamEntries/" + selected_team.id,
             contentType: "application/json"
         });
 
@@ -162,7 +162,7 @@ function initTeamVisSelect(userType){
     if(userType === "admin") {
         AJS.$.ajax({
             type: "GET",
-            url: restBaseUrl + "/config/getTeams",
+            url: restBaseUrl + "config/getTeams",
             success: function (data) {
                 console.log("Team request was successfull");
                 initTeamVisOptions(data);
@@ -174,7 +174,7 @@ function initTeamVisSelect(userType){
     }else{
         AJS.$.ajax({
             type: "GET",
-            url: restBaseUrl + "/getTeamsOfUser",
+            url: restBaseUrl + "getTeamsOfUser",
             success: function (data) {
                 console.log("Team request was successfull");
                 if(data.length > 1) {
