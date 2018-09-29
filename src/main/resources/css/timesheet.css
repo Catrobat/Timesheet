@@ -66,16 +66,21 @@
 }
 
 #timesheet-table .team,
-#timesheet-table .category,
 #timesheet-table .partner,
 #timesheet-table .ticket {
     min-width: 100px;
     width: 130px;
 }
 
+#timesheet-table .category {
+	min-width: 250px;
+    width: 290px;
+}
+
+
 .select2-container {
-    min-width: 80px;
-    width: 150px;
+    min-width: 250px;
+    width: 290px;
 }
 
 #timesheet-table .description,

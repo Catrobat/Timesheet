@@ -1,5 +1,67 @@
 "use strict";
 
+function assignTeamAndHoursDataToPiChart (timesheetData) {
+	
+	var teamAndHoursPerTeamArray = [];
+	var availableEntries = timesheetData[0].entries;
+	
+//	console.log("timesheetData[0] ", timesheetData[0]);
+//	console.log("timesheetData[0].teams ", timesheetData[0].teams);
+	
+    var teamsHavingEntries = timesheetData[0].teams;
+    
+    for (var key in teamsHavingEntries) {
+        if (key === 'length' || !teamsHavingEntries.hasOwnProperty(key)) continue;
+        var thisTeam = teamsHavingEntries[key];
+//        console.log("key: ", key);
+//        console.log("thisTeam: ", thisTeam);
+//        console.log("thisTeamName: ", thisTeam.teamName);
+        
+//        for each entry, if entry teamId == key, count
+        
+        var i = availableEntries.length - 1;
+        var totalHoursPerTeam = 0;
+        var totalMinutesPerTeam = 0;
+        var totalTimePerTeam = 0;
+        
+        while (i >= 0) {
+        	
+        	if (availableEntries[i].teamID == key) {
+        		
+//        		console.log("1 availableEntries[i].teamID: " + availableEntries[i].teamID);
+//        		console.log("1 key: ", key);
+        		
+                var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
+            		    availableEntries[i].pauseMinutes).getHours();
+        		var minutes = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
+        		    availableEntries[i].pauseMinutes).getMinutes();
+        		var pause = availableEntries[i].pauseMinutes;
+        		var calculatedTime = hours * 60 + minutes - pause;		
+        		totalMinutesPerTeam = totalMinutesPerTeam + calculatedTime;
+        		
+        		if (totalMinutesPerTeam >= 60) {
+        		    var minutesToFullHours = Math.floor(totalMinutesPerTeam / 60); //get only full hours
+        		    
+        		    totalHoursPerTeam = totalHoursPerTeam + minutesToFullHours;
+        		    totalMinutesPerTeam = totalMinutesPerTeam - minutesToFullHours * 60;
+        		}
+        	}
+        	i = i - 1;
+        }
+        
+        totalTimePerTeam = totalHoursPerTeam + totalMinutesPerTeam / 60;
+        
+        // per team, push!
+        teamAndHoursPerTeamArray.push(thisTeam.teamName);
+    	teamAndHoursPerTeamArray.push(totalTimePerTeam);
+//    	console.log("thisTeam.teamName: ", thisTeam.teamName);
+//    	console.log("totalTimePerTeam: ", totalTimePerTeam);
+    }
+
+    appendHoursPerTeamToPiChart(teamAndHoursPerTeamArray);
+}
+
+
 //reverse order of the table from bottom to top
 function assignCategoryDiagramData(timesheetData) {
 

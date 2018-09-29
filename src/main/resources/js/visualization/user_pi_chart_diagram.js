@@ -25,3 +25,32 @@ function appendTimeToPiChart(sortedDataArray, numberOfCategories) {
         }
     });
 }
+
+function appendHoursPerTeamToPiChart(teamAndHoursPerTeamArray) {
+	
+	// 0 Team - 1 Hours
+	// 2 Team - 3 Hours
+	// ...
+	
+	var data = [];
+	
+	for (var i = 1; i < teamAndHoursPerTeamArray.length; i+=2) {
+				
+//		console.log("TEAM teamAndHoursPerTeamArray[i]: ", teamAndHoursPerTeamArray[i-1]);
+//		console.log("HOURS teamAndHoursPerTeamArray[i+1]: ", teamAndHoursPerTeamArray[i]);
+		
+		data.push({
+			label: teamAndHoursPerTeamArray[i-1],
+			value: toFixed(teamAndHoursPerTeamArray[i], 2)
+		});
+	}
+	
+	var piChartHoursPerTeam = drawHoursPerTeamPiChart(data);
+	
+//	AJS.$("#table-header > ul > li > a").bind("tabSelect", function(e, o) {
+//        if (o.tab.attr("href") == "#tabs-line") {
+//        	piChartHoursPerTeam.redraw();
+//        }
+//    });
+}
+

@@ -22,6 +22,8 @@
         document.getElementById("visualization-table").style.visibility = "visible";
         document.getElementById("piChartDiagram").style.visibility = "visible";
         document.getElementById("piChartDiagramTag").style.visibility = "visible";
+        document.getElementById("piChartDiagramHoursPerTeam").style.visibility = "visible";
+        document.getElementById("piChartDiagramHoursPerTeamTag").style.visibility = "visible";
     }
 </script>
 
@@ -30,7 +32,7 @@
         document.getElementById("lineDiagram").style.visibility = "visible";
         document.getElementById("lineDiagramTag").style.visibility = "visible";
         document.getElementById("categoryLineDiagram").style.visibility = "visible";
-        document.getElementById("categoryLineDiagramTag").style.visibility = "visible";
+        document.getElementById("categoryLineDiagramTag").style.visibility = "visible";       
     }
 </script>
 
@@ -149,7 +151,7 @@
         </div>
     </div>
 
-#*    content of the third tab "Time-Visualization"*#
+#*    content of the third tab "Summary"*#
     <div class="tabs-pane" id="tabs-overview">
         <div class="progress-bar" >
             <div class="progress" >
@@ -171,8 +173,14 @@
         #*TODO: do we need that header? *#
         <h3 id="piChartDiagramTag" >Visualization of your theory - practical hours distribution</h3>
         <div id="piChartDiagram" style="height: 200px;"></div>
+        
+        <h3 id="piChartDiagramHoursPerTeamTag">Hours per Team distribution</h3>
+    	<div id="piChartDiagramHoursPerTeam" style="height: 200px;"></div>
+        
     </div>
+    
 #*    content of the third tab "Time-Visualization"*#
+
     <div class="tabs-pane" id="tabs-line">
         <div class="diagram-header-container">
             <h2 id="lineDiagramTag"><strong>Visualization of your working time</strong></h2>
@@ -362,6 +370,20 @@
             data: data,
         });
         return piChart;
+    }
+</script>
+
+<script>
+    function drawHoursPerTeamPiChart(data) {
+        var piChartHoursPerTeam = new Morris.Donut({
+            // ID of the element in which to draw the chart.
+            element: 'piChartDiagramHoursPerTeam',
+            // Chart data records -- each entry in this array corresponds to a point on
+            // the chart.
+            data: data,
+            // colors: #ff6347, #3cb371, #0000ff, #ee82ee, #ffa500,
+        });
+        return piChartHoursPerTeam;
     }
 </script>
 

@@ -165,6 +165,7 @@ function hideGoogleDocsImportButtonWhenDisabled() {
     });
 }
 
+
 function replaceJiraTicketLinks() {
     var tickets = AJS.$(".td.ticket a");
     for (var i = 0; i < tickets.length; i++) {
@@ -176,6 +177,96 @@ function replaceJiraTicketLinks() {
         }
     }
 }
+
+
+// TODO: GO ON IF TIME
+
+//function replaceJiraTicketLinks() {
+//    
+//	console.log("REPLACE JIRA TICKET LINKS");
+//	var tickets = AJS.$(".td.ticket");
+//	console.log("tickets: ", tickets);
+//	
+//	var linkStart = "<a target=\"_blank\" href=\""; //URL following
+//	var linkMiddle = "\">"; // Ticket ID following
+//	var linkEnd = "</a>";
+//		
+//	// for each timesheet entry "ticket" do...
+//    for (var i = 0; i < tickets.length; i++) {
+//    	var ticketUrlArray = [];
+//        var ticket = tickets[i];
+//        console.log("ticket: ", ticket);
+//        var ticketFieldText = ticket.textContent;
+//        console.log("ticketFieldText: ", ticketFieldText);
+//        
+//        if (ticketFieldText == "None") {
+////            AJS.$(ticket).removeAttr("a");
+//        // only 1 ticket, no Beistrich
+//        } else if (!ticketFieldText.includes(',')){
+//			var splittedTicketKey;
+//			if (ticketFieldText.includes(' ')) {
+//				splittedTicketKey = ticketFieldText.split(" ")[0];
+//	        	console.log("NUR 1 TICKET: ", splittedTicketKey);
+//			}
+//			else
+//				splittedTicketKey = ticketFieldText;
+//       	
+//        	var ticketUrl = baseUrl + "/browse/" + splittedTicketKey;
+//        	console.log("single ticketUrl: ", ticketUrl);
+//
+//        	var keyAndTitleUrl = linkStart + ticketUrl + linkMiddle + ticketFieldText + linkEnd;
+//        	console.log(keyAndTitleUrl);
+//        	
+//        	ticketUrlArray.push(keyAndTitleUrl);
+//        	
+////        	var innerPart = document.getElementById("ticketviewlink");
+////        	console.log("innerPart before: ", innerPart);
+////        	innerPart.innerHTML = innerPart.innerHTML.replace(keyAndTitleUrl);
+////        	console.log("innerPart after: ", innerPart);
+//		} else {
+//			console.log("MEHR ALS 1 TICKET...................");
+//			var ticketIDandTitleArray = ticketFieldText.split(',');
+//			console.log("ticketIDandTitleArray: ", ticketIDandTitleArray);
+//			
+//			for (var j = 0; j < ticketIDandTitleArray.length; j++) {
+//			
+//				var ticketKey;
+//			
+//				if (!ticketIDandTitleArray[j].includes(' ')) {
+//					ticketKey = ticketIDandTitleArray[j];
+//					console.log("KeyNr.: ", j);
+//					console.log("ticketKey: ", ticketKey);
+//					}
+//				else {
+//					ticketKey = ticketIDandTitleArray[j].split(" ")[0];
+//					console.log("KeyNr.: ", j);
+//					console.log("splitted ticketKey: ", ticketKey);
+//				}
+//				
+//				var ticketUrl = baseUrl + "/browse/" + ticketKey;
+//	        	console.log("multiple ticketUrl: ", ticketUrl);
+//	        	var keyUrl = linkStart + ticketUrl + linkMiddle + ticketKey + linkEnd;
+//	        	console.log(keyUrl);
+//	        	var titleUrl = linkStart + ticketUrl + linkMiddle + ticketFieldText + linkEnd;
+//	        	console.log(titleUrl);
+//	        	
+//	        	ticketUrlArray.push(titleUrl);
+//			}
+////			var innerPart = document.getElementById("ticketviewlink");
+////        	console.log("innerPart before: ", innerPart);
+////        	innerPart.innerHTML = innerPart.innerHTML.replace(ticketUrlArray.join());
+////        	console.log("innerPart after: ", innerPart);
+//		}
+//	}
+//}
+////TODO: über alle split ergebnisse iterieren
+//// wenn im split ein beistrich, dann nochmal am beistrich splitten??
+//        	var ticketUrl = baseUrl + "/browse/" + splittedTicketKey;
+//        	console.log("ticketUrl: ", ticketUrl);
+//            AJS.$(ticket).attr("href", ticketUrl);
+//        }
+//    }
+
 
 function checkConstrains() {
     return AJS.$.ajax({
@@ -307,6 +398,7 @@ function fetchData(timesheetID) {
         .done(populateTable, prepareImportDialog)
         .done(assembleTimesheetVisData)
         .done(populateVisTable)
+        .done(assignTeamAndHoursDataToPiChart)
         .done(assignCategoryDiagramData)
         .done(replaceJiraTicketLinks)
 
