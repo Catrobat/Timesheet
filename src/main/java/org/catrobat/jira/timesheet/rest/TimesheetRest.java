@@ -873,54 +873,54 @@ public class TimesheetRest {
     }
 
     // This is a demo API REST method to show you how to use the powerful and wonderful JqlQueryBuilder class
-    @GET
-    @Path("issueTickets")
-    public Response getIssueTickets(@Context HttpServletRequest request) throws ServiceException {
-        try {
-            permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-        }
-
-        SearchService searchService = ComponentAccessor.getComponentOfType(SearchService.class);
-        ApplicationUser currentUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
-
-        final JqlQueryBuilder builder = JqlQueryBuilder.newBuilder();
-
-        //builder.where().project("DEMO");
-        builder.where().assigneeUser("Admin");
-        Query query = builder.buildQuery();
-
-        List<Issue> issues = null;
-
-        try {
-            SearchResults results = searchService.search(currentUser, query, PagerFilter.getUnlimitedFilter());
-            issues = results.getIssues();
-
-            for (Issue issue : issues) {
-                String displayName = issue.getAssignee().getDisplayName();
-                logger.debug("displayName = {}", displayName);
-            }
-
-        } catch (SearchException e) {
-            logger.warn("Error running search: {}", e);
-        }
-
-        JSONObject jo = new JSONObject();
-        try {
-            for (Issue issue : issues) {
-                JSONObject item = new JSONObject();
-                item.put("assignee", issue.getAssignee());
-                item.put("id", issue.getId());
-                jo.append("issues", item);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return Response.ok(jo.toString()).build();
-    }
+//    @GET
+//    @Path("issueTickets")
+//    public Response getIssueTickets(@Context HttpServletRequest request) throws ServiceException {
+//        try {
+//            permissionService.checkIfUserExists();
+//        } catch (PermissionException e) {
+//            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+//        }
+//
+//        SearchService searchService = ComponentAccessor.getComponentOfType(SearchService.class);
+//        ApplicationUser currentUser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+//
+//        final JqlQueryBuilder builder = JqlQueryBuilder.newBuilder();
+//
+//        //builder.where().project("DEMO");
+//        builder.where().assigneeUser("Admin");
+//        Query query = builder.buildQuery();
+//
+//        List<Issue> issues = null;
+//
+//        try {
+//            SearchResults results = searchService.search(currentUser, query, PagerFilter.getUnlimitedFilter());
+//            issues = results.getIssues();
+//
+//            for (Issue issue : issues) {
+//                String displayName = issue.getAssignee().getDisplayName();
+//                logger.debug("displayName = {}", displayName);
+//            }
+//
+//        } catch (SearchException e) {
+//            logger.warn("Error running search: {}", e);
+//        }
+//
+//        JSONObject jo = new JSONObject();
+//        try {
+//            for (Issue issue : issues) {
+//                JSONObject item = new JSONObject();
+//                item.put("assignee", issue.getAssignee());
+//                item.put("id", issue.getId());
+//                jo.append("issues", item);
+//            }
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return Response.ok(jo.toString()).build();
+//    }
 
     @GET
     @Path("inactiveUsers")
