@@ -1220,7 +1220,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     };
     
     // empty description after submitting the entry
-    form.descriptionField.val("");
+//    form.descriptionField.val("");
 
     if (existingEntryID !== "new-id") {
         timesheetEntry.entryID = existingEntryID;
