@@ -33,19 +33,22 @@ function appendHoursPerTeamToPiChart(teamAndHoursPerTeamArray) {
 	// ...
 	
 	var data = [];
+	var teamNames = [];
 	
 	for (var i = 1; i < teamAndHoursPerTeamArray.length; i+=2) {
 				
 //		console.log("TEAM teamAndHoursPerTeamArray[i]: ", teamAndHoursPerTeamArray[i-1]);
 //		console.log("HOURS teamAndHoursPerTeamArray[i+1]: ", teamAndHoursPerTeamArray[i]);
 		
-		data.push({
-			label: teamAndHoursPerTeamArray[i-1],
-			value: toFixed(teamAndHoursPerTeamArray[i], 2)
-		});
+		teamNames.push(teamAndHoursPerTeamArray[i-1]);		
+		data.push(toFixed(teamAndHoursPerTeamArray[i], 2));
 	}
 	
-	var piChartHoursPerTeam = drawHoursPerTeamPiChart(data);
+	console.log("LABELS(teamNames) + DATA:");
+	console.log(teamNames);
+	console.log(data);
+	
+	var piChartHoursPerTeam = drawHoursPerTeamPiChart(teamNames, data);
 	
 //	AJS.$("#table-header > ul > li > a").bind("tabSelect", function(e, o) {
 //        if (o.tab.attr("href") == "#tabs-line") {
@@ -53,4 +56,5 @@ function appendHoursPerTeamToPiChart(teamAndHoursPerTeamArray) {
 //        }
 //    });
 }
+
 

@@ -1,6 +1,7 @@
 <html>
 <head>
     <title>Timesheet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
     <meta name="decorator" content="atl.admin">
     <meta name="decorator" content="atl.userprofile">
     $webResourceManager.requireResource("org.catrobat.jira.timesheet:timesheet-resources")
@@ -22,17 +23,17 @@
         document.getElementById("visualization-table").style.visibility = "visible";
         document.getElementById("piChartDiagram").style.visibility = "visible";
         document.getElementById("piChartDiagramTag").style.visibility = "visible";
-        document.getElementById("piChartDiagramHoursPerTeam").style.visibility = "visible";
-        document.getElementById("piChartDiagramHoursPerTeamTag").style.visibility = "visible";
     }
 </script>
 
 <script type="application/javascript">
     function showLineDiagram() {
+    	document.getElementById("piChartDiagramHoursPerTeamTag").style.visibility = "visible";
+    	document.getElementById("piChartDiagramHoursPerTeam").style.visibility = "visible";
         document.getElementById("lineDiagram").style.visibility = "visible";
         document.getElementById("lineDiagramTag").style.visibility = "visible";
         document.getElementById("categoryLineDiagram").style.visibility = "visible";
-        document.getElementById("categoryLineDiagramTag").style.visibility = "visible";       
+        document.getElementById("categoryLineDiagramTag").style.visibility = "visible"; 
     }
 </script>
 
@@ -174,23 +175,27 @@
         <h3 id="piChartDiagramTag" >Visualization of your theory - practical hours distribution</h3>
         <div id="piChartDiagram" style="height: 200px;"></div>
         
-        <h3 id="piChartDiagramHoursPerTeamTag">Hours per Team distribution</h3>
-    	<div id="piChartDiagramHoursPerTeam" style="height: 200px;"></div>
-        
     </div>
     
 #*    content of the third tab "Time-Visualization"*#
 
     <div class="tabs-pane" id="tabs-line">
         <div class="diagram-header-container">
+        <h2 id="piChartDiagramHoursPerTeamTag"><strong>Hours per Team distribution</strong></h2>		
+        </div>
+    	<canvas id="piChartDiagramHoursPerTeam" class="piChartDiaHpT" [colors]="doughnutChartColors" width="300" height="300"></canvas>
+    
+        <div class="diagram-header-container">
+        	
             <h2 id="lineDiagramTag"><strong>Visualization of your working time</strong></h2>
         </div>
         <div id="lineDiagram" style="height:300px;"></div>
         <div class="diagram-header-container">
             <h2 id="categoryLineDiagramTag"><strong>Visualization of your working time related on categories</strong></h2>
         </div>
-        <div id="categoryLineDiagram" style="height:400px;"></div>
+        <div id="categoryLineDiagram" style="height:300px;"></div>
     </div>
+    
 #*    content of the third tab "Team-Visualization"*#
     <div class="tabs-pane" id="tabs-team">
         <div id="team-vis-select-container" style="align-items:center; display:none;" >
@@ -368,24 +373,60 @@
             // Chart data records -- each entry in this array corresponds to a point on
             // the chart.
             data: data,
+            colors: ['#95D7BB', '#ff6347', '#0BA462', '#3cb371', '#39B580', '#0000ff', '#67C69D', '#ee82ee', '#ffa500'],
         });
         return piChart;
     }
 </script>
 
+
 <script>
-    function drawHoursPerTeamPiChart(data) {
-        var piChartHoursPerTeam = new Morris.Donut({
-            // ID of the element in which to draw the chart.
-            element: 'piChartDiagramHoursPerTeam',
-            // Chart data records -- each entry in this array corresponds to a point on
-            // the chart.
-            data: data,
-            // colors: #ff6347, #3cb371, #0000ff, #ee82ee, #ffa500,
-        });
+    function drawHoursPerTeamPiChart(teamNames, data) {
+    
+    	var doughnutChartColors = [{ backgroundColor: ["#b8436d", "#00d9f9", "#a4c73c", "#a4add3"] }];
+    
+    	var options = {
+                tooltipEvents: [],
+                showTooltips: true,
+                onAnimationComplete: function() {
+                    this.showTooltip(this.segments, true);
+                },
+                tooltipTemplate: "<%= label %> - <%= value %>",
+                responsive: false,
+                scaleBeginAtZero: true,
+                // you don't have to define this here, it exists inside the global defaults
+                legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+            }
+    	
+    	var piData =  {
+			    datasets: [{
+			        data: data
+			    }],		
+			    labels: teamNames,
+			    backgroundColor: [
+			      "#FF6384",
+			      "#36A2EB",
+			      "#FFCE56"
+			    ],
+			    hoverBackgroundColor: [
+			      "#000",
+			      "#36A2EB",
+			      "#FFCE56"
+			    ],
+				colors: ['#95D7BB', '#ff6347', '#0BA462', '#3cb371', '#39B580', '#0000ff', '#67C69D', '#ee82ee', '#ffa500']
+			};
+    
+    	var ctx = document.getElementById("piChartDiagramHoursPerTeam");
+	    var piChartHoursPerTeam = new Chart(ctx, {
+		    type: 'doughnut',
+		    data: piData,
+		    options: options
+		});
+
         return piChartHoursPerTeam;
     }
 </script>
+
 
 <script>
     function drawLineDiagram(data) {
