@@ -121,8 +121,7 @@ function calculateTime(timesheetData) {
             totalMinutes = totalMinutes - minutesToFullHours * 60;
         }
     }
-    console.log("time to return: " + totalHours + totalMinutes / 60);
-
+    console.log("time to return: ", (totalHours + totalMinutes / 60));
     return totalHours + totalMinutes / 60;
 }
 
@@ -361,7 +360,7 @@ function deleteLecture(lecture, dialog){
 }
 
 function setProgressBar(total, done){
-    console.log("initiating progress bar: total: " + total + " done: " + done);
+//    console.log("initiating progress bar: total: " + total + " done: " + done);
 
     if(total == 0)
         return;

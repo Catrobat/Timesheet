@@ -64,13 +64,6 @@ code {
     visibility: hidden;
 }
 
-#piChartDiagram {
-    margin-top: 25px;
-    width: 200px;
-    height: 200px;
-    margin-left: 10px;
-    visibility: hidden;
-}
 
 #lineDiagram {
     margin-top: 25px;

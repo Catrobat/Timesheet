@@ -114,8 +114,7 @@ public class TimesheetServlet extends HttpServlet {
                 //getting sheet for current user
                 if (sheetService.userHasTimesheet(userKey, false)) {
                     timesheet = sheetService.getTimesheetByUser(userKey, false);
-                    logger.info("Current user (user key: {}) has an active timesheet (timesheet id: {})", userKey, timesheet.getID());
-                    LOGGER.error("We created a new Timesheet for user with key: " + userKey);
+                    LOGGER.error("Current user (user key: " + userKey + ") has an active timesheet (timesheet id: " + timesheet.getID() + ")");
 
                     if (timesheet.getTargetHours() == 0 && timesheet.getLectures().isEmpty())
                         paramMap.put("isInit", true);
@@ -125,7 +124,7 @@ public class TimesheetServlet extends HttpServlet {
                 if (timesheet == null) {
                     timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 0, 0, 0, "",
                             "", false, Timesheet.State.ACTIVE);
-
+                    LOGGER.error("We created a new Timesheet for user with key: " + userKey);
                     paramMap.put("isInit", true);
                 }
                 paramMap.put("external", false);

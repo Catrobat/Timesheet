@@ -21,15 +21,14 @@
 <script type="application/javascript">
     function showOverview() {
         document.getElementById("visualization-table").style.visibility = "visible";
-        document.getElementById("piChartDiagram").style.visibility = "visible";
-        document.getElementById("piChartDiagramTag").style.visibility = "visible";
     }
 </script>
 
 <script type="application/javascript">
     function showLineDiagram() {
-    	document.getElementById("piChartDiagramHoursPerTeamTag").style.visibility = "visible";
+    	
     	document.getElementById("piChartDiagramHoursPerTeam").style.visibility = "visible";
+    	document.getElementById("piChartDiagramHoursPerCategory").style.visibility = "visible";
         document.getElementById("lineDiagram").style.visibility = "visible";
         document.getElementById("lineDiagramTag").style.visibility = "visible";
         document.getElementById("categoryLineDiagram").style.visibility = "visible";
@@ -123,6 +122,11 @@
 
 #*   content of the tab "Team Information"*#
     <div class="tabs-pane" id="tabs-team-information">
+    	<div class="progress-bar">
+            <div class="progress">
+                <strong class="progress-percentage-text"></strong>
+            </div>
+        </div>
         <div class="aui-page-panel">
             <div class="aui-page-panel-inner">
                 <section class="aui-page-panel-content">
@@ -159,6 +163,7 @@
                 <strong class="progress-percentage-text"></strong>
             </div>
         </div>
+        
         <table id="visualization-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
@@ -171,25 +176,35 @@
             </tbody>
         </table>
 
-        #*TODO: do we need that header? *#
-        <h3 id="piChartDiagramTag" >Visualization of your theory - practical hours distribution</h3>
-        <div id="piChartDiagram" style="height: 200px;"></div>
+        
         
     </div>
     
 #*    content of the third tab "Time-Visualization"*#
 
     <div class="tabs-pane" id="tabs-line">
-        <div class="diagram-header-container">
-        <h2 id="piChartDiagramHoursPerTeamTag"><strong>Hours per Team distribution</strong></h2>		
-        </div>
-    	<canvas id="piChartDiagramHoursPerTeam" class="piChartDiaHpT" [colors]="doughnutChartColors" width="300" height="300"></canvas>
     
-        <div class="diagram-header-container">
-        	
+    	<div class="progress-bar">
+            <div class="progress">
+                <strong class="progress-percentage-text"></strong>
+            </div>
+        </div>
+
+        <div id="contain">
+			<div id="canvas-holder" style="width:40%; float: left;">
+				 <canvas id="piChartDiagramHoursPerTeam" width="500" height="350" style=" float:left; margin-left:4em; margin-bottom:5em; margin-top:2em"></canvas>
+			</div>
+			<div id="canvas-holder" style="width:60%; float: left;">
+			 	<canvas id="piChartDiagramHoursPerCategory" width="600" height="350" style="float:left; margin-left:5em; margin-bottom:5em; margin-top:2em"></canvas>
+			</div>
+		</div>
+
+    
+        <div class="diagram-header-container">        	
             <h2 id="lineDiagramTag"><strong>Visualization of your working time</strong></h2>
         </div>
         <div id="lineDiagram" style="height:300px;"></div>
+        
         <div class="diagram-header-container">
             <h2 id="categoryLineDiagramTag"><strong>Visualization of your working time related on categories</strong></h2>
         </div>
@@ -198,14 +213,22 @@
     
 #*    content of the third tab "Team-Visualization"*#
     <div class="tabs-pane" id="tabs-team">
+    
+    	<div class="progress-bar">
+            <div class="progress">
+                <strong class="progress-percentage-text"></strong>
+            </div>
+        </div>
+        
         <div id="team-vis-select-container" style="align-items:center; display:none;" >
-            <select class="select" id="team-vis-select" placeholder="Select Gulasch" >
+            <select class="select" id="team-vis-select" placeholder="Select a Team" >
                 <option></option>
             </select>
             <input type="button" class="aui-button aui-button-primary" id="display-selected-team" value="Display">
             <input type="button" class="aui-button aui-button-primary" id="reset-teamvis-selection" value="Reset">
             <div class="loader" id="team-vis-spinner"></div>
         </div>
+        
         <form id="team-visualization" class="aui">
             <div class="diagram-header-container">
                 <h2 id="teamDiagramTag"></h2>
@@ -214,12 +237,19 @@
             <div class="diagram-header-container">
                 <h2 id="teamLineDiagramTag"></h2>
             </div>
-            <div id="teamLineDiagram" style="height: 400px;"></div>
+            <div id="teamLineDiagram" style="height: 300px;"></div>
         </form>
     </div>
 
 #*    content of the last tab "Key Data"*#
     <div class="tabs-pane" id="tabs-timesheet-information">
+    
+    	<div class="progress-bar">
+            <div class="progress">
+                <strong class="progress-percentage-text"></strong>
+            </div>
+        </div>
+        
         <p>
         <form id="timesheet-information" class="aui">
             <div class="field-group" id="timesheet-export-csv-link">
@@ -364,28 +394,59 @@
     }
 </script>
 
+
 <script>
-    function drawPiChart(data) {
-        var piChart = new Morris.Donut({
-            // ID of the element in which to draw the chart.
-            //element: 'piChartDiagram',
-            element: 'piChartDiagram',
-            // Chart data records -- each entry in this array corresponds to a point on
-            // the chart.
-            data: data,
-            colors: ['#95D7BB', '#ff6347', '#0BA462', '#3cb371', '#39B580', '#0000ff', '#67C69D', '#ee82ee', '#ffa500'],
-        });
-        return piChart;
+    function drawHoursPerCategoryPiChart(catNames, data) {
+    
+    	var options = {
+			legend: {
+		        position: 'right'
+		    },
+            tooltipEvents: [],
+            showTooltips: true,
+            onAnimationComplete: function() {
+                this.showTooltip(this.segments, true);
+            },
+            tooltipTemplate: "<%= label %> - <%= value %>",
+            responsive: false,
+            scaleBeginAtZero: true,
+            title: {
+            	display: true,
+            	text: "Hours per Category distribution",
+            	fontSize: 16,
+            	fontColor: '#000000',
+            	fontStyle: 'bold'
+            },
+            // you don't have to define this here, it exists inside the global defaults
+            legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+        }
+    	
+    	var piData =  {
+			    datasets: [{
+			        data: data,
+			        backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"]
+			    }],		
+			    labels: catNames			    
+			};
+    
+    	var ctx = document.getElementById("piChartDiagramHoursPerCategory");
+	    var piChartCategoryPerTeam = new Chart(ctx, {
+		    type: 'doughnut',
+		    data: piData,
+		    options: options
+		});
+
+        return piChartCategoryPerTeam;
     }
 </script>
-
 
 <script>
     function drawHoursPerTeamPiChart(teamNames, data) {
     
-    	var doughnutChartColors = [{ backgroundColor: ["#b8436d", "#00d9f9", "#a4c73c", "#a4add3"] }];
-    
     	var options = {
+		    	legend: {
+				        position: 'right'
+				    },
                 tooltipEvents: [],
                 showTooltips: true,
                 onAnimationComplete: function() {
@@ -394,26 +455,23 @@
                 tooltipTemplate: "<%= label %> - <%= value %>",
                 responsive: false,
                 scaleBeginAtZero: true,
+                title: {
+                	display: true,
+                	text: "Hours per Team distribution",
+                	fontSize: 16,
+                	fontColor: '#000000',
+                	fontStyle: 'bold'
+                },
                 // you don't have to define this here, it exists inside the global defaults
                 legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
             }
     	
     	var piData =  {
 			    datasets: [{
-			        data: data
+			        data: data,
+			        backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"]
 			    }],		
-			    labels: teamNames,
-			    backgroundColor: [
-			      "#FF6384",
-			      "#36A2EB",
-			      "#FFCE56"
-			    ],
-			    hoverBackgroundColor: [
-			      "#000",
-			      "#36A2EB",
-			      "#FFCE56"
-			    ],
-				colors: ['#95D7BB', '#ff6347', '#0BA462', '#3cb371', '#39B580', '#0000ff', '#67C69D', '#ee82ee', '#ffa500']
+			    labels: teamNames			    
 			};
     
     	var ctx = document.getElementById("piChartDiagramHoursPerTeam");

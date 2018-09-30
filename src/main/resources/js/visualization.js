@@ -37,8 +37,10 @@ function assembleTimesheetVisData(timesheetReply, categoriesReply, teamsReply, e
 function populateVisTable(timesheetDataReply) {
     AJS.$("#visualization-table-content").empty();
 
-    AJS.$("#piChartDiagramTag").empty();
-    AJS.$("#piChartDiagram").empty();
+//    AJS.$("#piChartDiagram").empty();
+    AJS.$("#piChartDiagramHoursPerTeam").empty();
+    AJS.$("#piChartDiagramHoursPerCategory").empty();
+    
 
     // user time visualization
     AJS.$("#lineDiagram").html("");

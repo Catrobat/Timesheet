@@ -4,10 +4,8 @@ function assignTeamAndHoursDataToPiChart (timesheetData) {
 	
 	var teamAndHoursPerTeamArray = [];
 	var availableEntries = timesheetData[0].entries;
-	
 //	console.log("timesheetData[0] ", timesheetData[0]);
 //	console.log("timesheetData[0].teams ", timesheetData[0].teams);
-	
     var teamsHavingEntries = timesheetData[0].teams;
     
     for (var key in teamsHavingEntries) {
@@ -18,7 +16,6 @@ function assignTeamAndHoursDataToPiChart (timesheetData) {
 //        console.log("thisTeamName: ", thisTeam.teamName);
         
 //        for each entry, if entry teamId == key, count
-        
         var i = availableEntries.length - 1;
         var totalHoursPerTeam = 0;
         var totalMinutesPerTeam = 0;
@@ -30,7 +27,6 @@ function assignTeamAndHoursDataToPiChart (timesheetData) {
         		
 //        		console.log("1 availableEntries[i].teamID: " + availableEntries[i].teamID);
 //        		console.log("1 key: ", key);
-        		
                 var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
             		    availableEntries[i].pauseMinutes).getHours();
         		var minutes = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
@@ -158,7 +154,8 @@ function assignCategoryDiagramData(timesheetData) {
     }
 
     categoryDiagram(sortedDataArray, categories.length, false);
-    appendTimeToPiChart(sortedDataArray, categories.length);
+
+    appendTimeToHoursPerCategoryPiChart(sortedDataArray, categories.length);
 }
 
 function categoryDiagram(sortedDataArray, numberOfCategories, isTeamDiagram) {

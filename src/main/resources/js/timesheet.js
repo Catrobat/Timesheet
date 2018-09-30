@@ -571,7 +571,8 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
 // first we have to clear the lineDiagram sections before we can repaint the lineDiagram.
 function clearDiagramSelections() {
     //summary lineDiagram
-    AJS.$("#piChartDiagram").empty();
+    AJS.$("#piChartDiagramHoursPerCategory").empty();
+    AJS.$("#piChartDiagramHoursPerTeam").empty();
 
     // user time visualization
     AJS.$("#lineDiagram").empty();
