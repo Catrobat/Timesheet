@@ -12,6 +12,7 @@ import org.catrobat.jira.timesheet.services.*;
 
 import java.util.*;
 
+
 public class ActivityVerificationJob implements PluginJob {
 
     private TimesheetService sheetService;
@@ -40,29 +41,36 @@ public class ActivityVerificationJob implements PluginJob {
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
             String statusFlagMessage = "nothing changed";
             
-//            LOGGER.error("USER: " + user.getDisplayName() + " / STATE: " + timesheet.getState());
-//            LOGGER.error("equals Timesheet.State.DONE: " + timesheet.getState().equals(Timesheet.State.DONE));
-//            LOGGER.error("isUserInUserGroupDisabled(user): " + permissionService.isUserInUserGroupDisabled(user));
-            
-            if (!timesheet.getState().equals(Timesheet.State.DONE) && permissionService.isUserInUserGroupDisabled(user)) {
-            	LOGGER.info("setting Timesheet to DONE for: " + user.getDisplayName());
-            	timesheet.setState(Timesheet.State.DONE);
-            	timesheet.save();
-            	statusFlagMessage = "Timesheet set to DONE";
-            }
-            
-            if (timesheet.getState().equals(Timesheet.State.DONE) && !permissionService.isUserInUserGroupDisabled(user)) {
-            	LOGGER.info("setting Timesheet to ACTIVE from DONE for: " + user.getDisplayName());
-            	timesheet.setState(Timesheet.State.ACTIVE);
-            	timesheet.save();
-            	statusFlagMessage = "Timesheet set to ACTIVE";
-            }
-        	
             TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
             if (entries.length == 0) {
                 continue;
             }
-
+            
+            if (permissionService == null) {
+            	LOGGER.error("ATTENTION! permissionService is null...! For: " + "USER: " + user.getDisplayName() + " / STATE: " + timesheet.getState());
+                LOGGER.error("equals Timesheet.State.DONE: " + timesheet.getState().equals(Timesheet.State.DONE));
+            }
+            else if (permissionService == null && !timesheet.getState().equals(Timesheet.State.DONE)) {
+            	LOGGER.error("---DONE DONE DONE ATTENTION! permissionService is null...! For: " + "USER: " + user.getDisplayName() + " / STATE: " + timesheet.getState());
+                LOGGER.error("equals Timesheet.State.DONE: " + timesheet.getState().equals(Timesheet.State.DONE));
+            }
+            else {
+            	LOGGER.debug("isUserInUserGroupDisabled(user): " + permissionService.isUserInUserGroupDisabled(user));
+                if (!timesheet.getState().equals(Timesheet.State.DONE) && permissionService.isUserInUserGroupDisabled(user)) {
+                	LOGGER.info("setting Timesheet to DONE for: " + user.getDisplayName());
+                	timesheet.setState(Timesheet.State.DONE);
+                	timesheet.save();
+                	statusFlagMessage = "Timesheet set to DONE";
+                }
+                
+                if (timesheet.getState().equals(Timesheet.State.DONE) && !permissionService.isUserInUserGroupDisabled(user)) {
+                	LOGGER.info("setting Timesheet to ACTIVE from DONE for: " + user.getDisplayName());
+                	timesheet.setState(Timesheet.State.ACTIVE);
+                	timesheet.save();
+                	statusFlagMessage = "Timesheet set to ACTIVE";
+                }
+            }
+            
             Date latestEntryDate = timesheet.getLatestEntryBeginDate();
             TimesheetEntry latestInactiveEntry = entryService.getLatestInactiveEntry(timesheet);
             Timesheet.State state = timesheet.getState();

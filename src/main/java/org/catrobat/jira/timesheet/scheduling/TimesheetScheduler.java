@@ -61,7 +61,7 @@ public class TimesheetScheduler implements LifecycleAware {
         );
         pluginScheduler.scheduleJob(
                 ACTIVITY_NOTIFICATION_JOB,
-                ActivityVerificationJob.class,
+                ActivityNotificationJob.class,
                 params,
                 jobStartDate(),
                 jobInterval()
