@@ -1,6 +1,7 @@
 "use strict";
 
 var coordUsersList = "";
+var currentUserOfCurrentTimesheet = "";
 
 function initCoordinatorUserList(userInformation) {
 	
@@ -64,9 +65,13 @@ function initCoordinatorUserList(userInformation) {
     
     AJS.$(".view-timesheet-button").on("click", function (e) {
         var timesheet_id = e.target.getAttribute("data-timesheet-id");
-
+        currentUserOfCurrentTimesheet = thisUsersName;
         window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheet_id, "_blank");
     });
+}
+
+function viewedTimesheetUserName() {
+	return currentUserOfCurrentTimesheet;
 }
 
 function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {

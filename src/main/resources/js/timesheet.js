@@ -453,7 +453,7 @@ function saveTimesheetIDOfUserInSession(selectedUser) {
 	else {
 		user = selectedUser[0];
 		isMTSheet = false;
-	}	
+	}
 	
     AJS.$.ajax({
         type: 'GET',
@@ -522,6 +522,8 @@ function fetchUsers() {
     }
 
     if(isCoordinator) {
+    	var selectedUserToUse = viewedTimesheetUserName();
+    	console.log("user/getUsersForCoordinator/ + ", selectedUserToUse);
         var userInformation = AJS.$.ajax({
             type: 'GET',
             url: restBaseUrl + 'user/getUsersForCoordinator',

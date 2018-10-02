@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -187,8 +188,13 @@ public class UserRest {
     	logger.error("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS));
 
         return Response.ok(jsonUserInformationList).build();
-    }
+    } 
 
+//    @GET
+//    @Path("/getUsersForCoordinator/{coordinatorName}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response getUsersForCoordinator(@Context HttpServletRequest request, @PathParam("coordinatorName") String coordinatorName) {
+    	
     @GET
     @Path("/getUsersForCoordinator")
     @Produces(MediaType.APPLICATION_JSON)
@@ -197,13 +203,28 @@ public class UserRest {
     	logger.debug("1 /getUsersForCoordinator reached");
     	Date date = new Date();
     	
-        ApplicationUser user;
+    	ApplicationUser user = null;
+//    	LOGGER.error("------------------------------------------ coordinatorName: " + coordinatorName);
+//    	if (!coordinatorName.equals("")) {
+//    		if (coordinatorName.contains(" ")) {
+//    			coordinatorName.replace(" ", "");
+//    			user = ComponentAccessor.getUserManager().getUserByName(coordinatorName);
+//    		}
+//    		else
+//    			user = ComponentAccessor.getUserManager().getUserByName(coordinatorName);
+//    	}
+    	
         boolean isAdmin = false;
-        try {
-            user = permissionService.checkIfUserExists();
-        } catch (PermissionException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        
+        if (user == null) {
+        	try {
+                user = permissionService.checkIfUserExists();
+            } catch (PermissionException e) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+            }
         }
+        
+        LOGGER.error("USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
 
         Response response = permissionService.checkUserPermission();
         if (response != null) {

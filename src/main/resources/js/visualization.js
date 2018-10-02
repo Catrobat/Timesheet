@@ -91,7 +91,7 @@ function initTeamVisOptions(teams){
     showTeamVisSelect();
 
     AJS.$("#team-vis-select").select2({
-        placeholder: "Select gulasch",
+        placeholder: "Select Team",
         width : "25%"
     });
 
@@ -103,7 +103,7 @@ function initTeamVisOptions(teams){
 }
 
 function setTeamVisListeners(){
-    //clear the listeners first, at multible calls function will be called multible times and listeners will be appended
+    //clear the listeners first, at multiple calls function will be called multiple times and listeners will be appended
     AJS.$("#display-selected-team").off();
 
     AJS.$("#display-selected-team").on("click", function () {
