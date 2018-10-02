@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.LogManager;
 
+
 @Path("/scheduling")
 @Produces({MediaType.APPLICATION_JSON})
 public class SchedulingRest {
@@ -75,6 +76,7 @@ public class SchedulingRest {
         params.put("teamService", teamService);
         params.put("configService", configService);
         params.put("schedulingService", schedulingService);
+        params.put("permissionService", permissionService);
 
         ActivityNotificationJob activityNotificationJob = new ActivityNotificationJob();
         activityNotificationJob.execute(params);
@@ -98,6 +100,7 @@ public class SchedulingRest {
         params.put("teamService", teamService);
         params.put("categoryService", categoryService);
         params.put("schedulingService", schedulingService);
+        params.put("permissionService", permissionService);
 
         ActivityVerificationJob activityVerificationJob = new ActivityVerificationJob();
         activityVerificationJob.execute(params);
@@ -117,6 +120,7 @@ public class SchedulingRest {
         params.put("sheetService", sheetService);
         params.put("configService", configService);
         params.put("schedulingService", schedulingService);
+        params.put("permissionService", permissionService);
 
         OutOfTimeJob outOfTimeJob = new OutOfTimeJob();
         outOfTimeJob.execute(params);

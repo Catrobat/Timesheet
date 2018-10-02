@@ -145,14 +145,14 @@ public class TimesheetRest {
 
         List<JsonTimesheetEntry> jsonTimesheetEntries = new LinkedList<>();
         Vector<String> TeamMembers = new Vector<>();
-        LOGGER.error("We want to extract team entries from timesheet: " + timesheetID);
+        LOGGER.trace("We want to extract team entries from timesheet: " + timesheetID);
 
         //calculating data only for most active team
         Team team = teamService.getMostActiveTeamForUser(owner_name, ownerSheet);
-        LOGGER.error("In getTeamEntries calculating for team: " + team.getTeamName());
+        LOGGER.trace("In getTeamEntries calculating for team: " + team.getTeamName());
 
         for (String teamMembersAndGroups : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.DEVELOPER)) {
-            LOGGER.error("currently to validate is : " + teamMembersAndGroups);
+            LOGGER.trace("currently to validate is : " + teamMembersAndGroups);
             if (ComponentAccessor.getUserManager().getUserByName(teamMembersAndGroups) == null) {
                 Collection<String> usersInGroup = ComponentAccessor.getGroupManager().getUserNamesInGroup(teamMembersAndGroups);
                 for (String member : usersInGroup) {
@@ -167,7 +167,7 @@ public class TimesheetRest {
             }
         }
 
-        LOGGER.error("after extraction list is: " + TeamMembers.toString());
+        LOGGER.trace("after extraction list is: " + TeamMembers.toString());
         for (String member : TeamMembers) {
             //collect all timesheet entries of all team members
             try {
@@ -427,7 +427,7 @@ public class TimesheetRest {
         if (response != null) {
             return response;
         }
-        LOGGER.error("We want to save an entry...");
+        LOGGER.trace("We want to save an entry...");
         try {
             RestUtils.checkJsonTimesheetEntryAndCategory(entry, categoryService);
             // TODO: how to remove the old error message if the done stuff was yet successful?? 
@@ -436,7 +436,7 @@ public class TimesheetRest {
         }
 
         Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
-        logger.error("is master thesis timesheet: " +sheet.getIsMasterThesisTimesheet());
+        LOGGER.trace("is master thesis timesheet: " +sheet.getIsMasterThesisTimesheet());
         try {
             RestUtils.checkTimesheetIsEnabled(sheet);
         } catch (PermissionException e) {
@@ -446,18 +446,18 @@ public class TimesheetRest {
         ApplicationUser user;
         Category category = categoryService.getCategoryByID(entry.getCategoryID());
         Team team = teamService.getTeamByID(entry.getTeamID());
-//        logger.error("team is: " + team.getTeamName());
+//        LOGGER.trace("team is: " + team.getTeamName());
         
         if (sheet.getIsMasterThesisTimesheet()) {
         	try {
 				team = teamService.getTeamByName("Master Thesis");
 			} catch (ServiceException e) {
-				logger.error("Could not find Team Master Thesis!");
+				LOGGER.error("Could not find Team Master Thesis!");
 				e.printStackTrace();
 			}
         }
         
-//        logger.error("team is: " + team.getTeamName());
+//        Logger.trace("team is: " + team.getTeamName());
         try {
             user = permissionService.checkIfUserExists();
             permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
@@ -1008,11 +1008,11 @@ public class TimesheetRest {
                         cal.get(Calendar.DAY_OF_YEAR) == cal1.get(Calendar.DAY_OF_YEAR);
 
                 if (is_same_day) {
-                    LOGGER.error("We want to edit a date which was created today and therefore we delete it");
+                    LOGGER.trace("We want to edit a date which was created today and therefore we delete it");
 
                     entryService.delete(latest_entry);
                 } else {
-                    LOGGER.error("Setting endDate to today");
+                    LOGGER.trace("Setting endDate to today");
                     latest_entry.setInactiveEndDate(new Date());
                     latest_entry.save();
                 }
@@ -1049,7 +1049,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        LOGGER.error("getting entries for team with id: " + teamId);
+        LOGGER.trace("getting entries for team with id: " + teamId);
         TimesheetEntry[] entries = teamService.getTeamEntriesById(teamId);
 
         if(entries.length == 0){
@@ -1164,7 +1164,7 @@ public class TimesheetRest {
             return response;
         }
 
-        LOGGER.error("We want to save data: " + jsonTimesheetReasonData);
+        LOGGER.trace("We want to save data: " + jsonTimesheetReasonData);
         try{
             Timesheet sheet = sheetService.getTimesheetByUser(user.getKey(), false);
             sheetService.updateTimesheetReasonData(sheet, jsonTimesheetReasonData);

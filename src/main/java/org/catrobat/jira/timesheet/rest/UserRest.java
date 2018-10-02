@@ -263,7 +263,7 @@ public class UserRest {
             
             teamArray.retainAll(teamsOfCoordArray);
             if (teamArray.size() > 0) {
-            	LOGGER.error("User is COORD of: " + teamArray.toString());
+            	LOGGER.error(userName + " - The current User is COORD of: " + teamArray.toString());
             	
             }
             else {
