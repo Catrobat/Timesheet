@@ -158,5 +158,5 @@ input[type=text] {
     box-sizing: border-box;
 }
 input[type=text]:focus {
-    background-color: lightgrey;
+    background-color: lightcyan ;
 }

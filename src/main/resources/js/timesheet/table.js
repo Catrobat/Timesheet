@@ -502,6 +502,23 @@ function prepareForm(entry, timesheetData, isModified) {
     return form;
 }
 
+function checkIfStartDateIsInRange(date, form) {
+    var today = new Date();
+    if (isDateMoreThanTwoMonthsAhead(date)) {
+    	if (dateRangeFlag)
+    		dateRangeFlag.close();
+    	dateRangeFlag = AJS.flag({
+            type: 'error',
+            title: 'Wrong date range',
+            body: 'The date is more than 2 months in advance. This is not allowed.',
+            close: 'auto'
+        });
+        form.inactiveEndDateField.val("");
+        return false;
+    }
+    else
+    	return true;
+}
 
 function checkIfDateIsInRange(date, form) {
     var today = new Date();
@@ -1106,6 +1123,13 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     form.saveButton.prop('disabled', true);
 
     var date = form.dateField.val();
+    
+    //console.log("checking date: ", date);
+    if (checkIfStartDateIsInRange(date, form) === false) {
+    	console.log("Start date not in range, entry not saved...!");
+    	return;
+    }
+    
     var validDateFormat = new Date(date);
     var categoryIndex = form.categorySelect.val();
     var is_inactive_entry = false;

@@ -68,7 +68,15 @@ public class RestUtils {
         ZonedDateTime dataTime = instant.atZone(ZoneId.systemDefault());
         ZonedDateTime twoMonthsAhead = ZonedDateTime.now().plusMonths(2);
 
+        Instant instantDate = entry.getBeginDate().toInstant();
+        
         RestUtils.checkJsonTimesheetEntry(entry);
+        
+        if (dataTime.isAfter(twoMonthsAhead)) {
+            throw new ParseException("The value entered to the 'Date' column is more than 2 months ahead. This is too far away.");
+            }
+        
+        
         if (dataTime.isAfter(twoMonthsAhead)) {
             throw new ParseException("The 'Inactive End Date' is more than 2 months ahead. This is too far away.");
         } else if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0) &&
