@@ -150,3 +150,13 @@ div.change-details {
 .view-profile-link{
     cursor: pointer;
 }
+
+input[type=text] {
+    width: 20%;
+    padding: 10px 18px;
+    margin: 7px 0;
+    box-sizing: border-box;
+}
+input[type=text]:focus {
+    background-color: lightgrey;
+}

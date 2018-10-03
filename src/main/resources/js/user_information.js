@@ -51,7 +51,7 @@ AJS.toInit(function () {
             var enabled = userInformation[i].state !== "DISABLED";
             
             var done = userInformation[i].state === "DONE";
-            console.log("DONE is: ", done);
+            //console.log("DONE is: ", done);
             var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
 
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +

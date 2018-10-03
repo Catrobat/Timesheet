@@ -48,6 +48,29 @@
 	        document.getElementById("user-information-table").style.visibility = "visible";
 	    }
 	</script>
+
+	<script type="application/javascript">
+		function searchFunction(element, tablename, id) {
+		  // Declare variables
+		  var input, filter, table, tr, td, i;
+		  input = document.getElementById(element);
+		  filter = input.value.toUpperCase();
+		  table = document.getElementById(tablename);
+		  tr = table.getElementsByTagName("tr");
+		
+		  // Loop through all table rows, and hide those who don't match the search query
+		  for (i = 0; i < tr.length; i++) {
+		    td = tr[i].getElementsByTagName("td")[id];
+		    if (td) {
+		      if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+		        tr[i].style.display = "";
+		      } else {
+		        tr[i].style.display = "none";
+		      }
+		    }
+		  }
+		}
+	</script>	
 	
 
 	<h1><b>Timesheet - User Information</b></h1>
@@ -79,7 +102,7 @@
 #*content of the first tab User Statistics*#
     <div class="tabs-pane active-pane" id="tabs-statistic">     
         
-            <h3><b> Timesheet User Statistics</b></h3>
+            <h2><b> Timesheet User Statistics</b></h2>
             
             <p>
             <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
@@ -94,8 +117,10 @@
 #*content of the tab Active & Inactive*#
     <div class="tabs-pane" id="tabs-users">     
 		                
-        <h3><b> Active and Inactive Timesheets</b></h3>
-        
+        <h2><b> Active and Inactive Timesheets</b></h2>
+        <p>
+        <input type="text" id="searchInputNamesActive" onkeyup="searchFunction('searchInputNamesActive', 'user-information-table', 0)" placeholder="Search for Users...">
+        <p>
         <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
@@ -123,8 +148,10 @@
 #* content of the 2nd tab "Disabled Users"*#
 
     <div class="tabs-pane" id="tabs-disabled-users">   
-		<h3><b>Disabled Users</b></h3>
-
+		<h2><b>Disabled Users</b></h2>
+        <p>
+        <input type="text" id="searchInputNamesDisabled" onkeyup="searchFunction('searchInputNamesDisabled', 'disabled-users-table', 0)" placeholder="Search for Users...">
+        <p>
         <table id="disabled-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
@@ -152,8 +179,10 @@
 #*    content of the 3rd tab "Done Users"*#
     <div class="tabs-pane" id="tabs-done-users">
     
-		<h3><b>Done Users </b></h3>
-
+		<h2><b>Done Users </b></h2>
+        <p>
+        <input type="text" id="searchInputNamesDone" onkeyup="searchFunction('searchInputNamesDone', 'done-users-table', 0)" placeholder="Search for Users...">
+        <p>
         <table id="done-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
@@ -181,7 +210,7 @@
 #*    content of the 4th tab "Master Timesheets"*#
     <div class="tabs-pane" id="tabs-master">
     
-		<h3><b> Master Timesheets</b></h3>
+		<h2><b> Master Timesheets</b></h2>
 
         <table id="user-information-table-master" class="aui aui-table-interactive aui-table-sortable">
             <thead>
