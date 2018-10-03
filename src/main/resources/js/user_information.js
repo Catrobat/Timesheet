@@ -85,6 +85,7 @@ AJS.toInit(function () {
             	var rowm = "<tr>" +
                 "<td headers='ti-users-m' class='musers'>" +
                     "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
+                "</td><td headers='ti-view-timesheet-m'>"+ view_timesheet_button +"</td>"+
                 "</td><td headers='ti-team-m' class='mteam'>" + userInformation[i].teams +
                 "</td><td headers='ti-state-m' class='mstate' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "'; >" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date-m' class='minactive-end'>" + inactiveEndDate +
@@ -94,7 +95,6 @@ AJS.toInit(function () {
                 "</td><td headers='ti-hours-per-half-year-m' class='mhours-half-year'>" + userInformation[i].hoursPerHalfYear +
                 "</td><td headers='ti-latest-entry-date-m' class='mlatest-date'>" + latestEntryDate +
                 "</td><td headers='ti-latest-entry-description-m' class='mlatest-description'>" + userInformation[i].latestEntryDescription +
-                "</td><td headers='ti-view-timesheet-m'>"+ view_timesheet_button +"</td>"+
                 enabledColumn +
                 "</td></tr>";
             	
@@ -105,6 +105,7 @@ AJS.toInit(function () {
             	var row = "<tr>" +
                 "<td headers='ti-users' class='users'>" +
                     "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
+                "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
                 "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
@@ -114,7 +115,6 @@ AJS.toInit(function () {
                 "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
                 "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
                 "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
-                "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
                 enabledColumn +
                 "</td></tr>";
             	

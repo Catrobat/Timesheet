@@ -99,7 +99,8 @@
         <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
-                <th id="ti-users">User</th>                        
+                <th id="ti-users">User</th>
+                <th id="ti-view-timesheet">Timesheet Link</th>                     
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -109,7 +110,6 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>
                 <th id="ti-enabled">Timesheet Enabled</th>
             </tr>
             </thead>
@@ -128,7 +128,8 @@
         <table id="disabled-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
-                <th id="ti-users">User</th>                        
+                <th id="ti-users">User</th>
+                <th id="ti-view-timesheet">Timesheet Link</th>                       
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -138,7 +139,6 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>
                 <th id="ti-enabled">Timesheet Enabled</th>
             </tr>
             </thead>
@@ -157,7 +157,8 @@
         <table id="done-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
-                <th id="ti-users">User</th>                        
+                <th id="ti-users">User</th>
+                <th id="ti-view-timesheet">Timesheet Link</th>                     
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -167,7 +168,6 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>
                 <th id="ti-enabled">Timesheet Enabled</th>
             </tr>
             </thead>
@@ -187,6 +187,7 @@
             <thead>
             <tr>
                 <th id="ti-users-m">User</th>
+                <th id="ti-view-timesheet-m">Timesheet Link</th>
                 <th id="ti-team-m">Team</th>
                 <th id="ti-state-m">State</th>
                 <th id="ti-inactive-end-date-m">Inactive End Date</th>
@@ -196,7 +197,6 @@
                 <th id="ti-hours-per-half-year-m">Hours last Half Year</th>
                 <th id="ti-latest-entry-date-m">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description-m">Description of the Latest Entry</th>
-                <th id="ti-view-timesheet-m">Timesheet Link</th>
                 <th id="ti-enabled-m">Timesheet Enabled</th>
             </tr>
             </thead>

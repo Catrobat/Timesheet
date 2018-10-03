@@ -37,6 +37,7 @@ function initCoordinatorUserList(userInformation) {
         
         var row = "<tr>" +
             "<td headers='ti-users'>" + thisUsersName +
+            "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +
             "</td><td headers='ti-teams'>" + userInformation[i].teams +
             "</td><td headers='ti-state'>" + userInformation[i].state +
             "</td><td headers='ti-inactive-end-date'>" + inactiveEndDate +
@@ -47,7 +48,6 @@ function initCoordinatorUserList(userInformation) {
             "</td><td headers='ti-hours-per-month'>" + userInformation[i].hoursPerMonth +
             "</td><td headers='ti-latest-entry-date'>" + latestEntryDate +
             "</td><td headers='ti-latest-entry-description'>" + userInformation[i].latestEntryDescription +
-            "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +
             "</td></tr>";
         AJS.$("#team-information-table-content").append(row);
     }

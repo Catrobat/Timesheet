@@ -135,6 +135,7 @@
                         <thead>
                         <tr>
                             <th id="ti-users">Member</th>
+                            <th id="ti-view-timesheet">Timesheet Link</th>
                             <th id="ti-teams">Team</th>
                             <th id="ti-state">State</th>
                             <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -145,7 +146,6 @@
                             <th id="ti-hours-per-month">Hours last Month</th>
                             <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                             <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-                            <th id="ti-view-timesheet">Timesheet Link</th>
                         </tr>
                         </thead>
                         <tbody class="list" id="team-information-table-content">
