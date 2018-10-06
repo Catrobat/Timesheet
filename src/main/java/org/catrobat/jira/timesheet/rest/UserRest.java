@@ -22,7 +22,9 @@ import com.atlassian.jira.bc.JiraServiceContextImpl;
 import com.atlassian.jira.bc.group.search.GroupPickerSearchService;
 import com.atlassian.jira.bc.user.search.UserSearchService;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.exception.PermissionException;
+import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
@@ -190,42 +192,44 @@ public class UserRest {
         return Response.ok(jsonUserInformationList).build();
     } 
 
-//    @GET
-//    @Path("/getUsersForCoordinator/{coordinatorName}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response getUsersForCoordinator(@Context HttpServletRequest request, @PathParam("coordinatorName") String coordinatorName) {
-    	
     @GET
-    @Path("/getUsersForCoordinator")
+    @Path("/getUsersForCoordinator/{currentTimesheetID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsersForCoordinator(@Context HttpServletRequest request) {
+    public Response getUsersForCoordinator(@Context HttpServletRequest request, @PathParam("currentTimesheetID") String currentTimesheetID) {
     	
-    	logger.debug("1 /getUsersForCoordinator reached");
+//    @GET
+//    @Path("/getUsersForCoordinator")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response getUsersForCoordinator(@Context HttpServletRequest request) {
+    	
+    	LOGGER.debug("1 /getUsersForCoordinator reached");
+    	
     	Date date = new Date();
-    	
     	ApplicationUser user = null;
-//    	LOGGER.error("------------------------------------------ coordinatorName: " + coordinatorName);
-//    	if (!coordinatorName.equals("")) {
-//    		if (coordinatorName.contains(" ")) {
-//    			coordinatorName.replace(" ", "");
-//    			user = ComponentAccessor.getUserManager().getUserByName(coordinatorName);
-//    		}
-//    		else
-//    			user = ComponentAccessor.getUserManager().getUserByName(coordinatorName);
-//    	}
+    	boolean isAdmin = false;
     	
-        boolean isAdmin = false;
+    	LOGGER.trace("getRequestURI : " + request.getRequestURI());
+    	LOGGER.trace("currentTimesheetID : " + currentTimesheetID);
+
+    	
+    	if (currentTimesheetID != null && !currentTimesheetID.equals("undefined")) {
+    		int currentTimesheetIDint = Integer.parseInt(currentTimesheetID);
+    		Timesheet currentTimesheet = timesheetService.getTimesheetByID(currentTimesheetIDint);
+        	String currentUserKey = currentTimesheet.getUserKey();
+        	LOGGER.trace("currentUserKey: " + currentUserKey);
+        	user = ComponentAccessor.getUserManager().getUserByKey(currentUserKey);
+        	LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());		
+    	}
         
-        if (user == null) {
+        if (user == null || user.getUsername().equals("")) {
         	try {
                 user = permissionService.checkIfUserExists();
+                LOGGER.debug("without ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
             } catch (PermissionException e) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
             }
         }
         
-        LOGGER.error("USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
-
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
@@ -248,6 +252,7 @@ public class UserRest {
         for (Team t : teamsOfCoordinator) {
         	teamsOfCoordArray.add(t.getTeamName());
         }
+        
         
         
         List<JsonUserInformation> jsonUserInformationListForCoordinator = new ArrayList<>();
@@ -284,7 +289,7 @@ public class UserRest {
             
             teamArray.retainAll(teamsOfCoordArray);
             if (teamArray.size() > 0) {
-            	LOGGER.error(userName + " - The current User is COORD of: " + teamArray.toString());
+            	LOGGER.error(userName + " - is a teammember of: " + teamArray.toString());
             	
             }
             else {

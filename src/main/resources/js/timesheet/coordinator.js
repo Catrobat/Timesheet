@@ -1,7 +1,7 @@
 "use strict";
 
 var coordUsersList = "";
-var currentUserOfCurrentTimesheet = "";
+var idOfCurrentTimesheet = "";
 
 function initCoordinatorUserList(userInformation) {
 	
@@ -65,13 +65,8 @@ function initCoordinatorUserList(userInformation) {
     
     AJS.$(".view-timesheet-button").on("click", function (e) {
         var timesheet_id = e.target.getAttribute("data-timesheet-id");
-        currentUserOfCurrentTimesheet = thisUsersName;
         window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheet_id, "_blank");
     });
-}
-
-function viewedTimesheetUserName() {
-	return currentUserOfCurrentTimesheet;
 }
 
 function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
@@ -79,7 +74,7 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
     var userName = jsonUser[0]['userName'];
     var isTeamCoordinator = false;
     var isSupervisedUser = isReadOnlyUser(userName, config);
-    var listOfUsers = [];
+
 
     for (var i = 0; i < config.teams.length; i++) {
         var team = config.teams[i];

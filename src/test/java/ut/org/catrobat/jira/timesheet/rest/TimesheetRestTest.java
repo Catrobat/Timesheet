@@ -38,6 +38,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(MySampleDatabaseUpdater.class)

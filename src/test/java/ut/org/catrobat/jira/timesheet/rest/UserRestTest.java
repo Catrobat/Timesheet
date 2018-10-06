@@ -173,7 +173,7 @@ public class UserRestTest {
                 "USER_KEY = ?", "chris")[0])).thenReturn(true);
         when(permissionServiceMock.isUserCoordinatorOfTimesheet(userMock, ao.find(Timesheet.class,
                 "USER_KEY = ?", "joh")[0])).thenReturn(false);
-        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock);
+        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, "125");
         assertEquals(1, ((List<JsonUserInformation>)response.getEntity()).size());
     }
 

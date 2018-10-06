@@ -522,11 +522,18 @@ function fetchUsers() {
     }
 
     if(isCoordinator) {
-    	var selectedUserToUse = viewedTimesheetUserName();
-    	console.log("user/getUsersForCoordinator/ + ", selectedUserToUse);
+    	
+    	var currentTimesheetID;
+    	var pathname = window.location.href;
+    	console.log("pathname  ", pathname);
+    	if (pathname.includes("timesheetID=")) {
+    		currentTimesheetID = pathname.split("timesheetID=")[1];
+    	}
+    	console.log("user/getUsersForCoordinator/  ", currentTimesheetID);
+    	
         var userInformation = AJS.$.ajax({
             type: 'GET',
-            url: restBaseUrl + 'user/getUsersForCoordinator',
+            url: restBaseUrl + 'user/getUsersForCoordinator/' + currentTimesheetID,
             contentType: "application/json"
         });
 
