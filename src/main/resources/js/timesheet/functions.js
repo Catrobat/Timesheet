@@ -373,141 +373,15 @@ function updateTimesheetInfoData(){
                 success : function (data) {
                     timesheetData_.entries = data;
                     updateTimesheetInformationValues(timesheetData_);
-                    updateAppendEntriesToVisTable(timesheetData_);
+                    
                 }
             });
         }
     })
 }
 
-function updateAppendEntriesToVisTable(timesheetData) {
-	
-	AJS.$("#visualization-table-content").empty();
-    AJS.$("#visualization-table-content tr:first").empty();
 
-	console.log("UPDATE updateAppendEntriesToVisTable");
-    var availableEntries = timesheetData.entries;
 
-    var pos = 0;
-    var i = 0;
-    //variables for the time calculation
-    var totalHours = 0;
-    var totalMinutes = 0;
-    var totalTimeHours = 0;
-    var totalTimeMinutes = 0;
-    var timeLastSixMonthHours = 0;
-    var timeLastSixMonthMinutes = 0;
-    //save data in an additional array
-    var count = 0;
-    var dataPoints = [];
-    //pi chart variables
-
-    //spent time within the last six months
-    var sixMonthAgo = new Date();
-    sixMonthAgo.setMonth(sixMonthAgo.getMonth() - 6);
-
-    while (i < availableEntries.length) {
-        var referenceEntryDate = new Date(availableEntries[pos].beginDate);
-        var compareToDate = new Date(availableEntries[i].beginDate);
-        var oldPos = pos;
-
-        if ((referenceEntryDate.getFullYear() == compareToDate.getFullYear()) &&
-            (referenceEntryDate.getMonth() == compareToDate.getMonth())) {
-            //add all times for the same year-month pairs
-            var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
-                availableEntries[i].pauseMinutes).getHours();
-            var minutes = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
-                availableEntries[i].pauseMinutes).getMinutes();
-            var pause = availableEntries[i].pauseMinutes;
-            var calculatedTime = hours * 60 + minutes - pause;
-
-            totalMinutes = totalMinutes + calculatedTime;
-
-            if (totalMinutes >= 60) {
-                var minutesToFullHours = Math.floor(totalMinutes / 60); //get only full hours
-                totalHours = totalHours + minutesToFullHours;
-                totalMinutes = totalMinutes - minutesToFullHours * 60;
-            }
-
-            //date within the last six months
-            if (compareToDate.getTime() >= sixMonthAgo.getTime()) {
-            	timeLastSixMonthMinutes = timeLastSixMonthMinutes + calculatedTime;               
-
-                if (timeLastSixMonthMinutes >= 60) {
-                    var minutesToFullHours = Math.floor(timeLastSixMonthMinutes / 60); //get only full hours
-                    timeLastSixMonthHours = timeLastSixMonthHours + minutesToFullHours;
-                    timeLastSixMonthMinutes = timeLastSixMonthMinutes - minutesToFullHours * 60;
-                }
-            }
-        } else {
-            pos = i;
-            i = i - 1;
-        }
-
-        if (oldPos != pos || i == availableEntries.length - 1) {
-            //add points to line lineDiagram
-            var dataX = referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1);
-            var dataY = toFixed(totalHours + totalMinutes / 60, 2);
-            dataPoints.push(dataX);
-            dataPoints.push(dataY);
-            AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"date\">" +
-                "Working Time: " + referenceEntryDate.getFullYear() + "-" + (referenceEntryDate.getMonth() + 1) + "</td>" +
-                "<td headers=\"basic-time\" class=\"time\">" + totalHours + "hours " + totalMinutes + "mins" + "</td>" +
-                "</tr>");
-
-            count++;
-
-            //overall sum of spent time
-            totalTimeHours = totalTimeHours + totalHours;
-            totalTimeMinutes = totalTimeMinutes + totalMinutes;
-
-            if (totalTimeMinutes >= 60) {
-                var minutesToFullHours = Math.floor(totalTimeMinutes / 60); //get only full hours
-                totalTimeHours = totalTimeHours + minutesToFullHours;
-                totalTimeMinutes = totalTimeMinutes - minutesToFullHours * 60;
-            }
-            totalHours = 0;
-            totalMinutes = 0;
-        }
-
-        i = i + 1;
-    }
-
-    var totalTime = totalTimeHours * 60 + totalTimeMinutes;
-
-    //append total time
-    AJS.$("#visualization-table-content tr:first").before("<tr><td headers=\"basic-date\" class=\"total-time\"><strong>" + "Total Working Time" + "</strong></td>" +
-        "<td headers=\"basic-time\" class=\"time\"><strong>" + totalTimeHours + "hours " + totalTimeMinutes + "mins" + "</strong></td>" +
-        "</tr>");
-    console.log("TOTAL WORKING TIME (h): ", totalTimeHours);
-    console.log("TOTAL WORKING TIME (min): ", totalTimeMinutes);
-
-    //entry for average time
-    var averageMinutesPerMonth = (totalTimeHours * 60 + totalTimeMinutes) / count;
-    var averageTimeHours = 0;
-    var averageTimeMinutes = 0;
-
-    if (averageMinutesPerMonth >= 60) {
-        var minutesToFullHours = Math.floor(averageMinutesPerMonth / 60); //get only full hours
-        averageTimeHours = minutesToFullHours;
-        averageTimeMinutes = averageMinutesPerMonth - minutesToFullHours * 60;
-    }
-
-    //append avg time
-    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"avg-time\"><strong>" + "Time / Month" + "</strong></td>" +
-        "<td headers=\"basic-time\" class=\"time\"><strong>" + averageTimeHours + "hours " + Math.floor(averageTimeMinutes) + "mins" + "</strong></td>" +
-        "</tr>");
-
-    //append time last 6 month
-    AJS.$("#visualization-table-content").append("<tr><td headers=\"basic-date\" class=\"total-time\"><strong>" + "Overall Time Last 6 Months" + "</strong></td>" +
-        "<td headers=\"basic-time\" class=\"time\"><strong>" + timeLastSixMonthHours + "hours " + timeLastSixMonthMinutes + "mins" + "</strong></td>" +
-        "</tr>");
-
-    AJS.$("#visualization-table-content").trigger("update");
-
-    //assign JSON data for line graph
-    lineDiagram(dataPoints);
-}
 
 function updateTimesheetInformationValues(timesheetData) {
 

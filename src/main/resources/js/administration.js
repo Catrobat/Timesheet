@@ -305,7 +305,7 @@ AJS.toInit(function () {
                     return inputArray.indexOf(item) == index;
                 });
 
-                //Pair Programmign - ldap group
+                //Pair Programming - ldap group
                 AJS.$("#pp-ldap").auiSelect2({
                     placeholder: "Select Pair Programming Group",
                     tags: allGroups[0].sort(),

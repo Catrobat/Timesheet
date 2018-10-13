@@ -179,7 +179,7 @@ function addNewEntryCallback(entry, timesheetData, form) {
 
     form.categorySelect.trigger("change"); // this is needed for the sparkling effect
 
-    replaceJiraTicketLinks();
+    //replaceJiraTicketLinks();
 
     var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
     var indexOfDeactivated = getIDFromCategoryName("inactive & offline", timesheetData);
@@ -213,6 +213,8 @@ function editEntryCallback(entry, timesheetData, form) {
 
     var newViewRow = prepareViewRow(timesheetData, augmentedEntry);
     var oldViewRow = form.row.prev();
+    
+    //replaceJiraTicketLinks();
 
     newViewRow.find("button.edit").click(function () {
         newViewRow.hide();
@@ -445,10 +447,19 @@ function prepareForm(entry, timesheetData, isModified) {
         dataType: 'json',
         success: function (data) {
             data.sections[0].issues.forEach(function (issue) {
-                tickets.push(issue.key + " : " + issue.summary);
+            	var issueSummary = issue.summary;
+            	
+            	if (issueSummary.includes("&quot;"))
+            		issueSummary = issueSummary.replace(/&quot;/g, "\"");
+            	
+            	if (issueSummary.includes(","))
+            		issueSummary = issueSummary.replace(/,/g, " ");
+            	
+                tickets.push(issue.key + ": " + issueSummary);
             });
             var reg = /\d+/g;
             var number = data.sections[0].sub;
+
             if (number) {
                 text = number.match(reg)[0] + " issues";
             }
@@ -837,7 +848,7 @@ function handleTimesheetReasonDataSuccess(data){
 
 function updateCurrentTimesheetData(data){
     Object.keys(data).forEach(function (key) {
-        //console.log("setting: " + key + " to: " + data[key]);
+
         timesheetData_[key] = data[key];
     });
 }
@@ -884,8 +895,6 @@ function editEntryClicked(timesheetData, augmentedEntry, editEntryOptions, viewR
         viewRow.after(formRow);
     }
 
-    //AJS.$("#entry-table").hide();
-    //AJS.$(".entry-form").hide();
     viewRow.hide();
     formRow.show();
 }
@@ -1196,6 +1205,15 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         });
     }
 
+    // ATLDEV-223 : Team vis data calc,ATLDEV-253 : Viewing another users Timesheet shows the viewers &quot;Team Information&quot; tab      
+    var ticketString = form.ticketSelect.val();
+    console.log("1 ticketString: ", ticketString);
+    
+    if (ticketString.includes(",")) {
+    	ticketString = ticketString.replace(/,/g,"   - -   ");
+    }
+    console.log("2 ticketString: ", ticketString);
+    
     timesheetEntry = {
         beginDate: beginDate,
         endDate: endDate,
@@ -1206,7 +1224,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         categoryID: form.categorySelect.val(),
         isGoogleDocImport: existingIsGoogleDocImportValue,
         partner: form.partnerSelect.val(),
-        ticketID: form.ticketSelect.val()
+        ticketID: ticketString
     };
     
     // empty description after submitting the entry
@@ -1224,6 +1242,9 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         contentType: "application/json",
         data: JSON.stringify(timesheetEntry),
         success: function (entryData) {
+        	
+        	form.descriptionField.val("");
+        	
             if(is_inactive_entry){
                 console.log("we saved an Inactive entry setting state to inactive");
                 timesheetData.state = "INACTIVE";
