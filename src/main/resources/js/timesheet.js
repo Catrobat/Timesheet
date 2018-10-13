@@ -95,13 +95,11 @@ AJS.toInit(function () {
                     lectures: lectures,
                     reason: AJS.$("#timesheet-substract-hours-text").val(),
                     targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
-                    targetHourTheory: toFixed(AJS.$("#timesheet-target-hours-theory").val(), 2),
                     targetHours: AJS.$("#timesheet-hours-text").val(),
-                    targetHoursCompleted: toFixed((AJS.$("#timesheet-hours-theory").val()
-                    - (-AJS.$("#timesheet-hours-practical").val()) - AJS.$("#timesheet-hours-substract").val()), 2),
+                    targetHoursCompleted: toFixed(AJS.$("#timesheet-hours-practical").val() - AJS.$("#timesheet-hours-substract").val(), 2),
                     targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
                     latestEntryDate: existingTimesheetData.latestEntryDate,
-                    isMTSheet: existingTimesheetData.isMTSheet,
+
                     state: existingTimesheetData.state
                 };
 
@@ -318,32 +316,19 @@ function projectedFinishDate(timesheetData, entryData) {
 }
 
 function setOwnerLabel(timesheet) {
-    if (timesheet.isMTSheet) {
-        AJS.$("#timesheet-owner").empty();
-    	AJS.$("#timesheet-owner").append("Timesheet of " + timesheet.displayName + " (Master Thesis Timesheet)");
-        AJS.$("#timesheet-owner-private").empty();
-    	AJS.$("#timesheet-owner-private").append("My Master Thesis Timesheet (" + timesheet.displayName + ")");
-    }
-    else {
-    	AJS.$("#timesheet-owner").empty();
-    	AJS.$("#timesheet-owner").append("Timesheet of: " + timesheet.displayName);
-        AJS.$("#timesheet-owner-private").empty();
-    	AJS.$("#timesheet-owner-private").append("My Timesheet (" + timesheet.displayName + ")");
-    }
+
+	AJS.$("#timesheet-owner").empty();
+	AJS.$("#timesheet-owner").append("Timesheet of: " + timesheet.displayName);
+    AJS.$("#timesheet-owner-private").empty();
+	AJS.$("#timesheet-owner-private").append("My Timesheet (" + timesheet.displayName + ")");
+    
 }
 
-function checkIfMasterThesisTimesheet(timesheet) {
+function setDownloadLink(timesheet) {
 
-// Now it is ok (via VOT too), taking always the value from the Timesheet, which is currently shown to you. 
-    if (timesheet.isMTSheet) {
-        AJS.$("#download-csv").attr("href", "download/timesheet/masterthesis");
-        AJS.$("#download-json").attr("href", "download/timesheet/json/masterthesis");
-        AJS.$("#theory-hour-key-data").show();
-    } else {
-        AJS.$("#download-csv").attr("href", "download/timesheet");
-        AJS.$("#download-json").attr("href", "download/timesheet/json");
-        AJS.$("#theory-hour-key-data").hide();
-    }
+    AJS.$("#download-csv").attr("href", "download/timesheet");
+    AJS.$("#download-json").attr("href", "download/timesheet/json");
+    
 }
 
 function fetchData(timesheetID) {
@@ -388,7 +373,7 @@ function fetchData(timesheetID) {
 
     AJS.$.when(timesheetFetched)
         .done(setOwnerLabel)
-    	.done(checkIfMasterThesisTimesheet);
+    	.done(setDownloadLink);
 
     AJS.$.when(timesheetFetched, entriesFetched)
         .done(projectedFinishDate);
@@ -443,21 +428,13 @@ function loadMostActiveTeamForUser(){
 }
 
 function saveTimesheetIDOfUserInSession(selectedUser) {
-	var isMTSheet = false;
-	var user;
-	
-	if (selectedUser[0].includes(' (Master Timesheet)')) {
-		user = selectedUser[0].replace(' (Master Timesheet)','');
-		isMTSheet = true;
-	}
-	else {
-		user = selectedUser[0];
-		isMTSheet = false;
-	}
+
+	var user;	
+	user = selectedUser[0];	
 	
     AJS.$.ajax({
         type: 'GET',
-        url: restBaseUrl + 'timesheet/timesheetID/' + user + '/' + isMTSheet,
+        url: restBaseUrl + 'timesheet/timesheetID/' + user,
         contentType: "application/json",
         success: function (timesheetID) {
             sessionStorage.setItem('timesheetID', timesheetID); // defining the session variable

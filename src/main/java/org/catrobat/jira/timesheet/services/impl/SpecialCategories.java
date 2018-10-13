@@ -10,7 +10,7 @@ public class SpecialCategories {
     public static final String THEORY = "Theory";
     public static final String RESEARCH = "Research";
     public static final String GOOGLEDOCSIMPORT = "GoogleDocsImport";
-//    public static final String THEORY_MT = "Theory (MT)";
+
     public static final String MEETING = "Meeting";
     public static final String PAIR_PROGRAMMING = "Pair programming";
     public static final String PROGRAMMING = "Programming";

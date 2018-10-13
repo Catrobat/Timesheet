@@ -112,8 +112,8 @@ public class TimesheetServlet extends HttpServlet {
                 }
             }else {
                 //getting sheet for current user
-                if (sheetService.userHasTimesheet(userKey, false)) {
-                    timesheet = sheetService.getTimesheetByUser(userKey, false);
+                if (sheetService.userHasTimesheet(userKey)) {
+                    timesheet = sheetService.getTimesheetByUser(userKey);
                     LOGGER.error("Current user (user key: " + userKey + ") has an active timesheet (timesheet id: " + timesheet.getID() + ")");
 
                     if (timesheet.getTargetHours() == 0 && timesheet.getLectures().isEmpty())
@@ -122,8 +122,8 @@ public class TimesheetServlet extends HttpServlet {
                         paramMap.put("isInit", false);
                 }
                 if (timesheet == null) {
-                    timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 0, 0, 0, "",
-                            "", false, Timesheet.State.ACTIVE);
+                    timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 0, 0, "",
+                            "", Timesheet.State.ACTIVE);
                     LOGGER.error("We created a new Timesheet for user with key: " + userKey);
                     paramMap.put("isInit", true);
                 }
@@ -138,9 +138,7 @@ public class TimesheetServlet extends HttpServlet {
 
             paramMap.put("isCoordinator", permissionService.isUserTeamCoordinator(user));
             paramMap.put("isReadOnlyUser", permissionService.isReadOnlyUser(user));
-
             paramMap.put("timesheetID", timesheet.getID());
-            paramMap.put("isMasterThesisTimesheet", false);
 
             response.setContentType("text/html;charset=utf-8");
             templateRenderer.render("timesheet.vm", paramMap, response.getWriter());

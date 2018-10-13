@@ -63,7 +63,6 @@ public class ExportTimesheetAsCSVServletTest {
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
         when(timesheet.getHoursPracticeCompleted()).thenReturn(50);
-        when(timesheet.getTargetHoursTheory()).thenReturn(100);
         when(timesheet.getTargetHours()).thenReturn(300);
         when(timesheet.getHoursCompleted()).thenReturn(150);
         when(timesheet.getLatestEntryBeginDate()).thenReturn(new Date());
@@ -71,8 +70,7 @@ public class ExportTimesheetAsCSVServletTest {
         when(timesheet.getUserKey()).thenReturn(test_key);
         when(timesheet.getHoursDeducted()).thenReturn(0);
         when(timesheet.getReason()).thenReturn("Agathe Bauer");
-        when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
-        when(timesheetService.getTimesheetByUser(user.getKey(), false)).thenReturn(timesheet);
+        when(timesheetService.getTimesheetByUser(user.getKey())).thenReturn(timesheet);
         when(response.getOutputStream()).thenReturn(outputStream);
         when(configService.getConfiguration()).thenReturn(config);
         when(config.getTimesheetAdminUsers()).thenReturn(new TimesheetAdmin[0]);
@@ -84,7 +82,7 @@ public class ExportTimesheetAsCSVServletTest {
 
     @Test
     public void testDoGet() throws Exception {
-        Timesheet sheet0 = timesheetService.getTimesheetByUser(user.getKey(), false);
+        Timesheet sheet0 = timesheetService.getTimesheetByUser(user.getKey());
         assertNotNull(sheet0);
         TimesheetEntry[] timesheetEntries = {};
         when(timesheet.getEntries()).thenReturn(timesheetEntries);

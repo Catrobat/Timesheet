@@ -71,7 +71,7 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
         Timesheet timesheet = null;
         try {
             if (id == null) {
-                timesheet = sheetService.getTimesheetByUser(loggedInUser.getKey(), false);
+                timesheet = sheetService.getTimesheetByUser(loggedInUser.getKey());
             } else {
                 timesheet = sheetService.getTimesheetByID(Integer.parseInt(id));
             }

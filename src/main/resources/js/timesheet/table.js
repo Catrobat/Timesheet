@@ -282,38 +282,6 @@ function renderFormRow(timesheetData, entry, saveOptions, isModified) {
 function prepareForm(entry, timesheetData, isModified) {
 
     var teams = timesheetData.teams;
-
-    // Let the Team "Master Thesis" NOT be shown in the drop down of normal Timesheets 
-    if (!isMasterThesisTimesheet) {
-    	for (var i = 0; i < teams.length; i++) {
-        	teamID = Object.keys(teams)[i];
-        	if (teamID) {
-        		thisTeamName = teams[teamID].teamName;
-        		if (thisTeamName.includes("Master Thesis")) {
-        			var index = teams.indexOf(teams[teamID]);
-        			if (index > -1) {
-        			    teams.splice(index, 1); //deletes this Team from the List (only for this load)
-        			}
-        		}
-        	}
-        }
-    }
-    // Let NO OTHER Team but "Master Thesis" be shown in the drop down Master Thesis Timesheets
-    else {
-    	for (var i = 0; i < teams.length; i++) {
-        	teamID = Object.keys(teams)[i];
-        	if (teamID) {
-        		thisTeamName = teams[teamID].teamName;
-        		if (!thisTeamName.includes("Master Thesis")) {
-        			var index = teams.indexOf(teams[teamID]);
-        			if (index > -1) {
-        			    teams.splice(index, 1); //deletes all Teams from the List (only for this load) except "Master Thesis"
-        			    i--;
-        			}
-        		}
-        	}
-        }
-    }
     
     var row = AJS.$(Jira.Templates.Timesheet.timesheetEntryForm(
         {entry: entry, teams: teams})
@@ -589,12 +557,10 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
         return;
     }
     
-//    console.log("---------------- IS IT A MASTERTIMESHEET ??????????????????????");
-//    console.log(timesheetData_.isMTSheet);
 //    console.log(selectedTeam);
 //    console.log(selectedTeamID);
     
-    var categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categoryIDs, timesheetData_.isMTSheet);
+    var categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categoryIDs);
 
     categorySelect.auiSelect2({data: categoriesPerTeam});
 

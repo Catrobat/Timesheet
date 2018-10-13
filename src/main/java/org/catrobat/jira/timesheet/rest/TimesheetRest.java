@@ -172,8 +172,8 @@ public class TimesheetRest {
             //collect all timesheet entries of all team members
             try {
                 String userKey = ComponentAccessor.getUserManager().getUserByName(member).getKey();
-                if (sheetService.userHasTimesheet(userKey, false)) {
-                    Timesheet sheet = sheetService.getTimesheetByUser(userKey, false);
+                if (sheetService.userHasTimesheet(userKey)) {
+                    Timesheet sheet = sheetService.getTimesheetByUser(userKey);
 
                     //all entries of each user
                     TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
@@ -223,7 +223,7 @@ public class TimesheetRest {
             TimesheetEntry[] timesheetEntries;
             try {
                 String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(developerTeamMemberName);
-                Timesheet timesheetByUser = sheetService.getTimesheetByUser(userKey, false);
+                Timesheet timesheetByUser = sheetService.getTimesheetByUser(userKey);
 
                 //check permissions for each sheet
                 if (!permissionService.userCanViewTimesheet(user, timesheetByUser)) {
@@ -246,10 +246,9 @@ public class TimesheetRest {
 
 
     @GET
-    @Path("timesheet/timesheetID/{userName}/{getMTSheet}")
+    @Path("timesheet/timesheetID/{userName}")
     public Response getTimesheetIDOFUser(@Context HttpServletRequest request,
-                                         @PathParam("userName") String userName,
-                                         @PathParam("getMTSheet") Boolean getMTSheet) {
+                                         @PathParam("userName") String userName) {
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
         Response response = permissionService.checkUserPermission();
         if (response != null) {
@@ -259,7 +258,7 @@ public class TimesheetRest {
         Timesheet sheet;
         try {
             sheet = sheetService.getTimesheetByUser(ComponentAccessor.
-                    getUserKeyService().getKeyForUsername(userName), getMTSheet);
+                    getUserKeyService().getKeyForUsername(userName));
         } catch (ServiceException e) {
             return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
         }
@@ -301,10 +300,9 @@ public class TimesheetRest {
     }
 
     @GET
-    @Path("timesheet/of/{userName}/{isMTSheet}")
+    @Path("timesheet/of/{userName}")
     public Response getTimesheetForUsername(@Context HttpServletRequest request,
-                                            @PathParam("userName") String userName,
-                                            @PathParam("isMTSheet") Boolean isMTSheet) {
+                                            @PathParam("userName") String userName) {
         Timesheet sheet;
         String userKey = ComponentAccessor.getUserKeyService().getKeyForUsername(userName);
         ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
@@ -314,7 +312,7 @@ public class TimesheetRest {
         }
 
         try {
-            sheet = sheetService.getTimesheetByUser(userKey, isMTSheet);
+            sheet = sheetService.getTimesheetByUser(userKey);
         } catch (ServiceException e) {
             return Response.serverError().entity("No Timesheet available for this user.").build();
         }
@@ -436,7 +434,7 @@ public class TimesheetRest {
         }
 
         Timesheet sheet = sheetService.getTimesheetByID(timesheetID);
-        LOGGER.trace("is master thesis timesheet: " +sheet.getIsMasterThesisTimesheet());
+
         try {
             RestUtils.checkTimesheetIsEnabled(sheet);
         } catch (PermissionException e) {
@@ -447,17 +445,7 @@ public class TimesheetRest {
         Category category = categoryService.getCategoryByID(entry.getCategoryID());
         Team team = teamService.getTeamByID(entry.getTeamID());
 //        LOGGER.trace("team is: " + team.getTeamName());
-        
-        if (sheet.getIsMasterThesisTimesheet()) {
-        	try {
-				team = teamService.getTeamByName("Master Thesis");
-			} catch (ServiceException e) {
-				LOGGER.error("Could not find Team Master Thesis!");
-				e.printStackTrace();
-			}
-        }
-        
-//        Logger.trace("team is: " + team.getTeamName());
+
         try {
             user = permissionService.checkIfUserExists();
             permissionService.userCanAddTimesheetEntry(user, sheet, entry.getBeginDate(), entry.IsGoogleDocImport());
@@ -646,15 +634,15 @@ public class TimesheetRest {
         try {
             if (permissionService.isJiraAdministrator(user)) {
                 sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
-                        jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
+                        jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isMTSheet(), jsonTimesheet.getState());
+                        jsonTimesheet.getLatestEntryDate(), jsonTimesheet.getState());
             } else {
                 sheet = sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
-                        jsonTimesheet.getTargetHourTheory(), jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
+                        jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                        jsonTimesheet.getLatestEntryDate(), jsonTimesheet.isMTSheet(), jsonTimesheet.getState());
+                        jsonTimesheet.getLatestEntryDate(), jsonTimesheet.getState());
             }
         } catch (ServiceException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -841,9 +829,9 @@ public class TimesheetRest {
                 try {
                     sheetService.editTimesheet(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
-                            sheet.getTargetHoursTheory(), sheet.getTargetHours(), deducted_hours,
+                            sheet.getTargetHours(), deducted_hours,
                             sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
-                            entryService.getLatestEntry(sheet).getBeginDate(), sheet.getIsMasterThesisTimesheet(), state);
+                            entryService.getLatestEntry(sheet).getBeginDate(), state);
                 } catch (ServiceException e) {
                     return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
                 }
@@ -852,9 +840,9 @@ public class TimesheetRest {
             try {
                 sheetService.editTimesheet(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
-                        sheet.getTargetHoursTheory(), sheet.getTargetHours(), deducted_hours,
+                        sheet.getTargetHours(), deducted_hours,
                         sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
-                        new Date(), sheet.getIsMasterThesisTimesheet(), sheet.getState());
+                        new Date(), sheet.getState());
             } catch (ServiceException e) {
                 return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
@@ -1085,7 +1073,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.CONFLICT).entity("The user does not exist").build();
         }
         try {
-            Timesheet sheet_of_user = sheetService.getTimesheetByUser(user_key, false);
+            Timesheet sheet_of_user = sheetService.getTimesheetByUser(user_key);
             Map<String, Object> result = new HashMap<>();
             Team most_active_team = teamService.getMostActiveTeamForUser(to_query.getUsername(), sheet_of_user);
 
@@ -1166,7 +1154,7 @@ public class TimesheetRest {
 
         LOGGER.trace("We want to save data: " + jsonTimesheetReasonData);
         try{
-            Timesheet sheet = sheetService.getTimesheetByUser(user.getKey(), false);
+            Timesheet sheet = sheetService.getTimesheetByUser(user.getKey());
             sheetService.updateTimesheetReasonData(sheet, jsonTimesheetReasonData);
 
             return Response.ok(new JsonTimesheet(sheet)).build();
@@ -1192,7 +1180,7 @@ public class TimesheetRest {
             return response;
 
         try{
-            Timesheet sheet = sheetService.getTimesheetByUser(user.getKey(), false);
+            Timesheet sheet = sheetService.getTimesheetByUser(user.getKey());
 
             if(sheet != null) {
                 sheet.setTargetHours(hours);
@@ -1224,7 +1212,7 @@ public class TimesheetRest {
         }
 
         try{
-            Timesheet sheet = sheetService.getTimesheetByUser(user.getKey(), false);
+            Timesheet sheet = sheetService.getTimesheetByUser(user.getKey());
             sheetService.deleteLecture(sheet, data);
             return Response.ok(new JsonTimesheet(sheet)).build();
         }

@@ -1,14 +1,24 @@
 package ut.org.catrobat.jira.timesheet.scheduling;
 
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.rest.TimesheetRest;
 import org.catrobat.jira.timesheet.scheduling.ActivityVerificationJob;
 import org.catrobat.jira.timesheet.services.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.user.UserKeyService;
+import com.atlassian.jira.user.util.UserManager;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -18,10 +28,12 @@ public class ActivityVerificationJobTest {
     private ActivityVerificationJob activityVerificationJob;
     private SchedulingService schedulingService;
     private Map<String, Object> params;
+    private UserManager userManagerJiraMock;
 
     private Timesheet timesheet1;
 
     @Before
+    @PrepareForTest({ComponentAccessor.class})
     public void setUp() {
         activityVerificationJob = new ActivityVerificationJob();
 
@@ -31,6 +43,12 @@ public class ActivityVerificationJobTest {
         CategoryService categoryService = Mockito.mock(CategoryService.class);
         schedulingService = Mockito.mock(SchedulingService.class);
         params = new HashMap<>();
+        userManagerJiraMock = mock(UserManager.class, RETURNS_DEEP_STUBS);
+        UserKeyService userKeyServiceMock = mock(UserKeyService.class, RETURNS_DEEP_STUBS);
+        
+        PowerMockito.mockStatic(ComponentAccessor.class);
+        PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);
+        PowerMockito.when(ComponentAccessor.getUserKeyService()).thenReturn(userKeyServiceMock);
 
         params.put("sheetService", sheetService);
         params.put("entryService", entryService);

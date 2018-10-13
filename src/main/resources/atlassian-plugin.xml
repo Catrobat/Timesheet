@@ -112,10 +112,6 @@
         <url-pattern>/timesheet</url-pattern>
     </servlet>
 
-    <servlet key="master-thesis-timesheet-servlet"
-             class="org.catrobat.jira.timesheet.servlet.MasterThesisTimesheetServlet">
-        <url-pattern>/timesheet/masterthesis</url-pattern>
-    </servlet>
 
     <servlet key="administration-servlet" class="org.catrobat.jira.timesheet.servlet.AdminServlet">
         <url-pattern>/timesheet/administration</url-pattern>
@@ -143,11 +139,6 @@
 
     <servlet key="download-timesheet-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsJsonServlet">
         <url-pattern>/download/timesheet/json</url-pattern>
-    </servlet>
-
-    <servlet key="download-master-thesis-timesheet-servlet"
-             class="org.catrobat.jira.timesheet.servlet.ExportMasterThesisTimesheetAsCSVServlet">
-        <url-pattern>/timesheet/download/masterthesis</url-pattern>
     </servlet>
 
     <servlet key="upload-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ImportConfigAsJsonServlet">
@@ -235,13 +226,6 @@
         <label>Timesheet</label>
         <link linkId="timesheet_view_link">/plugins/servlet/timesheet</link>
         <condition class="org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition"/>
-    </web-item>
-
-    <web-item key="master_thesis_timesheet_view" name="Link to Master Thesis Timsheet View"
-              section="system.user.options/personal" weight="35">
-        <label>Master Thesis Timesheet</label>
-        <link linkId="master_thesis_timesheet_view_link">/plugins/servlet/timesheet/masterthesis</link>
-        <condition class="org.catrobat.jira.timesheet.helper.MasterThesisTimesheetPermissionCondition"/>
     </web-item>
 
     <!-- administration -->

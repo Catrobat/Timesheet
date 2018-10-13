@@ -76,7 +76,6 @@ public class ExportAllTimesheetsAsCSVServletTest {
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
         when(timesheet.getHoursPracticeCompleted()).thenReturn(50);
-        when(timesheet.getTargetHoursTheory()).thenReturn(100);
         when(timesheet.getTargetHours()).thenReturn(300);
         when(timesheet.getHoursCompleted()).thenReturn(150);
         when(timesheet.getLatestEntryBeginDate()).thenReturn(new Date());
@@ -85,7 +84,6 @@ public class ExportAllTimesheetsAsCSVServletTest {
         when(timesheet.getUserKey()).thenReturn("test_key");
         when(timesheet.getHoursDeducted()).thenReturn(0);
         when(timesheet.getReason()).thenReturn("Agathe Bauer");
-        when(timesheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(response.getOutputStream()).thenReturn(outputStream);
         when(configService.getConfiguration()).thenReturn(config);
         when(config.getTimesheetAdminUsers()).thenReturn(new TimesheetAdmin[0]);
@@ -101,7 +99,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
     @Test
     public void testDoGet() throws Exception {
         Mockito.when(timesheetService.getTimesheetByUser(ComponentAccessor.getUserKeyService().
-                getKeyForUsername(user.getUsername()), false)).thenReturn(timesheet);
+                getKeyForUsername(user.getUsername()))).thenReturn(timesheet);
 
         exportAllTimesheetsAsCSVServlet.doGet(request, response);
     }

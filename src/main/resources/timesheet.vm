@@ -12,7 +12,6 @@
     var timesheetID = $timesheetID;
     var isAdmin = $isAdmin;
     var isCoordinator = $isCoordinator;
-    var isMasterThesisTimesheet = $isMasterThesisTimesheet;
     var isSupervisor = $isReadOnlyUser;
     var isInit = $isInit;
     var external_view = $external
@@ -282,24 +281,7 @@
                     Shows your finished practical hours.
                 </div>
             </div>
-            <div class="field-group" id="theory-hour-key-data">
-                <label for="timesheet-hours-theory">Finished Theory Hours</label>
-                <input disabled="disabled" class="text" type="text" id="timesheet-hours-theory"
-                       name="timesheet-hours-theory"
-                       title="timesheet-hours-theory">
 
-                <div class="description">
-                    Shows your finished theory hours.
-                </div>
-                <label for="timesheet-target-hours-theory">Target Theory Hours</label>
-                <input class="text" type="text" id="timesheet-target-hours-theory"
-                       name="timesheet-target-hours-theory"
-                       title="timesheet-target-hours-theory">
-
-                <div class="description">
-                    Shows your target theory hours.
-                </div>
-            </div>
             <div class="field-group">
                 <label for="timesheet-finish-date">Projected Finish Date</label>
                 <input disabled="disabled" class="text" type="text" id="timesheet-finish-date"

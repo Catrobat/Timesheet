@@ -43,13 +43,12 @@ public class TimesheetServletTest {
         when(admin.getKey()).thenReturn(admin_key);
         when(admin.getUsername()).thenReturn("admin");
         when(permissionService.checkIfUserExists()).thenReturn(admin);
-        when(sheetService.userHasTimesheet(admin_key, false)).thenReturn(true);
-        when(sheetService.getTimesheetByUser(admin_key, false)).thenReturn(timeSheet);
+        when(sheetService.userHasTimesheet(admin_key)).thenReturn(true);
+        when(sheetService.getTimesheetByUser(admin_key)).thenReturn(timeSheet);
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
         when(timeSheet.getID()).thenReturn(1);
         when(timeSheet.getUserKey()).thenReturn(admin_key);
         when(timeSheet.getState()).thenReturn(Timesheet.State.ACTIVE);
-        when(timeSheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(true);
         when(request.getMethod()).thenReturn("GET");
     }

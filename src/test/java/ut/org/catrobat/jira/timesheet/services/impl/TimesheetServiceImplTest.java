@@ -27,7 +27,7 @@ public class TimesheetServiceImplTest {
 
     private final String userKey = "USER_001";
     private final int targetHoursPractice = 150;
-    private final int targetHoursTheory = 0;
+
     private final int targetHours = 300;
     private final int targetHoursCompleted = 150;
     private final Date latestEntryDate = new Date();
@@ -49,15 +49,14 @@ public class TimesheetServiceImplTest {
         String displayName = "Test User";
         int targetHoursRemoved = 0;
         String reason = "Agathe Bauer";
-        service.add(userKey, displayName, targetHoursPractice, targetHoursTheory, targetHours, targetHoursCompleted,
-                targetHoursRemoved, lectures, reason, false, Timesheet.State.ACTIVE);
+        service.add(userKey, displayName, targetHoursPractice, targetHours, targetHoursCompleted,
+                targetHoursRemoved, lectures, reason, Timesheet.State.ACTIVE);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         //Assert
         assertEquals(1, timesheet.length);
         assertEquals(userKey, timesheet[0].getUserKey());
         assertEquals(targetHoursPractice, timesheet[0].getHoursPracticeCompleted());
-        assertEquals(targetHoursTheory, timesheet[0].getTargetHoursTheory());
         assertEquals(targetHours, timesheet[0].getTargetHours());
         assertEquals(targetHoursCompleted, timesheet[0].getHoursCompleted());
         assertEquals(lectures, timesheet[0].getLectures());
@@ -72,9 +71,6 @@ public class TimesheetServiceImplTest {
             new DBParam("USER_KEY", "USER_001")
         );
         sheet.setHoursPracticeCompleted(targetHoursPractice);
-        sheet.setTargetHoursTheory(targetHoursTheory);
-        sheet.setTargetHoursTheory(targetHours);
-        sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
         sheet.setState(Timesheet.State.ACTIVE);
         sheet.save();
@@ -94,23 +90,20 @@ public class TimesheetServiceImplTest {
             new DBParam("USER_KEY", userKey)
         );
         sheet.setHoursPracticeCompleted(targetHoursPractice);
-        sheet.setTargetHoursTheory(targetHoursTheory);
-        sheet.setTargetHoursTheory(targetHours);
-        sheet.setTargetHoursTheory(targetHoursCompleted);
         sheet.setLectures(lectures);
         sheet.setState(Timesheet.State.ACTIVE);
         sheet.save();
         ao.flushAll();
 
         //Act
-        Timesheet sheet0 = service.getTimesheetByUser("USER_000", false);
+        Timesheet sheet0 = service.getTimesheetByUser("USER_000");
 
         //Assert
         assertNotNull(sheet0);
         assertEquals(sheet0.getUserKey(), "USER_000");
 
         //Act
-        Timesheet sheet1 = service.getTimesheetByUser("USER_001", false);
+        Timesheet sheet1 = service.getTimesheetByUser("USER_001");
 
         //Assert
         assertNotNull(sheet1);
@@ -119,7 +112,7 @@ public class TimesheetServiceImplTest {
 
     @Test(expected = ServiceException.class)
     public void testGetTimesheetByUserNotFound() throws Exception {
-        service.getTimesheetByUser("USER_DOES_NOT_EXIST", false);
+        service.getTimesheetByUser("USER_DOES_NOT_EXIST");
     }
 
     @Test

@@ -889,7 +889,7 @@ AJS.toInit(function () {
         data.forEach(function(item, index){
             var display;
 
-            item.isMasterTimesheet === false ? display = item.userName : display = (item.userName + " (Master Timesheet)");
+            display = item.userName;
             select[select.options.length] = new Option(display, item.timesheetID);
         });
     }

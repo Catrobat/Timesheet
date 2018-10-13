@@ -50,8 +50,6 @@ public final class JsonTimesheet {
     @XmlElement
     private int targetHourPractice;
     @XmlElement
-    private int targetHourTheory;
-    @XmlElement
     private int targetHours;
     @XmlElement
     private int targetHoursCompleted;
@@ -62,8 +60,6 @@ public final class JsonTimesheet {
     // make sure updateTimesheetState still works as planned
     @XmlElement
     private boolean isEnabled;
-    @XmlElement
-    private boolean isMTSheet;
     @XmlElement
     private Timesheet.State state;
     @XmlElement
@@ -76,11 +72,9 @@ public final class JsonTimesheet {
         this.reason = timesheet.getReason();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
         this.targetHourPractice = timesheet.getHoursPracticeCompleted();
-        this.targetHourTheory = timesheet.getTargetHoursTheory();
         this.targetHours = timesheet.getTargetHours();
         this.targetHoursCompleted = timesheet.getHoursCompleted();
         this.targetHoursRemoved = timesheet.getHoursDeducted();
-        this.isMTSheet = timesheet.getIsMasterThesisTimesheet();
         this.state = timesheet.getState();
         this.displayName = timesheet.getDisplayName();
     }
@@ -132,13 +126,6 @@ public final class JsonTimesheet {
         this.targetHourPractice = targetHourPractice;
     }
 
-    public int getTargetHourTheory() {
-        return targetHourTheory;
-    }
-
-    public void setTargetHourTheory(int targetHourTheory) {
-        this.targetHourTheory = targetHourTheory;
-    }
 
     public int getTargetHours() {
         return targetHours;
@@ -170,14 +157,6 @@ public final class JsonTimesheet {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
-    }
-
-    public boolean isMTSheet() {
-        return isMTSheet;
-    }
-
-    public void setMTSheet(boolean MTSheet) {
-        isMTSheet = MTSheet;
     }
 
     public Timesheet.State getState() {
@@ -212,9 +191,6 @@ public final class JsonTimesheet {
         if (targetHourPractice != that.targetHourPractice) {
             return false;
         }
-        if (targetHourTheory != that.targetHourTheory) {
-            return false;
-        }
         if (targetHours != that.targetHours) {
             return false;
         }
@@ -241,7 +217,6 @@ public final class JsonTimesheet {
         result = 31 * result + reason.hashCode();
         //result = 31 * result + latestEntryDate.hashCode();
         result = 31 * result + targetHourPractice;
-        result = 31 * result + targetHourTheory;
         result = 31 * result + targetHours;
         result = 31 * result + targetHoursCompleted;
         result = 31 * result + targetHoursRemoved;

@@ -418,9 +418,6 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     }
 
     var firstTeamID = Object.keys(timesheetData.teams)[0];
-    
-    if (isMasterThesisTimesheet)
-    	firstTeamID = null;
 
     if (beginDate > endDate) {
         endDate.setDate(endDate.getDate() + 1)

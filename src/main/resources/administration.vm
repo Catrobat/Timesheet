@@ -288,8 +288,6 @@
         <p>
             <ul>
                 <li>Categories can be renamed within this tab.</li>
-                <li>By default, "Theory" is ONLY shown in Master Thesis Timesheets.</li>
-                <li>By default, only entries with the Category "Theory" are counted as "Theoretical Hours".</li>
                 <li><font color="red"><b>Important Note: Do not forget to 'save' your changes.</b></font></li>
             </ul>
         
@@ -474,7 +472,6 @@
         <p>User needs to access their Timesheet at least once to enable the import.</p>
         <form class="aui">
             <input id="select-for-import" class="text" width="120px"></input><br/>
-            <label>Is Masterthesis Timesheet: </label><input id="is-mt-sheet" class="checkbox" type="checkbox" />
         </form>
         <button class="aui-button" onclick="getTimesheetIDOfUser()">Load User</button>
         <button class="aui-button import-google-docs" disabled>Import GoogleDocs For User</button>

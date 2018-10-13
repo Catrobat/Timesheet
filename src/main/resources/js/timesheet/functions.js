@@ -12,16 +12,13 @@ function isReadOnlyUser(userName, config) {
     return false;
 }
 
-// TODO: isMasterThesisTimesheet ONLY works for your own Timesheets! Not for the one you are currently viewing!
-function filterAndSortCategoriesPerTeam(selectedTeam, categories, isMTSheet) {
+
+function filterAndSortCategoriesPerTeam(selectedTeam, categories) {
     var categoriesPerTeam = [];
     selectedTeam.teamCategories.filter(function (categoryID) {
-//    	console.log("filterAndSortCategoriesPerTeam" + isMasterThesisTimesheet);
-        if (!isMTSheet && categories[categoryID].categoryName === "Theory") {
-            return false;
-        } else {
+
             return true;
-        }
+        
     }).map(function (categoryID) {
         categoriesPerTeam.push(
             {id: categoryID, text: categories[categoryID].categoryName}
@@ -68,7 +65,6 @@ function initSelectTimesheetButton() {
         });
 
         var selectedUser;
-        //var isMTSheetSelected = AJS.$("#requestMTSheetCheckbox")[0].checked;
 
         // TODO: why even 2 different fields??? simplify to 1
 
@@ -125,35 +121,6 @@ function calculateTime(timesheetData) {
     return totalHours + totalMinutes / 60;
 }
 
-//TODO: isMasterThesisTimesheet ONLY works for your own Timesheets! Not for the one you are currently viewing!
-function calculateTheoryTime(timesheetData) {
-//	console.log("calculateTheoryTime" + isMasterThesisTimesheet);
-    if (!isMasterThesisTimesheet)
-        return 0;
-
-    var totalHours = 0;
-    var totalMinutes = 0;
-    var availableEntries = timesheetData.entries;
-
-    for (var i = 0; i < availableEntries.length; i++) {
-        var hours = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
-            availableEntries[i].pauseMinutes).getHours();
-        var minutes = calculateDuration(availableEntries[i].beginDate, availableEntries[i].endDate,
-            availableEntries[i].pauseMinutes).getMinutes();
-        var pause = availableEntries[i].pauseMinutes;
-        var calculatedTime = hours * 60 + minutes - pause;
-
-        if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory")
-            totalMinutes = totalMinutes + calculatedTime;
-
-        if (totalMinutes >= 60) {
-            var minutesToFullHours = Math.floor(totalMinutes / 60); //get only full hours
-            totalHours = totalHours + minutesToFullHours;
-            totalMinutes = totalMinutes - minutesToFullHours * 60;
-        }
-    }
-    return totalHours + totalMinutes / 60;
-}
 
 function initTimesheetInformationValues(timesheetData) {
     var target_hours_rounded = toFixed(timesheetData.targetHours, 2);
@@ -163,11 +130,10 @@ function initTimesheetInformationValues(timesheetData) {
     setProgressBar(target_hours_rounded, hours_done_rounded);
 
     AJS.$("#timesheet-hours-text").val(target_hours_rounded);
-    AJS.$("#timesheet-target-hours-theory").val(toFixed(timesheetData.targetHourTheory, 2));
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
-    AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData) - calculateTheoryTime(timesheetData), 2));
+    AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData), 2));
 
-    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours - AJS.$("#timesheet-hours-theory").val()
+    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours
         - AJS.$("#timesheet-hours-practical").val() - timesheetData.targetHoursRemoved, 2));
 
     AJS.$("#edit-total-hours").on("click", function (e) {
@@ -435,7 +401,6 @@ function updateAppendEntriesToVisTable(timesheetData) {
     var count = 0;
     var dataPoints = [];
     //pi chart variables
-    var theoryHours = 0;
 
     //spent time within the last six months
     var sixMonthAgo = new Date();
@@ -463,10 +428,6 @@ function updateAppendEntriesToVisTable(timesheetData) {
                 totalHours = totalHours + minutesToFullHours;
                 totalMinutes = totalMinutes - minutesToFullHours * 60;
             }
-
-            //calculate theory time in minutes
-            if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory")
-                theoryHours = theoryHours + calculatedTime;
 
             //date within the last six months
             if (compareToDate.getTime() >= sixMonthAgo.getTime()) {
@@ -575,11 +536,11 @@ function updateTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-substract").val(toFixed(timesheetData.targetHoursRemoved, 2));
     AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
     AJS.$("#timesheet-hours-text").val(toFixed(timesheetData.targetHours, 2));
-    AJS.$("#timesheet-hours-theory").val(toFixed(calculateTheoryTime(timesheetData), 2));
-    AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData) - calculateTheoryTime(timesheetData), 2));
 
-    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours - AJS.$("#timesheet-hours-theory").val()
-        - AJS.$("#timesheet-hours-practical").val() - timesheetData.targetHoursRemoved, 2));
+    AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData), 2));
+
+    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours - 
+        AJS.$("#timesheet-hours-practical").val() - timesheetData.targetHoursRemoved, 2));
 
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
 

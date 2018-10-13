@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.catrobat.jira</groupId>
     <artifactId>timesheet</artifactId>
-    <version>2.2</version>
+    <version>2.3-SNAPSHOT</version>
 
     <organization>
         <name>Catrobat</name>
@@ -82,12 +82,12 @@
         </dependency>
 
         <!-- Google Collections, useful utilities for manipulating collections -->
-        <dependency>
+<!--         <dependency>
             <groupId>com.google.collections</groupId>
             <artifactId>google-collections</artifactId>
             <version>1.0</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
 
         <!-- We're going to write a simple servlet -->
         <dependency>

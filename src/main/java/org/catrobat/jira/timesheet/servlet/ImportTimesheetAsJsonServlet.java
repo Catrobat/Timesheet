@@ -127,10 +127,10 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             Timesheet sheet;
             try {
                 sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getDisplayName(),
-                    jsonTimesheet.getTargetHourPractice(), jsonTimesheet.getTargetHourTheory(),
+                    jsonTimesheet.getTargetHourPractice(),
                     jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                     jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                    jsonTimesheet.isMTSheet(), jsonTimesheet.getState());
+                    jsonTimesheet.getState());
             } catch (ServiceException e) {
                 errorString.append(e.toString()).append(" Timesheet ignored.\n");
                 continue;

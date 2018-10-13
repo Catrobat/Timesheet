@@ -46,9 +46,9 @@ public class TimesheetServiceImpl implements TimesheetService {
 
 
     @Override
-    public Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
+    public Timesheet editTimesheet(String userKey, int targetHoursPractice,
                                    int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures, String reason, Date latestEntryDate,
-                                   boolean isMasterThesisTimesheet, Timesheet.State state) throws ServiceException {
+                                   Timesheet.State state) throws ServiceException {
 
         ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
@@ -62,24 +62,23 @@ public class TimesheetServiceImpl implements TimesheetService {
             throw new ServiceException("Lectures shall not be longer than 255 characters.");
         }
 
-        for (Timesheet aFound : found) {
-            if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
-                Timesheet sheet = aFound;
-
-                sheet.setDisplayName(user.getDisplayName());
-                sheet.setHoursPracticeCompleted(targetHoursPractice);
-                sheet.setTargetHoursTheory(targetHoursTheory);
-                sheet.setTargetHours(targetHours);
-                sheet.setHoursCompleted(targetHoursCompleted);
-                sheet.setHoursDeducted(targetHoursRemoved);
-                sheet.setLectures(lectures);
-                sheet.setReason(reason);
-                sheet.setLatestEntryBeginDate(latestEntryDate);
-                sheet.setState(state);
-                sheet.save();
-                return sheet;
-            }
-        }
+//        for (Timesheet aFound : found) {
+//            if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
+//                Timesheet sheet = aFound;
+//
+//                sheet.setDisplayName(user.getDisplayName());
+//                sheet.setHoursPracticeCompleted(targetHoursPractice);
+//                sheet.setTargetHours(targetHours);
+//                sheet.setHoursCompleted(targetHoursCompleted);
+//                sheet.setHoursDeducted(targetHoursRemoved);
+//                sheet.setLectures(lectures);
+//                sheet.setReason(reason);
+//                sheet.setLatestEntryBeginDate(latestEntryDate);
+//                sheet.setState(state);
+//                sheet.save();
+//                return sheet;
+//            }
+//        }
 
         return null;
     }
@@ -98,14 +97,13 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @NotNull
     @Override
-    public Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
+    public Timesheet add(String userKey, String displayName, int targetHoursPractice,
                          int targetHours, int targetHoursCompleted, int targetHoursRemoved,
-                         String lectures, String reason,
-                         boolean isMasterThesisTimesheet, Timesheet.State state) throws ServiceException {
+                         String lectures, String reason, Timesheet.State state) throws ServiceException {
 
-        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ? AND IS_MASTER_THESIS_TIMESHEET = ?", userKey, isMasterThesisTimesheet);
+        Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ? ", userKey);
         if (found.length != 0) {
-            throw new ServiceException("A timesheet for user: " + userKey + " isMTSheet: " + isMasterThesisTimesheet + " already exists");
+            throw new ServiceException("A timesheet for user: " + userKey + " already exists");
         }
 
         Timesheet sheet = ao.create(Timesheet.class,
@@ -113,14 +111,12 @@ public class TimesheetServiceImpl implements TimesheetService {
         );
         sheet.setDisplayName(displayName);
         sheet.setHoursPracticeCompleted(targetHoursPractice);
-        sheet.setTargetHoursTheory(targetHoursTheory);
         sheet.setTargetHours(targetHours);
         sheet.setHoursCompleted(targetHoursCompleted);
         sheet.setHoursDeducted(targetHoursRemoved);
         sheet.setLectures(lectures);
         sheet.setReason(reason);
         sheet.setLatestEntryBeginDate(new Date());
-        sheet.setIsMasterThesisTimesheet(isMasterThesisTimesheet);
         sheet.setState(state);
         sheet.save();
         return sheet;
@@ -160,52 +156,37 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public Timesheet getTimesheetByUser(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException {
+    public Timesheet getTimesheetByUser(String userKey) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
-        if (found.length > 2) {
-            throw new ServiceException("Found more than two Timesheets with the same UserKey.");
+
+        if (found.length > 1) {
+        	LOGGER.error("Found more than one Timesheet with the same UserKey.");
+        	throw new ServiceException("Found more than one Timesheet with the same UserKey.");
         }
 
-        if (isMasterThesisTimesheet) {
-            for (Timesheet aFound : found) {
-                if (aFound.getIsMasterThesisTimesheet()) {
-                    return aFound;
-                }
-            }
-        } else {
-            for (Timesheet aFound : found) {
-                if (!aFound.getIsMasterThesisTimesheet()) {
-                    return aFound;
-                }
-            }
+        if (found.length == 1) {
+        	for (Timesheet aFound : found) {
+        		LOGGER.trace("user has 1 timesheet");
+        		return aFound;
+        	}
         }
 
         throw new ServiceException("No Timesheet found. Maybe user does not have one.");
     }
 
     @Override
-    public Boolean userHasTimesheet(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException {
+    public Boolean userHasTimesheet(String userKey) throws ServiceException {
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
-        if (found.length > 2) {
+        if (found.length > 1) {
             ao.delete(found);
             throw new ServiceException("Found more than two Timesheets with the same UserKey. All timesheets will be deleted.");
         }
 
-        if (isMasterThesisTimesheet) {
-            for (Timesheet aFound : found) {
-                if (aFound.getIsMasterThesisTimesheet()) {
-                    return true;
-                }
-            }
-        } else {
-            for (Timesheet aFound : found) {
-                if (!aFound.getIsMasterThesisTimesheet()) {
-                    return true;
-                }
-            }
-        }
-
+        if (found.length == 1)
+        	return true;           
+      
+        LOGGER.debug("No Timesheet found for UserKey: " + userKey);
         return false;
     }
 
@@ -216,7 +197,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public void updateTimesheetReasonData(Timesheet sheet, JsonTimesheetReasonData jsonTimesheetReasonData){
-        LOGGER.error("in Update TimesheetReasonData");
+        LOGGER.error("Updating TimesheetReasonData");
 
         int current_hours = sheet.getTargetHours();
         String current_lectures = sheet.getLectures();

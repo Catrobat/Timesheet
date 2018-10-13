@@ -37,8 +37,6 @@ public interface Timesheet extends Entity {
     int getHoursCompleted();
     void setHoursCompleted(int hours);
 
-    int getTargetHoursTheory();
-    void setTargetHoursTheory(int hours);
 
     int getTargetHours();
     void setTargetHours(int hours);
@@ -54,9 +52,6 @@ public interface Timesheet extends Entity {
 
     Date getLatestEntryBeginDate();
     void setLatestEntryBeginDate(Date date);
-
-    boolean getIsMasterThesisTimesheet();
-    void setIsMasterThesisTimesheet(boolean isMasterThesisTimesheet);
 
     void setState(State state);
     State getState();

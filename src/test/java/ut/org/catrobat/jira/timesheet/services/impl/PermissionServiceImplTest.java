@@ -279,7 +279,7 @@ public class PermissionServiceImplTest {
         when(timeSheetEntry.getTimeSheet()).thenReturn(sheet);
         when(teamService.getTeamByID(1)).thenReturn(team);
         when(sheetService.getTimesheetByID(1)).thenReturn(sheet);
-        when(sheetService.getTimesheetByUser("admin_key", false)).thenReturn(sheet);
+        when(sheetService.getTimesheetByUser("admin_key")).thenReturn(sheet);
         when(entryService.getEntryByID(1)).thenReturn(timeSheetEntry);
 
         permissionService.userCanDeleteTimesheetEntry(eve, timeSheetEntry);

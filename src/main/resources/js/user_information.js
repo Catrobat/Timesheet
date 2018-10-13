@@ -30,7 +30,6 @@ AJS.toInit(function () {
     function populateTable(userInformation) {
         AJS.$(".loadingDiv").show();
         AJS.$("#user-information-table-content").empty();
-        AJS.$("#user-information-table-master-content").empty();
         AJS.$("#done-user-info-table-content").empty();
         AJS.$("#disabled-user-info-table-content").empty();
         
@@ -80,54 +79,33 @@ AJS.toInit(function () {
 
             var profile_link = AJS.params.baseURL + "\/secure\/ViewProfile.jspa?name=" ;
 
-            if (userInformation[i].isMasterTimesheet === true) {
-            	var enabledColumn = "</td><td headers='ti-enabled-m'>" + enableButton;
-            	var rowm = "<tr>" +
-                "<td headers='ti-users-m' class='musers'>" +
-                    "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
-                "</td><td headers='ti-view-timesheet-m'>"+ view_timesheet_button +"</td>"+
-                "</td><td headers='ti-team-m' class='mteam'>" + userInformation[i].teams +
-                "</td><td headers='ti-state-m' class='mstate' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "'; >" + userInformation[i].state +
-                "</td><td headers='ti-inactive-end-date-m' class='minactive-end'>" + inactiveEndDate +
-                "</td><td headers='ti-remaining-hours-m' class='mremaining-hours'>" + userInformation[i].remainingHours +
-                "</td><td headers='ti-target-total-hours-m' class='mtarget-total-hours'>" + userInformation[i].targetTotalHours +
-                "</td><td headers='ti-total-practice-hours-m' class='mtotal-practice'>" + userInformation[i].totalPracticeHours +
-                "</td><td headers='ti-hours-per-half-year-m' class='mhours-half-year'>" + userInformation[i].hoursPerHalfYear +
-                "</td><td headers='ti-latest-entry-date-m' class='mlatest-date'>" + latestEntryDate +
-                "</td><td headers='ti-latest-entry-description-m' class='mlatest-description'>" + userInformation[i].latestEntryDescription +
-                enabledColumn +
-                "</td></tr>";
-            	
-            	AJS.$("#user-information-table-master-content").append(rowm);
-            }
-            else {
-            	var enabledColumn = "</td><td headers='ti-enabled'>" + enableButton;
-            	var row = "<tr>" +
-                "<td headers='ti-users' class='users'>" +
-                    "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
-                "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
-                "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
-                "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
-                "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
-                "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
-                "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
-                "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
-                "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
-                "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
-                "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
-                enabledColumn +
-                "</td></tr>";
-            	
-            	if (userInformation[i].state === "DONE") {
-            		AJS.$("#done-user-info-table-content").append(row);
-            	}
-            	else if (userInformation[i].state === "DISABLED") {
-            		AJS.$("#disabled-user-info-table-content").append(row);
-            	}
-            	else {
-            		AJS.$("#user-information-table-content").append(row);
-            	}
-            }
+        	var enabledColumn = "</td><td headers='ti-enabled'>" + enableButton;
+        	var row = "<tr>" +
+            "<td headers='ti-users' class='users'>" +
+                "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
+            "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
+            "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
+            "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
+            "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
+            "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
+            "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
+            "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
+            "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
+            "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
+            "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
+            enabledColumn +
+            "</td></tr>";
+        	
+        	if (userInformation[i].state === "DONE") {
+        		AJS.$("#done-user-info-table-content").append(row);
+        	}
+        	else if (userInformation[i].state === "DISABLED") {
+        		AJS.$("#disabled-user-info-table-content").append(row);
+        	}
+        	else {
+        		AJS.$("#user-information-table-content").append(row);
+        	}
+            
             	
             var timesheetID = userInformation[i].timesheetID;
             setEnableButton(timesheetID, enabled);
@@ -148,10 +126,8 @@ AJS.toInit(function () {
         });
 
         AJS.$("#user-information-table").trigger("update");
-        AJS.$("#user-information-table-master").trigger("update");
         AJS.$("#disabled-users-table").trigger("update");
         AJS.$("#done-users-table").trigger("update");
-
 
         AJS.$("#timesheet-user-statistics").empty();
 
@@ -162,7 +138,6 @@ AJS.toInit(function () {
         var numberInActiveOffline = 0;
         var numberDisabled = 0;
         var numberDone = 0;
-        var numberMasterTimesheets = 0;
         
         for (var i = 0; i < userInformation.length; i++) {
         	
@@ -181,18 +156,15 @@ AJS.toInit(function () {
         	else if (userInformation[i].state === "DONE")
         		numberDone++;
         	
-        	if (userInformation[i].isMasterTimesheet === true)
-        		numberMasterTimesheets++;
         }
         
         var row = "<tr><td>" + "Total Number of Timesheets: " + numberTotal + "</td>" +
         				"<td>" + "Active Timesheets: " + numberActive + "</td>" +
                   		"<td>" + "Auto Inactive Timesheets: " + numberAutoInActive + "</td>" +
-                        "<td>" + "Master Timesheets: " + numberMasterTimesheets + "</td>" +
+                  		"<td>" + "Inactive Timesheets: " + numberInActive + "</td>" +
                   "</tr>" +
 
                   "<tr><td>" + "Disabled Timesheets: " + numberDisabled + "</td>" +
-                  		"<td>" + "Inactive Timesheets: " + numberInActive + "</td>" +
                   		"<td>" + "InactiveOffline Timesheets: " + numberInActiveOffline + "</td>" +
                   		"<td>" + "Done Timesheets: " + numberDone + "</td>" +
                   "</tr>";

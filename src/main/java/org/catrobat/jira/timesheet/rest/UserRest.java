@@ -187,7 +187,7 @@ public class UserRest {
     	Date date1 = new Date();
     	long diffInMillies = date1.getTime() - date.getTime();
     	TimeUnit timeUnit = TimeUnit.SECONDS;
-    	logger.error("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS));
+    	logger.debug("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS));
 
         return Response.ok(jsonUserInformationList).build();
     } 
@@ -196,12 +196,7 @@ public class UserRest {
     @Path("/getUsersForCoordinator/{currentTimesheetID}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsersForCoordinator(@Context HttpServletRequest request, @PathParam("currentTimesheetID") String currentTimesheetID) {
-    	
-//    @GET
-//    @Path("/getUsersForCoordinator")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response getUsersForCoordinator(@Context HttpServletRequest request) {
-    	
+
     	LOGGER.debug("1 /getUsersForCoordinator reached");
     	
     	Date date = new Date();
@@ -210,7 +205,6 @@ public class UserRest {
     	
     	LOGGER.trace("getRequestURI : " + request.getRequestURI());
     	LOGGER.trace("currentTimesheetID : " + currentTimesheetID);
-
     	
     	if (currentTimesheetID != null && !currentTimesheetID.equals("undefined")) {
     		int currentTimesheetIDint = Integer.parseInt(currentTimesheetID);
@@ -254,7 +248,6 @@ public class UserRest {
         }
         
         
-        
         List<JsonUserInformation> jsonUserInformationListForCoordinator = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetService.all()) {
@@ -289,7 +282,7 @@ public class UserRest {
             
             teamArray.retainAll(teamsOfCoordArray);
             if (teamArray.size() > 0) {
-            	LOGGER.error(userName + " - is a teammember of: " + teamArray.toString());
+            	LOGGER.trace(userName + " - is a teammember of: " + teamArray.toString());
             	
             }
             else {
@@ -297,9 +290,7 @@ public class UserRest {
             	continue;
             }
 
-            
             jsonUserInformation.setTeams(teamString.toString());
-        	
         	jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
         	jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
 
@@ -325,7 +316,7 @@ public class UserRest {
         Date date1 = new Date();
     	long diffInMillies1 = date1.getTime() - date.getTime();
     	TimeUnit timeUnit1 = TimeUnit.SECONDS;
-    	logger.error("3 /getUsersForCoordinator diffInMillies/diffInSeconds: " + diffInMillies1 + "/" + timeUnit1.convert(diffInMillies1,TimeUnit.MILLISECONDS));
+    	logger.debug("3 /getUsersForCoordinator diffInMillies/diffInSeconds: " + diffInMillies1 + "/" + timeUnit1.convert(diffInMillies1,TimeUnit.MILLISECONDS));
         
         return Response.ok(jsonUserInformationListForCoordinator).build();
     }

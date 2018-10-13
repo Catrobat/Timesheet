@@ -122,11 +122,9 @@ public class TimesheetRestTest {
         Date latestEntryDate = new Date();
         when(sheet.getLatestEntryBeginDate()).thenReturn(latestEntryDate);
         when(sheet.getHoursPracticeCompleted()).thenReturn(50);
-        when(sheet.getTargetHoursTheory()).thenReturn(50);
         when(sheet.getTargetHours()).thenReturn(150);
         when(sheet.getHoursCompleted()).thenReturn(50);
         when(sheet.getHoursDeducted()).thenReturn(0);
-        when(sheet.getIsMasterThesisTimesheet()).thenReturn(false);
         when(sheet.getState()).thenReturn(Timesheet.State.ACTIVE);
         return sheet;
     }
@@ -353,7 +351,7 @@ public class TimesheetRestTest {
                 "Test Entry", 0, team1, false, today, "CAT-1530", "Partner");
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
-        when(timesheetServiceMock.getTimesheetByUser(userKey, false)).thenReturn(timesheetMock);
+        when(timesheetServiceMock.getTimesheetByUser(userKey)).thenReturn(timesheetMock);
         when(timesheetEntryServiceMock.getEntriesBySheet(timesheetMock)).thenReturn(timesheetEntries);
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
@@ -459,7 +457,7 @@ public class TimesheetRestTest {
         when(user1.getName()).thenReturn(userName);
         when(ComponentAccessor.getUserKeyService().getKeyForUsername(userName)).thenReturn(userKey);
 
-        when(timesheetServiceMock.getTimesheetByUser(userKey, false)).thenReturn(timesheetMock);
+        when(timesheetServiceMock.getTimesheetByUser(userKey)).thenReturn(timesheetMock);
         when(timesheetMock.getEntries()).thenReturn(timesheetEntries);
 
         when(timesheetEntry.getTeam().getTeamName()).thenReturn(teamName);
@@ -483,10 +481,10 @@ public class TimesheetRestTest {
     @Test
     public void testGetTimesheetIDOfUserOk() throws Exception {
         String userName = "test";
-        Boolean isMTSheet = false;
+
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
-        response = timesheetRestMock.getTimesheetIDOFUser(requestMock, userName, isMTSheet);
+        response = timesheetRestMock.getTimesheetIDOFUser(requestMock, userName);
         assertNotNull(response.getEntity());
     }
 
@@ -552,12 +550,12 @@ public class TimesheetRestTest {
         String userName = "test";
         String userKey = "USER_KEY";
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
-        when(timesheetServiceMock.getTimesheetByUser(userKey, false)).thenReturn(timesheetMock);
+        when(timesheetServiceMock.getTimesheetByUser(userKey)).thenReturn(timesheetMock);
 
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
 
         //execution & verifying
-        response = timesheetRestMock.getTimesheetForUsername(requestMock, userName, false);
+        response = timesheetRestMock.getTimesheetForUsername(requestMock, userName);
         assertNotNull(response.getEntity());
     }
 
@@ -614,7 +612,6 @@ public class TimesheetRestTest {
         when(ComponentAccessor.getUserManager().getUserByName(userName).getKey()).thenReturn(userKey);
 
         when(timesheetServiceMock.all()).thenReturn(timesheets);
-        when(timesheetMock.getIsMasterThesisTimesheet()).thenReturn(false);
         when(timesheetMock.getUserKey()).thenReturn(userKey);
 
 
@@ -638,7 +635,7 @@ public class TimesheetRestTest {
     @Test
     public void testPostTimesheetEntriesOk() throws Exception {
         int timesheetID = 1;
-        Boolean isMTSheet = false;
+
 
         TimesheetEntry timesheetEntryMock = createTimesheetEntryMock();
         JsonTimesheetEntry jsonTimesheetEntry = new JsonTimesheetEntry(timesheetEntryMock);
@@ -655,7 +652,6 @@ public class TimesheetRestTest {
     public void testPostTimesheetHoursOk() throws Exception {
         int timesheetID = 1;
         String userKey = "USER_KEY";
-        Boolean isMTSheet = false;
 
         Timesheet sheet = createTimesheetMock();
         JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);

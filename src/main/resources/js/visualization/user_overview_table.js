@@ -17,7 +17,7 @@ function appendEntriesToVisTable(timesheetData) {
     var count = 0;
     var dataPoints = [];
     //pi chart variables
-    var theoryHours = 0;
+
 
     //spent time within the last six months
     var sixMonthAgo = new Date();
@@ -45,10 +45,6 @@ function appendEntriesToVisTable(timesheetData) {
                 totalHours = totalHours + minutesToFullHours;
                 totalMinutes = totalMinutes - minutesToFullHours * 60;
             }
-
-            //calculate theory time in minutes
-            if (timesheetData.categoryIDs[availableEntries[i].categoryID].categoryName === "Theory")
-                theoryHours = theoryHours + calculatedTime;
 
             //date within the last six months
             if (compareToDate.getTime() >= sixMonthAgo.getTime()) {

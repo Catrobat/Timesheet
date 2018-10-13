@@ -107,11 +107,11 @@ function prepareData(timesheetID) {
 function getTimesheetIDOfUser() {
     var importButton = AJS.$(".import-google-docs");
     var userName = AJS.$("#select-for-import").val();
-    var isMTSheet = AJS.$("#is-mt-sheet").is(":checked");
+
     AJS.$.ajax({
         type: "GET",
-        // url: restBaseUrl + "timesheet/of/" + userName + "/" + isMTSheet,
-        url: restBaseUrl + "timesheet/timesheetID/" + userName + "/" + isMTSheet,
+
+        url: restBaseUrl + "timesheet/timesheetID/" + userName,
         contentType: "application/json",
         success: function (timesheetIDlocal) {
             timesheetID = timesheetIDlocal;

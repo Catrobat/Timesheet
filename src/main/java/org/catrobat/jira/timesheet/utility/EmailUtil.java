@@ -29,14 +29,14 @@ public class EmailUtil {
                 ? config.getMailSubjectTime() : "[Timesheet - Timesheet Out Of Time Notification]";
         String mailBody = config.getMailBodyTime() != null && config.getMailBodyTime().length() != 0
                 ? config.getMailBodyTime() : "Hi " + user.getDisplayName() + ",\n" +
-                "you have only" + sheet.getTargetHoursTheory() + " hours left! \n" +
+                "you have only" + sheet.getTargetHours() + " hours left! \n" +
                 "Please contact you coordinator, or one of the administrators\n\n" +
                 "Best regards,\n" +
                 "Catrobat-Admins";
 
 
         mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getDisplayName());
-        mailBody = mailBody.replaceAll("\\{\\{time\\}\\}", Integer.toString(sheet.getTargetHoursTheory()));
+        mailBody = mailBody.replaceAll("\\{\\{time\\}\\}", Integer.toString(sheet.getTargetHours()));
 
         sendEmail(emailTo, mailSubject, mailBody);
     }

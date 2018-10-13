@@ -34,14 +34,12 @@ public interface TimesheetService {
      * @param userKey             identifies the user
      * @param targetHoursPractice specifies the amount of hours the user has to
      *                            solve in practical work
-     * @param targetHoursTheory   specifies the amount of hours the user has to
-*                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
-     * @param isMasterThesisTimesheet @return the new Timesheet, or null          */
+     * @return the new Timesheet, or null          */
     @Nullable
-    Timesheet editTimesheet(String userKey, int targetHoursPractice, int targetHoursTheory,
+    Timesheet editTimesheet(String userKey, int targetHoursPractice,
                             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                            String reason, Date latestEntryDate, boolean isMasterThesisTimesheet,
+                            String reason, Date latestEntryDate,
                             Timesheet.State state) throws ServiceException;
 
     Timesheet updateTimesheet(int id, int targetHoursCompleted, int targetHoursPractice, Date latestEntryDate, Timesheet.State state);
@@ -52,14 +50,12 @@ public interface TimesheetService {
      * @param displayName           the name displayed for the timesheet
      * @param targetHoursPractice specifies the amount of hours the user has to
  *                            solve in practical work
-     * @param targetHoursTheory   specifies the amount of hours the user has to
-*                            invest in theoretical work
      * @param lectures            describes the lecture in which the user is enrolled
-     * @param isMasterThesisTimesheet @return the new Timesheet        */
+     * @return the new Timesheet        */
     @NotNull
-    Timesheet add(String userKey, String displayName, int targetHoursPractice, int targetHoursTheory,
+    Timesheet add(String userKey, String displayName, int targetHoursPractice,
                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
-                  String reason, boolean isMasterThesisTimesheet,
+                  String reason,
                   Timesheet.State state) throws ServiceException;
 
     @NotNull
@@ -78,14 +74,14 @@ public interface TimesheetService {
      * @return Timesheet, null if unknown user
      */
     @Nullable
-    Timesheet getTimesheetByUser(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException;
+    Timesheet getTimesheetByUser(String userKey) throws ServiceException;
 
     /**
      * Returns true if the user has a timesheet, otherwise false
      *
      * @return Boolean
      */
-    Boolean userHasTimesheet(String userKey, Boolean isMasterThesisTimesheet) throws ServiceException;
+    Boolean userHasTimesheet(String userKey) throws ServiceException;
 
     @Nullable
     Timesheet getTimesheetByID(int id);

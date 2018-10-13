@@ -63,7 +63,7 @@ public class ExportTimesheetAsCSVServlet extends HttpServlet {
         Timesheet timesheet = null;
         try {
             if (id == null) {
-                timesheet = timesheetService.getTimesheetByUser(loggedInUser.getKey(), false);
+                timesheet = timesheetService.getTimesheetByUser(loggedInUser.getKey());
             } else {
                 timesheet = timesheetService.getTimesheetByID(Integer.parseInt(id));
             }

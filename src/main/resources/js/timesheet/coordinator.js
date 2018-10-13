@@ -6,14 +6,11 @@ var idOfCurrentTimesheet = "";
 function initCoordinatorUserList(userInformation) {
 	
     var userListToSort = [];
-    var userListToSortMaster = [];
 	
     for (var i = 0; i < userInformation.length; i++) {
     	
-    	if (userInformation[i].isMasterTimesheet === false && !(userInformation[i].state === "DONE"))
+    	if (!(userInformation[i].state === "DONE"))
     		userListToSort.push(userInformation[i].userName);
-    	else if (userInformation[i].isMasterTimesheet === true && !(userInformation[i].state === "DONE"))
-    		userListToSortMaster.push(userInformation[i].userName);
     	
         var latestEntryDate;
         if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
@@ -28,9 +25,6 @@ function initCoordinatorUserList(userInformation) {
             inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
         }
         thisUsersName = userInformation[i].userName;
-        if (userInformation[i].isMasterTimesheet === true) {
-        	thisUsersName = thisUsersName + " (MT)"
-        }
         
         var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
         "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
@@ -53,13 +47,10 @@ function initCoordinatorUserList(userInformation) {
     }
     
     var sortedUserList = userListToSort.sort();
-    var sortedUserListMaster = userListToSortMaster.sort();
     
     for (var i = 0; i < sortedUserList.length; i++)
     	coordUsersList = coordUsersList + "<option value=\"" + sortedUserList[i] + "\"/>";
     
-    for (var i = 0; i < sortedUserListMaster.length; i++)
-    	coordUsersList = coordUsersList + "<option value=\"" + sortedUserListMaster[i] + " (Master Timesheet)\"/>";
     
     AJS.$("#team-information-table").trigger("update");
     

@@ -38,12 +38,6 @@
 	</script>
 	
 	<script type="application/javascript">
-	    function showMasterUsers() {
-	        document.getElementById("user-information-table-master").style.visibility = "visible";
-	    }
-	</script>
-	
-	<script type="application/javascript">
 	    function showActiveInactiveUsers() {
 	        document.getElementById("user-information-table").style.visibility = "visible";
 	    }
@@ -93,9 +87,6 @@
         </li>
         <li class="menu-item">
             <a href="#tabs-done-users" onclick="showDoneUsers();">Done Timesheets</a>
-        </li>
-        <li class="menu-item">
-            <a href="#tabs-master" onclick="showMasterUsers();"><strong>Master Timesheets</strong></a>
         </li>
     </ul>
 
@@ -206,34 +197,6 @@
         </table>
     </div>
 
-
-#*    content of the 4th tab "Master Timesheets"*#
-    <div class="tabs-pane" id="tabs-master">
-    
-		<h2><b> Master Timesheets</b></h2>
-
-        <table id="user-information-table-master" class="aui aui-table-interactive aui-table-sortable">
-            <thead>
-            <tr>
-                <th id="ti-users-m">User</th>
-                <th id="ti-view-timesheet-m">Timesheet Link</th>
-                <th id="ti-team-m">Team</th>
-                <th id="ti-state-m">State</th>
-                <th id="ti-inactive-end-date-m">Inactive End Date</th>
-                <th id="ti-remaining-hours-m">Remaining Hours</th>
-                <th id="ti-target-total-hours-m">Target Total Hours</th>
-                <th id="ti-total-practice-hours-m">Total Practice Hours</th>
-                <th id="ti-hours-per-half-year-m">Hours last Half Year</th>
-                <th id="ti-latest-entry-date-m">Date of the Latest Entry</th>
-                <th id="ti-latest-entry-description-m">Description of the Latest Entry</th>
-                <th id="ti-enabled-m">Timesheet Enabled</th>
-            </tr>
-            </thead>
-            <tbody class="list" id="user-information-table-master-content">
-            #* will be filled out by JavaScript *#
-            </tbody>
-        </table>
-    </div>
 </div>
 </body>
 </html>

@@ -26,8 +26,6 @@ public class JsonUserInformation {
     @XmlElement
     private int targetTotalHours;
     @XmlElement
-    private int targetTheoryHours;
-    @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
@@ -47,8 +45,6 @@ public class JsonUserInformation {
     private int timesheetID;
     @XmlElement
     private boolean isEnabled;
-    @XmlElement
-    private boolean isMasterTimesheet;
     
     
     public JsonUserInformation (Timesheet timesheet) {
@@ -56,11 +52,11 @@ public class JsonUserInformation {
     	this.userName = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getName();
     	this.state = timesheet.getState();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
-        this.isMasterTimesheet = timesheet.getIsMasterThesisTimesheet();
+
         this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted() 
 				+ timesheet.getHoursDeducted());
         this.targetTotalHours = timesheet.getTargetHours();
-        this.targetTheoryHours = timesheet.getTargetHoursTheory();
+
         this.totalPracticeHours = timesheet.getHoursPracticeCompleted();
         this.email = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getEmailAddress();
         this.timesheetID = timesheet.getID();
@@ -187,11 +183,4 @@ public class JsonUserInformation {
         isEnabled = enabled;
     }
     
-    public boolean isMasterTimesheet() {
-        return isMasterTimesheet;
-    }
-
-    public void setIsMasterTimesheet(boolean isMaster) {
-    	isMasterTimesheet = isMaster;;
-    }
 }
