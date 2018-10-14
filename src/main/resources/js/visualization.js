@@ -107,7 +107,7 @@ function setTeamVisListeners(){
     AJS.$("#display-selected-team").off();
 
     AJS.$("#display-selected-team").on("click", function () {
-        console.log("displaying team with id: " + AJS.$("#team-vis-select").val());
+//        console.log("displaying team with id: " + AJS.$("#team-vis-select").val());
         var selected_team = AJS.$("#team-vis-select").select2("data");
 
         if(selected_team == null){
@@ -166,7 +166,7 @@ function initTeamVisSelect(userType){
             type: "GET",
             url: restBaseUrl + "config/getTeams",
             success: function (data) {
-                console.log("Team request was successfull");
+//                console.log("admin Team request was successfull");
                 initTeamVisOptions(data);
             },
             fail: function (err) {
@@ -178,7 +178,7 @@ function initTeamVisSelect(userType){
             type: "GET",
             url: restBaseUrl + "getTeamsOfUser",
             success: function (data) {
-                console.log("Team request was successfull");
+//                console.log("user Team request was successfull");
                 if(data.length > 1) {
                     initTeamVisOptions(data);
                 }else{

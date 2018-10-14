@@ -256,7 +256,7 @@ AJS.toInit(function () {
             tempData.timesheetID = users[i].timesheetID;
             var tmpCheckBox = AJS.$("#checkBox" + users[i].timesheetID);
             tempData.isEnabled = tmpCheckBox.prop("checked");
-            console.log(tempData);
+//            console.log(tempData);
             data.push(tempData);
         }
 

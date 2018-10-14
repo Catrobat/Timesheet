@@ -26,14 +26,9 @@ function appendHoursPerTeamToPiChart(teamAndHoursPerTeamArray) {
 	var teamNames = [];
 	
 	for (var i = 1; i < teamAndHoursPerTeamArray.length; i+=2) {				
-//		console.log("TEAM teamAndHoursPerTeamArray[i]: ", teamAndHoursPerTeamArray[i-1]);
-//		console.log("HOURS teamAndHoursPerTeamArray[i+1]: ", teamAndHoursPerTeamArray[i]);		
 		teamNames.push(teamAndHoursPerTeamArray[i-1]);		
 		data.push(toFixed(teamAndHoursPerTeamArray[i], 2));
 	}
-	
-//	console.log("LABELS(teamNames): ", teamNames);
-//	console.log("DATA: ", data);
 	
 	var piChartHoursPerTeam = drawHoursPerTeamPiChart(teamNames, data);
 }

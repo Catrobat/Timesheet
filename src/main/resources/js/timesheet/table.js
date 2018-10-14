@@ -62,14 +62,6 @@ function populateTable(timesheetDataReply) {
         }
     } else if (((timesheetData.targetHours - timesheetData.targetHoursCompleted) <= 80) && !isInit) {
 
-        // FIXME: is this banner needed?
-        AJS.messages.warning({
-            title: 'Timesheet Warning.',
-            closeable: true,
-            body: '<p> Congratulations you almost did it. Please contact an "Administrator", or your ' +
-            '"Coordinator" for further steps.</p>'
-        });
-
         require(['aui/banner'], function (banner) {
             banner({
                 body: 'You have <strong>less than 80 hours</strong> left, please contact ' +
@@ -168,6 +160,7 @@ function appendEntriesToTable(timesheetData) {
  * @param {jQuery} form
  */
 function addNewEntryCallback(entry, timesheetData, form) {
+	
     var viewRow = renderViewRow(timesheetData, entry);
     var beginTime = form.beginTimeField.timepicker('getTime');
     var endTime = form.endTimeField.timepicker('getTime');
@@ -178,8 +171,6 @@ function addNewEntryCallback(entry, timesheetData, form) {
     form.pauseTimeField.val("00:00").trigger('change');
 
     form.categorySelect.trigger("change"); // this is needed for the sparkling effect
-
-    //replaceJiraTicketLinks();
 
     var indexOfInactive = getIDFromCategoryName("inactive", timesheetData);
     var indexOfDeactivated = getIDFromCategoryName("inactive & offline", timesheetData);
@@ -207,6 +198,7 @@ function addNewEntryCallback(entry, timesheetData, form) {
  * @param {jQuery} form
  */
 function editEntryCallback(entry, timesheetData, form) {
+	
     var augmentedEntry = augmentEntry(timesheetData, entry);
     if (augmentedEntry == null)
         return;
@@ -214,8 +206,6 @@ function editEntryCallback(entry, timesheetData, form) {
     var newViewRow = prepareViewRow(timesheetData, augmentedEntry);
     var oldViewRow = form.row.prev();
     
-    //replaceJiraTicketLinks();
-
     newViewRow.find("button.edit").click(function () {
         newViewRow.hide();
         form.row.show();
@@ -242,7 +232,7 @@ function editEntryCallback(entry, timesheetData, form) {
  * @returns {jquery} form
  */
 function renderFormRow(timesheetData, entry, saveOptions, isModified) {
-
+	
     if (entry.pause === "")
         entry.pause = "00:00";
 
@@ -266,6 +256,7 @@ function renderFormRow(timesheetData, entry, saveOptions, isModified) {
         }
         else
         {
+        	replaceJiraTicketLinks();
             submit(timesheetData, saveOptions, form, entry.entryID,
                 entry.isGoogleDocImport);
         }
@@ -447,15 +438,19 @@ function prepareForm(entry, timesheetData, isModified) {
         dataType: 'json',
         success: function (data) {
             data.sections[0].issues.forEach(function (issue) {
+            	
             	var issueSummary = issue.summary;
             	
             	if (issueSummary.includes("&quot;"))
             		issueSummary = issueSummary.replace(/&quot;/g, "\"");
             	
+            	if (issueSummary.includes("&#39;"))
+            		issueSummary = issueSummary.replace(/&#39;/g, "\'");
+            	
             	if (issueSummary.includes(","))
             		issueSummary = issueSummary.replace(/,/g, " ");
             	
-                tickets.push(issue.key + ": " + issueSummary);
+                tickets.push(issue.key + " : " + issueSummary);
             });
             var reg = /\d+/g;
             var number = data.sections[0].sub;
@@ -532,13 +527,6 @@ function getIDFromCategoryName(categoryName) {
     for (var key in orig_array) {
         dup_array[key.toLowerCase()] = orig_array[key];
     }
-
-    /* Info: iterate through key, value pair
-     for (var k in dup_array){
-     if (dup_array.hasOwnProperty(k)) {
-     console.log("Key is " + k + ", value is" + dup_array[k]);
-     }
-     }*/
     return dup_array[categoryName.toLowerCase()];
 }
 
@@ -567,9 +555,6 @@ function updateCategorySelect(categorySelect, selectedTeamID, entry, timesheetDa
     if (selectedTeam == null || selectedTeam.teamCategories == null) {
         return;
     }
-    
-//    console.log(selectedTeam);
-//    console.log(selectedTeamID);
     
     var categoriesPerTeam = filterAndSortCategoriesPerTeam(selectedTeam, timesheetData.categoryIDs);
 
@@ -823,8 +808,8 @@ function sendLectureDataToServer(reason, hours, dialog) {
 }
 
 function handleTimesheetReasonDataSuccess(data){
-    var success_body = "<br> Your Data Has successfully been saved!";
-    var additional_info = "<br><strong>Have Fun during Your Time in the Catrobat Project</strong>";
+    var success_body = "<br> Your data has successfully been saved!";
+    var additional_info = "<br><strong>Have fun during your time in the Catrobat Project</strong>";
 
     if(isInit)
         success_body += additional_info;
@@ -1096,7 +1081,7 @@ function prepareViewRow(timesheetData, entry) {
 function submit(timesheetData, saveOptions, form, existingEntryID,
                 existingIsGoogleDocImportValue) {
     form.saveButton.prop('disabled', true);
-
+    
     var date = form.dateField.val();
     
     //console.log("checking date: ", date);
@@ -1204,15 +1189,13 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
             "border-color": "#DCDCDC"
         });
     }
-
+  
     // ATLDEV-223 : Team vis data calc,ATLDEV-253 : Viewing another users Timesheet shows the viewers &quot;Team Information&quot; tab      
     var ticketString = form.ticketSelect.val();
-    console.log("1 ticketString: ", ticketString);
     
     if (ticketString.includes(",")) {
-    	ticketString = ticketString.replace(/,/g,"   - -   ");
-    }
-    console.log("2 ticketString: ", ticketString);
+    	ticketString = ticketString.replace(/,/g,"  ---  ");
+    }  
     
     timesheetEntry = {
         beginDate: beginDate,
@@ -1227,9 +1210,6 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         ticketID: ticketString
     };
     
-    // empty description after submitting the entry
-//    form.descriptionField.val("");
-
     if (existingEntryID !== "new-id") {
         timesheetEntry.entryID = existingEntryID;
     }
@@ -1242,8 +1222,6 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         contentType: "application/json",
         data: JSON.stringify(timesheetEntry),
         success: function (entryData) {
-        	
-        	form.descriptionField.val("");
         	
             if(is_inactive_entry){
                 console.log("we saved an Inactive entry setting state to inactive");

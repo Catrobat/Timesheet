@@ -78,8 +78,8 @@ AJS.toInit(function () {
             .done(function (existingTimesheetData) {
             	var lectures = "";
 
-                console.log("elements");
-                console.log(AJS.$("[name=timesheet-hours-lectures]"));
+//                console.log("elements");
+//                console.log(AJS.$("[name=timesheet-hours-lectures]"));
 
                 for(var i = 0; i < AJS.$("[name=timesheet-hours-lectures]").length; i++){
                     var item = AJS.$("[name=timesheet-hours-lectures]")[i];
@@ -163,107 +163,46 @@ function hideGoogleDocsImportButtonWhenDisabled() {
     });
 }
 
-
+// outerHTML "<span class=\"td ticket\">ATLDEV-250: Create User Helper - Mandatory Fields broken,ATLDEV-252: Clean up Timesheet plugin code from unneeded libraries/dependencies and so on</span>"
+// text "ATLDEV-250: Create User Helper - Mandatory Fields broken,ATLDEV-252: Clean up Timesheet plugin code from unneeded libraries/dependencies and so on"
 function replaceJiraTicketLinks() {
-    var tickets = AJS.$(".td.ticket a");
+    
+	var tickets = AJS.$(".td.ticket a");    
+//    console.log("tickets: ", tickets);   
+    
     for (var i = 0; i < tickets.length; i++) {
         var ticket = tickets[i];
+        
         if (ticket.text == "None") {
             AJS.$(ticket).removeAttr("href");
-        } else {
-            AJS.$(ticket).attr("href", baseUrl + "/browse/" + ticket.text.split(" ")[0]);
+        }
+        else if (ticket.text.includes(",")) {
+        	
+        	var ticketsKeyStringArray = [];
+        	var thisTicketStringArray = ticket.text.split(",");
+        	
+        	for (var j = 0; j < thisTicketStringArray.length; j++) {
+        		
+        		var thisTicketString = thisTicketStringArray[j];
+        		var ticketKey = "";
+        		
+        		if (thisTicketString.includes(" : ")) {
+        			ticketKey = thisTicketString.split(" ")[0];
+        			ticketsKeyStringArray.push(ticketKey);
+        		}
+        		else {
+        			ticketKey = thisTicketString;
+        			ticketsKeyStringArray.push(ticketKey);
+        		}        		       		
+        	}
+        	//jql=key in (atldev-225%2C atldev-224)
+        	AJS.$(ticket).attr("href", baseUrl + "/issues/?jql=key in (" + ticketsKeyStringArray.toString() + ")");       	     	
+        }
+        else {
+        	AJS.$(ticket).attr("href", baseUrl + "/browse/" + ticket.text.split(" ")[0]);
         }
     }
 }
-
-
-// TODO: GO ON IF TIME
-
-//function replaceJiraTicketLinks() {
-//    
-//	console.log("REPLACE JIRA TICKET LINKS");
-//	var tickets = AJS.$(".td.ticket");
-//	console.log("tickets: ", tickets);
-//	
-//	var linkStart = "<a target=\"_blank\" href=\""; //URL following
-//	var linkMiddle = "\">"; // Ticket ID following
-//	var linkEnd = "</a>";
-//		
-//	// for each timesheet entry "ticket" do...
-//    for (var i = 0; i < tickets.length; i++) {
-//    	var ticketUrlArray = [];
-//        var ticket = tickets[i];
-//        console.log("ticket: ", ticket);
-//        var ticketFieldText = ticket.textContent;
-//        console.log("ticketFieldText: ", ticketFieldText);
-//        
-//        if (ticketFieldText == "None") {
-////            AJS.$(ticket).removeAttr("a");
-//        // only 1 ticket, no Beistrich
-//        } else if (!ticketFieldText.includes(',')){
-//			var splittedTicketKey;
-//			if (ticketFieldText.includes(' ')) {
-//				splittedTicketKey = ticketFieldText.split(" ")[0];
-//	        	console.log("NUR 1 TICKET: ", splittedTicketKey);
-//			}
-//			else
-//				splittedTicketKey = ticketFieldText;
-//       	
-//        	var ticketUrl = baseUrl + "/browse/" + splittedTicketKey;
-//        	console.log("single ticketUrl: ", ticketUrl);
-//
-//        	var keyAndTitleUrl = linkStart + ticketUrl + linkMiddle + ticketFieldText + linkEnd;
-//        	console.log(keyAndTitleUrl);
-//        	
-//        	ticketUrlArray.push(keyAndTitleUrl);
-//        	
-////        	var innerPart = document.getElementById("ticketviewlink");
-////        	console.log("innerPart before: ", innerPart);
-////        	innerPart.innerHTML = innerPart.innerHTML.replace(keyAndTitleUrl);
-////        	console.log("innerPart after: ", innerPart);
-//		} else {
-//			console.log("MEHR ALS 1 TICKET...................");
-//			var ticketIDandTitleArray = ticketFieldText.split(',');
-//			console.log("ticketIDandTitleArray: ", ticketIDandTitleArray);
-//			
-//			for (var j = 0; j < ticketIDandTitleArray.length; j++) {
-//			
-//				var ticketKey;
-//			
-//				if (!ticketIDandTitleArray[j].includes(' ')) {
-//					ticketKey = ticketIDandTitleArray[j];
-//					console.log("KeyNr.: ", j);
-//					console.log("ticketKey: ", ticketKey);
-//					}
-//				else {
-//					ticketKey = ticketIDandTitleArray[j].split(" ")[0];
-//					console.log("KeyNr.: ", j);
-//					console.log("splitted ticketKey: ", ticketKey);
-//				}
-//				
-//				var ticketUrl = baseUrl + "/browse/" + ticketKey;
-//	        	console.log("multiple ticketUrl: ", ticketUrl);
-//	        	var keyUrl = linkStart + ticketUrl + linkMiddle + ticketKey + linkEnd;
-//	        	console.log(keyUrl);
-//	        	var titleUrl = linkStart + ticketUrl + linkMiddle + ticketFieldText + linkEnd;
-//	        	console.log(titleUrl);
-//	        	
-//	        	ticketUrlArray.push(titleUrl);
-//			}
-////			var innerPart = document.getElementById("ticketviewlink");
-////        	console.log("innerPart before: ", innerPart);
-////        	innerPart.innerHTML = innerPart.innerHTML.replace(ticketUrlArray.join());
-////        	console.log("innerPart after: ", innerPart);
-//		}
-//	}
-//}
-////TODO: über alle split ergebnisse iterieren
-//// wenn im split ein beistrich, dann nochmal am beistrich splitten??
-//        	var ticketUrl = baseUrl + "/browse/" + splittedTicketKey;
-//        	console.log("ticketUrl: ", ticketUrl);
-//            AJS.$(ticket).attr("href", ticketUrl);
-//        }
-//    }
 
 
 function checkConstrains() {
@@ -421,7 +360,7 @@ function loadMostActiveTeamForUser(){
         type : "GET",
         url : restBaseUrl + "getMostActiveTeamForUser/" + timesheetData_.userKey,
         success : function (data) {
-            console.log("Team fetched: " + data.teamName);
+//            console.log("Team fetched: " + data.teamName);
             setTeamVisInfoHeaders(data.teamName);
         }
     });
@@ -502,11 +441,11 @@ function fetchUsers() {
     	
     	var currentTimesheetID;
     	var pathname = window.location.href;
-    	console.log("pathname  ", pathname);
+
     	if (pathname.includes("timesheetID=")) {
     		currentTimesheetID = pathname.split("timesheetID=")[1];
-    	}
-    	console.log("user/getUsersForCoordinator/  ", currentTimesheetID);
+    		console.log("user/getUsersForCoordinator/  ", currentTimesheetID);
+    	}   	
     	
         var userInformation = AJS.$.ajax({
             type: 'GET',

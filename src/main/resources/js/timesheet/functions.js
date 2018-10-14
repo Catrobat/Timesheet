@@ -117,7 +117,7 @@ function calculateTime(timesheetData) {
             totalMinutes = totalMinutes - minutesToFullHours * 60;
         }
     }
-    console.log("time to return: ", (totalHours + totalMinutes / 60));
+//    console.log("time to return: ", (totalHours + totalMinutes / 60));
     return totalHours + totalMinutes / 60;
 }
 
@@ -278,9 +278,9 @@ function showLectureDeletionDialog(lecture){
 
 function deleteLecture(lecture, dialog){
 	var hours_part = lecture.split("(")[1];
-	console.log("hours_part: " + hours_part);
+//	console.log("hours_part: " + hours_part);
     var hours_string = hours_part.replace(/[^0-9\.]/g, '');
-    console.log("hours_string: " + hours_string);
+//    console.log("hours_string: " + hours_string);
     var hours;
 
     hours = (hours_string === "" ? 0 : parseInt(hours_string));
@@ -309,7 +309,7 @@ function deleteLecture(lecture, dialog){
             updateTimesheetInformationValues(timesheetData_);
 
             dialog.remove();
-            console.log("that worked");
+//            console.log("that worked");
         },
         fail : function (err) {
             AJS.messages.error({
@@ -322,7 +322,7 @@ function deleteLecture(lecture, dialog){
         }
     });
 
-    console.log(data);
+//    console.log(data);
 }
 
 function setProgressBar(total, done){
@@ -344,7 +344,7 @@ function setProgressBar(total, done){
 }
 
 function updateProgressBar(){
-    console.log("UpdateProgressBar called");
+//    console.log("UpdateProgressBar called");
     AJS.$.ajax({
         url : restBaseUrl + "timesheets/" + timesheetData_.timesheetID,
         type : "GET",
@@ -385,8 +385,8 @@ function updateTimesheetInfoData(){
 
 function updateTimesheetInformationValues(timesheetData) {
 
-    console.log("updating timesheetInfo");
-    console.log(timesheetData);
+//    console.log("updating timesheetInfo");
+//    console.log(timesheetData);
 
     AJS.$("#lectures-container").empty();
 

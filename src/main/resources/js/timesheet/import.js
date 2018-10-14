@@ -282,7 +282,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
     
  // check if Von time is in the correct HH:MM format
     if (pieces[1] != "") {
-    	console.log("pieces1 = von");
+//    	console.log("pieces1 = von");
     	isTimeFormatValid = validateHhMm(pieces[1]);
 
     	if (!isTimeFormatValid) {
@@ -292,7 +292,7 @@ function parseEntryFromGoogleDocRow(row, timesheetData) {
 
     // check if Bis time is in the correct HH:MM format
     if (pieces[2] != "") {
-    	console.log("pieces2 = bis");
+//    	console.log("pieces2 = bis");
     	isTimeFormatValid = validateHhMm(pieces[2]);
 
     	if (!isTimeFormatValid) {
