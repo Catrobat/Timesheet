@@ -176,10 +176,10 @@ function replaceJiraTicketLinks() {
         if (ticket.text == "None") {
             AJS.$(ticket).removeAttr("href");
         }
-        else if (ticket.text.includes(",")) {
+        else if (ticket.text.includes("  ---  ")) {
         	
         	var ticketsKeyStringArray = [];
-        	var thisTicketStringArray = ticket.text.split(",");
+        	var thisTicketStringArray = ticket.text.split("  ---  ");
         	
         	for (var j = 0; j < thisTicketStringArray.length; j++) {
         		
@@ -187,7 +187,7 @@ function replaceJiraTicketLinks() {
         		var ticketKey = "";
         		
         		if (thisTicketString.includes(" : ")) {
-        			ticketKey = thisTicketString.split(" ")[0];
+        			ticketKey = thisTicketString.split(" : ")[0];
         			ticketsKeyStringArray.push(ticketKey);
         		}
         		else {
