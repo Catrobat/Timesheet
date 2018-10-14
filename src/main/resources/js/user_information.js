@@ -27,13 +27,29 @@ AJS.toInit(function () {
     var errorMessage;
     var fetchingErrorMessage;
 
+    function dynamicSort(property) {
+        var sortOrder = 1;
+        if(property[0] === "-") {
+            sortOrder = -1;
+            property = property.substr(1);
+        }
+        return function (a,b) {
+            var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+            return result * sortOrder;
+        }
+    }
+    
     function populateTable(userInformation) {
         AJS.$(".loadingDiv").show();
         AJS.$("#user-information-table-content").empty();
         AJS.$("#done-user-info-table-content").empty();
         AJS.$("#disabled-user-info-table-content").empty();
         
+        //sort by username
+        userInformation.sort(dynamicSort("userName"));
+        
         for (var i = 0; i < userInformation.length; i++) {
+        	
             var latestEntryDate;
             if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
                 latestEntryDate = "none";
@@ -50,7 +66,7 @@ AJS.toInit(function () {
             var enabled = userInformation[i].state !== "DISABLED";
             
             var done = userInformation[i].state === "DONE";
-            //console.log("DONE is: ", done);
+
             var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
 
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
