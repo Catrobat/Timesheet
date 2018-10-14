@@ -55,8 +55,9 @@
 		  // Loop through all table rows, and hide those who don't match the search query
 		  for (i = 0; i < tr.length; i++) {
 		    td = tr[i].getElementsByTagName("td")[id];
-		    if (td) {
-		      if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+		    tdTeam = tr[i].getElementsByTagName("td")[2];
+		    if (td || tdTeam) {
+		      if (td.innerHTML.toUpperCase().indexOf(filter) > -1 || tdTeam.innerHTML.toUpperCase().indexOf(filter) > -1) {
 		        tr[i].style.display = "";
 		      } else {
 		        tr[i].style.display = "none";
@@ -110,7 +111,7 @@
 		                
         <h2><b> Active and Inactive Timesheets</b></h2>
         <p>
-        <input type="text" id="searchInputNamesActive" onkeyup="searchFunction('searchInputNamesActive', 'user-information-table', 0)" placeholder="Search for Users...">
+        <input type="text" id="searchInputNamesActive" onkeyup="searchFunction('searchInputNamesActive', 'user-information-table', 0)" placeholder="Search for Users or Teams...">
         <p>
         <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
@@ -141,7 +142,7 @@
     <div class="tabs-pane" id="tabs-disabled-users">   
 		<h2><b>Disabled Users</b></h2>
         <p>
-        <input type="text" id="searchInputNamesDisabled" onkeyup="searchFunction('searchInputNamesDisabled', 'disabled-users-table', 0)" placeholder="Search for Users...">
+        <input type="text" id="searchInputNamesDisabled" onkeyup="searchFunction('searchInputNamesDisabled', 'disabled-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
         <table id="disabled-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
@@ -172,7 +173,7 @@
     
 		<h2><b>Done Users </b></h2>
         <p>
-        <input type="text" id="searchInputNamesDone" onkeyup="searchFunction('searchInputNamesDone', 'done-users-table', 0)" placeholder="Search for Users...">
+        <input type="text" id="searchInputNamesDone" onkeyup="searchFunction('searchInputNamesDone', 'done-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
         <table id="done-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
