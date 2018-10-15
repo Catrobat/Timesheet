@@ -48,19 +48,20 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Override
     public TimesheetEntry add(Timesheet sheet, Date begin, Date end, Category category, String description, int pause,
             Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID,
-            String userName) throws ServiceException {
+            String userName, boolean teamroom) throws ServiceException {
 
         if (ao.find(TimesheetEntry.class, "TIME_SHEET_ID = ? AND BEGIN_DATE < ? AND END_DATE > ?", sheet.getID(), end, begin).length != 0) {
             throw new ServiceException("TimesheetEntries are not allowed to overlap.");
         }
 
         TimesheetEntry entry = ao.create(TimesheetEntry.class);
-        return setTimesheetEntryData(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName, entry);
+        return setTimesheetEntryData(sheet, begin, end, category, description, pause, team, isGoogleDocImport, 
+        		inactiveEndDate, jiraTicketID, userName, teamroom, entry);
     }
 
     private TimesheetEntry setTimesheetEntryData(Timesheet sheet, Date begin, Date end, Category category, String description,
             int pause, Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID, String userName,
-            TimesheetEntry entry) throws ServiceException {
+            boolean teamroom, TimesheetEntry entry) throws ServiceException {
 
         checkParams(begin, end, category, description, team, jiraTicketID, userName);
 
@@ -72,6 +73,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         entry.setPauseMinutes(pause);
         entry.setTeam(team);
         entry.setIsGoogleDocImport(isGoogleDocImport);
+        entry.setTeamroom(teamroom);
         entry.setInactiveEndDate(inactiveEndDate);
         entry.setJiraTicketID(jiraTicketID);
         entry.setPairProgrammingUserName(userName);
@@ -159,14 +161,15 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Nullable
     public TimesheetEntry edit(int entryId, Timesheet sheet, Date begin, Date end, Category category,
             String description, int pause, Team team, boolean isGoogleDocImport,
-            Date inactiveEndDate, String jiraTicketID, String userName) throws ServiceException {
+            Date inactiveEndDate, String jiraTicketID, String userName, boolean teamroom) throws ServiceException {
 
         TimesheetEntry entry = getEntryByID(entryId);
 
         if (entry == null) {
             throw new ServiceException("Entry not found");
         }
-        return setTimesheetEntryData(sheet, begin, end, category, description, pause, team, isGoogleDocImport, inactiveEndDate, jiraTicketID, userName, entry);
+        return setTimesheetEntryData(sheet, begin, end, category, description, pause, team, isGoogleDocImport, 
+        		inactiveEndDate, jiraTicketID, userName, teamroom, entry);
     }
 
     @Override

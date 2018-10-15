@@ -129,7 +129,8 @@ public class ActivityVerificationJob implements PluginJob {
                     false,
                     end,
                     "",
-                    ""
+                    "",
+                    false
             );
         } catch (ServiceException e) {
             e.printStackTrace();

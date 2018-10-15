@@ -18,6 +18,7 @@
     <span class="th partner" style="display:none">Partner (PP)</span>
     <span class="th ticket">Jira Ticket ID</span>
     <span class="th description">Task Description</span>
+    <span class="th teamroom">Teamroom</span>
     <span class="th"></span>
   </div>
 {/template}
@@ -34,9 +35,7 @@
           <span class="td team">{$entry.team}</span>
     {/if}
     <span class="td category">{$entry.category}</span>
-
     <span class="td inactive" style="display:none">{$entry.inactiveEndDate}</span>
-
     <span class="td start">{$entry.begin}</span>
     <span class="td end">{$entry.end}</span>
     <span class="td pause">{$entry.pause}</span>
@@ -44,6 +43,14 @@
     <span class="td partner" >{$entry.partner}</span>
     <span class="td ticket"><a target="_blank" href="">{$entry.ticketID}</a></span>
     <span class="td desc">{$entry.description}</span>
+    <span class="td room">
+		    {if $entry.teamroom}
+		    	Yes
+		    {else}
+		    	No
+		    {/if}
+	</span>
+        
     <span class="td save">
       <button class="aui-button aui-button-subtle edit">
         {call aui.icons.icon}
@@ -105,6 +112,12 @@
     </span>
     <span class="td description">
       <input class="description_ text" type="text" placeholder="a short task description" value="{$entry.description}"/>
+    </span>
+    <span class="td room">
+          <select class="room_">
+            	<option value=false>No</option>
+            	<option value=true>Yes</option>
+          </select>
     </span>
     <span class="td elements">
       <button class="aui-button aui-button-subtle save">

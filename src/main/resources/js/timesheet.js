@@ -99,7 +99,6 @@ AJS.toInit(function () {
                     targetHoursCompleted: toFixed(AJS.$("#timesheet-hours-practical").val() - AJS.$("#timesheet-hours-substract").val(), 2),
                     targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
                     latestEntryDate: existingTimesheetData.latestEntryDate,
-
                     state: existingTimesheetData.state
                 };
 
@@ -230,6 +229,7 @@ function checkConstrains() {
 }
 
 function projectedFinishDate(timesheetData, entryData) {
+	
     var timesheet = timesheetData[0];
     var entries = entryData[0];
     var rem = timesheet.targetHours - timesheet.targetHoursCompleted + timesheet.targetHoursRemoved;
@@ -259,15 +259,13 @@ function setOwnerLabel(timesheet) {
 	AJS.$("#timesheet-owner").empty();
 	AJS.$("#timesheet-owner").append("Timesheet of: " + timesheet.displayName);
     AJS.$("#timesheet-owner-private").empty();
-	AJS.$("#timesheet-owner-private").append("My Timesheet (" + timesheet.displayName + ")");
-    
+	AJS.$("#timesheet-owner-private").append("My Timesheet (" + timesheet.displayName + ")"); 
 }
 
 function setDownloadLink(timesheet) {
-
+	
     AJS.$("#download-csv").attr("href", "download/timesheet");
-    AJS.$("#download-json").attr("href", "download/timesheet/json");
-    
+    AJS.$("#download-json").attr("href", "download/timesheet/json");    
 }
 
 function fetchData(timesheetID) {
@@ -488,8 +486,6 @@ function assembleTimesheetData(timesheetReply, categoriesReply, teamsReply, entr
     });
 
     initTimesheetInformationValues(timesheetData_);
-    //updateTimesheetInformationValues(timesheetData_);
-
     return timesheetData_;
 }
 

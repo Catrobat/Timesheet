@@ -348,7 +348,7 @@ public class TimesheetRestTest {
         Date today = new Date();
 
         TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
-                "Test Entry", 0, team1, false, today, "CAT-1530", "Partner");
+                "Test Entry", 0, team1, false, today, "CAT-1530", "Partner", true);
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
         when(timesheetServiceMock.getTimesheetByUser(userKey)).thenReturn(timesheetMock);
@@ -446,7 +446,7 @@ public class TimesheetRestTest {
         Date today = new Date();
 
         TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
-                "Test Entry", 0, team1, false, today, "CAT-1530", "Partner");
+                "Test Entry", 0, team1, false, today, "CAT-1530", "Partner", true);
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
         Config config = mock(Config.class);
@@ -691,7 +691,7 @@ public class TimesheetRestTest {
 
         Date today = new Date();
         TimesheetEntry timesheetEntry = timesheetEntryServiceMock.add(timesheetMock, today, today, categoryMock,
-                "Test Entry", 0, teamMock, false, today, "CAT-1530", "Partner");
+                "Test Entry", 0, teamMock, false, today, "CAT-1530", "Partner", false);
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
 

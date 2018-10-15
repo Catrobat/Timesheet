@@ -108,7 +108,8 @@ function populateTable(timesheetDataReply) {
         duration: "",
         ticketID: "",
         isGoogleDocImport: false,
-        partner: ""
+        partner: "",
+        teamroom: false
     };
 
     var addNewEntryOptions = {
@@ -218,6 +219,13 @@ function editEntryCallback(entry, timesheetData, form) {
     oldViewRow.after(newViewRow);
     oldViewRow.remove();
 
+    var categoryIndex = form.categorySelect.val();
+    
+    var categoryName = getNameFromCategoryIndex(categoryIndex, timesheetData);
+    if (!(categoryName.includes("(pp)") || categoryName.includes("pair"))) {
+        AJS.$(".partner").hide();
+    }    
+    
     form.row.hide();
 }
 
@@ -260,7 +268,7 @@ function renderFormRow(timesheetData, entry, saveOptions, isModified) {
             submit(timesheetData, saveOptions, form, entry.entryID,
                 entry.isGoogleDocImport);
         }
-        //AJS.$(".entry-form").show();
+
     });
 
     return form.row;
@@ -294,7 +302,8 @@ function prepareForm(entry, timesheetData, isModified) {
         ticketSelect: row.find('input.ticket_'),
         categorySelect: row.find('span.category_'),
         partnerSelect: row.find('span.partner_'),
-        teamSelect: row.find('select.team')
+        teamSelect: row.find('select.team'),
+        teamroomField: row.find('select.room_')
     };
 
     form.ticketSelect.show();
@@ -329,6 +338,7 @@ function prepareForm(entry, timesheetData, isModified) {
             form.durationField.val('00:00');
             form.ticketSelect.select2("val", "");
             form.partnerSelect.select2("val", "");
+            form.teamroomField.select2("val", "");
 
             AJS.$(".ticket").fadeOut(2000);
             AJS.$(".partner").fadeOut(2000);
@@ -337,6 +347,7 @@ function prepareForm(entry, timesheetData, isModified) {
             AJS.$(".pause").fadeOut(2000);
             AJS.$(".end").fadeOut(2000);
             AJS.$(".start").fadeOut(2000);
+            AJS.$(".room").fadeOut(2000);
 
             var date = form.inactiveEndDateField.val();
             checkIfDateIsInRange(date, form);
@@ -358,6 +369,7 @@ function prepareForm(entry, timesheetData, isModified) {
             AJS.$(".pause").fadeIn(2000);
             AJS.$(".duration").fadeIn(2000);
             AJS.$(".ticket").fadeIn(2000);
+            AJS.$(".room").fadeIn(2000);
 
             // define special behaviour
             setTimeout(function () { //little hack we have to do
@@ -1028,7 +1040,7 @@ function augmentEntry(timesheetData, entry) {
 
 
     var pauseDate = new Date(entry.pauseMinutes * 1000 * 60);
-
+    
     return {
         date: toDateString(new Date(entry.beginDate)),
         begin: toTimeString(new Date(entry.beginDate)),
@@ -1047,7 +1059,8 @@ function augmentEntry(timesheetData, entry) {
         isGoogleDocImport: entry.isGoogleDocImport,
         inactiveEndDate: toDateString(new Date(entry.inactiveEndDate)),
         ticketID: entry.ticketID,
-        partner: entry.partner
+        partner: entry.partner,
+        teamroom: entry.teamroom
     };
 }
 
@@ -1195,7 +1208,7 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     
     if (ticketString.includes(",")) {
     	ticketString = ticketString.replace(/,/g,"  ---  ");
-    }  
+    }
     
     timesheetEntry = {
         beginDate: beginDate,
@@ -1207,7 +1220,8 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         categoryID: form.categorySelect.val(),
         isGoogleDocImport: existingIsGoogleDocImportValue,
         partner: form.partnerSelect.val(),
-        ticketID: ticketString
+        ticketID: ticketString,
+        teamroom: form.teamroomField.val()
     };
     
     if (existingEntryID !== "new-id") {

@@ -237,8 +237,8 @@ public class UserRest {
         }
 
         if (!(permissionService.isUserTeamCoordinator(user) || permissionService.isReadOnlyUser(user) || isAdmin)) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Access Forbidden: You are neither a team " +
-                    "coordinator nor a read only user nor a administrator!").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Access Forbidden: " + user.getDisplayName() + " is neither a team " +
+                    "coordinator nor a read only user nor an administrator!").build();
         }
 
         Set<Team> teamsOfCoordinator = teamService.getTeamsOfCoordinator(user.getUsername());

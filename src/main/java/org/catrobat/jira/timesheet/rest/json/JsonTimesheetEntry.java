@@ -65,6 +65,9 @@ public final class JsonTimesheetEntry {
     private String partner;
     @XmlElement
     private boolean isGoogleDocImport;
+    @XmlElement
+    private boolean teamroom;
+
 
     public JsonTimesheetEntry() {
     }
@@ -96,6 +99,7 @@ public final class JsonTimesheetEntry {
             this.ticketID = timesheetEntry.getJiraTicketID();
             this.partner = timesheetEntry.getPairProgrammingUserName();
             this.isGoogleDocImport = timesheetEntry.getIsGoogleDocImport();
+            this.teamroom = timesheetEntry.getTeamroom();
         } else {
             this.entryID = 0;
             this.inactiveEndDate = null;
@@ -103,6 +107,7 @@ public final class JsonTimesheetEntry {
             this.ticketID = null;
             this.partner = null;
             this.isGoogleDocImport = false;
+            this.teamroom = false;
         }
     }
 
@@ -191,6 +196,12 @@ public final class JsonTimesheetEntry {
     public void setIsGoogleDocImport(boolean isGoogleDocImport) {
         this.isGoogleDocImport = isGoogleDocImport;
     }
+    
+    public boolean getTeamroom() {return teamroom;}
+
+    public void setTeamroom(boolean teamroom) {
+        this.teamroom = teamroom;
+    }
 
     public String getCategoryName() {return categoryName;}
 
@@ -212,6 +223,7 @@ public final class JsonTimesheetEntry {
         if (teamID != that.teamID) return false;
         if (categoryID != that.categoryID) return false;
         if (isGoogleDocImport != that.isGoogleDocImport) return false;
+        if (teamroom != that.teamroom) return false;
         if (!beginDate.equals(that.beginDate)) return false;
         if (!endDate.equals(that.endDate)) return false;
         if (!inactiveEndDate.equals(that.inactiveEndDate)) return false;

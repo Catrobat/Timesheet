@@ -39,6 +39,9 @@ public interface TimesheetEntry extends Entity {
 
     boolean getIsGoogleDocImport();
     void setIsGoogleDocImport(boolean isGoogleDocImport);
+    
+    boolean getTeamroom();
+    void setTeamroom(boolean teamroom);
 
     String getDescription();
     void setDescription(String description);
