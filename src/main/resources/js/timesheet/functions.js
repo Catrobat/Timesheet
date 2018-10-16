@@ -35,62 +35,6 @@ function getNameFromCategoryIndex(categoryID, timesheetData) {
     return "";
 }
 
-
-function initSelectTimesheetButton() {
-    AJS.$("#timesheet-settings").submit(function (e) {
-        e.preventDefault();
-
-        if (AJS.$("#user-select2-field").val()) {
-            selectedUser = AJS.$("#user-select2-field").val().split(',');
-        } else if (AJS.$("#approved-user-select2-field").val()) {
-            selectedUser = AJS.$("#approved-user-select2-field").val().split(',');
-        }
-
-        if(typeof selectedUser === "undefined"){
-            console.log("you have not select a user !!");
-
-            AJS.messages.error({
-                title:"Error!",
-                body: "Please select a user and try again!"
-            });
-            return;
-        }
-
-        require('aui/flag')({
-            type: 'info',
-            title: 'Page will be reloaded',
-            body: '<p>Page will be loaded soon. Please wait...</p>' +
-            'You can <a href="javascript:window.location.reload();">quick reload</a> by pressing the F5 key.',
-            close: 'auto'
-        });
-
-        var selectedUser;
-
-        // TODO: why even 2 different fields??? simplify to 1
-
-        if (selectedUser[0] !== "") {
-            saveTimesheetIDOfUserInSession(selectedUser);
-        }
-
-        //browser reload
-        window.setTimeout(function () {
-            location.reload()
-        }, 4000);
-    });
-    AJS.$("#reset-timesheet-settings").submit(function (e) {
-        e.preventDefault();
-
-        sessionStorage.removeItem('timesheetID');
-        location.reload();
-    });
-    AJS.$("#reset-timesheet-settings-coord").submit(function (e) {
-        e.preventDefault();
-
-        sessionStorage.removeItem('timesheetID');
-        location.reload();
-    });
-}
-
 function toFixed(value, precision) {
     var power = Math.pow(10, precision || 0);
     return Math.round(value * power) / power;

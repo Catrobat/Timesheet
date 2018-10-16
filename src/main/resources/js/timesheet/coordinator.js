@@ -73,14 +73,12 @@ function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
         for (var j = 0; j < team['coordinatorGroups'].length; j++) {
             if (team['coordinatorGroups'][j].localeCompare(userName) == 0) {
             	var teamNameForTeamInformation = team.teamName;
-            	AJS.$("#team-information-teamname").append(teamNameForTeamInformation);
                 isTeamCoordinator = true;
             }
         }
     }
 
     if (isTeamCoordinator && !isSupervisedUser && !isAdmin) {
-        initSelectTimesheetButton();
         AJS.$("#visualizationTeamSelect").show();
     } else if(isSupervisedUser && !isTeamCoordinator) {
         AJS.$("#visualizationTeamSelect").show();

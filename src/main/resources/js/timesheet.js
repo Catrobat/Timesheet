@@ -144,7 +144,7 @@ AJS.toInit(function () {
     }
     else {
         fetchData(timesheetID);
-        AJS.$("#reset-timesheet-settings").hide();
+
     }
 
     hideGoogleDocsImportButtonWhenDisabled();
@@ -364,28 +364,6 @@ function loadMostActiveTeamForUser(){
     });
 }
 
-function saveTimesheetIDOfUserInSession(selectedUser) {
-
-	var user;	
-	user = selectedUser[0];	
-	
-    AJS.$.ajax({
-        type: 'GET',
-        url: restBaseUrl + 'timesheet/timesheetID/' + user,
-        contentType: "application/json",
-        success: function (timesheetID) {
-            sessionStorage.setItem('timesheetID', timesheetID); // defining the session variable
-        },
-        error: function (error) {
-            AJS.messages.error({
-                title: 'There was an error while getting timesheet data of another user.',
-                body: '<p>Reason: ' + error.responseText + '</p>'
-            });
-            console.log(error);
-        }
-    });
-}
-
 
 function fetchUsers() {
     var config = AJS.$.ajax({
@@ -408,7 +386,7 @@ function fetchUsers() {
     
     AJS.$.when(config, jsonUser, userList)
         .done(initCoordinatorTimesheetSelect)
-        .done(initTimesheetAdminTimesheetSelect)
+
         .fail(function (error) {
             AJS.messages.error({
                 title: 'There was an error while fetching user data.',

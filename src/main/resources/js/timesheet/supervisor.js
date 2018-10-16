@@ -24,13 +24,3 @@ function initTimesheetAdminUserList (totalUserList) {
     	allUsersList = allUsersList + "<option value=\"" + sortedUserList[i] + "\"/>";
     
 }
-
-function initTimesheetAdminTimesheetSelect(jsonConfig, jsonUser, userList) {
-    var config = jsonConfig[0];
-    var userName = jsonUser[0]['userName'];
-    var isSupervisedUser = isReadOnlyUser(userName, config);
-
-    if (isSupervisedUser || isAdmin) {
-        initSelectTimesheetButton();
-    } 
-}
