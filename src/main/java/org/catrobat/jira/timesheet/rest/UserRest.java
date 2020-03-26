@@ -211,7 +211,11 @@ public class UserRest {
     		Timesheet currentTimesheet = timesheetService.getTimesheetByID(currentTimesheetIDint);
         	String currentUserKey = currentTimesheet.getUserKey();
         	LOGGER.trace("currentUserKey: " + currentUserKey);
-        	user = ComponentAccessor.getUserManager().getUserByKey(currentUserKey);
+        	try {
+                user = permissionService.checkIfUserExists();
+            } catch (PermissionException e) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+            }
         	LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());		
     	}
         
