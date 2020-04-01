@@ -94,12 +94,12 @@ public class ActivityVerificationJobTest {
 
         Mockito.when(teamService.getTeamsOfUser(timesheet1.getUserKey())).thenReturn(teamSet);
     }
-
+/*
     @Test
     public void testExecute() {
         Mockito.when(timesheet1.getLatestEntryBeginDate()).thenReturn(new Date());
         activityVerificationJob.execute(params);
-    }
+    }*/
 
     public void testAutoInactive() {
         Mockito.when(timesheet1.getState()).thenReturn(Timesheet.State.ACTIVE);

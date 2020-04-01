@@ -67,7 +67,9 @@ AJS.toInit(function () {
             
             var done = userInformation[i].state === "DONE";
 
-            var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
+            var timeSheetActive = "";
+            timeSheetActive = "<select id='active-timesheet" + userInformation[i].timesheetID + "'><option value='1'>ACTIVE</option><option value='0'>DISABLED</option> </select>";
+
 
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
                 "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
@@ -95,7 +97,7 @@ AJS.toInit(function () {
 
             var profile_link = AJS.params.baseURL + "\/secure\/ViewProfile.jspa?name=" ;
 
-        	var enabledColumn = "</td><td headers='ti-enabled'>" + enableButton;
+        	var enabledColumn = "</td><td headers='ti-enabled'>";
         	var row = "<tr>" +
             "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
@@ -109,8 +111,7 @@ AJS.toInit(function () {
             "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
             "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
             "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
-            enabledColumn +
-            "</td></tr>";
+                timeSheetActive +  "</td></tr>";
         	
         	if (userInformation[i].state === "DONE") {
         		AJS.$("#done-user-info-table-content").append(row);
@@ -121,10 +122,11 @@ AJS.toInit(function () {
         	else {
         		AJS.$("#user-information-table-content").append(row);
         	}
-            
             	
             var timesheetID = userInformation[i].timesheetID;
+
             setEnableButton(timesheetID, enabled);
+
 
             AJS.$("[name=user-" + userInformation[i].userName + "-profile]").attr("href" , profile_link);
         }
@@ -191,19 +193,22 @@ AJS.toInit(function () {
     }
 
     function setEnableButton(timesheetID, enabled) {
-        var button = AJS.$("#button" + timesheetID);
-        button.prop("onclick", null).off("click");
+
+
+        var button = AJS.$("#active-timesheet" + timesheetID);
+
         if (enabled) {
-            button.text("Disable Timesheet");
-            button.click(function () {
-                setTimesheetState(timesheetID, false)
-            });
+            button.prop.selectedIndex = 1;
+            button.change(function () {
+                setTimesheetState(timesheetID, true);
+                });
             button.css("background", "");
         } else {
-            button.text("Enable Timesheet");
-            button.click(function () {
-                setTimesheetState(timesheetID, true)
-            });
+            button.prop.selectedIndex = 0;
+            button.change(function () {
+                setTimesheetState(timesheetID, false);
+
+                });
             button.css("background", "red");
         }
     }
@@ -227,7 +232,9 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
+                console.log("Debug: Callin set enable Button 243: ");
                 setEnableButton(timesheetID, enabled);
+                console.log("Debug: Called set enable Button 245: ");
                 if (enabled) {
                     AJS.$("#state" + timesheetID).text("ACTIVE");
                 } else {
