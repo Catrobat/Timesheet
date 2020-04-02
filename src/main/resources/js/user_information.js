@@ -73,7 +73,7 @@ AJS.toInit(function () {
             
             var done = userInformation[i].state === "DONE";
 
-            var enableDropdown =  "<select id='active-timesheet" + userInformation[i].timesheetID + "' onchange='getComboA(this)'><option value='ACTIVE'>ACTIVE</option><option value='DISABLED'>DISABLED</option><option value='SHOW' selected>SHOW</option></select>";
+            var enableDropdown =  "<select id='active-timesheet" + userInformation[i].timesheetID + "' onchange='getComboA(this)'><option value='ACTIVE'>ACTIVE</option><option value='DISABLED'>DISABLED</option><option value='SHOW'>SHOW</option><option value='selectAction' selected disabled>SELECT ACTION</option></select>";
 
 //            var timeSheetActive = "";
   //          timeSheetActive = "<select id='active-timesheet" + userInformation[i].timesheetID + "'><option value='1'>ACTIVE</option><option value='0'>DISABLED</option> </select>";
@@ -215,18 +215,25 @@ AJS.toInit(function () {
 
         var op = document.getElementById("active-timesheet" + timesheetID).getElementsByTagName("option")
         var op2 = document.getElementById("active-timesheet" + timesheetID);
+        var op2_value = op2.options[op2.selectedIndex].value;
         for (var i = 0; i < op.length; i++)
         {
             if (enabled)
             {
-                if (op[i].value.toUpperCase() == "ACTIVE")
-                {  op[i].disabled = true; }
+                if (op[i].value.toUpperCase() == "ACTIVE") {  op[i].disabled = true; }
                 op2.onchange = function () {
-                    console.log(op2);
-                    setTimesheetState(timesheetID, false);
-                    console.log(op2);
-                  //  alert("Setting disabled now for timesheet " + timesheetID);
-                    //alert('The option with value ' + $(this).val() + ' and text ' + $(this).text() + ' was selected.');
+
+                    op2_value = op2.options[op2.selectedIndex].value;
+                    switch (op2_value) {
+                        case "DISABLED":
+                            setTimesheetState(timesheetID, false);
+                            break;
+                        case "SHOW":
+                            window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
+                            break;
+                        default:
+                            // should not get here
+                    }
                }
             }
             else
@@ -234,17 +241,21 @@ AJS.toInit(function () {
                 if (op[i].value.toUpperCase() == "DISABLED")
                 {   op[i].disabled = true;   }
                 op2.onchange = function () {
-                    //alert("Setting enanled now for timesheet " + timesheetID);
-                    console.log(op2);
-                    setTimesheetState(timesheetID, true)
-                    //alert('The option with value ' + $(this).val() + ' and text ' + $(this).text() + ' was selected.');
+
+                    op2_value = op2.options[op2.selectedIndex].value;
+                    switch (op2_value) {
+                        case "ACTIVE":
+                            setTimesheetState(timesheetID, true);
+                            break;
+                        case "SHOW":
+                            window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
+                            break;
+                        default:
+                        // should not get here
+                    }
             }
             }
         }
-
-
-
-
     }
 
     function setTimesheetState(timesheetID, enabled) {
