@@ -109,7 +109,6 @@ AJS.toInit(function () {
         	var row = "<tr>" +
             "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
-            "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
             "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
             "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
             "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +

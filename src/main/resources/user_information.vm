@@ -117,7 +117,6 @@
             <thead>
             <tr>
                 <th id="ti-users">User</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>                     
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -148,7 +147,6 @@
             <thead>
             <tr>
                 <th id="ti-users">User</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>                       
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -179,7 +177,6 @@
             <thead>
             <tr>
                 <th id="ti-users">User</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>                     
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
