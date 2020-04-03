@@ -25,6 +25,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
+import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
@@ -138,7 +139,17 @@ public class UserRest {
         List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
         
         for (Timesheet timesheet : timesheetService.all()) {
-            
+
+            ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
+            if(u == null) {
+                try {
+                    timesheetService.remove(timesheet);
+                } catch (ServiceException e) {
+                    //ignore
+                }
+                continue;
+            }
+
         	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
         	
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
@@ -251,7 +262,16 @@ public class UserRest {
         List<JsonUserInformation> jsonUserInformationListForCoordinator = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetService.all()) {
-            	
+
+            ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
+            if(u == null) {
+                try {
+                    timesheetService.remove(timesheet);
+                } catch (ServiceException e) {
+                    //ignore
+                }
+                continue;
+            }
         	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
         	
             String userName = jsonUserInformation.getUserName();
