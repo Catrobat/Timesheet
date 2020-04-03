@@ -210,9 +210,5 @@
     <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
   </web-item>
   <!-- end of web-items -->
-  <web-item name="Timesheet" i18n-name-key="timesheet.name" key="timesheet" section="timesheet" weight="1000">
-    <description key="timesheet.description">The Timesheet Plugin</description>
-    <label key="timesheet.label"></label>
-    <link linkId="timesheet-link">timesheet</link>
-  </web-item>
+
 </atlassian-plugin>
