@@ -75,10 +75,6 @@ AJS.toInit(function () {
 
             var enableDropdown =  "<select id='active-timesheet" + userInformation[i].timesheetID + "' onchange='getComboA(this)'><option value='ACTIVE'>ACTIVE</option><option value='DISABLED'>DISABLED</option><option value='SHOW'>SHOW</option><option value='selectAction' selected disabled>SELECT ACTION</option></select>";
 
-//            var timeSheetActive = "";
-  //          timeSheetActive = "<select id='active-timesheet" + userInformation[i].timesheetID + "'><option value='1'>ACTIVE</option><option value='0'>DISABLED</option> </select>";
-
-
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
                 "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
 
@@ -204,13 +200,6 @@ AJS.toInit(function () {
     function setEnableDropdownButton(timesheetID, enabled) {
         console.log("Set enable Called for timesheet " + timesheetID + " enabled = " + enabled );
 
-        // Enabled (bool) shows State of TimeSheet
-        // timeSheetID => userInformation[i].timesheetID
-        /*
-            0:<option value='ACTIVE'>ACTIVE</option>
-            1:<option value='DISABLED'>DISABLED</option>
-            2:<option value='SHOW'>SHOW</option></select>
-         */
 
         var op = document.getElementById("active-timesheet" + timesheetID).getElementsByTagName("option")
         var op2 = document.getElementById("active-timesheet" + timesheetID);
