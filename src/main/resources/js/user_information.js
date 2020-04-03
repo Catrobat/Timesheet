@@ -198,8 +198,6 @@ AJS.toInit(function () {
 
 
     function setEnableDropdownButton(timesheetID, enabled) {
-        console.log("Set enable Called for timesheet " + timesheetID + " enabled = " + enabled );
-
 
         var op = document.getElementById("active-timesheet" + timesheetID).getElementsByTagName("option")
         var op2 = document.getElementById("active-timesheet" + timesheetID);
@@ -265,9 +263,9 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
-                console.log("Debug: Callin set enable Button 243: ");
+
                 setEnableDropdownButton(timesheetID, enabled);
-                console.log("Debug: Called set enable Button 245: ");
+
                 if (enabled) {
                     AJS.$("#state" + timesheetID).text("ACTIVE");
                 } else {
@@ -296,7 +294,7 @@ AJS.toInit(function () {
             tempData.timesheetID = users[i].timesheetID;
             var tmpCheckBox = AJS.$("#checkBox" + users[i].timesheetID);
             tempData.isEnabled = tmpCheckBox.prop("checked");
-//            console.log(tempData);
+
             data.push(tempData);
         }
 
