@@ -98,6 +98,7 @@ public class UserRestTest {
         ApplicationUser joh = mock(ApplicationUser.class);
         when(userManager.getUserByKey("chris")).thenReturn(chris);
         when(userManager.getUserByKey("joh")).thenReturn(joh);
+        when(userManager.getUserByKey("empty")).thenReturn(null);
         when(chris.getUsername()).thenReturn("chris");
         when(joh.getUsername()).thenReturn("joh");
         when(chris.getEmailAddress()).thenReturn("chris@example.com");

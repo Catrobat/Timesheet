@@ -142,11 +142,6 @@ public class UserRest {
 
             ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
             if(u == null) {
-                try {
-                    timesheetService.remove(timesheet);
-                } catch (ServiceException e) {
-                    //ignore
-                }
                 continue;
             }
 
@@ -265,11 +260,6 @@ public class UserRest {
 
             ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
             if(u == null) {
-                try {
-                    timesheetService.remove(timesheet);
-                } catch (ServiceException e) {
-                    //ignore
-                }
                 continue;
             }
         	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
