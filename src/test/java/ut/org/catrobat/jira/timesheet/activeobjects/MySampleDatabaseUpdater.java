@@ -30,10 +30,6 @@ public class MySampleDatabaseUpdater implements DatabaseUpdater {
             new DBParam("USER_KEY", "joh")
         );
 
-        Timesheet emptySheet = em.create(Timesheet.class,
-                new DBParam("USER_KEY", "empty")
-        );
-
         Team scratchTeam = em.create(Team.class,
             new DBParam("TEAM_NAME", "SCRATCH")
         );

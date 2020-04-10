@@ -215,10 +215,12 @@ public class UserRest {
     	if (currentTimesheetID != null && !currentTimesheetID.equals("undefined")) {
     		int currentTimesheetIDint = Integer.parseInt(currentTimesheetID);
     		Timesheet currentTimesheet = timesheetService.getTimesheetByID(currentTimesheetIDint);
-        	String currentUserKey = currentTimesheet.getUserKey();
-        	LOGGER.trace("currentUserKey: " + currentUserKey);
-        	user = ComponentAccessor.getUserManager().getUserByKey(currentUserKey);
-        	LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());		
+            if (currentTimesheet != null) {
+                String currentUserKey = currentTimesheet.getUserKey();
+                LOGGER.trace("currentUserKey: " + currentUserKey);
+                user = ComponentAccessor.getUserManager().getUserByKey(currentUserKey);
+                LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
+            }
     	}
         
         if (user == null || user.getUsername().equals("")) {
