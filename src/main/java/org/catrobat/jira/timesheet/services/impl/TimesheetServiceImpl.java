@@ -46,8 +46,8 @@ public class TimesheetServiceImpl implements TimesheetService {
 
 
     @Override
-    public Timesheet editTimesheet(String userKey, int targetHoursPractice,
-                                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures, String reason, Date latestEntryDate,
+    public Timesheet editTimesheets(String userKey, int hoursPracticeCompleted, int targetHours, int hoursCompleted,
+                                   int hoursDeducted, String lectures, String reason, Date latestEntryDate,
                                    Timesheet.State state) throws ServiceException {
 
         //ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
@@ -65,10 +65,10 @@ public class TimesheetServiceImpl implements TimesheetService {
         for(Timesheet sheet : found) {
             //if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
             //sheet.setDisplayName(user.getDisplayName());
-            sheet.setHoursPracticeCompleted(targetHoursPractice);
+            sheet.setHoursPracticeCompleted(hoursPracticeCompleted);
             sheet.setTargetHours(targetHours);
-            sheet.setHoursCompleted(targetHoursCompleted);
-            sheet.setHoursDeducted(targetHoursRemoved);
+            sheet.setHoursCompleted(hoursCompleted);
+            sheet.setHoursDeducted(hoursDeducted);
             sheet.setLectures(lectures);
             sheet.setReason(reason);
             sheet.setLatestEntryBeginDate(latestEntryDate);

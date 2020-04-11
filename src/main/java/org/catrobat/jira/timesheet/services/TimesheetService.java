@@ -37,7 +37,7 @@ public interface TimesheetService {
      * @param lectures            describes the lecture in which the user is enrolled
      * @return the new Timesheet, or null          */
     @Nullable
-    Timesheet editTimesheet(String userKey, int targetHoursPractice,
+    Timesheet editTimesheets(String userKey, int targetHoursPractice,
                             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
                             String reason, Date latestEntryDate,
                             Timesheet.State state) throws ServiceException;
