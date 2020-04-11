@@ -213,18 +213,18 @@ public class UserRest {
     	LOGGER.trace("currentTimesheetID : " + currentTimesheetID);
     	
     	if (currentTimesheetID != null && !currentTimesheetID.equals("undefined")) {
-    		int currentTimesheetIDint = Integer.parseInt(currentTimesheetID);
+    	    int currentTimesheetIDint = Integer.parseInt(currentTimesheetID);
     		Timesheet currentTimesheet = timesheetService.getTimesheetByID(currentTimesheetIDint);
-    		
-            if (currentTimesheet != null) {
-                String currentUserKey = currentTimesheet.getUserKey();
-                LOGGER.trace("currentUserKey: " + currentUserKey);
-        	    try {
-                    user = permissionService.checkIfUserExists();
-                } catch (PermissionException e) {
-                    return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-                }
-        	    LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
+
+    		if (currentTimesheet != null) {
+    		    String currentUserKey = currentTimesheet.getUserKey();
+    		    LOGGER.trace("currentUserKey: " + currentUserKey);
+    		    try {
+    		        user = permissionService.checkIfUserExists();
+    		    } catch (PermissionException e) {
+    		        return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+    		    }
+    		    LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
             }
     	}
         
