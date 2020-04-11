@@ -1,18 +1,18 @@
 /*
-* Copyright 2014 Stephan Fellhofer
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2014 Stephan Fellhofer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.catrobat.jira.timesheet.rest;
 
@@ -63,7 +63,7 @@ public class UserRest {
 
     private final UserSearchService userSearchService;
     private final GroupPickerSearchService groupPickerSearchService;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(UserRest.class);
 
     public UserRest(ConfigService configService, PermissionService permissionService,
@@ -127,26 +127,26 @@ public class UserRest {
     @Path("/getUserInformation")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserInformation(@Context HttpServletRequest request) {
-    	
-    	logger.debug("1 /getUserInformation reached");
-    	Date date = new Date();
-    	
+
+        logger.debug("1 /getUserInformation reached");
+        Date date = new Date();
+
         Response response = permissionService.checkRootPermission();
         if (response != null) {
             return response;
         }
 
         List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
-        
+
         for (Timesheet timesheet : timesheetService.all()) {
 
             ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
-            if(u == null) {
+            if (u == null) {
                 continue;
             }
 
-        	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
-        	
+            JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
+
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
 
@@ -169,79 +169,79 @@ public class UserRest {
             String userName = jsonUserInformation.getUserName();
             ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
             StringBuilder teamString = new StringBuilder();
-            
+
             for (Team jsonteam : teamService.all()) {
-            	org.catrobat.jira.timesheet.activeobjects.Group[] teamGroups = jsonteam.getGroups();
-            	for (org.catrobat.jira.timesheet.activeobjects.Group groupName : teamGroups) {
-            		if (groupName.getGroupName().equalsIgnoreCase(userName) ||
-                            ComponentAccessor.getGroupManager().isUserInGroup(applicationUser,groupName.getGroupName())) {
-            			if (!teamString.toString().equals("")) {
-                          teamString.append(", ");
-            			}
-	            		if (!teamString.toString().contains(jsonteam.getTeamName())) {
-	            			teamString.append(jsonteam.getTeamName());
-	                		break;
-	            		}
-            		}
-            	}
+                org.catrobat.jira.timesheet.activeobjects.Group[] teamGroups = jsonteam.getGroups();
+                for (org.catrobat.jira.timesheet.activeobjects.Group groupName : teamGroups) {
+                    if (groupName.getGroupName().equalsIgnoreCase(userName) ||
+                            ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, groupName.getGroupName())) {
+                        if (!teamString.toString().equals("")) {
+                            teamString.append(", ");
+                        }
+                        if (!teamString.toString().contains(jsonteam.getTeamName())) {
+                            teamString.append(jsonteam.getTeamName());
+                            break;
+                        }
+                    }
+                }
             }
             jsonUserInformation.setTeams(teamString.toString());
 
             jsonUserInformationList.add(jsonUserInformation);
         }
-        
-    	Date date1 = new Date();
-    	long diffInMillies = date1.getTime() - date.getTime();
-    	TimeUnit timeUnit = TimeUnit.SECONDS;
-    	logger.debug("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS));
+
+        Date date1 = new Date();
+        long diffInMillies = date1.getTime() - date.getTime();
+        TimeUnit timeUnit = TimeUnit.SECONDS;
+        logger.debug("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS));
 
         return Response.ok(jsonUserInformationList).build();
-    } 
+    }
 
     @GET
     @Path("/getUsersForCoordinator/{currentTimesheetID}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsersForCoordinator(@Context HttpServletRequest request, @PathParam("currentTimesheetID") String currentTimesheetID) {
 
-    	LOGGER.debug("1 /getUsersForCoordinator reached");
-    	
-    	Date date = new Date();
-    	ApplicationUser user = null;
-    	boolean isAdmin = false;
-    	
-    	LOGGER.trace("getRequestURI : " + request.getRequestURI());
-    	LOGGER.trace("currentTimesheetID : " + currentTimesheetID);
-    	
-    	if (currentTimesheetID != null && !currentTimesheetID.equals("undefined")) {
-    	    int currentTimesheetIDint = Integer.parseInt(currentTimesheetID);
-    		Timesheet currentTimesheet = timesheetService.getTimesheetByID(currentTimesheetIDint);
+        LOGGER.debug("1 /getUsersForCoordinator reached");
 
-    		if (currentTimesheet != null) {
-    		    String currentUserKey = currentTimesheet.getUserKey();
-    		    LOGGER.trace("currentUserKey: " + currentUserKey);
-    		    try {
-    		        user = permissionService.checkIfUserExists();
-    		    } catch (PermissionException e) {
-    		        return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-    		    }
-    		    LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
+        Date date = new Date();
+        ApplicationUser user = null;
+        boolean isAdmin = false;
+
+        LOGGER.trace("getRequestURI : " + request.getRequestURI());
+        LOGGER.trace("currentTimesheetID : " + currentTimesheetID);
+
+        if (currentTimesheetID != null && !currentTimesheetID.equals("undefined")) {
+            int currentTimesheetIDint = Integer.parseInt(currentTimesheetID);
+            Timesheet currentTimesheet = timesheetService.getTimesheetByID(currentTimesheetIDint);
+
+            if (currentTimesheet != null) {
+                String currentUserKey = currentTimesheet.getUserKey();
+                LOGGER.trace("currentUserKey: " + currentUserKey);
+                try {
+                    user = permissionService.checkIfUserExists();
+                } catch (PermissionException e) {
+                    return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+                }
+                LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
             }
-    	}
-        
+        }
+
         if (user == null || user.getUsername().equals("")) {
-        	try {
+            try {
                 user = permissionService.checkIfUserExists();
                 LOGGER.debug("without ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
             } catch (PermissionException e) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
             }
         }
-        
+
         Response response = permissionService.checkUserPermission();
         if (response != null) {
             return response;
         }
-        
+
         boolean adminExists = permissionService.timesheetAdminExists();
         if (adminExists && permissionService.isTimesheetAdmin(user)) {
             isAdmin = true;
@@ -257,59 +257,58 @@ public class UserRest {
         Set<Team> teamsOfCoordinator = teamService.getTeamsOfCoordinator(user.getUsername());
         ArrayList<String> teamsOfCoordArray = new ArrayList<String>();
         for (Team t : teamsOfCoordinator) {
-        	teamsOfCoordArray.add(t.getTeamName());
+            teamsOfCoordArray.add(t.getTeamName());
         }
-        
-        
+
+
         List<JsonUserInformation> jsonUserInformationListForCoordinator = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetService.all()) {
 
             ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
-            if(u == null) {
+            if (u == null) {
                 continue;
             }
-        	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
-        	
+            JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
+
             String userName = jsonUserInformation.getUserName();
             ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);
             StringBuilder teamString = new StringBuilder();
             ArrayList<String> teamArray = new ArrayList<String>();
-            
+
             for (Team jsonteam : teamService.all()) {
-            	org.catrobat.jira.timesheet.activeobjects.Group[] teamGroups = jsonteam.getGroups();
-            	for (org.catrobat.jira.timesheet.activeobjects.Group groupName : teamGroups) {
-            		if (groupName.getGroupName().equalsIgnoreCase(userName) ||
-                            ComponentAccessor.getGroupManager().isUserInGroup(applicationUser,groupName.getGroupName())) {
-            			if (!teamString.toString().equals("")) {
-                          teamString.append(", ");
-            			}
-                		if (!teamString.toString().contains(jsonteam.getTeamName())) {
-                			teamString.append(jsonteam.getTeamName());
-                			
-                			if (!teamArray.contains(jsonteam.getTeamName())) {
-                				teamArray.add(jsonteam.getTeamName());
-                			}
-                			
-                			break;
-                		}
-            		}
-            	}
+                org.catrobat.jira.timesheet.activeobjects.Group[] teamGroups = jsonteam.getGroups();
+                for (org.catrobat.jira.timesheet.activeobjects.Group groupName : teamGroups) {
+                    if (groupName.getGroupName().equalsIgnoreCase(userName) ||
+                            ComponentAccessor.getGroupManager().isUserInGroup(applicationUser, groupName.getGroupName())) {
+                        if (!teamString.toString().equals("")) {
+                            teamString.append(", ");
+                        }
+                        if (!teamString.toString().contains(jsonteam.getTeamName())) {
+                            teamString.append(jsonteam.getTeamName());
+
+                            if (!teamArray.contains(jsonteam.getTeamName())) {
+                                teamArray.add(jsonteam.getTeamName());
+                            }
+
+                            break;
+                        }
+                    }
+                }
             }
-            
+
             teamArray.retainAll(teamsOfCoordArray);
             if (teamArray.size() > 0) {
-            	LOGGER.trace(userName + " - is a teammember of: " + teamArray.toString());
-            	
-            }
-            else {
-            	LOGGER.trace("CONTINUE REACHED...");
-            	continue;
+                LOGGER.trace(userName + " - is a teammember of: " + teamArray.toString());
+
+            } else {
+                LOGGER.trace("CONTINUE REACHED...");
+                continue;
             }
 
             jsonUserInformation.setTeams(teamString.toString());
-        	jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
-        	jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+            jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
+            jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
@@ -320,21 +319,21 @@ public class UserRest {
 
             TimesheetEntry latestEntry = timesheetEntryService.getLatestEntry(timesheet);
             if (latestEntry != null) {
-            	jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
-            	jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
+                jsonUserInformation.setLatestEntryHours(latestEntry.getDurationMinutes() / 60);
+                jsonUserInformation.setLatestEntryDescription(latestEntry.getDescription());
             } else {
-            	jsonUserInformation.setLatestEntryHours(0);
-            	jsonUserInformation.setLatestEntryDescription("");
+                jsonUserInformation.setLatestEntryHours(0);
+                jsonUserInformation.setLatestEntryDescription("");
             }
-            
+
             jsonUserInformationListForCoordinator.add(jsonUserInformation);
         }
 
         Date date1 = new Date();
-    	long diffInMillies1 = date1.getTime() - date.getTime();
-    	TimeUnit timeUnit1 = TimeUnit.SECONDS;
-    	logger.debug("3 /getUsersForCoordinator diffInMillies/diffInSeconds: " + diffInMillies1 + "/" + timeUnit1.convert(diffInMillies1,TimeUnit.MILLISECONDS));
-        
+        long diffInMillies1 = date1.getTime() - date.getTime();
+        TimeUnit timeUnit1 = TimeUnit.SECONDS;
+        logger.debug("3 /getUsersForCoordinator diffInMillies/diffInSeconds: " + diffInMillies1 + "/" + timeUnit1.convert(diffInMillies1, TimeUnit.MILLISECONDS));
+
         return Response.ok(jsonUserInformationListForCoordinator).build();
     }
 
@@ -391,24 +390,24 @@ public class UserRest {
     @GET
     @Path("/getActiveTimesheetUsers")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getActiveTimesheetUsers(@Context HttpServletRequest request){
+    public Response getActiveTimesheetUsers(@Context HttpServletRequest request) {
         UserManager userManager = ComponentAccessor.getUserManager();
         ArrayList<String> queried_user_key = new ArrayList<>();
         ArrayList<Object> active_user_list = new ArrayList<>();
 
-        for(Timesheet sheet : timesheetService.all()){
+        for (Timesheet sheet : timesheetService.all()) {
             Map<String, String> result = new HashMap<>();
             ApplicationUser current_user = userManager.getUserByKey(sheet.getUserKey());
 
-            if(current_user == null){
+            if (current_user == null) {
                 return Response.status(Response.Status.CONFLICT).entity("No User Was found!").build();
             }
 
-            if(queried_user_key.contains(current_user.getKey())){
+            if (queried_user_key.contains(current_user.getKey())) {
                 LOGGER.info("User has already been queried continue");
                 continue;
             }
-            if(sheet.getState() != Timesheet.State.ACTIVE){
+            if (sheet.getState() != Timesheet.State.ACTIVE) {
                 LOGGER.info("Current Timesheet is not active continue");
                 continue;
             }
