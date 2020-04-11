@@ -251,6 +251,12 @@ public class TimesheetServiceImplTest {
         assertEquals(expectedState, updatedTimesheet.getState());
     }
 
+    @Test(expected = ServiceException.class)
+    public void testEditTimesheetsNotAvailable() throws ServiceException {
+        service.editTimesheets("invalidUserKey", 0, 0,
+                0, 0, "", "", null, null);
+    }
+
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 
         @Override
