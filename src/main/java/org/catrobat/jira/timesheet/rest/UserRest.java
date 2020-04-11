@@ -25,6 +25,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
+import com.atlassian.jira.service.ServiceException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
@@ -138,7 +139,12 @@ public class UserRest {
         List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
         
         for (Timesheet timesheet : timesheetService.all()) {
-            
+
+            ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
+            if(u == null) {
+                continue;
+            }
+
         	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
         	
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
@@ -209,14 +215,17 @@ public class UserRest {
     	if (currentTimesheetID != null && !currentTimesheetID.equals("undefined")) {
     		int currentTimesheetIDint = Integer.parseInt(currentTimesheetID);
     		Timesheet currentTimesheet = timesheetService.getTimesheetByID(currentTimesheetIDint);
-        	String currentUserKey = currentTimesheet.getUserKey();
-        	LOGGER.trace("currentUserKey: " + currentUserKey);
-        	try {
-                user = permissionService.checkIfUserExists();
-            } catch (PermissionException e) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+    		
+            if (currentTimesheet != null) {
+                String currentUserKey = currentTimesheet.getUserKey();
+                LOGGER.trace("currentUserKey: " + currentUserKey);
+        	    try {
+                    user = permissionService.checkIfUserExists();
+                } catch (PermissionException e) {
+                    return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+                }
+        	    LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());
             }
-        	LOGGER.debug("with ID > USER FOR COORD TEAM INFO VIEW IS: " + user.getDisplayName());		
     	}
         
         if (user == null || user.getUsername().equals("")) {
@@ -255,7 +264,11 @@ public class UserRest {
         List<JsonUserInformation> jsonUserInformationListForCoordinator = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetService.all()) {
-            	
+
+            ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
+            if(u == null) {
+                continue;
+            }
         	JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
         	
             String userName = jsonUserInformation.getUserName();
