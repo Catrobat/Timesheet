@@ -46,11 +46,11 @@ public class TimesheetServiceImpl implements TimesheetService {
 
 
     @Override
-    public Timesheet editTimesheet(String userKey, int targetHoursPractice,
-                                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures, String reason, Date latestEntryDate,
+    public Timesheet editTimesheets(String userKey, int hoursPracticeCompleted, int targetHours, int hoursCompleted,
+                                   int hoursDeducted, String lectures, String reason, Date latestEntryDate,
                                    Timesheet.State state) throws ServiceException {
 
-        ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
+        //ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
         Timesheet[] found = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
         if (found.length > 2) {
@@ -62,24 +62,21 @@ public class TimesheetServiceImpl implements TimesheetService {
             throw new ServiceException("Lectures shall not be longer than 255 characters.");
         }
 
-//        for (Timesheet aFound : found) {
-//            if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
-//                Timesheet sheet = aFound;
-//
-//                sheet.setDisplayName(user.getDisplayName());
-//                sheet.setHoursPracticeCompleted(targetHoursPractice);
-//                sheet.setTargetHours(targetHours);
-//                sheet.setHoursCompleted(targetHoursCompleted);
-//                sheet.setHoursDeducted(targetHoursRemoved);
-//                sheet.setLectures(lectures);
-//                sheet.setReason(reason);
-//                sheet.setLatestEntryBeginDate(latestEntryDate);
-//                sheet.setState(state);
-//                sheet.save();
-//                return sheet;
-//            }
-//        }
-
+        for(Timesheet sheet : found) {
+            //if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
+            //sheet.setDisplayName(user.getDisplayName());
+            sheet.setHoursPracticeCompleted(hoursPracticeCompleted);
+            sheet.setTargetHours(targetHours);
+            sheet.setHoursCompleted(hoursCompleted);
+            sheet.setHoursDeducted(hoursDeducted);
+            sheet.setLectures(lectures);
+            sheet.setReason(reason);
+            sheet.setLatestEntryBeginDate(latestEntryDate);
+            sheet.setState(state);
+            sheet.save();
+            return sheet;
+            //}
+        }
         return null;
     }
 

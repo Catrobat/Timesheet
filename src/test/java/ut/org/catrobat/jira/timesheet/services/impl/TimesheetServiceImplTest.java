@@ -27,11 +27,8 @@ public class TimesheetServiceImplTest {
 
     private final String userKey = "USER_001";
     private final int targetHoursPractice = 150;
-
-    private final int targetHours = 300;
-    private final int targetHoursCompleted = 150;
-    private final Date latestEntryDate = new Date();
     private final String lectures = "Mobile Applications (705.881)";
+
     private EntityManager entityManager;
     private TimesheetService service;
     private ActiveObjects ao;
@@ -46,9 +43,13 @@ public class TimesheetServiceImplTest {
     @Test
     public void testAdd() throws Exception {
         //Act
+        int targetHours = 300;
         String displayName = "Test User";
         int targetHoursRemoved = 0;
+        int targetHoursCompleted = 150;
         String reason = "Agathe Bauer";
+        Date latestEntryDate = new Date();
+
         service.add(userKey, displayName, targetHoursPractice, targetHours, targetHoursCompleted,
                 targetHoursRemoved, lectures, reason, Timesheet.State.ACTIVE);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
@@ -207,6 +208,53 @@ public class TimesheetServiceImplTest {
             new DBParam("USER_KEY", "USER_001")
         );
         service.updateTimesheetEnableState(unusedTimesheet.getID()+1, false);
+    }
+
+    @Test
+    public void testEditTimesheets() throws ServiceException {
+        int originalHoursPracticeCompleted = 150;
+        int originalTargetHours = 200;
+        int originalHoursCompleted = 100;
+        int originalHoursDeducted = 0;
+        String originalReason = "";
+        Date originalLatestEntryDate = new Date(100);
+        Timesheet.State originalState = Timesheet.State.AUTO_INACTIVE;
+
+        int expectedHoursDeducted = -50;
+        String expectedReason = "Reason for deduction";
+        Timesheet.State expectedState = Timesheet.State.ACTIVE;
+
+        Timesheet timesheet = ao.create(Timesheet.class, new DBParam("USER_KEY", userKey));
+        timesheet.setHoursPracticeCompleted(originalHoursPracticeCompleted);
+        timesheet.setTargetHours(originalTargetHours);
+        timesheet.setHoursCompleted(originalHoursCompleted);
+        timesheet.setHoursDeducted(originalHoursDeducted);
+        timesheet.setLectures(lectures);
+        timesheet.setReason(originalReason);
+        timesheet.setLatestEntryBeginDate(originalLatestEntryDate);
+        timesheet.setState(originalState);
+        timesheet.save();
+
+        Timesheet updatedTimesheet = service.editTimesheets(userKey, originalHoursPracticeCompleted,
+                originalTargetHours, originalHoursCompleted, expectedHoursDeducted, lectures,
+                expectedReason, originalLatestEntryDate, expectedState);
+
+        assertNotNull(updatedTimesheet);
+
+        assertEquals(originalHoursPracticeCompleted, updatedTimesheet.getHoursPracticeCompleted());
+        assertEquals(originalTargetHours, updatedTimesheet.getTargetHours());
+        assertEquals(originalHoursCompleted, updatedTimesheet.getHoursCompleted());
+        assertEquals(expectedHoursDeducted, updatedTimesheet.getHoursDeducted());
+        assertEquals(lectures, updatedTimesheet.getLectures());
+        assertEquals(expectedReason, updatedTimesheet.getReason());
+        assertEquals(originalLatestEntryDate, updatedTimesheet.getLatestEntryBeginDate());
+        assertEquals(expectedState, updatedTimesheet.getState());
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testEditTimesheetsNotAvailable() throws ServiceException {
+        service.editTimesheets("invalidUserKey", 0, 0,
+                0, 0, "", "", null, null);
     }
 
     public static class MyDatabaseUpdater implements DatabaseUpdater {
