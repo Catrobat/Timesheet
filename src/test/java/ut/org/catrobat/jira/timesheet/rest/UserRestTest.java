@@ -51,6 +51,7 @@ public class UserRestTest {
     private UserUtil userUtilMock;
     private ApplicationUser userMock;
     private EntityManager entityManager;
+    private UserManager userManager;
     private PermissionService permissionServiceMock;
     private UserSearchService userSearchService;
     private GroupPickerSearchService groupPickerSearchService;
@@ -74,7 +75,7 @@ public class UserRestTest {
         TeamService teamService = mock(TeamService.class, RETURNS_DEEP_STUBS);
         userSearchService = mock(UserSearchService.class, RETURNS_DEEP_STUBS);
         groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
-        UserManager userManager = mock(UserManager.class);
+        userManager = mock(UserManager.class);
 
         UserRest userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetService,
                 timesheetEntryServiceMock, teamService, userSearchService, groupPickerSearchService);
@@ -158,6 +159,27 @@ public class UserRestTest {
         assertEquals(2, ((List<Group>)response.getEntity()).size());
     }
 
+    @Test
+    public void testUserInformationForDeletedUser() {
+        when(userManager.getUserByKey("joh")).thenReturn(null);
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+
+        Response response = spyUserRest.getUserInformation(httpRequestMock);
+        assertEquals(1, ((List<JsonUserInformation>) response.getEntity()).size());
+    }
+
+    @Test
+    public void testUsersForCoordinatorWithDeletedUser() throws PermissionException {
+        when(userManager.getUserByKey("joh")).thenReturn(null);
+
+        when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
+        when(permissionServiceMock.isUserTeamCoordinator(userMock)).thenReturn(true);
+        when(permissionServiceMock.isUserCoordinatorOfTimesheet(eq(userMock), any())).thenReturn(true);
+
+        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, "125");
+        assertEquals(0, ((List<JsonUserInformation>) response.getEntity()).size());
+    }
+    
     @Test
     public void testUserInformation() {
         when(permissionServiceMock.checkRootPermission()).thenReturn(null);

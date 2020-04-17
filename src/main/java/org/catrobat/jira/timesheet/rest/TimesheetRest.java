@@ -640,12 +640,12 @@ public class TimesheetRest {
 
         try {
             if (permissionService.isJiraAdministrator(user)) {
-                sheet = sheetService.editTimesheet(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
+                sheet = sheetService.editTimesheets(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
                         jsonTimesheet.getLatestEntryDate(), jsonTimesheet.getState());
             } else {
-                sheet = sheetService.editTimesheet(ComponentAccessor.
+                sheet = sheetService.editTimesheets(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
@@ -835,7 +835,7 @@ public class TimesheetRest {
         if (sheet.getEntries().length > 0) {
             if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
                 try {
-                    sheetService.editTimesheet(ComponentAccessor.
+                    sheetService.editTimesheets(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
                             sheet.getTargetHours(), deducted_hours,
                             sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
@@ -846,7 +846,7 @@ public class TimesheetRest {
             }
         } else {
             try {
-                sheetService.editTimesheet(ComponentAccessor.
+                sheetService.editTimesheets(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
                         sheet.getTargetHours(), deducted_hours,
                         sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
