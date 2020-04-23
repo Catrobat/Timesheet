@@ -39,11 +39,6 @@ AJS.toInit(function () {
         }
     }
 
-    function getComboA(selectObject) {
-        var value = selectObject.value;
-        alert(value);
-        console.log(value);
-    }
 
     function populateTable(userInformation) {
         AJS.$(".loadingDiv").show();

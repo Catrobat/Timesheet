@@ -1,214 +1,265 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
-  <!-- project specified -->
-  <plugin-info>
-    <description>${project.description}</description>
-    <version>${project.version}</version>
-    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-    <param name="plugin-icon">images/pluginIcon.png</param>
-    <param name="plugin-logo">images/pluginLogo.png</param>
-  </plugin-info>
-  <!-- add our i18n resource -->
-  <resource type="i18n" name="i18n" location="org.catrobat.jira.timesheet"/>
-  <!-- web-resources -->
-  <web-resource key="timesheet-resources" name="Timesheet Web Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <dependency>com.atlassian.auiplugin:aui-select2</dependency>
-    <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
-    <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
-    <dependency>com.atlassian.auiplugin:dialog2</dependency>
-    <dependency>com.atlassian.auiplugin:aui-banner</dependency>
-    <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
-    <dependency>com.atlassian.auiplugin:message</dependency>
-    <dependency>com.atlassian.auiplugin:aui-table-sortable</dependency>
-    <dependency>com.atlassian.auiplugin:aui-spinner</dependency>
-    <!-- CSS -->
-    <resource type="download" name="timesheet.css" location="/css/timesheet.css"/>
-    <resource type="download" name="table-aui.css" location="/css/table-aui.css"/>
-    <resource type="download" name="visualization.css" location="/css/visualization.css"/>
-    <!-- JS core files -->
-    <resource type="download" name="timesheet.js" location="/js/timesheet.js"/>
-    <resource type="download" name="visualization.js" location="/js/visualization.js"/>
-    <!-- additional timesheet JS files -->
-    <resource type="download" name="supervisor.js" location="/js/timesheet/supervisor.js"/>
-    <resource type="download" name="coordinator.js" location="/js/timesheet/coordinator.js"/>
-    <resource type="download" name="functions.js" location="/js/timesheet/functions.js"/>
-    <resource type="download" name="import.js" location="/js/timesheet/import.js"/>
-    <resource type="download" name="table.js" location="/js/timesheet/table.js"/>
-    <!-- additional visualization JS files -->
-    <resource type="download" name="team_diagram.js" location="/js/visualization/team_diagram.js"/>
-    <resource type="download" name="user_category_diagram.js" location="/js/visualization/user_category_diagram.js"/>
-    <resource type="download" name="user_line_diagram.js" location="/js/visualization/user_line_diagram.js"/>
-    <resource type="download" name="user_overview_table.js" location="/js/visualization/user_overview_table.js"/>
-    <resource type="download" name="user_pi_chart_diagram.js" location="/js/visualization/user_pi_chart_diagram.js"/>
-    <resource type="download" name="user_team_diagram.js" location="/js/visualization/user_team_diagram.js"/>
-    <resource type="download" name="jquery.datepair.min.js" location="/js/jquery.datepair.min.js"/>
-    <resource type="download" name="datepair.min.js" location="/js/datepair.min.js"/>
-    <resource type="download" name="jquery.timepicker.min.js" location="/js/jquery.timepicker.min.js"/>
-    <resource type="download" name="jquery.timepicker.css" location="/css/jquery.timepicker.css"/>
-    <resource type="download" name="autosize.js" location="/js/autosize.js"/>
-    <resource type="download" name="images/" location="/images"/>
-    <!-- add additional web resources -->
-    <resource type="download" name="morris.css" location="/library/morris/morris.css"/>
-    <resource type="download" name="morris.min.js" location="/library/morris/morris.min.js"/>
-    <resource type="download" name="raphael-min.js" location="/library/raphael/raphael-min.js"/>
-    <transformation extension="soy">
-      <transformer key="soyTransformer">
-        <functions>com.atlassian.jira.template.soy:soy-core-functions</functions>
-      </transformer>
-    </transformation>
-    <resource name="timesheet-template-soy.js" type="download" location="/timesheet.soy"/>
-    <context>timesheet</context>
-  </web-resource>
-  <web-resource key="administration-resources" name="Admin Web Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <dependency>com.atlassian.auiplugin:aui-select2</dependency>
-    <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
-    <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
-    <dependency>com.atlassian.auiplugin:dialog2</dependency>
-    <dependency>com.atlassian.auiplugin:aui-banner</dependency>
-    <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
-    <dependency>com.atlassian.auiplugin:message</dependency>
-    <dependency>com.atlassian.auiplugin:aui-select</dependency>
-    <resource type="download" name="administration.js" location="/js/administration.js"/>
-    <!-- 4 JS ressources needed for admin import -->
-    <resource type="download" name="admin_import.js" location="/js/admin_import.js"/>
-    <resource type="download" name="import.js" location="/js/timesheet/import.js"/>
-    <resource type="download" name="autosize.js" location="/js/autosize.js"/>
-    <resource type="download" name="functions.js" location="/js/timesheet/functions.js"/>
-    <!-- end of ressources for import -->
-    <resource type="download" name="administration.css" location="/css/administration.css"/>
-    <context>administration</context>
-  </web-resource>
-  <web-resource key="user-information-resources" name="User Information Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <dependency>com.atlassian.auiplugin:aui-select2</dependency>
-    <dependency>com.atlassian.auiplugin:aui-table-sortable</dependency>
-    <resource type="download" name="user_information.js" location="/js/user_information.js"/>
-    <resource type="download" name="administration.css" location="/css/administration.css"/>
-    <context>modify</context>
-  </web-resource>
-  <!-- end of web-resources -->
-  <!-- end of project specified -->
-  <!-- servlets -->
-  <servlet key="timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.TimesheetServlet">
-    <url-pattern>/timesheet</url-pattern>
-  </servlet>
-  <servlet key="administration-servlet" class="org.catrobat.jira.timesheet.servlet.AdminServlet">
-    <url-pattern>/timesheet/administration</url-pattern>
-  </servlet>
-  <servlet key="modify-user-servlet" class="org.catrobat.jira.timesheet.servlet.UserInformationServlet">
-    <url-pattern>/timesheet/user/information</url-pattern>
-  </servlet>
-  <servlet key="download-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportConfigAsJsonServlet">
-    <url-pattern>/timesheet/download/config/json</url-pattern>
-  </servlet>
-  <servlet key="download-all-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet">
-    <url-pattern>/timesheet/download/timesheets</url-pattern>
-  </servlet>
-  <servlet key="download-all-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsJsonServlet">
-    <url-pattern>/timesheet/download/timesheets/json</url-pattern>
-  </servlet>
-  <servlet key="download-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsCSVServlet">
-    <url-pattern>/download/timesheet</url-pattern>
-  </servlet>
-  <servlet key="download-timesheet-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsJsonServlet">
-    <url-pattern>/download/timesheet/json</url-pattern>
-  </servlet>
-  <servlet key="upload-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ImportConfigAsJsonServlet">
-    <url-pattern>/timesheet/upload/config/json</url-pattern>
-  </servlet>
-  <servlet key="upload-timesheet-json-servlet" class="org.catrobat.jira.timesheet.servlet.ImportTimesheetAsJsonServlet">
-    <url-pattern>/timesheet/upload/timesheets/json</url-pattern>
-  </servlet>
-  <!-- end of servlets -->
-  <!-- import from the product container -->
-  <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
-  <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
-  <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider"/>
-  <component key="component-accessor" name="Component Accessor" class="com.atlassian.jira.component.ComponentAccessor"/>
-  <!--
+
+    <!-- project specified -->
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="org.catrobat.jira.timesheet"/>
+
+    <!-- web-resources -->
+    <web-resource key="timesheet-resources" name="Timesheet Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-banner</dependency>
+        <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
+        <dependency>com.atlassian.auiplugin:message</dependency>
+        <dependency>com.atlassian.auiplugin:aui-table-sortable</dependency>
+        <dependency>com.atlassian.auiplugin:aui-spinner</dependency>
+
+        <!-- CSS -->
+        <resource type="download" name="timesheet.css" location="/css/timesheet.css"/>
+        <resource type="download" name="table-aui.css" location="/css/table-aui.css"/>
+        <resource type="download" name="visualization.css" location="/css/visualization.css"/>
+
+        <!-- JS core files -->
+        <resource type="download" name="timesheet.js" location="/js/timesheet.js"/>
+        <resource type="download" name="visualization.js" location="/js/visualization.js"/>
+
+        <!-- additional timesheet JS files -->
+        <resource type="download" name="supervisor.js" location="/js/timesheet/supervisor.js"/>
+        <resource type="download" name="coordinator.js" location="/js/timesheet/coordinator.js"/>
+        <resource type="download" name="functions.js" location="/js/timesheet/functions.js"/>
+        <resource type="download" name="import.js" location="/js/timesheet/import.js"/>
+        <resource type="download" name="table.js" location="/js/timesheet/table.js"/>
+
+        <!-- additional visualization JS files -->
+        <resource type="download" name="team_diagram.js" location="/js/visualization/team_diagram.js"/>
+        <resource type="download" name="user_category_diagram.js"
+                  location="/js/visualization/user_category_diagram.js"/>
+        <resource type="download" name="user_line_diagram.js" location="/js/visualization/user_line_diagram.js"/>
+        <resource type="download" name="user_overview_table.js" location="/js/visualization/user_overview_table.js"/>
+        <resource type="download" name="user_pi_chart_diagram.js"
+                  location="/js/visualization/user_pi_chart_diagram.js"/>
+        <resource type="download" name="user_team_diagram.js" location="/js/visualization/user_team_diagram.js"/>
+
+        <resource type="download" name="jquery.datepair.min.js" location="/js/jquery.datepair.min.js"/>
+        <resource type="download" name="datepair.min.js" location="/js/datepair.min.js"/>
+        <resource type="download" name="jquery.timepicker.min.js" location="/js/jquery.timepicker.min.js"/>
+        <resource type="download" name="jquery.timepicker.css" location="/css/jquery.timepicker.css"/>
+        <resource type="download" name="autosize.js" location="/js/autosize.js"/>
+        <resource type="download" name="images/" location="/images"/>
+
+        <!-- add additional web resources -->
+        <resource type="download" name="morris.css" location="/library/morris/morris.css"/>
+        <resource type="download" name="morris.min.js" location="/library/morris/morris.min.js"/>
+        <resource type="download" name="raphael-min.js" location="/library/raphael/raphael-min.js"/>
+
+        <transformation extension="soy">
+            <transformer key="soyTransformer">
+                <functions>com.atlassian.jira.template.soy:soy-core-functions</functions>
+            </transformer>
+        </transformation>
+        <resource name="timesheet-template-soy.js" type="download" location="/timesheet.soy"/>
+        <context>timesheet</context>
+    </web-resource>
+
+    <web-resource key="administration-resources" name="Admin Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-banner</dependency>
+        <dependency>com.atlassian.auiplugin:aui-dropdown2</dependency>
+        <dependency>com.atlassian.auiplugin:message</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select</dependency>
+
+        <resource type="download" name="administration.js" location="/js/administration.js"/>
+        <!-- 4 JS ressources needed for admin import -->
+        <resource type="download" name="admin_import.js" location="/js/admin_import.js" />
+        <resource type="download" name="import.js" location="/js/timesheet/import.js" />
+        <resource type="download" name="autosize.js" location="/js/autosize.js"/>
+        <resource type="download" name="functions.js" location="/js/timesheet/functions.js"/>
+        <!-- end of ressources for import -->
+        <resource type="download" name="administration.css" location="/css/administration.css"/>
+        <context>administration</context>
+    </web-resource>
+
+    <web-resource key="user-information-resources" name="User Information Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-table-sortable</dependency>
+
+        <resource type="download" name="user_information.js" location="/js/user_information.js"/>
+        <resource type="download" name="administration.css" location="/css/administration.css"/>
+        <context>modify</context>
+    </web-resource>
+
+    <!-- end of web-resources -->
+    <!-- end of project specified -->
+
+    <!-- servlets -->
+    <servlet key="timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.TimesheetServlet">
+        <url-pattern>/timesheet</url-pattern>
+    </servlet>
+
+
+    <servlet key="administration-servlet" class="org.catrobat.jira.timesheet.servlet.AdminServlet">
+        <url-pattern>/timesheet/administration</url-pattern>
+    </servlet>
+
+    <servlet key="modify-user-servlet" class="org.catrobat.jira.timesheet.servlet.UserInformationServlet">
+        <url-pattern>/timesheet/user/information</url-pattern>
+    </servlet>
+
+    <servlet key="download-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportConfigAsJsonServlet">
+        <url-pattern>/timesheet/download/config/json</url-pattern>
+    </servlet>
+
+    <servlet key="download-all-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsCSVServlet">
+        <url-pattern>/timesheet/download/timesheets</url-pattern>
+    </servlet>
+
+    <servlet key="download-all-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportAllTimesheetsAsJsonServlet">
+        <url-pattern>/timesheet/download/timesheets/json</url-pattern>
+    </servlet>
+
+    <servlet key="download-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsCSVServlet">
+        <url-pattern>/download/timesheet</url-pattern>
+    </servlet>
+
+    <servlet key="download-timesheet-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsJsonServlet">
+        <url-pattern>/download/timesheet/json</url-pattern>
+    </servlet>
+
+    <servlet key="upload-config-json-servlet" class="org.catrobat.jira.timesheet.servlet.ImportConfigAsJsonServlet">
+        <url-pattern>/timesheet/upload/config/json</url-pattern>
+    </servlet>
+
+    <servlet key="upload-timesheet-json-servlet" class="org.catrobat.jira.timesheet.servlet.ImportTimesheetAsJsonServlet">
+        <url-pattern>/timesheet/upload/timesheets/json</url-pattern>
+    </servlet>
+    <!-- end of servlets -->
+
+    <!-- import from the product container -->
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+    <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
+    <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider"/>
+    <component key="component-accessor" name="Component Accessor"
+               class="com.atlassian.jira.component.ComponentAccessor"/>
+
+    <!--
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
     -->
-  <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate"/>
-  <component-import key="webSudoManager" interface="com.atlassian.sal.api.websudo.WebSudoManager"/>
-  <component-import key="ao" name="Active Objects service" interface="com.atlassian.activeobjects.external.ActiveObjects">
-    <description>Component to access Active Objects functionality from the plugin</description>
-  </component-import>
-  <component-import key="ApplicationLinkService">
-    <interface>com.atlassian.applinks.api.ApplicationLinkService</interface>
-  </component-import>
-  <component-import key="pluginScheduler">
-    <description>SAL Scheduler</description>
-    <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
-  </component-import>
-  <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
-    <decription>Processes @Transactional annotations.</decription>
-  </component>
-  <!-- end of import from the product container -->
-  <!-- scheduling-components -->
-  <component key="timesheet-scheduler" name="Timesheet Scheduler" public="true" class="org.catrobat.jira.timesheet.scheduling.TimesheetScheduler">
-    <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
-  </component>
-  <!-- end of scheduling-components -->
-  <ao key="ao-module">
-    <description>The module configuring the Active Objects service used by this plugin</description>
-    <!-- timesheet -->
-    <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetEntry</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.Timesheet</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.Team</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.TeamToGroup</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.Category</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.CategoryToTeam</entity>
+
+    <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate"/>
+    <component-import key="webSudoManager" interface="com.atlassian.sal.api.websudo.WebSudoManager"/>
+    <component-import key="ao" name="Active Objects service"
+                      interface="com.atlassian.activeobjects.external.ActiveObjects">
+        <description>Component to access Active Objects functionality from the plugin</description>
+    </component-import>
+    <component-import key="ApplicationLinkService">
+        <interface>com.atlassian.applinks.api.ApplicationLinkService</interface>
+    </component-import>
+    <component-import key="pluginScheduler">
+        <description>SAL Scheduler</description>
+        <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+    </component-import>
+    <component key="tx-processor" name="Transactional Annotation Processor"
+               class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
+        <decription>Processes @Transactional annotations.</decription>
+    </component>
+    <!-- end of import from the product container -->
+
+    <!-- scheduling-components -->
+    <component key="timesheet-scheduler" name="Timesheet Scheduler" public="true"
+               class="org.catrobat.jira.timesheet.scheduling.TimesheetScheduler">
+        <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+    </component>
+    <!-- end of scheduling-components -->
+
+
+    <ao key="ao-module">
+        <description>The module configuring the Active Objects service used by this plugin</description>
+        <!-- timesheet -->
+        <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetEntry</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.Timesheet</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.Team</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.TeamToGroup</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.Category</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.CategoryToTeam</entity>
+
+        <!-- administration -->
+        <entity>org.catrobat.jira.timesheet.activeobjects.Config</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.Group</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.Scheduling</entity>
+        <entity>org.catrobat.jira.timesheet.activeobjects.AllowedModUsers</entity>
+    </ao>
+
+    <!-- rest-resources -->
+    <rest key="timesheetRest" path="/timesheet" version="1.0">
+        <description>Provides timesheet services.</description>
+    </rest>
+    <!-- end of rest-resources -->
+
+    <!-- web-sections -->
+    <web-section key="timesheet-config-section" location="admin_plugins_menu">
+        <label>Timesheet Administration</label>
+        <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition">
+        </condition>
+    </web-section>
+    <!-- end of web-sections -->
+
+    <!-- web-items -->
+    <!-- user timesheet -->
+    <web-item key="timesheet_view" name="Link to Timsheet View" section="system.user.options/personal" weight="30">
+        <label>Timesheet</label>
+        <link linkId="timesheet_view_link">/plugins/servlet/timesheet</link>
+        <condition class="org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition"/>
+    </web-item>
+
     <!-- administration -->
-    <entity>org.catrobat.jira.timesheet.activeobjects.Config</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.Group</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.Scheduling</entity>
-    <entity>org.catrobat.jira.timesheet.activeobjects.AllowedModUsers</entity>
-  </ao>
-  <!-- rest-resources -->
-  <rest key="timesheetRest" path="/timesheet" version="1.0">
-    <description>Provides timesheet services.</description>
-  </rest>
-  <!-- end of rest-resources -->
-  <!-- web-sections -->
-  <web-section key="timesheet-config-section" location="admin_plugins_menu">
-    <label>Timesheet Administration</label>
-    <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"></condition>
-  </web-section>
-  <!-- end of web-sections -->
-  <!-- web-items -->
-  <!-- user timesheet -->
-  <web-item key="timesheet_view" name="Link to Timsheet View" section="system.user.options/personal" weight="30">
-    <label>Timesheet</label>
-    <link linkId="timesheet_view_link">/plugins/servlet/timesheet</link>
-    <condition class="org.catrobat.jira.timesheet.helper.TimesheetPermissionCondition"/>
-  </web-item>
-  <!-- administration -->
-  <web-item key="administration_view" name="Link to Administration View" section="admin_plugins_menu/timesheet-config-section" weight="1">
-    <description>Link to Administration menu</description>
-    <label>Timesheet - Configuration</label>
-    <link linkId="administration_view_link">/plugins/servlet/timesheet/administration</link>
-    <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
-  </web-item>
-  <web-item key="user_information" name="Link to User Information View" section="admin_plugins_menu/timesheet-config-section" weight="2">
-    <label>Timesheet - User Information</label>
-    <link linkId="user_information_view_link">/plugins/servlet/timesheet/user/information</link>
-    <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
-  </web-item>
-  <web-item key="timesheet_user_information" name="Link to User Information Servlet" section="system.user.options/personal" weight="2">
-    <label>Timesheet - User Information</label>
-    <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/user/information</link>
-    <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
-  </web-item>
-  <!-- hidden administration links -->
-  <web-item key="timesheet_config" name="Link to Administration Servlet" section="system.user.options/personal" weight="1">
-    <label>Timesheet - Configuration</label>
-    <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/administration</link>
-    <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
-  </web-item>
-  <!-- end of web-items -->
+    <web-item key="administration_view" name="Link to Administration View"
+              section="admin_plugins_menu/timesheet-config-section"
+              weight="1">
+        <description>Link to Administration menu</description>
+        <label>Timesheet - Configuration</label>
+        <link linkId="administration_view_link">/plugins/servlet/timesheet/administration</link>
+        <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
+    </web-item>
+
+    <web-item key="user_information" name="Link to User Information View"
+              section="admin_plugins_menu/timesheet-config-section" weight="2">
+        <label>Timesheet - User Information</label>
+        <link linkId="user_information_view_link">/plugins/servlet/timesheet/user/information</link>
+        <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
+    </web-item>
+
+    <web-item key="timesheet_user_information" name="Link to User Information Servlet"
+              section="system.user.options/personal" weight="2">
+        <label>Timesheet - User Information</label>
+        <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/user/information</link>
+        <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
+    </web-item>
+
+    <!-- hidden administration links -->
+    <web-item key="timesheet_config" name="Link to Administration Servlet" section="system.user.options/personal"
+              weight="1">
+        <label>Timesheet - Configuration</label>
+        <link linkId="timesheet_administration_link">/plugins/servlet/timesheet/administration</link>
+        <condition class="org.catrobat.jira.timesheet.helper.PluginPermissionCondition"/>
+    </web-item>
+
+    <!-- end of web-items -->
 
 </atlassian-plugin>
