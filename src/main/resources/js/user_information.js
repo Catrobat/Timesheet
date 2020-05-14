@@ -21,9 +21,9 @@ var restBaseUrl;
 AJS.toInit(function () {
     window.onbeforeunload = null;
     var baseUrl = AJS.params.baseURL;
+
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
-    var timesheet = [];
     var errorMessage;
     var fetchingErrorMessage;
 
@@ -68,7 +68,7 @@ AJS.toInit(function () {
             
             var done = userInformation[i].state === "DONE";
 
-            var enableDropdown =  "<select id='active-timesheet" + userInformation[i].timesheetID + "' onchange='getComboA(this)'><option value='ACTIVE'>ACTIVE</option><option value='DISABLED'>DISABLED</option><option value='SHOW'>SHOW</option><option value='selectAction' selected disabled>SELECT ACTION</option></select>";
+            var enableDropdown =  "<button id='button" + userInformation[i].timesheetID + "' class='aui-button aui-dropdown2-trigger' aria-controls='active-timesheet" + userInformation[i].timesheetID + "'>choose option</button><aui-dropdown-menu id='active-timesheet" + userInformation[i].timesheetID + "' ><aui-item-radio  value='ACTIVE'>ACTIVE</aui-item-radio><aui-item-radio disabled value='DISABLED'>DISABLED</aui-item-radio><aui-item-radio value='SHOW'>SHOW</aui-item-radio></aui-dropdown-menu>";
 
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
                 "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
@@ -101,7 +101,7 @@ AJS.toInit(function () {
             "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
             "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
-            "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
+            "</td><td headers='ti-state' class='state' id='state" + userInformation[i].timesheetID + "'>" +  userInformation[i].state +
             "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
             "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
             "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
@@ -194,48 +194,41 @@ AJS.toInit(function () {
 
     function setEnableDropdownButton(timesheetID, enabled) {
 
-        var op = document.getElementById("active-timesheet" + timesheetID).getElementsByTagName("option")
-        var op2 = document.getElementById("active-timesheet" + timesheetID);
-        var op2_value = op2.options[op2.selectedIndex].value;
-        for (var i = 0; i < op.length; i++)
+        if (enabled)
         {
-            if (enabled)
-            {
-                if (op[i].value.toUpperCase() == "ACTIVE") {  op[i].disabled = true; }
-                op2.onchange = function () {
+            var dropdown = document.getElementById("active-timesheet" + timesheetID);
+            var button = document.getElementById("button" + timesheetID);
+            button.innerText = 'ACTIVE';
+            try {
+                dropdown.children[1].removeAttribute('disabled');
+                dropdown.children[0].setAttribute('disabled', '');
+            }
+            catch (e) {//never go there
+            }
 
-                    op2_value = op2.options[op2.selectedIndex].value;
-                    switch (op2_value) {
-                        case "DISABLED":
-                            setTimesheetState(timesheetID, false);
-                            break;
-                        case "SHOW":
-                            window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
-                            break;
-                        default:
-                            // should not get here
-                    }
-               }
-            }
-            else
-            {
-                if (op[i].value.toUpperCase() == "DISABLED")
-                {   op[i].disabled = true;   }
-                op2.onchange = function () {
+            dropdown.addEventListener('change', function (e) {
+                if (e.target.textContent === 'DISABLED') {
+                    setTimesheetState(timesheetID, false);
+                }
+                if (e.target.textContent === 'SHOW') {
+                    window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
+                }
+            });
+        }
+        else
+        {
+            var dropdown = document.getElementById("active-timesheet" + timesheetID);
+            var button = document.getElementById("button" + timesheetID);
+            button.innerText = 'DISABLED';
+            dropdown.addEventListener('change', function (e) {
 
-                    op2_value = op2.options[op2.selectedIndex].value;
-                    switch (op2_value) {
-                        case "ACTIVE":
-                            setTimesheetState(timesheetID, true);
-                            break;
-                        case "SHOW":
-                            window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
-                            break;
-                        default:
-                        // should not get here
-                    }
-            }
-            }
+                if (e.target.textContent === 'ACTIVE') {
+                    setTimesheetState(timesheetID, true);
+                }
+                if (e.target.textContent === 'SHOW') {
+                    window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
+                }
+            });
         }
     }
 

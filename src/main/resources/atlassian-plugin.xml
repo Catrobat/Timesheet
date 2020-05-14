@@ -96,6 +96,7 @@
 
     <web-resource key="user-information-resources" name="User Information Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select</dependency>
         <dependency>com.atlassian.auiplugin:aui-select2</dependency>
         <dependency>com.atlassian.auiplugin:aui-table-sortable</dependency>
 
