@@ -187,7 +187,7 @@ public class UserRestTest {
         assertEquals(2, ((List<JsonUserInformation>)response.getEntity()).size());
     }
 
-    /*@Test
+    <@Test
     public void testTeamInformation() throws PermissionException {
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(permissionServiceMock.isUserTeamCoordinator(userMock)).thenReturn(true);
@@ -197,9 +197,7 @@ public class UserRestTest {
                 "USER_KEY = ?", "joh")[0])).thenReturn(false);
         Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, "125");
         assertEquals(1, ((List<JsonUserInformation>)response.getEntity()).size());
-
-
-    }*/
+    }
 
     @Test
     public void testPairProgrammingUsers() {
