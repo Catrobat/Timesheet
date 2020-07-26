@@ -120,7 +120,7 @@ public class JsonImporterServletTest {
                 webSudoManager, permissionService, configService, timesheetService, entryService, categoryService, teamService,
                 renderer);
 
-        File file = new File("src/test/java/ut/org/catrobat/jira/timesheet/servlet/exampleJSONs/example1.json");
+        File file = new File("src/test/resources/export/timesheets-export-1.json");
         Gson gson = new Gson();
         JsonTimesheetAndEntries[] result = importTimesheetAsJsonServlet.parseJSONToEntries(file, response, gson);
 
@@ -134,7 +134,7 @@ public class JsonImporterServletTest {
                 webSudoManager, permissionService, configService, timesheetService, entryService, categoryService, teamService,
                 renderer);
 
-        File file = new File("src/test/java/ut/org/catrobat/jira/timesheet/servlet/exampleJSONs/example2.json");
+        File file = new File("src/test/resources/export/timesheets-export-2.json");
         Gson gson = new Gson();
         JsonTimesheetAndEntries[] result = importTimesheetAsJsonServlet.parseJSONToEntries(file, response, gson);
 
