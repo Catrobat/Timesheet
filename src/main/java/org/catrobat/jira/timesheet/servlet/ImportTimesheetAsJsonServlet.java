@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -69,51 +70,92 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
 
         Map<String, List<Map<String,String>>> faulty_teams = new HashMap<>();
 
-        logger.info("new Import");
-        boolean isMultipartContent = ServletFileUpload.isMultipartContent(request);
-        if (!isMultipartContent) {
-            response.sendError(500, "An error occurred: no files were given!");
+        File temp = getJSONFile(request, response);
+        if(temp == null) {
             return;
         }
 
-        FileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-
-        File temp = File.createTempFile("backup", ".json");
-
-        try {
-            List<FileItem> fields = upload.parseRequest(request);
-            Iterator<FileItem> it = fields.iterator();
-            if (!it.hasNext()) {
-                return;
-            }
-            if (fields.size() != 1) {
-                response.sendError(500, "An error occurred: Only one File is allowed");
-                return;
-            }
-            FileItem fileItem = it.next();
-            if (!(fileItem.getContentType().equals("application/json"))){
-                response.sendError(500, "An error occurred: you may only upload Json files");
-                return;
-            }
-            fileItem.write(temp);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         Gson gson = new Gson();
-
-        JsonReader jsonReader = new JsonReader(new FileReader(new File(temp.getAbsolutePath())));
-        JsonTimesheetAndEntries[] timesheetAndEntriesList = gson.fromJson(jsonReader, JsonTimesheetAndEntries[].class);
-
-        if (timesheetAndEntriesList == null) {
-            response.getWriter().print("No Json given");
+        JsonTimesheetAndEntries[] timesheetAndEntriesList = parseJSONToEntries(temp, response, gson);
+        if(timesheetAndEntriesList == null) {
             return;
         }
 
         StringBuilder errorString = new StringBuilder();
 
+        importTimesheets(timesheetAndEntriesList, errorString, faulty_teams);
+
+        Map<String, Object> params = new HashMap<>();
+        if (!errorString.toString().isEmpty()) {
+            logger.warn(errorString.toString()); // TODO: view errors after import
+            importResult = Result.Errors;
+        }
+
+        params.put("status", importResult);
+        params.put("error_teams", gson.toJson(faulty_teams));
+        renderer.render("upload_result.vm", params, response.getWriter());
+    }
+
+    File getJSONFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("new Import");
+        boolean isMultipartContent = ServletFileUpload.isMultipartContent(request);
+        if (!isMultipartContent) {
+            response.sendError(500, "An error occurred: no files were given!");
+            return null;
+        }
+
+        FileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+
+        File json_file = File.createTempFile("backup", ".json");
+
+        try {
+            List<FileItem> fields = upload.parseRequest(request);
+            Iterator<FileItem> it = fields.iterator();
+            if (!it.hasNext()) {
+                return null;
+            }
+            if (fields.size() != 1) {
+                response.sendError(500, "An error occurred: Only one File is allowed");
+                return null;
+            }
+            FileItem fileItem = it.next();
+            if (!(fileItem.getContentType().equals("application/json"))){
+                response.sendError(500, "An error occurred: you may only upload Json files");
+                return null;
+            }
+            //if the file is to big for the cache then the upload-file is renamed -> a file with this name should not exist
+            if(!fileItem.isInMemory()) {
+                json_file.delete();
+            }
+            fileItem.write(json_file);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return json_file;
+    }
+
+    public JsonTimesheetAndEntries[] parseJSONToEntries (File json_file , HttpServletResponse response, Gson gson) throws IOException {
+        File json_file_abs = new File(json_file.getAbsolutePath());
+        FileReader json_filereader = new FileReader(json_file_abs);
+        JsonReader jsonReader = new JsonReader(json_filereader);
+
+        JsonTimesheetAndEntries[] timesheetAndEntriesList = null;
+        try {
+            timesheetAndEntriesList = gson.fromJson(jsonReader, JsonTimesheetAndEntries[].class);
+        } catch (Exception e) {
+            response.getWriter().print(e.toString());
+        }
+
+        if (timesheetAndEntriesList == null) {
+            response.getWriter().print("No Json given");
+        }
+        return timesheetAndEntriesList;
+    }
+
+    void importTimesheets(JsonTimesheetAndEntries[] timesheetAndEntriesList, StringBuilder errorString, Map<String, List<Map<String,String>>> faulty_teams) {
         for (JsonTimesheetAndEntries timesheetAndEntries : timesheetAndEntriesList) {
             JsonTimesheet jsonTimesheet = timesheetAndEntries.getJsonTimesheet();
             List<JsonTimesheetEntry> timesheetEntryList = timesheetAndEntries.getJsonTimesheetEntryList();
@@ -127,10 +169,10 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             Timesheet sheet;
             try {
                 sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getDisplayName(),
-                    jsonTimesheet.getTargetHourPractice(),
-                    jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
-                    jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
-                    jsonTimesheet.getState());
+                        jsonTimesheet.getTargetHourPractice(),
+                        jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
+                        jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
+                        jsonTimesheet.getState());
             } catch (ServiceException e) {
                 errorString.append(e.toString()).append(" Timesheet ignored.\n");
                 continue;
@@ -171,14 +213,5 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
                 }
             }
         }
-        Map<String, Object> params = new HashMap<>();
-        if (!errorString.toString().isEmpty()) {
-            logger.warn(errorString.toString()); // TODO: view errors after import
-            importResult = Result.Errors;
-        }
-
-        params.put("status", importResult);
-        params.put("error_teams", gson.toJson(faulty_teams));
-        renderer.render("upload_result.vm", params, response.getWriter());
     }
 }

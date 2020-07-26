@@ -8,12 +8,14 @@ import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webresource.api.assembler.PageBuilderService;
+import com.google.gson.Gson;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
+import org.catrobat.jira.timesheet.rest.json.JsonTimesheetAndEntries;
 import org.catrobat.jira.timesheet.services.*;
 import org.catrobat.jira.timesheet.services.impl.CategoryServiceImpl;
 import org.catrobat.jira.timesheet.services.impl.TeamServiceImpl;
@@ -24,15 +26,17 @@ import org.catrobat.jira.timesheet.servlet.ImportTimesheetAsJsonServlet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.util.Assert;
 import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -108,6 +112,34 @@ public class JsonImporterServletTest {
                 renderer);
 
         importTimesheetAsJsonServlet.doPost(request, response);
+    }
+
+    @Test
+    public void testParseJSONTimesheet() throws IOException {
+        ImportTimesheetAsJsonServlet importTimesheetAsJsonServlet = new ImportTimesheetAsJsonServlet(loginUriProvider,
+                webSudoManager, permissionService, configService, timesheetService, entryService, categoryService, teamService,
+                renderer);
+
+        File file = new File("src/test/resources/export/timesheets-export-1.json");
+        Gson gson = new Gson();
+        JsonTimesheetAndEntries[] result = importTimesheetAsJsonServlet.parseJSONToEntries(file, response, gson);
+
+        assertNotNull(result);
+        assertEquals(result.length, 1);
+    }
+
+    @Test
+    public void testParseJSONTimesheet2() throws IOException {
+        ImportTimesheetAsJsonServlet importTimesheetAsJsonServlet = new ImportTimesheetAsJsonServlet(loginUriProvider,
+                webSudoManager, permissionService, configService, timesheetService, entryService, categoryService, teamService,
+                renderer);
+
+        File file = new File("src/test/resources/export/timesheets-export-2.json");
+        Gson gson = new Gson();
+        JsonTimesheetAndEntries[] result = importTimesheetAsJsonServlet.parseJSONToEntries(file, response, gson);
+
+        assertNotNull(result);
+        assertTrue(result.length > 100);
     }
 
     @Test
