@@ -403,7 +403,7 @@
                     <input class="text" type="text" id="scheduling-inactive-time" name="scheduling-inactive-time"
                            title="scheduling-inactive-time" placeholder="e.g.: [Inactive Time in days] ...">
                     <div class="description">
-                        After which time will a Timesheet be marked as Auto Inactive? (In Weeks)
+                        Number of weeks without a Timesheet entry after which a Timesheet will be marked as "Auto Inactive".
                     </div>
                 </div>
                 <div class="field-group">
@@ -411,7 +411,7 @@
                     <input class="text" type="text" id="scheduling-offline-time" name="scheduling-offline-time"
                            title="scheduling-offline-time" placeholder="e.g.: [Offline Time in days] ...">
                     <div class="description">
-                        After which time will a Timesheet be marked as Disabled? (In Weeks)
+                        Number of week without a Timesheet entry after which a Timesheet will be marked as "Disabled"
                     </div>
                 </div>
                 <div class="field-group">
@@ -419,8 +419,8 @@
                     <input class="text" type="text" id="scheduling-remaining-time" name="scheduling-remaining-time"
                            title="scheduling-remaining-time" placeholder="e.g.: [Remaining Time in days] ...">
                     <div class="description">
-                        After which time will a Timesheet be marked as Auto Inactive,
-                        when the user set himself to inactive and that inactive period ran out? (In Weeks)
+                        Number of weeks without a Timesheet entry after which a Timesheet will be marked as "Disabled"
+                        after having been automatically reactivated after inactive period
                     </div>
                 </div>
                 <div class="field-group">
@@ -428,7 +428,7 @@
                     <input class="text" type="text" id="scheduling-out-of-time" name="scheduling-out-of-time"
                            title="scheduling-out-of-time" placeholder="e.g.: [Out Of Time in hours] ...">
                     <div class="description">
-                        When a user has less than this much hours remaining a notification will be send.
+                        Number of hours starting from which a notification will be displayed to the user informing him or her about further organizational steps.
                     </div>
                 </div>
                 <div class="field-group">
