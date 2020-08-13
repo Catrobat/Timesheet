@@ -411,7 +411,7 @@
                     <input class="text" type="text" id="scheduling-offline-time" name="scheduling-offline-time"
                            title="scheduling-offline-time" placeholder="e.g.: [Offline Time in days] ...">
                     <div class="description">
-                        Number of week without a Timesheet entry after which a Timesheet will be marked as "Disabled"
+                        Number of weeks without a Timesheet entry after which a Timesheet will be marked as "Disabled".
                     </div>
                 </div>
                 <div class="field-group">
@@ -420,7 +420,7 @@
                            title="scheduling-remaining-time" placeholder="e.g.: [Remaining Time in days] ...">
                     <div class="description">
                         Number of weeks without a Timesheet entry after which a Timesheet will be marked as "Disabled"
-                        after having been automatically reactivated after inactive period
+                        after having been automatically reactivated after inactive period.
                     </div>
                 </div>
                 <div class="field-group">
