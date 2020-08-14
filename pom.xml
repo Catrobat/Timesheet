@@ -202,6 +202,7 @@
                     <enableQuickReload>true</enableQuickReload>
                     <enableFastdev>false</enableFastdev>
                     <allowGoogleTracking>false</allowGoogleTracking>
+                    <compressJs>${compressJs}</compressJs>
 
                     <!-- See here for an explanation of default instructions: -->
                     <!-- https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins -->
@@ -292,6 +293,7 @@
         <testkit.version>7.0.97</testkit.version>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.4</powermock.version>
+        <compressJs>true</compressJs>
     </properties>
 
 </project>
