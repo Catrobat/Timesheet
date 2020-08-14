@@ -576,6 +576,7 @@ AJS.toInit(function () {
                         duration: 5000
                     });
                     fetchData();
+                    scrollToAnchor('top');
                     AJS.$(".loadingDiv").hide();
                 },
                 error: function (error) {
@@ -648,6 +649,7 @@ AJS.toInit(function () {
                         duration: 5000
                     });
                     fetchData();
+                    scrollToAnchor('top');
                     AJS.$(".loadingDiv").hide();
                 },
                 error: function (error) {
@@ -764,39 +766,23 @@ AJS.toInit(function () {
 
     AJS.$("#general").submit(function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
-            updateConfig();
-            scrollToAnchor('top');
-        } else if ((AJS.$(document.activeElement).val()[0] === "C") &&
-            (AJS.$(document.activeElement).val()[1] === "-")) {
-            editCategory(AJS.$(document.activeElement).val());
-        } else {
-            editTeam(AJS.$(document.activeElement).val());
-        }
+        updateConfig();
+        scrollToAnchor('top');
     });
 
     AJS.$("#team-general").submit(function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
+        if (e.originalEvent.submitter.value === 'Save') {
             updateTeams();
             scrollToAnchor('top');
-        } else if ((AJS.$(document.activeElement).val()[0] === "C") &&
-            (AJS.$(document.activeElement).val()[1] === "-")) {
-            editCategory(AJS.$(document.activeElement).val());
         } else {
-            editTeam(AJS.$(document.activeElement).val());
+            editTeam(e.originalEvent.submitter.value);
         }
     });
 
     AJS.$("#category-general").submit(function (e) {
-        // TODO: is this still needed?
         e.preventDefault();
-        if ((AJS.$(document.activeElement).val()[0] === "C") &&
-            (AJS.$(document.activeElement).val()[1] === "-")) {
-            editCategory(AJS.$(document.activeElement).val());
-        } else {
-            editTeam(AJS.$(document.activeElement).val());
-        }
+        editCategory(e.originalEvent.submitter.value);
     });
 
     AJS.$("#modify-team").submit(function (e) {
