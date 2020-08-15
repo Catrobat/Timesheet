@@ -818,13 +818,13 @@ AJS.toInit(function () {
 
     AJS.$("#modify-scheduling").submit(function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Activity Verification') {
+        if (e.originalEvent.submitter.value === 'Activity Verification') {
             triggerJobManually("trigger/activity/verification", "Activity-Verification");
-        } else if (AJS.$(document.activeElement).val() === 'Activity Notification') {
+        } else if (e.originalEvent.submitter.value === 'Activity Notification') {
             triggerJobManually("trigger/activity/notification", "Activity-Notification");
-        } else if (AJS.$(document.activeElement).val() === 'Out Of Time') {
+        } else if (e.originalEvent.submitter.value === 'Out Of Time') {
             triggerJobManually("trigger/out/of/time/notification", "Out-Of-Time-Notification");
-        } else if (AJS.$(document.activeElement).val() === 'Save') {
+        } else if (e.originalEvent.submitter.value === 'Save') {
             updateScheduling();
         }
     });
@@ -1147,6 +1147,7 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
+                scrollToAnchor('top');
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
@@ -1155,6 +1156,7 @@ AJS.toInit(function () {
                     title: "Error!",
                     body: error.responseText
                 });
+                scrollToAnchor('top');
                 AJS.$(".loadingDiv").hide();
             }
         });
@@ -1178,6 +1180,7 @@ AJS.toInit(function () {
                     duration: 5000
                 });
                 fetchData();
+                scrollToAnchor('top');
                 AJS.$(".loadingDiv").hide();
             })
             .fail(function (error) {
@@ -1187,6 +1190,7 @@ AJS.toInit(function () {
                     body: '<p>Reason: ' + error.responseText + '</p>'
                 });
                 console.log(error);
+                scrollToAnchor('top');
                 AJS.$(".loadingDiv").hide();
             });
     }
