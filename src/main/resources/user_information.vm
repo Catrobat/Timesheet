@@ -126,7 +126,7 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-                <th id="ti-enabled">Timesheet Enabled</th>
+                <th id="ti-actions">Actions</th>
             </tr>
             </thead>
             <tbody class="list" id="user-information-table-content">
@@ -156,7 +156,7 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
-                <th id="ti-enabled">Timesheet Enabled</th>
+                <th id="ti-actions">Actions</th>
             </tr>
             </thead>
             <tbody class="list" id="disabled-user-info-table-content">
