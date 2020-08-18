@@ -36,7 +36,10 @@ public class ActivityVerificationJobTest {
     private PermissionService permissionService;
     private Map<String, Object> params;
     private UserManager userManagerJiraMock;
+
     private ApplicationUser max;
+    private ApplicationUser moritz;
+    private ApplicationUser fritz;
 
     private Timesheet timesheet1;
 
@@ -73,10 +76,14 @@ public class ActivityVerificationJobTest {
         Mockito.when(timesheet2.getLatestEntryBeginDate()).thenReturn(new Date());
         Mockito.when(timesheet3.getLatestEntryBeginDate()).thenReturn(null);
 
+        Mockito.when(timesheet1.getState()).thenReturn(Timesheet.State.ACTIVE);
+        Mockito.when(timesheet2.getState()).thenReturn(Timesheet.State.ACTIVE);
+        Mockito.when(timesheet3.getState()).thenReturn(Timesheet.State.DISABLED);
+
         List<Timesheet> timesheetList = new ArrayList<>();
         timesheetList.add(timesheet1);
-        //timesheetList.add(timesheet2);
-        //timesheetList.add(timesheet3);
+        timesheetList.add(timesheet2);
+        timesheetList.add(timesheet3);
 
         TimesheetEntry sheet1entry1 = Mockito.mock(TimesheetEntry.class);
         TimesheetEntry sheet1entry2 = Mockito.mock(TimesheetEntry.class);
@@ -108,6 +115,16 @@ public class ActivityVerificationJobTest {
         when(timesheet1.getUserKey()).thenReturn("max");
         when(max.getDisplayName()).thenReturn("max");
 
+        moritz = mock(ApplicationUser.class);
+        when(userManagerJiraMock.getUserByKey("moritz")).thenReturn(moritz);
+        when(timesheet2.getUserKey()).thenReturn("moritz");
+        when(max.getDisplayName()).thenReturn("moritz");
+
+        fritz = mock(ApplicationUser.class);
+        when(userManagerJiraMock.getUserByKey("fritz")).thenReturn(fritz);
+        when(timesheet2.getUserKey()).thenReturn("fritz");
+        when(max.getDisplayName()).thenReturn("fritz");
+
         Set<Team> teamSet = new HashSet<>();
         teamSet.add(Mockito.mock(Team.class));
 
@@ -116,13 +133,14 @@ public class ActivityVerificationJobTest {
 
     @Test
     public void testAutoInactive() {
-        Mockito.when(timesheet1.getState()).thenReturn(Timesheet.State.ACTIVE);
         ZonedDateTime tooOldDateTime = ZonedDateTime.now().minusDays(15);
         Date tooOld = Date.from(tooOldDateTime.toInstant());
 
         Mockito.when(timesheet1.getLatestEntryBeginDate()).thenReturn(tooOld);
         Mockito.when(schedulingService.isOlderThanInactiveTime(tooOld)).thenReturn(true);
         when(permissionService.isUserInUserGroupDisabled(max)).thenReturn(false);
+        when(permissionService.isUserInUserGroupDisabled(moritz)).thenReturn(false);
+        when(permissionService.isUserInUserGroupDisabled(fritz)).thenReturn(true);
         activityVerificationJob.execute(params);
 
         Mockito.verify(timesheet1).setState(Timesheet.State.AUTO_INACTIVE);

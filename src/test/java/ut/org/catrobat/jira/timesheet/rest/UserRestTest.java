@@ -57,7 +57,6 @@ public class UserRestTest {
     private GroupManager groupManager;
     private TeamService teamServiceMock;
     private TimesheetService timesheetServiceMock;
-    private TimesheetService spyTimesheetServiceMock;
     private PermissionService permissionServiceMock;
     private UserSearchService userSearchService;
     private GroupPickerSearchService groupPickerSearchService;
@@ -66,6 +65,8 @@ public class UserRestTest {
     private ApplicationUser user2;
     private ApplicationUser chris;
     private ApplicationUser joh;
+    private String timesheetId = "125";
+
 
     @Before
     public void setUp() throws Exception {
@@ -85,7 +86,6 @@ public class UserRestTest {
         userManager = mock(UserManager.class);
         groupManager = mock(GroupManager.class);
         timesheetServiceMock = new TimesheetServiceImpl(ao);
-        spyTimesheetServiceMock = spy(TimesheetService.class);
 
         UserRest userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock,
                 timesheetEntryServiceMock, teamServiceMock, userSearchService, groupPickerSearchService);
@@ -192,7 +192,7 @@ public class UserRestTest {
         when(permissionServiceMock.isUserTeamCoordinator(userMock)).thenReturn(true);
         when(permissionServiceMock.isUserCoordinatorOfTimesheet(eq(userMock), any())).thenReturn(true);
 
-        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, "125");
+        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, timesheetId);
         assertEquals(0, ((List<JsonUserInformation>) response.getEntity()).size());
     }
     
@@ -205,29 +205,30 @@ public class UserRestTest {
 
     @Test
     public void testUsersForCoordinator() throws PermissionException {
+        String teamGroupName = "TestGroup";
+
         Team teamMock = mock(Team.class);
         org.catrobat.jira.timesheet.activeobjects.Group groupMock = mock(org.catrobat.jira.timesheet.activeobjects.Group.class);
         when(teamMock.getTeamName()).thenReturn("TestTeam");
         org.catrobat.jira.timesheet.activeobjects.Group[] groupList = {groupMock};
         when(teamMock.getGroups()).thenReturn(groupList);
-        when(groupMock.getGroupName()).thenReturn("TestGroup");
-        when(groupManager.isUserInGroup(chris, "TestGroup")).thenReturn(true);
-        when(groupManager.isUserInGroup(joh, "TestGroup")).thenReturn(false);
+        when(groupMock.getGroupName()).thenReturn(teamGroupName);
+        when(groupManager.isUserInGroup(chris, teamGroupName)).thenReturn(true);
+        when(groupManager.isUserInGroup(joh, teamGroupName)).thenReturn(false);
 
         Timesheet timesheet = mock(Timesheet.class);
         Timesheet timesheet2 = mock(Timesheet.class);
         when(timesheet.getUserKey()).thenReturn("chris");
         when(timesheet2.getUserKey()).thenReturn("joh");
-        when(spyTimesheetServiceMock.getTimesheetByID(125)).thenReturn(timesheet);
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(permissionServiceMock.isUserTeamCoordinator(userMock)).thenReturn(true);
 
         when(teamServiceMock.getTeamsOfCoordinator(userMock.getUsername())).thenReturn(new HashSet<Team>(Arrays.asList(teamMock)));
-        when(spyTimesheetServiceMock.all()).thenReturn(Arrays.asList(timesheet, timesheet2));
         when(teamServiceMock.all()).thenReturn(Arrays.asList(teamMock));
 
-        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, "125");
+        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, timesheetId);
         assertEquals(1, ((List<JsonUserInformation>)response.getEntity()).size());
+        assertEquals(chris.getUsername(), ((List<JsonUserInformation>)response.getEntity()).get(0).getUserName());
     }
 
     @Test
