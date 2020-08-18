@@ -7,12 +7,14 @@ import com.atlassian.jira.bc.group.search.GroupPickerSearchService;
 import com.atlassian.jira.bc.user.search.UserSearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.PermissionException;
+import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.rest.json.JsonUserInformation;
 import org.catrobat.jira.timesheet.services.*;
@@ -52,12 +54,19 @@ public class UserRestTest {
     private ApplicationUser userMock;
     private EntityManager entityManager;
     private UserManager userManager;
+    private GroupManager groupManager;
+    private TeamService teamServiceMock;
+    private TimesheetService timesheetServiceMock;
     private PermissionService permissionServiceMock;
     private UserSearchService userSearchService;
     private GroupPickerSearchService groupPickerSearchService;
     private List<ApplicationUser> usersSet;
     private ApplicationUser user1;
     private ApplicationUser user2;
+    private ApplicationUser chris;
+    private ApplicationUser joh;
+    private String timesheetId = "125";
+
 
     @Before
     public void setUp() throws Exception {
@@ -70,15 +79,16 @@ public class UserRestTest {
         httpRequestMock = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
         userMock = mock(ApplicationUser.class, RETURNS_DEEP_STUBS);
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
-        TimesheetService timesheetService = new TimesheetServiceImpl(ao);
         TimesheetEntryService timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
-        TeamService teamService = mock(TeamService.class, RETURNS_DEEP_STUBS);
+        teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         userSearchService = mock(UserSearchService.class, RETURNS_DEEP_STUBS);
         groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
         userManager = mock(UserManager.class);
+        groupManager = mock(GroupManager.class);
+        timesheetServiceMock = new TimesheetServiceImpl(ao);
 
-        UserRest userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetService,
-                timesheetEntryServiceMock, teamService, userSearchService, groupPickerSearchService);
+        UserRest userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock,
+                timesheetEntryServiceMock, teamServiceMock, userSearchService, groupPickerSearchService);
         spyUserRest = spy(userRest);
 
 
@@ -95,12 +105,18 @@ public class UserRestTest {
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManager);
-        ApplicationUser chris = mock(ApplicationUser.class);
-        ApplicationUser joh = mock(ApplicationUser.class);
+        PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManager);
+        chris = mock(ApplicationUser.class);
+        joh = mock(ApplicationUser.class);
+        when(userMock.getUsername()).thenReturn("userMock");
         when(userManager.getUserByKey("chris")).thenReturn(chris);
         when(userManager.getUserByKey("joh")).thenReturn(joh);
+        when(userManager.getUserByName("chris")).thenReturn(chris);
+        when(userManager.getUserByName("joh")).thenReturn(joh);
         when(chris.getUsername()).thenReturn("chris");
+        when(chris.getName()).thenReturn("chris");
         when(joh.getUsername()).thenReturn("joh");
+        when(joh.getName()).thenReturn("joh");
         when(chris.getEmailAddress()).thenReturn("chris@example.com");
         when(joh.getEmailAddress()).thenReturn("joh@example.com");
         Mockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
@@ -176,7 +192,7 @@ public class UserRestTest {
         when(permissionServiceMock.isUserTeamCoordinator(userMock)).thenReturn(true);
         when(permissionServiceMock.isUserCoordinatorOfTimesheet(eq(userMock), any())).thenReturn(true);
 
-        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, "125");
+        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, timesheetId);
         assertEquals(0, ((List<JsonUserInformation>) response.getEntity()).size());
     }
     
@@ -188,15 +204,31 @@ public class UserRestTest {
     }
 
     @Test
-    public void testTeamInformation() throws PermissionException {
+    public void testUsersForCoordinator() throws PermissionException {
+        String teamGroupName = "TestGroup";
+
+        Team teamMock = mock(Team.class);
+        org.catrobat.jira.timesheet.activeobjects.Group groupMock = mock(org.catrobat.jira.timesheet.activeobjects.Group.class);
+        when(teamMock.getTeamName()).thenReturn("TestTeam");
+        org.catrobat.jira.timesheet.activeobjects.Group[] groupList = {groupMock};
+        when(teamMock.getGroups()).thenReturn(groupList);
+        when(groupMock.getGroupName()).thenReturn(teamGroupName);
+        when(groupManager.isUserInGroup(chris, teamGroupName)).thenReturn(true);
+        when(groupManager.isUserInGroup(joh, teamGroupName)).thenReturn(false);
+
+        Timesheet timesheet = mock(Timesheet.class);
+        Timesheet timesheet2 = mock(Timesheet.class);
+        when(timesheet.getUserKey()).thenReturn("chris");
+        when(timesheet2.getUserKey()).thenReturn("joh");
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
         when(permissionServiceMock.isUserTeamCoordinator(userMock)).thenReturn(true);
-        when(permissionServiceMock.isUserCoordinatorOfTimesheet(userMock, ao.find(Timesheet.class,
-                "USER_KEY = ?", "chris")[0])).thenReturn(true);
-        when(permissionServiceMock.isUserCoordinatorOfTimesheet(userMock, ao.find(Timesheet.class,
-                "USER_KEY = ?", "joh")[0])).thenReturn(false);
-        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, "125");
+
+        when(teamServiceMock.getTeamsOfCoordinator(userMock.getUsername())).thenReturn(new HashSet<Team>(Arrays.asList(teamMock)));
+        when(teamServiceMock.all()).thenReturn(Arrays.asList(teamMock));
+
+        Response response = spyUserRest.getUsersForCoordinator(httpRequestMock, timesheetId);
         assertEquals(1, ((List<JsonUserInformation>)response.getEntity()).size());
+        assertEquals(chris.getUsername(), ((List<JsonUserInformation>)response.getEntity()).get(0).getUserName());
     }
 
     @Test

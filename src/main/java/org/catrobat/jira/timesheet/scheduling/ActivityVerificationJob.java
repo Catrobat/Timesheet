@@ -24,7 +24,7 @@ public class ActivityVerificationJob implements PluginJob {
 
     @Override
     public void execute(Map<String, Object> map) {
-        LOGGER.error("ActivityVerificationJob triggered at: {}" + (new Date()).toString());
+        LOGGER.info("ActivityVerificationJob triggered at: {}" + (new Date()).toString());
 
         Date today = new Date();
 
@@ -99,7 +99,7 @@ public class ActivityVerificationJob implements PluginJob {
     }
 
     private void setAutoInactive(Timesheet timesheet) {
-        LOGGER.error("Setting timesheet autoinactive of " + timesheet.getDisplayName());
+        LOGGER.info("Setting timesheet autoinactive of " + timesheet.getDisplayName());
 
         Date begin = new Date();
         Calendar cal = Calendar.getInstance();
