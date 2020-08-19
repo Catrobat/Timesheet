@@ -367,7 +367,7 @@
             <fieldset>
                 <div class="field-group">
                     <label for="monitoring-period">Monitoring period</label>
-                    <input class="text" type="text" id="monitoring-period" name="monitoring-period"
+                    <input class="text" type="number" min="0" step="1" id="monitoring-period" name="monitoring-period"
                            title="monitoring-period" placeholder="e.g.: [Needed Time in Months] ...">
                     <div class="description">
                         Number of months in which a user needs to write a certain number of hours into his or her timesheet.
@@ -375,7 +375,7 @@
                 </div>
                 <div class="field-group">
                     <label for="monitoring-required-hours">Minimum required hours</label>
-                    <input class="text" type="text" id="monitoring-required-hours" name="monitoring-required-hours"
+                    <input class="text" type="number" min="0" step="1" id="monitoring-required-hours" name="monitoring-required-hours"
                            title="monitoring-required-hours" placeholder="e.g.: [Needed Time in Hours] ...">
                     <div class="description">
                         Number of hours which needs to be spent per user and monitoring period.
@@ -383,7 +383,7 @@
                 </div>
                 <div class="field-group">
                     <label for="monitoring-exceptions">Exceptions per user</label>
-                    <input class="text" type="text" id="monitoring-exceptions" name="monitoring-exceptions"
+                    <input class="text" type="number" min="0" step="1" id="monitoring-exceptions" name="monitoring-exceptions"
                            title="monitoring-exceptions" placeholder="e.g.: [Number of not reached Periods] ...">
                     <div class="description">
                         Number of times a user is allowed to not reach the minimum required hours per monitoring period.
