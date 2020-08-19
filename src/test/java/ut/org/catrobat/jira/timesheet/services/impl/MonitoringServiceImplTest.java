@@ -39,6 +39,15 @@ public class MonitoringServiceImplTest {
         assertEquals(3, monitoring.getExceptions());
     }
 
+    @Test
+    public void testNegativeValues(){
+        monitoringService.setMonitoring(-1,-1,-1);
+        Monitoring monitoring = monitoringService.getMonitoring();
+        assertEquals(1, monitoring.getPeriod());
+        assertEquals(1, monitoring.getRequiredHours());
+        assertEquals(1, monitoring.getExceptions());
+    }
+
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 
         @Override

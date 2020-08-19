@@ -35,15 +35,15 @@ public class MonitoringServiceImpl implements MonitoringService {
             monitoring = ao.find(Monitoring.class);
         }
 
-        if (period <= 0 || period >= 999) {
-            period = 6; // half a year
+        if (period <= 0) {
+            period = 1; // half a year
         }
 
-        if (requiredHours <= 0 || requiredHours >= 999) {
-            requiredHours = 100;
+        if (requiredHours <= 0) {
+            requiredHours = 1;
         }
 
-        if (exceptions <= 2 || exceptions >= 999) {
+        if (exceptions <= 0) {
             exceptions = 1; // one exception
         }
 
