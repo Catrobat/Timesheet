@@ -1194,7 +1194,7 @@ AJS.toInit(function () {
 
         monitoring.period = AJS.$("#monitoring-period").val();
         monitoring.requiredHours = AJS.$("#monitoring-required-hours").val();
-        monitoring.remainingTime = AJS.$("#monitoring-exceptions").val();
+        monitoring.exceptions = AJS.$("#monitoring-exceptions").val();
 
         AJS.$(".loadingDiv").show();
         AJS.$.ajax({
