@@ -204,6 +204,22 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     }
 
     @Override
+    public int getHoursOfMonths(Timesheet sheet, int months){
+        if(months != 0)  months -= 1;
+        ZonedDateTime month = ZonedDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).minusMonths(months);
+
+        int minutes = 0;
+        for (TimesheetEntry entry : getEntriesBySheet(sheet)) {
+            Instant instant = entry.getBeginDate().toInstant();
+            ZonedDateTime beginDate = instant.atZone(ZoneId.systemDefault());
+            if (beginDate.isAfter(month)) {
+                minutes += entry.getDurationMinutes();
+            }
+        }
+        return minutes / 60;
+    }
+
+    @Override
     public TimesheetEntry getLatestEntry(Timesheet timesheet) {
         TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
         if (entries.length == 0) {

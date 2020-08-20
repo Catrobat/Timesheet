@@ -59,6 +59,7 @@ public class UserRest {
     private final TimesheetService timesheetService;
     private final TimesheetEntryService timesheetEntryService;
     private final TeamService teamService;
+    private final MonitoringService monitoringService;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(UserRest.class);
 
     private final UserSearchService userSearchService;
@@ -68,12 +69,14 @@ public class UserRest {
 
     public UserRest(ConfigService configService, PermissionService permissionService,
                     TimesheetService timesheetService, TimesheetEntryService timesheetEntryService, TeamService teamService,
-                    UserSearchService userSearchService, GroupPickerSearchService groupPickerSearchService) {
+                    MonitoringService monitoringService, UserSearchService userSearchService,
+                    GroupPickerSearchService groupPickerSearchService) {
         this.configService = configService;
         this.permissionService = permissionService;
         this.timesheetService = timesheetService;
         this.timesheetEntryService = timesheetEntryService;
         this.teamService = teamService;
+        this.monitoringService = monitoringService;
         this.userSearchService = userSearchService;
         this.groupPickerSearchService = groupPickerSearchService;
     }
@@ -149,6 +152,7 @@ public class UserRest {
 
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHoursOfMonths(timesheet,monitoringService.getMonitoring().getPeriod()));
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
@@ -309,6 +313,7 @@ public class UserRest {
             jsonUserInformation.setTeams(teamString.toString());
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
+            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHoursOfMonths(timesheet, monitoringService.getMonitoring().getPeriod()));
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE

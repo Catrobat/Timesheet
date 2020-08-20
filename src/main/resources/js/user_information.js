@@ -38,18 +38,18 @@ AJS.toInit(function () {
             return result * sortOrder;
         }
     }
-    
+
     function populateTable(userInformation) {
         AJS.$(".loadingDiv").show();
         AJS.$("#user-information-table-content").empty();
         AJS.$("#done-user-info-table-content").empty();
         AJS.$("#disabled-user-info-table-content").empty();
-        
+
         //sort by username
         userInformation.sort(dynamicSort("userName"));
-        
+
         for (var i = 0; i < userInformation.length; i++) {
-        	
+
             var latestEntryDate;
             if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
                 latestEntryDate = "none";
@@ -64,7 +64,7 @@ AJS.toInit(function () {
             }
 
             var enabled = userInformation[i].state !== "DISABLED";
-            
+
             var done = userInformation[i].state === "DONE";
 
             var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
@@ -106,12 +106,13 @@ AJS.toInit(function () {
             "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
             "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
             "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
+            "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
             "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
             "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
             "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
             enabledColumn +
             "</td></tr>";
-        	
+
         	if (userInformation[i].state === "DONE") {
         		AJS.$("#done-user-info-table-content").append(row);
         	}
@@ -121,8 +122,8 @@ AJS.toInit(function () {
         	else {
         		AJS.$("#user-information-table-content").append(row);
         	}
-            
-            	
+
+
             var timesheetID = userInformation[i].timesheetID;
             setEnableButton(timesheetID, enabled);
 
@@ -154,11 +155,11 @@ AJS.toInit(function () {
         var numberInActiveOffline = 0;
         var numberDisabled = 0;
         var numberDone = 0;
-        
+
         for (var i = 0; i < userInformation.length; i++) {
-        	
+
         	numberTotal++;
-        	
+
         	if (userInformation[i].state === "ACTIVE")
         		numberActive++;
         	else if (userInformation[i].state === "INACTIVE")
@@ -171,9 +172,9 @@ AJS.toInit(function () {
         		numberDisabled++;
         	else if (userInformation[i].state === "DONE")
         		numberDone++;
-        	
+
         }
-        
+
         var row = "<tr><td>" + "Total Number of Timesheets: " + numberTotal + "</td>" +
         				"<td>" + "Active Timesheets: " + numberActive + "</td>" +
                   		"<td>" + "Auto Inactive Timesheets: " + numberAutoInActive + "</td>" +
@@ -188,6 +189,18 @@ AJS.toInit(function () {
         AJS.$("#timesheet-user-statistics").append(row);
 
         AJS.$(".loadingDiv").hide();
+    }
+
+    function renameMonitoringTime(monitoring){
+        if(monitoring.period === 1){
+            $("th").each(function(){$(this).html($(this).html()
+                .replace("%MonitoringPeriod% Months",monitoring.period + " Month"));});
+        }
+        else{
+            $("th").each(function(){$(this).html($(this).html()
+                .replace("%MonitoringPeriod%",monitoring.period));});
+        }
+
     }
 
     function setEnableButton(timesheetID, enabled) {
@@ -300,11 +313,29 @@ AJS.toInit(function () {
             contentType: "application/json"
         });
 
+        var monitoringFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'monitoring/getMonitoring',
+            contentType: "application/json"
+        });
+
         AJS.$.when(userInformationFetched)
             .done(populateTable)
             .fail(function (error) {
             	if(fetchingErrorMessage)
             		fetchingErrorMessage.closeMessage();
+                fetchingErrorMessage = AJS.messages.error({
+                    title: 'There was an error while fetching the required data.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
+            });
+
+        AJS.$.when(monitoringFetched)
+            .done(renameMonitoringTime)
+            .fail(function (error) {
+                if(fetchingErrorMessage)
+                    fetchingErrorMessage.closeMessage();
                 fetchingErrorMessage = AJS.messages.error({
                     title: 'There was an error while fetching the required data.',
                     body: '<p>Reason: ' + error.responseText + '</p>'

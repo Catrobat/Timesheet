@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import static org.junit.Assert.*;
