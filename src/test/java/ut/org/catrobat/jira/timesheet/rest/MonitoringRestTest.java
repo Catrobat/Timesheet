@@ -1,6 +1,7 @@
 package ut.org.catrobat.jira.timesheet.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.user.util.UserManager;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -33,9 +34,7 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
-@Data(MySampleDatabaseUpdater.class)
-@PrepareForTest({ComponentAccessor.class, SchedulingRest.class})
+@PrepareForTest(MonitoringRest.class)
 public class MonitoringRestTest {
 
     private PermissionService permissionServiceMock;
@@ -50,12 +49,10 @@ public class MonitoringRestTest {
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
 
         monitoringRest = new MonitoringRest(permissionServiceMock, monitoringService);
-
-        PowerMockito.mockStatic(ComponentAccessor.class);
     }
 
     @Test
-    public void testSaveAndRetrieveScheduling() {
+    public void testSaveAndRetrieveMonitoring() {
         when(permissionServiceMock.checkRootPermission()).thenReturn(null);
         Monitoring monitoring = mock(Monitoring.class);
         JsonMonitoring jsonMonitoring = new JsonMonitoring(monitoring);
