@@ -41,6 +41,7 @@ public class DatabaseUtil {
         ao.deleteWithSQL(Config.class, "ID > ?", 0);
         ao.deleteWithSQL(Group.class, "ID > ?", 0);
         ao.deleteWithSQL(Scheduling.class, "ID > ?", 0);
+        ao.deleteWithSQL(Monitoring.class, "ID > ?", 0);
 
         logger.warn("All timesheet tables has been deleted!");
     }

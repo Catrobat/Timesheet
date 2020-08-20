@@ -32,6 +32,7 @@ var selectACategoryErrorMessage;
 var deleteCategoryErrorMessage;
 var processingResetTimesheetsErrorMessage;
 var updateSchedulingErrorMessage;
+var updateMonitoringErrorMessage;
 var triggeringJobErrorMessage;
 var fetchingUserDataErrorMessage;
 
@@ -134,7 +135,17 @@ AJS.toInit(function () {
             url: restBaseUrl + 'scheduling/getScheduling',
             contentType: "application/json"
         });
+
+        var monitoringFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'monitoring/getMonitoring',
+            contentType: "application/json"
+        });
+
         AJS.$.when(schedulingFetched)
+            .done(fillSchedulingData);
+
+        AJS.$.when(monitoringFetched)
             .done(fillSchedulingData);
 
         AJS.$.when(allUsersFetched, categoriesFetched, groupsFetched)
@@ -148,6 +159,12 @@ AJS.toInit(function () {
                 console.log(error);
                 AJS.$(".loadingDiv").hide();
             });
+    }
+
+    function fillMonitoringData(monitoring){
+        AJS.$("#monitoring-period").val(monitoring.period);
+        AJS.$("#monitoring-required-hours").val(monitoring.requiredHours);
+        AJS.$("#monitoring-exceptions").val(monitoring.exceptions);
     }
 
     function fillSchedulingData(scheduling) {
@@ -829,6 +846,16 @@ AJS.toInit(function () {
         }
     });
 
+    AJS.$("#modify-monitoring").submit(function (e) {
+       e.preventDefault();
+       if(e.originalEvent.submitter.value === 'Save'){
+           updateMonitoring();
+       }
+       else{
+           console.log("Error modifying Monitoring");
+       }
+    });
+
     AJS.$("#reset-timesheets").click(function (e) {
         e.preventDefault();
         showTimesheetsDeletionDialog();
@@ -1153,6 +1180,43 @@ AJS.toInit(function () {
             error: function (error) {
             	removeErrorMessage(updateSchedulingErrorMessage);
                 updateSchedulingErrorMessage = AJS.messages.error({
+                    title: "Error!",
+                    body: error.responseText
+                });
+                scrollToAnchor('top');
+                AJS.$(".loadingDiv").hide();
+            }
+        });
+    }
+
+    function updateMonitoring(){
+        var monitoring = {};
+
+        monitoring.period = AJS.$("#monitoring-period").val();
+        monitoring.requiredHours = AJS.$("#monitoring-required-hours").val();
+        monitoring.exceptions = AJS.$("#monitoring-exceptions").val();
+
+        AJS.$(".loadingDiv").show();
+        AJS.$.ajax({
+            url: restBaseUrl + 'monitoring/saveMonitoring',
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(monitoring),
+            processData: false,
+            success: function () {
+                AJS.messages.success({
+                    title: "Success!",
+                    body: "Settings saved!",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
+                });
+                scrollToAnchor('top');
+                AJS.$(".loadingDiv").hide();
+            },
+            error: function (error) {
+                removeErrorMessage(updateMonitoringErrorMessage);
+                updateMonitoringErrorMessage = AJS.messages.error({
                     title: "Error!",
                     body: error.responseText
                 });
