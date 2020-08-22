@@ -68,7 +68,7 @@ AJS.toInit(function () {
             
             var done = userInformation[i].state === "DONE";
 
-            var enableDropdown =  "<aui-button id='button" + userInformation[i].timesheetID + "' class='aui-button aui-dropdown2-trigger' aria-controls='active-timesheet" + userInformation[i].timesheetID + "'>choose option</aui-button><aui-dropdown-menu id='active-timesheet" + userInformation[i].timesheetID + "' ><aui-item-link  value='ACTIVE'>Enable Timesheet</aui-item-link><aui-item-link disabled value='DISABLED'>Disable Timesheet</aui-item-link><aui-item-link value='SHOW'>Open Timesheet</aui-item-link></aui-dropdown-menu>";
+            var enableDropdown =  "<aui-button id='button" + userInformation[i].timesheetID + "' class='aui-button aui-dropdown2-trigger' aria-controls='active-timesheet" + userInformation[i].timesheetID + "'>choose option</aui-button><aui-dropdown-menu id='active-timesheet" + userInformation[i].timesheetID + "' ><aui-item-radio  value='ACTIVE'>Enable Timesheet</aui-item-radio><aui-item-radio disabled value='DISABLED'>Disable Timesheet</aui-item-radio><aui-item-radio value='SHOW'>Open Timesheet</aui-item-radio></aui-dropdown-menu>";
 
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
                 "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
@@ -227,19 +227,18 @@ AJS.toInit(function () {
             var dropdown = document.getElementById("active-timesheet" + timesheetID);
             var button = document.getElementById("button" + timesheetID);
 
-           //AJS.$("#active-timesheet" + timesheetID+".dropdown.children")[0].show();
-           // AJS.$("#active-timesheet" + timesheetID+".dropdown.children")[1].hide();
-            //dropdown.children[0].show();
-            //dropdown.children[1].hide();
+
             dropdown.children[0].removeAttribute('disabled');
             dropdown.children[0].removeAttribute('hidden');
             dropdown.children[1].setAttribute('disabled', '');
             dropdown.children[1].setAttribute('hidden', '');
 
+
             button.innerText = 'Actions';
             dropdown.addEventListener('change', function (e) {
 
                 if (e.target.textContent === 'Enable Timesheet') {
+
                     setTimesheetState(timesheetID, true);
                 }
                 if (e.target.textContent === 'Open Timesheet') {
