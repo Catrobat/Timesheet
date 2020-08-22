@@ -204,16 +204,15 @@ AJS.toInit(function () {
                 dropdown.children[1].removeAttribute('hidden');
                 dropdown.children[0].setAttribute('disabled', '');
                 dropdown.children[0].setAttribute('hidden', '');
-               // AJS.$("#active-timesheet" + timesheetID+".dropdown.children[1]").show();
-               // AJS.$("#active-timesheet" + timesheetID+".dropdown.children[0]").hide();
-              //dropdown.children[1].show();
-              //dropdown.children[0].hide();
+
 
             }
             catch (e) {//never go there
             }
 
             dropdown.addEventListener('change', function (e) {
+               // alert(e.target.textContent);
+
                 if (e.target.textContent === 'Disable Timesheet') {
                     setTimesheetState(timesheetID, false);
                 }
