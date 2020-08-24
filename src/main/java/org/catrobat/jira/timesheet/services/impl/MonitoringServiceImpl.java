@@ -1,12 +1,13 @@
 package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import javafx.util.Pair;
 import org.catrobat.jira.timesheet.activeobjects.Monitoring;
 import org.catrobat.jira.timesheet.services.MonitoringService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.AbstractMap;
+import java.util.Map;
 
 @Component
 public class MonitoringServiceImpl implements MonitoringService {
@@ -57,12 +58,12 @@ public class MonitoringServiceImpl implements MonitoringService {
     }
 
     @Override
-    public Pair<LocalDate, LocalDate> getLastInterval() {
+    public Map.Entry<LocalDate, LocalDate> getLastInterval() {
         LocalDate begin = LocalDate.now().withDayOfMonth(1);
         LocalDate end = LocalDate.now();
         if(getMonitoring().getPeriod() > 1){
             begin = begin.minusMonths(getMonitoring().getPeriod() - 1);
         }
-        return new Pair<>(begin, end);
+        return new AbstractMap.SimpleEntry<>(begin, end);
     }
 }

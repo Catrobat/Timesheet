@@ -294,10 +294,12 @@ public class TimesheetEntryServiceImplTest {
         //Act
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
+
         TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
-        TimesheetEntry receivedEntry = service.getEntryByID(sheet.getID());
+        TimesheetEntry receivedEntry = service.getEntryByID(entryList[0].getID());
 
         //Assert
+        assertEquals(1, entryList.length);
         Assert.assertEquals(receivedEntry, entryList[0]);
     }
 

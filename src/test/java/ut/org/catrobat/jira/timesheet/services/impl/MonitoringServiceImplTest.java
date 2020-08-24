@@ -2,7 +2,6 @@ package ut.org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import javafx.util.Pair;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -15,6 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.time.LocalDate;
+import java.util.AbstractMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,15 +55,15 @@ public class MonitoringServiceImplTest {
     @Test
     public void testGetLastIntervalTwoMonths(){
         monitoringService.setMonitoring(2,1,1);
-        Pair<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
-        assertEquals(interval, new Pair<>(LocalDate.now().withDayOfMonth(1).minusMonths(1), LocalDate.now()));
+        Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
+        assertEquals(interval, new AbstractMap.SimpleEntry<>(LocalDate.now().withDayOfMonth(1).minusMonths(1), LocalDate.now()));
     }
 
     @Test
     public void testGetLastIntervalOneMonth(){
         monitoringService.setMonitoring(1,1,1);
-        Pair<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
-        assertEquals(interval, new Pair<>(LocalDate.now().withDayOfMonth(1), LocalDate.now()));
+        Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
+        assertEquals(interval, new AbstractMap.SimpleEntry<>(LocalDate.now().withDayOfMonth(1), LocalDate.now()));
     }
 
     public static class MyDatabaseUpdater implements DatabaseUpdater {

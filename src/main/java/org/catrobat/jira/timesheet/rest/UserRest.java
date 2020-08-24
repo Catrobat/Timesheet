@@ -26,8 +26,6 @@ import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
-
-import javafx.util.Pair;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
@@ -45,7 +43,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -149,7 +146,7 @@ public class UserRest {
 
             JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
 
-            Pair<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
+            Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
 
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
@@ -313,7 +310,7 @@ public class UserRest {
 
             jsonUserInformation.setTeams(teamString.toString());
 
-            Pair<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
+            Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
 
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
