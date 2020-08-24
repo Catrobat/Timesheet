@@ -23,7 +23,7 @@ import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Transactional
@@ -44,7 +44,7 @@ public interface TimesheetEntryService {
 
     int getHoursOfLastXMonths(Timesheet sheet, int months);
 
-    int getHoursOfMonths(Timesheet sheet, int months);
+    int getHours(Timesheet sheet, LocalDate begin, LocalDate end);
 
     TimesheetEntry getLatestEntry(Timesheet timesheet);
 

@@ -37,9 +37,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -332,13 +332,8 @@ public class TimesheetEntryServiceImplTest {
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
 
         TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
-
-        for(TimesheetEntry entry: entryList){
-            System.out.println(entry.getBeginDate());
-            System.out.println(entry.getEndDate());
-        }
-
-        int result = service.getHoursOfMonths(sheet, 2);
+        
+        int result = service.getHours(sheet, LocalDate.now().minusMonths(2),LocalDate.now() );
         Assert.assertEquals(2,result);
     }
 
