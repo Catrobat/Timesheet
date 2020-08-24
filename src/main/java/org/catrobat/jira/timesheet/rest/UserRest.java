@@ -27,6 +27,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 
+import javafx.util.Pair;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
@@ -148,15 +149,11 @@ public class UserRest {
 
             JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
 
-            LocalDate begin = LocalDate.now().withDayOfMonth(1);
-            LocalDate end = LocalDate.now();
-            if(monitoringService.getMonitoring().getPeriod() > 1){
-                begin = begin.minusMonths(monitoringService.getMonitoring().getPeriod() - 1);
-            }
+            Pair<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
 
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, begin, end));
+            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, interval.getKey(), interval.getValue()));
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
@@ -316,15 +313,11 @@ public class UserRest {
 
             jsonUserInformation.setTeams(teamString.toString());
 
-            LocalDate begin = LocalDate.now().withDayOfMonth(1);
-            LocalDate end = LocalDate.now();
-            if(monitoringService.getMonitoring().getPeriod() > 1){
-                begin = begin.minusMonths(monitoringService.getMonitoring().getPeriod() - 1);
-            }
+            Pair<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
 
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
             jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, begin, end));
+            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, interval.getKey(), interval.getValue()));
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE

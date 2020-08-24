@@ -331,6 +331,11 @@ public class TimesheetEntryServiceImplTest {
 
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
 
+        begin = Date.from(ZonedDateTime.now().plusMonths(1).toInstant());
+        end = Date.from(ZonedDateTime.now().plusMonths(1).plusHours(1).toInstant());
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
         TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
         
         int result = service.getHours(sheet, LocalDate.now().minusMonths(2),LocalDate.now() );
