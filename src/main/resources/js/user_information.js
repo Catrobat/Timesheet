@@ -229,8 +229,11 @@ AJS.toInit(function () {
 
             dropdown.children[0].removeAttribute('disabled');
             dropdown.children[0].removeAttribute('hidden');
+            if (dropdown.childElementCount > 1)
+            {
             dropdown.children[1].setAttribute('disabled', '');
             dropdown.children[1].setAttribute('hidden', '');
+            }
 
 
             button.innerText = 'Actions';
