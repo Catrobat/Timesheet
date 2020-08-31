@@ -199,16 +199,16 @@ AJS.toInit(function () {
             var dropdown = document.getElementById("active-timesheet" + timesheetID);
             var button = document.getElementById("button" + timesheetID);
             button.innerText = 'Actions';
-            try {
+
+            if (dropdown.children.count > 1)
+             {
                 dropdown.children[1].removeAttribute('disabled');
                 dropdown.children[1].removeAttribute('hidden');
-                dropdown.children[0].setAttribute('disabled', '');
-                dropdown.children[0].setAttribute('hidden', '');
+            }
+            dropdown.children[0].setAttribute('disabled', '');
+            dropdown.children[0].setAttribute('hidden', '');
 
 
-            }
-            catch (e) {//never go there
-            }
 
             dropdown.addEventListener('change', function (e) {
                // alert(e.target.textContent);
