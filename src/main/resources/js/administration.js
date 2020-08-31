@@ -32,6 +32,7 @@ var selectACategoryErrorMessage;
 var deleteCategoryErrorMessage;
 var processingResetTimesheetsErrorMessage;
 var updateSchedulingErrorMessage;
+var updateMonitoringErrorMessage;
 var triggeringJobErrorMessage;
 var fetchingUserDataErrorMessage;
 
@@ -134,7 +135,17 @@ AJS.toInit(function () {
             url: restBaseUrl + 'scheduling/getScheduling',
             contentType: "application/json"
         });
+
+        var monitoringFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'monitoring/getMonitoring',
+            contentType: "application/json"
+        });
+
         AJS.$.when(schedulingFetched)
+            .done(fillSchedulingData);
+
+        AJS.$.when(monitoringFetched)
             .done(fillSchedulingData);
 
         AJS.$.when(allUsersFetched, categoriesFetched, groupsFetched)
@@ -148,6 +159,12 @@ AJS.toInit(function () {
                 console.log(error);
                 AJS.$(".loadingDiv").hide();
             });
+    }
+
+    function fillMonitoringData(monitoring){
+        AJS.$("#monitoring-period").val(monitoring.period);
+        AJS.$("#monitoring-required-hours").val(monitoring.requiredHours);
+        AJS.$("#monitoring-exceptions").val(monitoring.exceptions);
     }
 
     function fillSchedulingData(scheduling) {
@@ -576,6 +593,7 @@ AJS.toInit(function () {
                         duration: 5000
                     });
                     fetchData();
+                    scrollToAnchor('top');
                     AJS.$(".loadingDiv").hide();
                 },
                 error: function (error) {
@@ -648,6 +666,7 @@ AJS.toInit(function () {
                         duration: 5000
                     });
                     fetchData();
+                    scrollToAnchor('top');
                     AJS.$(".loadingDiv").hide();
                 },
                 error: function (error) {
@@ -764,39 +783,23 @@ AJS.toInit(function () {
 
     AJS.$("#general").submit(function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
-            updateConfig();
-            scrollToAnchor('top');
-        } else if ((AJS.$(document.activeElement).val()[0] === "C") &&
-            (AJS.$(document.activeElement).val()[1] === "-")) {
-            editCategory(AJS.$(document.activeElement).val());
-        } else {
-            editTeam(AJS.$(document.activeElement).val());
-        }
+        updateConfig();
+        scrollToAnchor('top');
     });
 
     AJS.$("#team-general").submit(function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Save') {
+        if (e.originalEvent.submitter.value === 'Save') {
             updateTeams();
             scrollToAnchor('top');
-        } else if ((AJS.$(document.activeElement).val()[0] === "C") &&
-            (AJS.$(document.activeElement).val()[1] === "-")) {
-            editCategory(AJS.$(document.activeElement).val());
         } else {
-            editTeam(AJS.$(document.activeElement).val());
+            editTeam(e.originalEvent.submitter.value);
         }
     });
 
     AJS.$("#category-general").submit(function (e) {
-        // TODO: is this still needed?
         e.preventDefault();
-        if ((AJS.$(document.activeElement).val()[0] === "C") &&
-            (AJS.$(document.activeElement).val()[1] === "-")) {
-            editCategory(AJS.$(document.activeElement).val());
-        } else {
-            editTeam(AJS.$(document.activeElement).val());
-        }
+        editCategory(e.originalEvent.submitter.value);
     });
 
     AJS.$("#modify-team").submit(function (e) {
@@ -832,15 +835,25 @@ AJS.toInit(function () {
 
     AJS.$("#modify-scheduling").submit(function (e) {
         e.preventDefault();
-        if (AJS.$(document.activeElement).val() === 'Activity Verification') {
+        if (e.originalEvent.submitter.value === 'Activity Verification') {
             triggerJobManually("trigger/activity/verification", "Activity-Verification");
-        } else if (AJS.$(document.activeElement).val() === 'Activity Notification') {
+        } else if (e.originalEvent.submitter.value === 'Activity Notification') {
             triggerJobManually("trigger/activity/notification", "Activity-Notification");
-        } else if (AJS.$(document.activeElement).val() === 'Out Of Time') {
+        } else if (e.originalEvent.submitter.value === 'Out Of Time') {
             triggerJobManually("trigger/out/of/time/notification", "Out-Of-Time-Notification");
-        } else if (AJS.$(document.activeElement).val() === 'Save') {
+        } else if (e.originalEvent.submitter.value === 'Save') {
             updateScheduling();
         }
+    });
+
+    AJS.$("#modify-monitoring").submit(function (e) {
+       e.preventDefault();
+       if(e.originalEvent.submitter.value === 'Save'){
+           updateMonitoring();
+       }
+       else{
+           console.log("Error modifying Monitoring");
+       }
     });
 
     AJS.$("#reset-timesheets").click(function (e) {
@@ -1161,6 +1174,7 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
+                scrollToAnchor('top');
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
@@ -1169,6 +1183,44 @@ AJS.toInit(function () {
                     title: "Error!",
                     body: error.responseText
                 });
+                scrollToAnchor('top');
+                AJS.$(".loadingDiv").hide();
+            }
+        });
+    }
+
+    function updateMonitoring(){
+        var monitoring = {};
+
+        monitoring.period = AJS.$("#monitoring-period").val();
+        monitoring.requiredHours = AJS.$("#monitoring-required-hours").val();
+        monitoring.exceptions = AJS.$("#monitoring-exceptions").val();
+
+        AJS.$(".loadingDiv").show();
+        AJS.$.ajax({
+            url: restBaseUrl + 'monitoring/saveMonitoring',
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(monitoring),
+            processData: false,
+            success: function () {
+                AJS.messages.success({
+                    title: "Success!",
+                    body: "Settings saved!",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
+                });
+                scrollToAnchor('top');
+                AJS.$(".loadingDiv").hide();
+            },
+            error: function (error) {
+                removeErrorMessage(updateMonitoringErrorMessage);
+                updateMonitoringErrorMessage = AJS.messages.error({
+                    title: "Error!",
+                    body: error.responseText
+                });
+                scrollToAnchor('top');
                 AJS.$(".loadingDiv").hide();
             }
         });
@@ -1192,6 +1244,7 @@ AJS.toInit(function () {
                     duration: 5000
                 });
                 fetchData();
+                scrollToAnchor('top');
                 AJS.$(".loadingDiv").hide();
             })
             .fail(function (error) {
@@ -1201,6 +1254,7 @@ AJS.toInit(function () {
                     body: '<p>Reason: ' + error.responseText + '</p>'
                 });
                 console.log(error);
+                scrollToAnchor('top');
                 AJS.$(".loadingDiv").hide();
             });
     }
