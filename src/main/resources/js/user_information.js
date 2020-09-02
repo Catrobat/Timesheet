@@ -50,6 +50,13 @@ AJS.toInit(function () {
 
         for (var i = 0; i < userInformation.length; i++) {
 
+            var firstEntryDate;
+            if (new Date(userInformation[i].firstEntryDate).getTime() == new Date(0).getTime()) {
+                firstEntryDate = "none";
+            } else {
+                firstEntryDate = (new Date(userInformation[i].firstEntryDate)).toLocaleDateString("en-US");
+            }
+
             var latestEntryDate;
             if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
                 latestEntryDate = "none";
@@ -108,6 +115,7 @@ AJS.toInit(function () {
             "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
             "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
             "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
+            "</td><td headers='ti-first-entry-date' class='latest-date'>" + firstEntryDate +
             "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
             "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
             enabledColumn +

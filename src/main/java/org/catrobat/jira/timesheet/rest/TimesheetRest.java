@@ -328,7 +328,13 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
+        TimesheetEntry firstEntry = entryService.getFirstEntry(sheet);
+        Date firstEntryDate = null;
+                if(firstEntry != null){
+                    firstEntryDate = firstEntry.getBeginDate();
+                }
+
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet, firstEntryDate);
         return Response.ok(jsonTimesheet).build();
     }
 
@@ -370,7 +376,14 @@ public class TimesheetRest {
             emailUtil.buildEmailOutOfTime(user.getEmailAddress(), sheet, user);
         }
 
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
+        TimesheetEntry firstEntry = entryService.getFirstEntry(sheet);
+        Date firstEntryDate = null;
+        if(firstEntry != null){
+            firstEntryDate = firstEntry.getBeginDate();
+        }
+
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet, firstEntryDate);
+
         return Response.ok(jsonTimesheet).build();
     }
 
@@ -414,7 +427,15 @@ public class TimesheetRest {
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<>();
 
         for (Timesheet timesheet : sheetService.all()) {
-            JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheet);
+
+            TimesheetEntry firstEntry = entryService.getFirstEntry(timesheet);
+            Date firstEntryDate = null;
+            if(firstEntry != null){
+                firstEntryDate = firstEntry.getBeginDate();
+            }
+
+            JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheet, firstEntryDate);
+
             jsonTimesheetList.add(jsonTimesheet);
         }
 
@@ -655,7 +676,13 @@ public class TimesheetRest {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
 
-        JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet);
+        TimesheetEntry firstEntry = entryService.getFirstEntry(sheet);
+        Date firstEntryDate = null;
+        if(firstEntry != null){
+            firstEntryDate = firstEntry.getBeginDate();
+        }
+
+        JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet, firstEntryDate);
         return Response.ok(newJsonTimesheet).build();
     }
 
@@ -680,7 +707,14 @@ public class TimesheetRest {
             sheet = sheetService.getTimesheetByID(jsonTimesheet.getTimesheetID());
             if (sheet != null) {
                 sheet = sheetService.updateTimesheetEnableState(jsonTimesheet.getTimesheetID(), jsonTimesheet.isEnabled());
-                JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet);
+
+                TimesheetEntry firstEntry = entryService.getFirstEntry(sheet);
+                Date firstEntryDate = null;
+                if(firstEntry != null){
+                    firstEntryDate = firstEntry.getBeginDate();
+                }
+
+                JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet, firstEntryDate);
                 newJsonTimesheetList.add(newJsonTimesheet);
             }
         }
@@ -703,7 +737,13 @@ public class TimesheetRest {
             sheet = sheetService.updateTimesheetEnableState(timesheetID, enabled);
         }
 
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
+        TimesheetEntry firstEntry = entryService.getFirstEntry(sheet);
+        Date firstEntryDate = null;
+        if(firstEntry != null){
+            firstEntryDate = firstEntry.getBeginDate();
+        }
+
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet, firstEntryDate);
         return Response.ok(jsonTimesheet).build();
     }
 
@@ -1165,7 +1205,14 @@ public class TimesheetRest {
             Timesheet sheet = sheetService.getTimesheetByUser(user.getKey());
             sheetService.updateTimesheetReasonData(sheet, jsonTimesheetReasonData);
 
-            return Response.ok(new JsonTimesheet(sheet)).build();
+
+            TimesheetEntry firstEntry = entryService.getFirstEntry(sheet);
+            Date firstEntryDate = null;
+            if(firstEntry != null){
+                firstEntryDate = firstEntry.getBeginDate();
+            }
+
+            return Response.ok(new JsonTimesheet(sheet, firstEntryDate)).build();
         }
         catch (ServiceException e){
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -1195,7 +1242,13 @@ public class TimesheetRest {
                 sheet.save();
             }
 
-            return Response.ok(new JsonTimesheet(sheet)).build();
+            TimesheetEntry firstEntry = entryService.getFirstEntry(sheet);
+            Date firstEntryDate = null;
+            if(firstEntry != null){
+                firstEntryDate = firstEntry.getBeginDate();
+            }
+
+            return Response.ok(new JsonTimesheet(sheet, firstEntryDate)).build();
         }
         catch (ServiceException e){
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -1222,7 +1275,14 @@ public class TimesheetRest {
         try{
             Timesheet sheet = sheetService.getTimesheetByUser(user.getKey());
             sheetService.deleteLecture(sheet, data);
-            return Response.ok(new JsonTimesheet(sheet)).build();
+
+            TimesheetEntry firstEntry = entryService.getFirstEntry(sheet);
+            Date firstEntryDate = null;
+            if(firstEntry != null){
+                firstEntryDate = firstEntry.getBeginDate();
+            }
+
+            return Response.ok(new JsonTimesheet(sheet, firstEntryDate)).build();
         }
         catch (ServiceException e){
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();

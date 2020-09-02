@@ -654,7 +654,7 @@ public class TimesheetRestTest {
         String userKey = "USER_KEY";
 
         Timesheet sheet = createTimesheetMock();
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet, new Date());
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
@@ -670,7 +670,7 @@ public class TimesheetRestTest {
     @Test
     public void testPostTimesheetEnableStatesOk() throws Exception {
         Timesheet sheet = createTimesheetMock();
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet, new Date());
 
         JsonTimesheet[] jsonTimesheets = {jsonTimesheet};
 

@@ -28,6 +28,7 @@ import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.sql.Time;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -215,6 +216,15 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
             }
         }
         return minutes / 60;
+    }
+
+    @Override
+    public TimesheetEntry getFirstEntry(Timesheet timesheet) {
+        TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
+        if (entries.length == 0) {
+            return null;
+        }
+        return entries[entries.length-1];
     }
 
     @Override

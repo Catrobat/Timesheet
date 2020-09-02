@@ -79,7 +79,7 @@ public class ConfigResourceRestTest {
         TimesheetEntryService entryService = new TimesheetEntryServiceImpl(ao, timesheetService);
         TeamService teamService = new TeamServiceImpl(ao, categoryService, entryService);
         ConfigService configService = new ConfigServiceImpl(ao, categoryService, teamService);
-        configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock, ao, null);
+        configResourceRest = new ConfigResourceRest(configService, teamService, categoryService, permissionServiceMock, ao, entryService,null);
 
         PowerMockito.mockStatic(ComponentAccessor.class);
         PowerMockito.when(ComponentAccessor.getUserManager()).thenReturn(userManagerJiraMock);

@@ -29,6 +29,9 @@ public class JsonUserInformation {
     private int targetTotalHours;
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
+    private Date firstEntryDate;
+    @XmlElement
+    @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
@@ -49,10 +52,11 @@ public class JsonUserInformation {
     private boolean isEnabled;
     
     
-    public JsonUserInformation (Timesheet timesheet) {
+    public JsonUserInformation (Timesheet timesheet, Date firstEntryDate) {
     	
     	this.userName = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getName();
     	this.state = timesheet.getState();
+        this.firstEntryDate = firstEntryDate;
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
 
         this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted() 
@@ -120,7 +124,15 @@ public class JsonUserInformation {
     public void setTargetTotalHours(int targetTotalHours) {
         this.targetTotalHours = targetTotalHours;
     }
-    
+
+    public Date getFirstEntryDate() {
+        return firstEntryDate;
+    }
+
+    public void setFirstEntryDate(Date firstEntryDate) {
+        this.firstEntryDate = firstEntryDate;
+    }
+
     public Date getLatestEntryDate() {
         return latestEntryDate;
     }

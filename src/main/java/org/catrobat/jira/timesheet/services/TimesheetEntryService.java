@@ -46,6 +46,8 @@ public interface TimesheetEntryService {
 
     int getHours(Timesheet sheet, LocalDate begin, LocalDate end);
 
+    TimesheetEntry getFirstEntry(Timesheet timesheet);
+
     TimesheetEntry getLatestEntry(Timesheet timesheet);
 
     TimesheetEntry getLatestInactiveEntry(Timesheet timesheet);
