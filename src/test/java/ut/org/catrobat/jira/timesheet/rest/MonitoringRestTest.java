@@ -58,7 +58,7 @@ public class MonitoringRestTest {
 
     @Test
     public void testSaveAndRetrieveMonitoring() {
-        when(permissionServiceMock.checkRootPermission()).thenReturn(null)
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
         Map.Entry<LocalDate, LocalDate> entry =  mock(AbstractMap.SimpleEntry.class);
         when(monitoringService.getLastInterval()).thenReturn(entry);
         Monitoring monitoring = mock(Monitoring.class);
