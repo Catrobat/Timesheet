@@ -5,6 +5,7 @@ import com.atlassian.jira.user.util.UserManager;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import net.sf.cglib.core.Local;
 import org.catrobat.jira.timesheet.activeobjects.Monitoring;
 import org.catrobat.jira.timesheet.rest.MonitoringRest;
 import org.catrobat.jira.timesheet.rest.SchedulingRest;
@@ -59,7 +60,8 @@ public class MonitoringRestTest {
     @Test
     public void testSaveAndRetrieveMonitoring() {
         when(permissionServiceMock.checkRootPermission()).thenReturn(null);
-        Map.Entry<LocalDate, LocalDate> entry =  mock(AbstractMap.SimpleEntry.class);
+        LocalDate begin = LocalDate.now();
+        Map.Entry<LocalDate, LocalDate> entry = new AbstractMap.SimpleEntry<>(begin.minusMonths(1), begin);
         when(monitoringService.getLastInterval()).thenReturn(entry);
         Monitoring monitoring = mock(Monitoring.class);
         JsonMonitoring jsonMonitoring = new JsonMonitoring(monitoring);
