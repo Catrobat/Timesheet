@@ -37,6 +37,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -292,11 +294,54 @@ public class TimesheetEntryServiceImplTest {
         //Act
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
+
         TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
-        TimesheetEntry receivedEntry = service.getEntryByID(sheet.getID());
+        TimesheetEntry receivedEntry = service.getEntryByID(entryList[0].getID());
 
         //Assert
+        assertEquals(1, entryList.length);
         Assert.assertEquals(receivedEntry, entryList[0]);
+    }
+
+    @Test
+    public void testGetHoursofLastMonths() throws ServiceException {
+
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+
+        Date inactiveEnd = Date.from(ZonedDateTime.now().minusMonths(6).toInstant());
+
+        Date begin = Date.from(ZonedDateTime.now().toInstant());
+        Date end = Date.from(ZonedDateTime.now().plusHours(1).toInstant());
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "ATLDEV-287";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = false;
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        begin = Date.from(ZonedDateTime.now().minusMonths(1).toInstant());
+        end = Date.from(ZonedDateTime.now().minusMonths(1).plusHours(1).toInstant());
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        begin = Date.from(ZonedDateTime.now().minusMonths(3).toInstant());
+        end = Date.from(ZonedDateTime.now().minusMonths(3).plusHours(1).toInstant());
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        begin = Date.from(ZonedDateTime.now().plusMonths(1).toInstant());
+        end = Date.from(ZonedDateTime.now().plusMonths(1).plusHours(1).toInstant());
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
+        
+        int result = service.getHours(sheet, LocalDate.now().minusMonths(2),LocalDate.now() );
+        Assert.assertEquals(2,result);
     }
 
     public static class MyDatabaseUpdater implements DatabaseUpdater {

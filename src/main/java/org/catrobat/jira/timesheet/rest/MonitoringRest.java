@@ -27,6 +27,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 
 @Path("/monitoring")
@@ -52,6 +55,7 @@ public class MonitoringRest {
 
         Monitoring monitoring = monitoringService.getMonitoring();
         JsonMonitoring jsonMonitoring = new JsonMonitoring(monitoring);
+        jsonMonitoring.setPeriodTime(monitoringService.getLastIntervalFormattedAsString());
 
         return Response.ok(jsonMonitoring).build();
     }

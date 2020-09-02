@@ -22,6 +22,8 @@ public class JsonUserInformation {
     @XmlElement
     private int hoursPerHalfYear;
     @XmlElement
+    private int hoursPerMonitoringPeriod;
+    @XmlElement
     private int remainingHours;
     @XmlElement
     private int targetTotalHours;
@@ -85,6 +87,14 @@ public class JsonUserInformation {
 
     public void setHoursPerMonth(int hoursPerMonth) {
         this.hoursPerMonth = hoursPerMonth;
+    }
+
+    public int getHoursPerMonitoringPeriod(){
+        return  hoursPerMonitoringPeriod;
+    }
+
+    public void setHoursPerMonitoringPeriod(int hoursPerMonitoringPeriod) {
+        this.hoursPerMonitoringPeriod = hoursPerMonitoringPeriod;
     }
 
     public int getHoursPerHalfYear() {

@@ -25,11 +25,11 @@ import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 import org.catrobat.jira.timesheet.services.TimesheetEntryService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
-import org.ofbiz.core.entity.jdbc.SQLProcessor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -197,6 +197,20 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
             Instant instant = entry.getBeginDate().toInstant();
             ZonedDateTime beginDate = instant.atZone(ZoneId.systemDefault());
             if (beginDate.isAfter(xMonthsAgo)) {
+                minutes += entry.getDurationMinutes();
+            }
+        }
+        return minutes / 60;
+    }
+
+    @Override
+    public int getHours(Timesheet sheet, LocalDate begin, LocalDate end){
+        int minutes = 0;
+        for (TimesheetEntry entry : getEntriesBySheet(sheet)) {
+            Instant instant = entry.getBeginDate().toInstant();
+            LocalDate beginDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if ((beginDate.isAfter(begin) || beginDate.isEqual(begin)) && (beginDate.isBefore(end) || beginDate.isEqual(end))) {
                 minutes += entry.getDurationMinutes();
             }
         }

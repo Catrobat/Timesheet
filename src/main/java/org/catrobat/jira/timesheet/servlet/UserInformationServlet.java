@@ -21,6 +21,7 @@ import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 
 import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.MonitoringService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
@@ -32,20 +33,25 @@ import javax.ws.rs.core.Response;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserInformationServlet extends HttpServlet {
 
 	private final LoginUriProvider loginUriProvider;
     private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
+    private final MonitoringService monitoringService;
     private final PermissionService permissionService;
 
     public UserInformationServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
-            final TimesheetService sheetService, final PermissionService permissionService) {
+                                  final TimesheetService sheetService, final MonitoringService monitoringService,
+                                  final PermissionService permissionService) {
         super();
         this.loginUriProvider = loginUriProvider;
         this.templateRenderer = templateRenderer;
         this.sheetService = sheetService;
+        this.monitoringService = monitoringService;
         this.permissionService = permissionService;
     }
     
@@ -73,8 +79,9 @@ public class UserInformationServlet extends HttpServlet {
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        
-        templateRenderer.render("user_information.vm", response.getWriter());
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, Object> context = new HashMap<>();
+        context.put("monitoringPeriod", monitoringService.getLastIntervalFormattedAsString());
+        templateRenderer.render("user_information.vm", context, response.getWriter());
     }
 }
