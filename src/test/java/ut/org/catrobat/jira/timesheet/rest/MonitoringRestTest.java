@@ -29,6 +29,10 @@ import ut.org.catrobat.jira.timesheet.activeobjects.MySampleDatabaseUpdater;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
+import java.time.LocalDate;
+import java.util.AbstractMap;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -40,11 +44,12 @@ public class MonitoringRestTest {
     private PermissionService permissionServiceMock;
     private HttpServletRequest httpRequest;
     private MonitoringRest monitoringRest;
+    private MonitoringService monitoringService;
 
     @Before
     public void setUp() throws Exception {
 
-        MonitoringService monitoringService = mock(MonitoringService.class, RETURNS_DEEP_STUBS);
+        monitoringService = mock(MonitoringService.class, RETURNS_DEEP_STUBS);
 
         permissionServiceMock = mock(PermissionService.class, RETURNS_DEEP_STUBS);
 
@@ -53,7 +58,9 @@ public class MonitoringRestTest {
 
     @Test
     public void testSaveAndRetrieveMonitoring() {
-        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null)
+        Map.Entry<LocalDate, LocalDate> entry =  mock(AbstractMap.SimpleEntry.class);
+        when(monitoringService.getLastInterval()).thenReturn(entry);
         Monitoring monitoring = mock(Monitoring.class);
         JsonMonitoring jsonMonitoring = new JsonMonitoring(monitoring);
         Response response = monitoringRest.setMonitoring(jsonMonitoring, httpRequest);

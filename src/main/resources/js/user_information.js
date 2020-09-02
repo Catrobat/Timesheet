@@ -192,15 +192,8 @@ AJS.toInit(function () {
     }
 
     function renameMonitoringTime(monitoring){
-        if(monitoring.period === 1){
-            $("th").each(function(){$(this).html($(this).html()
-                .replace("%MonitoringPeriod% Months",monitoring.period + " Month"));});
-        }
-        else{
-            $("th").each(function(){$(this).html($(this).html()
-                .replace("%MonitoringPeriod%",monitoring.period));});
-        }
-
+        $("th").each(function(){$(this).html($(this).html()
+            .replace("%MonitoringPeriod%",monitoring.periodTime));});
     }
 
     function setEnableButton(timesheetID, enabled) {
