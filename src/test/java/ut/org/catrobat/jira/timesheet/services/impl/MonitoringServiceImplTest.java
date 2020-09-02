@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Map;
 
@@ -64,6 +65,28 @@ public class MonitoringServiceImplTest {
         monitoringService.setMonitoring(1,1,1);
         Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
         assertEquals(interval, new AbstractMap.SimpleEntry<>(LocalDate.now().withDayOfMonth(1), LocalDate.now()));
+    }
+
+    @Test
+    public void testGetLastIntervalFormattedAsStringOneMonth(){
+        monitoringService.setMonitoring(1,1,1);
+
+        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
+        LocalDate endDate = LocalDate.now();
+        String expectedFormat = startDate.format(DateTimeFormatter.ofPattern("dd.")) + "-" + endDate.format(DateTimeFormatter.ofPattern("dd.MM.yy"));
+
+        assertEquals(expectedFormat, monitoringService.getLastIntervalFormattedAsString());
+    }
+
+    @Test
+    public void testGetLastIntervalFormattedAsStringTwoMonths(){
+        monitoringService.setMonitoring(2,1,1);
+
+        LocalDate startDate = LocalDate.now().withDayOfMonth(1).minusMonths(1);
+        LocalDate endDate = LocalDate.now();
+        String expectedFormat = startDate.format(DateTimeFormatter.ofPattern("dd.MM.")) + "-" + endDate.format(DateTimeFormatter.ofPattern("dd.MM.yy"));
+
+        assertEquals(expectedFormat, monitoringService.getLastIntervalFormattedAsString());
     }
 
     public static class MyDatabaseUpdater implements DatabaseUpdater {

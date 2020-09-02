@@ -55,18 +55,7 @@ public class MonitoringRest {
 
         Monitoring monitoring = monitoringService.getMonitoring();
         JsonMonitoring jsonMonitoring = new JsonMonitoring(monitoring);
-        DateTimeFormatter formatter;
-        Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
-        if(interval.getKey().getYear() != interval.getValue().getYear()){
-            formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        }
-        else if(interval.getKey().getMonth() != interval.getValue().getMonth()){
-             formatter = DateTimeFormatter.ofPattern("dd.MM.");
-        }
-        else{
-            formatter = DateTimeFormatter.ofPattern("dd.");
-        }
-        jsonMonitoring.setPeriodTime("(" + interval.getKey().format(formatter) + "-" + interval.getValue().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + ")");
+        jsonMonitoring.setPeriodTime(monitoringService.getLastIntervalFormattedAsString());
 
         return Response.ok(jsonMonitoring).build();
     }

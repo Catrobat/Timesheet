@@ -191,11 +191,6 @@ AJS.toInit(function () {
         AJS.$(".loadingDiv").hide();
     }
 
-    function renameMonitoringTime(monitoring){
-        $("th").each(function(){$(this).html($(this).html()
-            .replace("%MonitoringPeriod%",monitoring.periodTime));});
-    }
-
     function setEnableButton(timesheetID, enabled) {
         var button = AJS.$("#button" + timesheetID);
         button.prop("onclick", null).off("click");
@@ -325,7 +320,6 @@ AJS.toInit(function () {
             });
 
         AJS.$.when(monitoringFetched)
-            .done(renameMonitoringTime)
             .fail(function (error) {
                 if(fetchingErrorMessage)
                     fetchingErrorMessage.closeMessage();

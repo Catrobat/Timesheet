@@ -15,4 +15,6 @@ public interface MonitoringService {
 
     Map.Entry<LocalDate, LocalDate> getLastInterval();
 
+    String getLastIntervalFormattedAsString();
+
 }
