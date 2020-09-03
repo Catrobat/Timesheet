@@ -98,6 +98,7 @@ AJS.toInit(function () {
                     targetHours: AJS.$("#timesheet-hours-text").val(),
                     targetHoursCompleted: toFixed(AJS.$("#timesheet-hours-practical").val() - AJS.$("#timesheet-hours-substract").val(), 2),
                     targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
+                    firstEntryDate: existingTimesheetData.firstEntryDate,
                     latestEntryDate: existingTimesheetData.latestEntryDate,
                     state: existingTimesheetData.state
                 };

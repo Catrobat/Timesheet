@@ -39,18 +39,24 @@ AJS.toInit(function () {
         }
     }
 
-
     function populateTable(userInformation) {
         AJS.$(".loadingDiv").show();
         AJS.$("#user-information-table-content").empty();
         AJS.$("#done-user-info-table-content").empty();
         AJS.$("#disabled-user-info-table-content").empty();
-        
+
         //sort by username
         userInformation.sort(dynamicSort("userName"));
 
         for (var i = 0; i < userInformation.length; i++) {
-        	
+
+            var firstEntryDate;
+            if (new Date(userInformation[i].firstEntryDate).getTime() == new Date(0).getTime()) {
+                firstEntryDate = "none";
+            } else {
+                firstEntryDate = (new Date(userInformation[i].firstEntryDate)).toLocaleDateString("en-US");
+            }
+
             var latestEntryDate;
             if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
                 latestEntryDate = "none";
@@ -65,6 +71,7 @@ AJS.toInit(function () {
             }
 
             var enabled = userInformation[i].state !== "DISABLED";
+
             var done = userInformation[i].state === "DONE";
 
             var timesheetId = userInformation[i].timesheetID;
@@ -109,6 +116,8 @@ AJS.toInit(function () {
             "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
             "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
             "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
+            "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
+            "</td><td headers='ti-first-entry-date' class='latest-date'>" + firstEntryDate +
             "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
             "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
                 enabledColumn +  "</td></tr>";
@@ -122,7 +131,8 @@ AJS.toInit(function () {
         	else {
         		AJS.$("#user-information-table-content").append(row);
         	}
-            	
+
+
             var timesheetID = userInformation[i].timesheetID;
 
             setupDropdownButton(timesheetID, enabled);
@@ -156,11 +166,11 @@ AJS.toInit(function () {
         var numberInActiveOffline = 0;
         var numberDisabled = 0;
         var numberDone = 0;
-        
+
         for (var i = 0; i < userInformation.length; i++) {
-        	
+
         	numberTotal++;
-        	
+
         	if (userInformation[i].state === "ACTIVE")
         		numberActive++;
         	else if (userInformation[i].state === "INACTIVE")
@@ -173,9 +183,9 @@ AJS.toInit(function () {
         		numberDisabled++;
         	else if (userInformation[i].state === "DONE")
         		numberDone++;
-        	
+
         }
-        
+
         var row = "<tr><td>" + "Total Number of Timesheets: " + numberTotal + "</td>" +
         				"<td>" + "Active Timesheets: " + numberActive + "</td>" +
                   		"<td>" + "Auto Inactive Timesheets: " + numberAutoInActive + "</td>" +
@@ -313,11 +323,28 @@ AJS.toInit(function () {
             contentType: "application/json"
         });
 
+        var monitoringFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'monitoring/getMonitoring',
+            contentType: "application/json"
+        });
+
         AJS.$.when(userInformationFetched)
             .done(populateTable)
             .fail(function (error) {
             	if(fetchingErrorMessage)
             		fetchingErrorMessage.closeMessage();
+                fetchingErrorMessage = AJS.messages.error({
+                    title: 'There was an error while fetching the required data.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
+            });
+
+        AJS.$.when(monitoringFetched)
+            .fail(function (error) {
+                if(fetchingErrorMessage)
+                    fetchingErrorMessage.closeMessage();
                 fetchingErrorMessage = AJS.messages.error({
                     title: 'There was an error while fetching the required data.',
                     body: '<p>Reason: ' + error.responseText + '</p>'

@@ -82,13 +82,14 @@ public class UserRestTest {
         TimesheetEntryService timesheetEntryServiceMock = mock(TimesheetEntryService.class, RETURNS_DEEP_STUBS);
         teamServiceMock = mock(TeamService.class, RETURNS_DEEP_STUBS);
         userSearchService = mock(UserSearchService.class, RETURNS_DEEP_STUBS);
+        MonitoringService monitoringService = mock(MonitoringService.class, RETURNS_DEEP_STUBS);
         groupPickerSearchService = mock(GroupPickerSearchService.class, RETURNS_DEEP_STUBS);
         userManager = mock(UserManager.class);
         groupManager = mock(GroupManager.class);
         timesheetServiceMock = new TimesheetServiceImpl(ao);
 
         UserRest userRest = new UserRest(configServiceMock, permissionServiceMock, timesheetServiceMock,
-                timesheetEntryServiceMock, teamServiceMock, userSearchService, groupPickerSearchService);
+                timesheetEntryServiceMock, teamServiceMock, monitoringService, userSearchService, groupPickerSearchService);
         spyUserRest = spy(userRest);
 
 

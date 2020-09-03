@@ -46,6 +46,9 @@ public final class JsonTimesheet {
     private String reason;
     @XmlElement
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
+    private Date firstEntryDate;
+    @XmlElement
+    @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
     private int targetHourPractice;
@@ -77,6 +80,10 @@ public final class JsonTimesheet {
         this.targetHoursRemoved = timesheet.getHoursDeducted();
         this.state = timesheet.getState();
         this.displayName = timesheet.getDisplayName();
+
+        if (timesheet.firstEntry() != null) {
+            this.firstEntryDate = timesheet.firstEntry().getBeginDate();
+        }
     }
 
     public JsonTimesheet() {
@@ -108,6 +115,14 @@ public final class JsonTimesheet {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public Date getFirstEntryDate() {
+        return firstEntryDate;
+    }
+
+    public void setFirstEntryDate(Date firstEntryDate) {
+        this.firstEntryDate = firstEntryDate;
     }
 
     public Date getLatestEntryDate() {

@@ -124,6 +124,8 @@
                 <th id="ti-target-total-hours">Target Total Hours</th>
                 <th id="ti-total-practice-hours">Total Practice Hours</th>
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
+                <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
                 <th id="ti-actions">Actions</th>
@@ -154,6 +156,8 @@
                 <th id="ti-target-total-hours">Target Total Hours</th>
                 <th id="ti-total-practice-hours">Total Practice Hours</th>
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
+                <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
                 <th id="ti-actions">Actions</th>
@@ -184,6 +188,8 @@
                 <th id="ti-target-total-hours">Target Total Hours</th>
                 <th id="ti-total-practice-hours">Total Practice Hours</th>
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
+                <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
                 <th id="ti-enabled">Timesheet Enabled</th>

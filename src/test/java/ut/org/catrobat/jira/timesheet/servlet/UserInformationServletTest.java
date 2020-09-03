@@ -10,6 +10,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetAdmin;
 import org.catrobat.jira.timesheet.activeobjects.Config;
 import org.catrobat.jira.timesheet.services.ConfigService;
+import org.catrobat.jira.timesheet.services.MonitoringService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.UserInformationServlet;
@@ -40,7 +41,7 @@ public class UserInformationServletTest {
         LoginUriProvider loginUriProvider = mock(LoginUriProvider.class);
         TemplateRenderer templateRenderer = mock(TemplateRenderer.class);
         TimesheetService sheetService = mock(TimesheetService.class);
-        WebSudoManager webSudoManager = mock(WebSudoManager.class);
+        MonitoringService monitoringService = mock(MonitoringService.class);
         PermissionService permissionService = mock(PermissionService.class);
         PowerMockito.mockStatic(ComponentAccessor.class);
         ApplicationUser user = mock(ApplicationUser.class);
@@ -50,7 +51,9 @@ public class UserInformationServletTest {
         Config config = Mockito.mock(Config.class);
         JiraAuthenticationContext jiraAuthenticationContext = Mockito.mock(JiraAuthenticationContext.class);
 
-        userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, sheetService, permissionService);
+        userInformationServlet = new UserInformationServlet(loginUriProvider, templateRenderer, sheetService,
+                monitoringService, permissionService);
+
         when(user.getUsername()).thenReturn("test");
         String test_key = "test_key";
         when(user.getKey()).thenReturn(test_key);

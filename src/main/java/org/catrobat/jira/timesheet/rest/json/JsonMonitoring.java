@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.time.LocalDate;
 
 @SuppressWarnings("unused")
 @XmlRootElement
@@ -14,11 +15,13 @@ public class JsonMonitoring {
 
     @XmlElement
     private int period;
+    private String periodTime;
     private int requiredHours;
     private int exceptions;
 
     public JsonMonitoring(Monitoring monitoring) {
         this.period = monitoring.getPeriod();
+        this.periodTime = "";
         this.requiredHours = monitoring.getRequiredHours();
         this.exceptions = monitoring.getExceptions();
     }
@@ -29,6 +32,14 @@ public class JsonMonitoring {
 
     public int getPeriod() {
         return period;
+    }
+
+    public String getPeriodTime() {
+        return periodTime;
+    }
+
+    public void setPeriodTime(String periodTime) {
+        this.periodTime = periodTime;
     }
 
     public void setPeriod(int period) {

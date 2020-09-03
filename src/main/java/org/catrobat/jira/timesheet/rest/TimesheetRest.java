@@ -414,6 +414,7 @@ public class TimesheetRest {
         List<JsonTimesheet> jsonTimesheetList = new ArrayList<>();
 
         for (Timesheet timesheet : sheetService.all()) {
+
             JsonTimesheet jsonTimesheet = new JsonTimesheet(timesheet);
             jsonTimesheetList.add(jsonTimesheet);
         }
@@ -680,6 +681,7 @@ public class TimesheetRest {
             sheet = sheetService.getTimesheetByID(jsonTimesheet.getTimesheetID());
             if (sheet != null) {
                 sheet = sheetService.updateTimesheetEnableState(jsonTimesheet.getTimesheetID(), jsonTimesheet.isEnabled());
+
                 JsonTimesheet newJsonTimesheet = new JsonTimesheet(sheet);
                 newJsonTimesheetList.add(newJsonTimesheet);
             }
@@ -1222,6 +1224,7 @@ public class TimesheetRest {
         try{
             Timesheet sheet = sheetService.getTimesheetByUser(user.getKey());
             sheetService.deleteLecture(sheet, data);
+
             return Response.ok(new JsonTimesheet(sheet)).build();
         }
         catch (ServiceException e){

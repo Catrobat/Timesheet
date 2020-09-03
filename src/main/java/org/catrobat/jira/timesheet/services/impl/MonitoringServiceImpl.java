@@ -5,6 +5,11 @@ import org.catrobat.jira.timesheet.activeobjects.Monitoring;
 import org.catrobat.jira.timesheet.services.MonitoringService;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
+import java.util.Map;
+
 @Component
 public class MonitoringServiceImpl implements MonitoringService {
 
@@ -51,5 +56,31 @@ public class MonitoringServiceImpl implements MonitoringService {
         monitoring[0].setRequiredHours(requiredHours);
         monitoring[0].setExceptions(exceptions);
         monitoring[0].save();
+    }
+
+    @Override
+    public Map.Entry<LocalDate, LocalDate> getLastInterval() {
+        LocalDate begin = LocalDate.now().withDayOfMonth(1);
+        LocalDate end = LocalDate.now();
+        if (getMonitoring().getPeriod() > 1) {
+            begin = begin.minusMonths(getMonitoring().getPeriod() - 1);
+        }
+        return new AbstractMap.SimpleEntry<>(begin, end);
+    }
+
+    @Override
+    public String getLastIntervalFormattedAsString() {
+        DateTimeFormatter formatter;
+        Map.Entry<LocalDate, LocalDate> interval = getLastInterval();
+        if (interval.getKey().getYear() != interval.getValue().getYear()) {
+            formatter = DateTimeFormatter.ofPattern("dd.MM.yy");
+        }  else if(interval.getKey().getMonth() != interval.getValue().getMonth()){
+            formatter = DateTimeFormatter.ofPattern("dd.MM.");
+        }
+        else {
+            formatter = DateTimeFormatter.ofPattern("dd.");
+        }
+
+        return interval.getKey().format(formatter) + "-" + interval.getValue().format(DateTimeFormatter.ofPattern("dd.MM.yy"));
     }
 }
