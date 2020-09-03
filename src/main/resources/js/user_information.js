@@ -48,7 +48,7 @@ AJS.toInit(function () {
         
         //sort by username
         userInformation.sort(dynamicSort("userName"));
-        
+
         for (var i = 0; i < userInformation.length; i++) {
         	
             var latestEntryDate;
@@ -65,13 +65,15 @@ AJS.toInit(function () {
             }
 
             var enabled = userInformation[i].state !== "DISABLED";
-            
             var done = userInformation[i].state === "DONE";
 
-            var enableDropdown =  "<aui-button id='button" + userInformation[i].timesheetID + "' class='aui-button aui-dropdown2-trigger' aria-controls='active-timesheet" + userInformation[i].timesheetID + "'>choose option</aui-button><aui-dropdown-menu id='active-timesheet" + userInformation[i].timesheetID + "' ><aui-item-radio  value='ACTIVE'>Enable Timesheet</aui-item-radio><aui-item-radio disabled value='DISABLED'>Disable Timesheet</aui-item-radio><aui-item-radio value='SHOW'>Open Timesheet</aui-item-radio></aui-dropdown-menu>";
-
-            var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
-                "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
+            var timesheetId = userInformation[i].timesheetID;
+            var dropdown =  "<aui-button id='button" + timesheetId + "' class='aui-button aui-dropdown2-trigger' aria-controls='active-timesheet" + timesheetId + "'>Actions</aui-button>";
+            dropdown += "<aui-dropdown-menu id='active-timesheet" + timesheetId + "' >";
+            dropdown += "<aui-item-link href='#' class='actions-open' value='SHOW'>Open Timesheet</aui-item-link>";
+            dropdown += "<aui-item-link href='#' class='actions-enable' value='ACTIVE'>Enable Timesheet</aui-item-link>";
+            dropdown += "<aui-item-link href='#' class='actions-disable' value='DISABLED'>Disable Timesheet</aui-item-link>";
+            dropdown += "</aui-dropdown-menu>";
 
             var current_state = userInformation[i].state;
             var current_state_color = "black";
@@ -96,12 +98,12 @@ AJS.toInit(function () {
 
             var profile_link = AJS.params.baseURL + "\/secure\/ViewProfile.jspa?name=" ;
 
-        	var enabledColumn = "</td><td headers='ti-actions'>" + enableDropdown;
+        	var enabledColumn = "</td><td headers='ti-actions'>" + dropdown;
         	var row = "<tr>" +
             "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
             "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
-            "</td><td headers='ti-state' class='state' id='state" + userInformation[i].timesheetID + "'>" +  userInformation[i].state +
+                "</td><td headers='ti-state' class='state' id='state"+ timesheetId + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
             "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
             "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
             "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
@@ -123,7 +125,7 @@ AJS.toInit(function () {
             	
             var timesheetID = userInformation[i].timesheetID;
 
-            setEnableDropdownButton(timesheetID, enabled);
+            setupDropdownButton(timesheetID, enabled);
 
 
             AJS.$("[name=user-" + userInformation[i].userName + "-profile]").attr("href" , profile_link);
@@ -190,63 +192,30 @@ AJS.toInit(function () {
         AJS.$(".loadingDiv").hide();
     }
 
+    function setupDropdownButton(timesheetID, enabled) {
+        var dropdown = document.getElementById("active-timesheet" + timesheetID);
+        var buttonOpen = AJS.$(dropdown).find(".actions-open");
+        var buttonDisable = AJS.$(dropdown).find(".actions-disable");
+        var buttonEnable = AJS.$(dropdown).find(".actions-enable");
 
+        buttonOpen.on("click", function() {
+            window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
+        });
 
-    function setEnableDropdownButton(timesheetID, enabled) {
+        buttonDisable.on("click", function() {
+            setTimesheetState(timesheetID, false);
+        });
 
-        if (enabled)
-        {
-            var dropdown = document.getElementById("active-timesheet" + timesheetID);
-            var button = document.getElementById("button" + timesheetID);
-            button.innerText = 'Actions';
+        buttonEnable.on("click", function() {
+            setTimesheetState(timesheetID, true);
+        });
 
-            if (dropdown.children.count > 1)
-             {
-                dropdown.children[1].removeAttribute('disabled');
-                dropdown.children[1].removeAttribute('hidden');
-            }
-            dropdown.children[0].setAttribute('disabled', '');
-            dropdown.children[0].setAttribute('hidden', '');
-
-
-
-            dropdown.addEventListener('change', function (e) {
-               // alert(e.target.textContent);
-
-                if (e.target.textContent === 'Disable Timesheet') {
-                    setTimesheetState(timesheetID, false);
-                }
-                if (e.target.textContent === 'Open Timesheet') {
-                    window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
-                }
-            });
-        }
-        else
-        {
-            var dropdown = document.getElementById("active-timesheet" + timesheetID);
-            var button = document.getElementById("button" + timesheetID);
-
-
-            dropdown.children[0].removeAttribute('disabled');
-            dropdown.children[0].removeAttribute('hidden');
-            if (dropdown.childElementCount > 1)
-            {
-            dropdown.children[1].setAttribute('disabled', '');
-            dropdown.children[1].setAttribute('hidden', '');
-            }
-
-
-            button.innerText = 'Actions';
-            dropdown.addEventListener('change', function (e) {
-
-                if (e.target.textContent === 'Enable Timesheet') {
-
-                    setTimesheetState(timesheetID, true);
-                }
-                if (e.target.textContent === 'Open Timesheet') {
-                    window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
-                }
-            });
+        if (enabled)  {
+            buttonDisable.show();
+            buttonEnable.hide();
+        }  else  {
+            buttonDisable.hide();
+            buttonEnable.show();
         }
     }
 
@@ -270,7 +239,7 @@ AJS.toInit(function () {
                     duration: 5000
                 });
 
-                setEnableDropdownButton(timesheetID, enabled);
+                setupDropdownButton(timesheetID, enabled);
 
                 if (enabled) {
                     AJS.$("#state" + timesheetID).text("ACTIVE");

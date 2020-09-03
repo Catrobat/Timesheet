@@ -157,6 +157,20 @@ input[type=text] {
     margin: 7px 0;
     box-sizing: border-box;
 }
+
 input[type=text]:focus {
     background-color: lightcyan ;
+}
+
+.aui-dropdown2 .actions-open > a, .aui-dropdown2 .actions-disable > a, .aui-dropdown2 .actions-enable > a {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+
+.aui-dropdown2 .actions-enable > a {
+    color: green !important;
+}
+
+.aui-dropdown2 .actions-disable > a {
+    color: red !important;
 }
