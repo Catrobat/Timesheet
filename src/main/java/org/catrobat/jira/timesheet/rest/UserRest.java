@@ -271,6 +271,7 @@ public class UserRest {
             if (u == null) {
                 continue;
             }
+
             JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
 
             String userName = jsonUserInformation.getUserName();

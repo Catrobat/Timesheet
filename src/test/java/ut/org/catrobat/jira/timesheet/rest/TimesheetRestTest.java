@@ -339,7 +339,7 @@ public class TimesheetRestTest {
         List<String> developerList = new LinkedList<>();
         developerList.add(username);
         developerList.add("asdf");
-        developerList.add("jklö");
+        developerList.add("jkl");
 
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
@@ -398,7 +398,7 @@ public class TimesheetRestTest {
 
         List<String> developerList = new LinkedList<>();
         developerList.add("asdf");
-        developerList.add("jklö");
+        developerList.add("jkl");
 
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);

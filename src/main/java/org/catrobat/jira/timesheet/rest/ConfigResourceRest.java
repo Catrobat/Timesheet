@@ -48,16 +48,19 @@ public class ConfigResourceRest {
     private final PermissionService permissionService;
     private final AllowedModUsersService allowedModUsersService;
     private final ActiveObjects ao;
+    private final  TimesheetEntryService timesheetEntryService;
 
 
     public ConfigResourceRest(final ConfigService configService, final TeamService teamService,
-            final CategoryService categoryService, final PermissionService permissionService, ActiveObjects ao,
-            final AllowedModUsersService allowedModUsersService) {
+                              final CategoryService categoryService, final PermissionService permissionService, ActiveObjects ao,
+                              final TimesheetEntryService timesheetEntryService,
+                              final AllowedModUsersService allowedModUsersService) {
         this.configService = configService;
         this.teamService = teamService;
         this.categoryService = categoryService;
         this.permissionService = permissionService;
         this.ao = ao;
+        this.timesheetEntryService = timesheetEntryService;
         this.allowedModUsersService = allowedModUsersService;
     }
 
@@ -212,7 +215,7 @@ public class ConfigResourceRest {
             return response;
         }
 
-        DatabaseUtil db = new DatabaseUtil(ao);
+        DatabaseUtil db = new DatabaseUtil(ao, timesheetEntryService);
         db.resetTimesheets();
         return Response.ok().build();
     }
@@ -226,7 +229,7 @@ public class ConfigResourceRest {
             return unauthorized;
         }
 
-        DatabaseUtil db = new DatabaseUtil(ao);
+        DatabaseUtil db = new DatabaseUtil(ao, timesheetEntryService);
         db.clearAllTimesheetTables();
         return Response.status(Response.Status.OK).entity("All timesheet tables has been dropped!").build();
     }
@@ -239,7 +242,7 @@ public class ConfigResourceRest {
             return unauthorized;
         }
 
-        DatabaseUtil db = new DatabaseUtil(ao);
+        DatabaseUtil db = new DatabaseUtil(ao, timesheetEntryService);
         db.fixDatabaseInconsistencies();
         return Response.status(Response.Status.OK).entity("Database Inconsistencies have been fixed.").build();
     }
@@ -253,7 +256,7 @@ public class ConfigResourceRest {
         if (unauthorized != null) {
             return unauthorized;
         }
-        DatabaseUtil db = new DatabaseUtil(ao);
+        DatabaseUtil db = new DatabaseUtil(ao, timesheetEntryService);
         List table = db.getActiveObjectsAsJson(tableName, query);
         return Response.ok(table).build();
     }

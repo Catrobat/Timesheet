@@ -28,6 +28,7 @@ import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.sql.Time;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;

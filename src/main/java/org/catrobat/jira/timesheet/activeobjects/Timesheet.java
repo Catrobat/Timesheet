@@ -17,11 +17,16 @@
 package org.catrobat.jira.timesheet.activeobjects;
 
 import net.java.ao.Entity;
+import net.java.ao.Implementation;
 import net.java.ao.OneToMany;
+import net.java.ao.Transient;
+import net.java.ao.schema.Ignore;
 import net.java.ao.schema.NotNull;
+import org.catrobat.jira.timesheet.activeobjects.impl.TimesheetImpl;
 
 import java.util.Date;
 
+@Implementation(TimesheetImpl.class)
 public interface Timesheet extends Entity {
 
     @NotNull
@@ -62,4 +67,7 @@ public interface Timesheet extends Entity {
 
     @OneToMany(reverse = "getTimeSheet")
     TimesheetEntry[] getEntries();
+
+    @Ignore
+    TimesheetEntry firstEntry();
 }
