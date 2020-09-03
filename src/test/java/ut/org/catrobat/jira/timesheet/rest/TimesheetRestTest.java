@@ -339,7 +339,7 @@ public class TimesheetRestTest {
         List<String> developerList = new LinkedList<>();
         developerList.add(username);
         developerList.add("asdf");
-        developerList.add("jklö");
+        developerList.add("jkl");
 
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
@@ -398,7 +398,7 @@ public class TimesheetRestTest {
 
         List<String> developerList = new LinkedList<>();
         developerList.add("asdf");
-        developerList.add("jklö");
+        developerList.add("jkl");
 
         Config config = mock(Config.class);
         when(configServiceMock.getConfiguration()).thenReturn(config);
@@ -654,7 +654,7 @@ public class TimesheetRestTest {
         String userKey = "USER_KEY";
 
         Timesheet sheet = createTimesheetMock();
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet, new Date());
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
 
         when(permissionServiceMock.checkIfUserExists()).thenReturn(userMock);
 
@@ -670,7 +670,7 @@ public class TimesheetRestTest {
     @Test
     public void testPostTimesheetEnableStatesOk() throws Exception {
         Timesheet sheet = createTimesheetMock();
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet, new Date());
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
 
         JsonTimesheet[] jsonTimesheets = {jsonTimesheet};
 

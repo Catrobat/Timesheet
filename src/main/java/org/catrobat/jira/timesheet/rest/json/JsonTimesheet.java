@@ -68,12 +68,11 @@ public final class JsonTimesheet {
     @XmlElement
     private String displayName;
 
-    public  JsonTimesheet(Timesheet timesheet, Date firstEntryDate) {
+    public  JsonTimesheet(Timesheet timesheet) {
         this.timesheetID = timesheet.getID();
         this.userKey = timesheet.getUserKey();
         this.lectures = timesheet.getLectures();
         this.reason = timesheet.getReason();
-        this.firstEntryDate = firstEntryDate;
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
         this.targetHourPractice = timesheet.getHoursPracticeCompleted();
         this.targetHours = timesheet.getTargetHours();
@@ -81,6 +80,10 @@ public final class JsonTimesheet {
         this.targetHoursRemoved = timesheet.getHoursDeducted();
         this.state = timesheet.getState();
         this.displayName = timesheet.getDisplayName();
+
+        if (timesheet.firstEntry() != null) {
+            this.firstEntryDate = timesheet.firstEntry().getBeginDate();
+        }
     }
 
     public JsonTimesheet() {

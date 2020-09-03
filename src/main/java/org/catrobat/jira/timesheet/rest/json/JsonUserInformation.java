@@ -50,13 +50,11 @@ public class JsonUserInformation {
     private int timesheetID;
     @XmlElement
     private boolean isEnabled;
-    
-    
-    public JsonUserInformation (Timesheet timesheet, Date firstEntryDate) {
+
+    public JsonUserInformation (Timesheet timesheet) {
     	
     	this.userName = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getName();
     	this.state = timesheet.getState();
-        this.firstEntryDate = firstEntryDate;
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
 
         this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted() 
@@ -66,8 +64,11 @@ public class JsonUserInformation {
         this.totalPracticeHours = timesheet.getHoursPracticeCompleted();
         this.email = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getEmailAddress();
         this.timesheetID = timesheet.getID();
-    }
 
+        if (timesheet.firstEntry() != null) {
+            this.firstEntryDate = timesheet.firstEntry().getBeginDate();
+        }
+    }
 
     public String getUserName() {
         return userName;
@@ -204,5 +205,4 @@ public class JsonUserInformation {
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
-    
 }

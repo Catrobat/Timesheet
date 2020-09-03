@@ -91,15 +91,8 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
             jsonEntries.add(new JsonTimesheetEntry(entry));
         }
 
-
-        TimesheetEntry firstEntry = entryService.getFirstEntry(timesheet);
-        Date firstEntryDate = null;
-        if(firstEntry != null){
-            firstEntryDate = firstEntry.getBeginDate();
-        }
-
         Gson gson = new Gson();
-        String jsonString = gson.toJson(new JsonTimesheetAndEntries(new JsonTimesheet(timesheet, firstEntryDate), jsonEntries));
+        String jsonString = gson.toJson(new JsonTimesheetAndEntries(new JsonTimesheet(timesheet), jsonEntries));
 
         PrintStream printStream = new PrintStream(response.getOutputStream(), false, "UTF-8");
         printStream.print(jsonString);

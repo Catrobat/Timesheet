@@ -61,14 +61,7 @@ public class DatabaseUtil {
                 List<JsonTimesheet> timesheetList = new ArrayList<>();
                 Timesheet[] timesheets = ao.find(Timesheet.class, query);
                 for (Timesheet timesheet : timesheets) {
-
-                    TimesheetEntry firstEntry = timesheetEntryService.getFirstEntry(timesheet);
-                    Date firstEntryDate = null;
-                    if(firstEntry != null){
-                        firstEntryDate = firstEntry.getBeginDate();
-                    }
-
-                    timesheetList.add(new JsonTimesheet(timesheet, firstEntryDate));
+                    timesheetList.add(new JsonTimesheet(timesheet));
                 }
                 return timesheetList;
             case "TimesheetEntry":

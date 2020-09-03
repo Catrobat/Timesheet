@@ -144,14 +144,7 @@ public class UserRest {
                 continue;
             }
 
-
-            TimesheetEntry firstEntry = timesheetEntryService.getFirstEntry(timesheet);
-            Date firstEntryDate = null;
-            if(firstEntry != null){
-                firstEntryDate = firstEntry.getBeginDate();
-            }
-
-            JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet, firstEntryDate);
+            JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
 
             Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
 
@@ -279,13 +272,7 @@ public class UserRest {
                 continue;
             }
 
-            TimesheetEntry firstEntry = timesheetEntryService.getFirstEntry(timesheet);
-            Date firstEntryDate = null;
-            if(firstEntry != null){
-                firstEntryDate = firstEntry.getBeginDate();
-            }
-
-            JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet, firstEntryDate);
+            JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
 
             String userName = jsonUserInformation.getUserName();
             ApplicationUser applicationUser = ComponentAccessor.getUserManager().getUserByName(userName);

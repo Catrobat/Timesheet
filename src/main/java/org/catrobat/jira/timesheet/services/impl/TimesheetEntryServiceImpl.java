@@ -219,15 +219,6 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     }
 
     @Override
-    public TimesheetEntry getFirstEntry(Timesheet timesheet) {
-        TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
-        if (entries.length == 0) {
-            return null;
-        }
-        return entries[entries.length-1];
-    }
-
-    @Override
     public TimesheetEntry getLatestEntry(Timesheet timesheet) {
         TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
         if (entries.length == 0) {

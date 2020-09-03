@@ -93,13 +93,7 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
             }
 
 
-            TimesheetEntry firstEntry = entryService.getFirstEntry(timesheet);
-            Date firstEntryDate = null;
-            if(firstEntry != null){
-                firstEntryDate = firstEntry.getBeginDate();
-            }
-
-            JsonTimesheetAndEntries jsonTimesheetAndEntries = new JsonTimesheetAndEntries(new JsonTimesheet(timesheet, firstEntryDate), jsonEntries);
+            JsonTimesheetAndEntries jsonTimesheetAndEntries = new JsonTimesheetAndEntries(new JsonTimesheet(timesheet), jsonEntries);
             timesheetAndEntriesList.add(jsonTimesheetAndEntries);
         }
 
