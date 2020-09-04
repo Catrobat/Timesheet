@@ -21,9 +21,9 @@ var restBaseUrl;
 AJS.toInit(function () {
     window.onbeforeunload = null;
     var baseUrl = AJS.params.baseURL;
+
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
-    var timesheet = [];
     var errorMessage;
     var fetchingErrorMessage;
 
@@ -74,10 +74,13 @@ AJS.toInit(function () {
 
             var done = userInformation[i].state === "DONE";
 
-            var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
-
-            var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
-                "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
+            var timesheetId = userInformation[i].timesheetID;
+            var dropdown =  "<aui-button id='button" + timesheetId + "' class='aui-button aui-dropdown2-trigger' aria-controls='active-timesheet" + timesheetId + "'>Actions</aui-button>";
+            dropdown += "<aui-dropdown-menu id='active-timesheet" + timesheetId + "' >";
+            dropdown += "<aui-item-link href='#' class='actions-open' value='SHOW'>Open Timesheet</aui-item-link>";
+            dropdown += "<aui-item-link href='#' class='actions-enable' value='ACTIVE'>Enable Timesheet</aui-item-link>";
+            dropdown += "<aui-item-link href='#' class='actions-disable' value='DISABLED'>Disable Timesheet</aui-item-link>";
+            dropdown += "</aui-dropdown-menu>";
 
             var current_state = userInformation[i].state;
             var current_state_color = "black";
@@ -102,25 +105,23 @@ AJS.toInit(function () {
 
             var profile_link = AJS.params.baseURL + "\/secure\/ViewProfile.jspa?name=" ;
 
-        	var enabledColumn = "</td><td headers='ti-enabled'>" + enableButton;
+        	var enabledColumn = "</td><td headers='ti-actions'>" + dropdown;
         	var row = "<tr>" +
             "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
-            "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
             "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
-            "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
+                "</td><td headers='ti-state' class='state' id='state"+ timesheetId + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
             "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
             "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
             "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
             "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
-            "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
             "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
+            "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
             "</td><td headers='ti-first-entry-date' class='latest-date'>" + firstEntryDate +
             "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
             "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
-            enabledColumn +
-            "</td></tr>";
-
+                enabledColumn +  "</td></tr>";
+        	
         	if (userInformation[i].state === "DONE") {
         		AJS.$("#done-user-info-table-content").append(row);
         	}
@@ -133,7 +134,9 @@ AJS.toInit(function () {
 
 
             var timesheetID = userInformation[i].timesheetID;
-            setEnableButton(timesheetID, enabled);
+
+            setupDropdownButton(timesheetID, enabled);
+
 
             AJS.$("[name=user-" + userInformation[i].userName + "-profile]").attr("href" , profile_link);
         }
@@ -199,21 +202,30 @@ AJS.toInit(function () {
         AJS.$(".loadingDiv").hide();
     }
 
-    function setEnableButton(timesheetID, enabled) {
-        var button = AJS.$("#button" + timesheetID);
-        button.prop("onclick", null).off("click");
-        if (enabled) {
-            button.text("Disable Timesheet");
-            button.click(function () {
-                setTimesheetState(timesheetID, false)
-            });
-            button.css("background", "");
-        } else {
-            button.text("Enable Timesheet");
-            button.click(function () {
-                setTimesheetState(timesheetID, true)
-            });
-            button.css("background", "red");
+    function setupDropdownButton(timesheetID, enabled) {
+        var dropdown = document.getElementById("active-timesheet" + timesheetID);
+        var buttonOpen = AJS.$(dropdown).find(".actions-open");
+        var buttonDisable = AJS.$(dropdown).find(".actions-disable");
+        var buttonEnable = AJS.$(dropdown).find(".actions-enable");
+
+        buttonOpen.on("click", function() {
+            window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
+        });
+
+        buttonDisable.on("click", function() {
+            setTimesheetState(timesheetID, false);
+        });
+
+        buttonEnable.on("click", function() {
+            setTimesheetState(timesheetID, true);
+        });
+
+        if (enabled)  {
+            buttonDisable.show();
+            buttonEnable.hide();
+        }  else  {
+            buttonDisable.hide();
+            buttonEnable.show();
         }
     }
 
@@ -236,7 +248,9 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
-                setEnableButton(timesheetID, enabled);
+
+                setupDropdownButton(timesheetID, enabled);
+
                 if (enabled) {
                     AJS.$("#state" + timesheetID).text("ACTIVE");
                 } else {
@@ -265,7 +279,7 @@ AJS.toInit(function () {
             tempData.timesheetID = users[i].timesheetID;
             var tmpCheckBox = AJS.$("#checkBox" + users[i].timesheetID);
             tempData.isEnabled = tmpCheckBox.prop("checked");
-//            console.log(tempData);
+
             data.push(tempData);
         }
 
