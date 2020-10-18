@@ -52,8 +52,8 @@
                 }
             });
 
-            function redirectToTimesheet() {
-                window.open("$applicationProperties.getBaseUrl()/plugins/servlet/timesheet","_self");
+            function redirectToDashboard() {
+                window.open("/jira/secure/Dashboard.jspa","_self");
             }
 
             function displayFaultyEntries(json) {
@@ -107,8 +107,8 @@
 
         <br><br>
         <div class ="field-group">
-            <input type="button" value="redirect to Timesheet" class="aui-button aui-button-primary"
-                   onclick="redirectToTimesheet()"/>
+            <input type="button" value="redirect to Dashboard" class="aui-button aui-button-primary"
+                   onclick="redirectToDashboard()"/>
         </div>
     </body>
 </html>
