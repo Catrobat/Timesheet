@@ -107,7 +107,8 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     }
 
     private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) throws ServiceException {
-        int completedHours = getTotalHours(sheet);
+
+        int completedHours = sheet.getTotalHours();
         int completedPracticeHours = getPracticeHoursOfTimesheet(sheet);
         Date latestEntryDate = getLatestEntry(sheet).getBeginDate();
 
@@ -127,26 +128,6 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         }
 
         timesheetService.updateTimesheet(sheet.getID(), completedHours, completedPracticeHours, latestEntryDate, state);
-    }
-
-
-    public int getTotalHours(Timesheet timesheet)
-    {
-        TimesheetEntry[] TimeSheetEntryiesArray = timesheet.getEntries();
-
-        int sumTotalMinutes = 0;
-
-        if (TimeSheetEntryiesArray == null || TimeSheetEntryiesArray.length == 0) {
-            return 0;
-        }
-
-        for (TimesheetEntry entry : TimeSheetEntryiesArray)
-        {
-            sumTotalMinutes = sumTotalMinutes + (entry.getDurationMinutes() - entry.getPauseMinutes());
-        }
-
-        return (sumTotalMinutes / 60);
-
     }
 
     private int getPracticeHoursOfTimesheet(Timesheet sheet) {
