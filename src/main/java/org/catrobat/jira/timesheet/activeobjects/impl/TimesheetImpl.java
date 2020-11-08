@@ -42,7 +42,7 @@ public class TimesheetImpl {
         return entries.get(0);
     }
 
-    public final int getTotalHours()
+    public final int calculateTotalHours()
     {
         TimesheetEntry[] TimeSheetEntryiesArray = timesheet.getEntries();
 
@@ -54,7 +54,7 @@ public class TimesheetImpl {
 
         for (TimesheetEntry entry : TimeSheetEntryiesArray)
         {
-            sumTotalMinutes = sumTotalMinutes + (entry.getDurationMinutes() - entry.getPauseMinutes());
+            sumTotalMinutes = sumTotalMinutes + entry.getDurationMinutes();
         }
 
         return (sumTotalMinutes / 60);
