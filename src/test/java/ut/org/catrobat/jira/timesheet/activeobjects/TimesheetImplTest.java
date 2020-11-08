@@ -57,7 +57,7 @@ public class TimesheetImplTest {
 
         TimesheetImpl timesheet = new TimesheetImpl(timesheetMock);
 
-        int totalHours = (int) timesheet.getTotalHours();
+        int totalHours = (int) timesheet.calculateTotalHours();
         // Temporary workaround with int till getHours is calculated in float
 
         assertEquals((Float.compare((float) totalHours, (float) (int) compareValue) == 0), true);
@@ -75,7 +75,7 @@ public class TimesheetImplTest {
 
         TimesheetImpl timesheet = new TimesheetImpl(timesheetMock);
 
-        int totalHours = timesheet.getTotalHours();
+        int totalHours = timesheet.calculateTotalHours();
         assertEquals((Float.compare(totalHours, compareValue) == 0), true);
 
     }
@@ -86,7 +86,7 @@ public class TimesheetImplTest {
         Timesheet timesheetMock = mock(Timesheet.class);
         TimesheetImpl timesheet = new TimesheetImpl(timesheetMock);
 
-        float totalHours = timesheet.getTotalHours();
+        float totalHours = timesheet.calculateTotalHours();
         assertEquals((Float.compare(totalHours, compareValue) == 0), true);
 
     }
