@@ -108,7 +108,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) throws ServiceException {
 
-        int completedHours = sheet.getTotalHours();
+        int completedHours = sheet.calculateTotalHours();
         int completedPracticeHours = getPracticeHoursOfTimesheet(sheet);
         Date latestEntryDate = getLatestEntry(sheet).getBeginDate();
 
@@ -177,6 +177,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Override
     public void delete(TimesheetEntry entry) {
         ao.delete(entry);
+
     }
 
 

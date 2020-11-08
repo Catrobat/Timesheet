@@ -65,15 +65,14 @@ public interface Timesheet extends Entity {
         ACTIVE, INACTIVE, AUTO_INACTIVE, INACTIVE_OFFLINE, DISABLED, DONE
     }
 
-    int getTotalHours();
-    void setTotalHours(int totalHours);
-
     @OneToMany(reverse = "getTimeSheet")
     TimesheetEntry[] getEntries();
 
     @Ignore
     TimesheetEntry firstEntry();
 
-
+    @Ignore
+    int calculateTotalHours();
+    void  setCalculateTotalHours();
 
 }
