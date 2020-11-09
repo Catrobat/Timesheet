@@ -52,8 +52,7 @@ public class TimesheetImpl {
             return 0;
         }
 
-        for (TimesheetEntry entry : TimeSheetEntryiesArray)
-        {
+        for (TimesheetEntry entry : TimeSheetEntryiesArray)  {
             sumTotalMinutes = sumTotalMinutes + entry.getDurationMinutes();
         }
 

@@ -73,6 +73,5 @@ public interface Timesheet extends Entity {
 
     @Ignore
     int calculateTotalHours();
-    void  setCalculateTotalHours();
 
 }
