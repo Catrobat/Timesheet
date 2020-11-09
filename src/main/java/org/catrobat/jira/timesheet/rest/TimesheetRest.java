@@ -829,7 +829,7 @@ public class TimesheetRest {
             state = Timesheet.State.ACTIVE;
         }
 
-        int deducted_hours = sheet.getHoursCompleted() - entry.getDurationMinutes() / 60;
+        int deducted_hours = sheet.calculateTotalHours() - entry.getDurationMinutes() / 60;
 
         entryService.delete(entry);
 
