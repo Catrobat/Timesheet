@@ -234,6 +234,43 @@ public class TimesheetEntryServiceImplTest {
     }
 
     @Test
+    public void testDeleteTimesheetEntryCheckCompleted() throws Exception {
+        //Arrange
+        int hoursTotal;
+        int hoursTotalAfterDelete;
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        Date beginFirstEntry = new Date();
+
+        Date endFirstEntry = new Date(beginFirstEntry.getTime() + oneHourInMS);
+        Date beginSecondEntry = new Date(endFirstEntry.getTime() + oneHourInMS);
+        Date endSecondEntry = new Date(beginSecondEntry.getTime() + 2 * oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        //Act
+        service.add(sheet, beginFirstEntry, endFirstEntry, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+        service.add(sheet, beginSecondEntry, endSecondEntry, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+        hoursTotal = sheet.calculateTotalHours();
+
+        TimesheetEntry[] entriesBeforeDelete = ao.find(TimesheetEntry.class);
+
+        service.delete(entriesBeforeDelete[0]);
+        TimesheetEntry[] entriesAfterDelete = ao.find(TimesheetEntry.class);
+        hoursTotalAfterDelete = sheet.calculateTotalHours();
+
+        Assert.assertTrue(hoursTotalAfterDelete < hoursTotal);
+    }
+
+    @Test
     public void testEditTimesheetEntryWithSetter() throws Exception {
         //Arrange
         long oneHourInMS = 60 * 60 * 1000;
