@@ -48,8 +48,9 @@ import static org.junit.Assert.*;
 
 public class TimesheetEntryServiceImplTest {
 
-    private EntityManager entityManager;
     private TimesheetEntryService service;
+    private TimesheetService timesheetService;
+    private EntityManager entityManager;
     private ActiveObjects ao;
 
     private static final Date TODAY = new Date();
@@ -58,7 +59,7 @@ public class TimesheetEntryServiceImplTest {
     public void setUp() throws Exception {
         assertNotNull(entityManager);
         ao = new TestActiveObjects(entityManager);
-        TimesheetService timesheetService = new TimesheetServiceImpl(ao);
+        timesheetService = new TimesheetServiceImpl(ao);
         service = new TimesheetEntryServiceImpl(ao, timesheetService);
     }
 
@@ -220,24 +221,53 @@ public class TimesheetEntryServiceImplTest {
         String jiraTicketID = "CAT-1530";
         String pairProgrammingUserName = "TestUser";
         boolean teamroom = true;
-        
 
         //Act
-        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+        TimesheetEntry firstEntry = service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
-        TimesheetEntry[] entriesBeforeDelete = ao.find(TimesheetEntry.class);
+        TimesheetEntry secondEntry = service.add(sheet, end, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
 
-        service.delete(entriesBeforeDelete[0]);
-        TimesheetEntry[] entriesAfterDelete = ao.find(TimesheetEntry.class);
+        int entriesBeforeDelete = sheet.getEntries().length;
 
-        Assert.assertTrue(entriesBeforeDelete.length > entriesAfterDelete.length);
+        service.delete(firstEntry);
+
+        Timesheet updatedSheet = timesheetService.getTimesheetByID(sheet.getID());
+        assertNotNull(updatedSheet);
+
+        int entriesAfterDelete = updatedSheet.getEntries().length;
+        assertEquals(entriesBeforeDelete - 1, entriesAfterDelete);
+        assertEquals(secondEntry.getID(), updatedSheet.getEntries()[0].getID());
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testDeleteFirstTimesheetEntryAndFail() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        //Act
+        TimesheetEntry entry = service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+
+        assertEquals(1, sheet.getEntries().length);
+
+        service.delete(entry);
     }
 
     @Test
     public void testDeleteTimesheetEntryCheckCompleted() throws Exception {
         //Arrange
-        int hoursTotal;
-        int hoursTotalAfterDelete;
         long oneHourInMS = 60 * 60 * 1000;
         Timesheet sheet = createTestTimesheet();
         Category category = createTestCategory();
@@ -255,19 +285,25 @@ public class TimesheetEntryServiceImplTest {
         boolean teamroom = true;
 
         //Act
-        service.add(sheet, beginFirstEntry, endFirstEntry, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+        TimesheetEntry firstEntry = service.add(sheet, beginFirstEntry, endFirstEntry, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
-        service.add(sheet, beginSecondEntry, endSecondEntry, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+        TimesheetEntry secondEntry = service.add(sheet, beginSecondEntry, endSecondEntry, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
-        hoursTotal = sheet.calculateTotalHours();
 
-        TimesheetEntry[] entriesBeforeDelete = ao.find(TimesheetEntry.class);
+        int durationInHours = firstEntry.getDurationMinutes() / 60 + secondEntry.getDurationMinutes() / 60;
 
-        service.delete(entriesBeforeDelete[0]);
-        TimesheetEntry[] entriesAfterDelete = ao.find(TimesheetEntry.class);
-        hoursTotalAfterDelete = sheet.calculateTotalHours();
+        Timesheet updatedTimesheet = timesheetService.getTimesheetByID(sheet.getID());
+        assertNotNull(updatedTimesheet);
+        assertEquals(durationInHours, updatedTimesheet.calculateTotalHours());
+        assertEquals(durationInHours, updatedTimesheet.getHoursCompleted());
 
-        Assert.assertTrue(hoursTotalAfterDelete < hoursTotal);
+        service.delete(firstEntry);
+
+        updatedTimesheet = ao.find(Timesheet.class, "USER_KEY = ?", sheet.getUserKey())[0];
+
+        durationInHours = secondEntry.getDurationMinutes() / 60;
+        assertEquals(durationInHours, updatedTimesheet.calculateTotalHours());
+        assertEquals(durationInHours, updatedTimesheet.getHoursCompleted());
     }
 
     @Test

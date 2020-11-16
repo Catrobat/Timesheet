@@ -107,12 +107,17 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     }
 
     private void updateTimesheet(Timesheet sheet, TimesheetEntry entry) throws ServiceException {
+        Timesheet updatedTimesheet = timesheetService.getTimesheetByID(sheet.getID());
 
-        int completedHours = sheet.calculateTotalHours();
-        int completedPracticeHours = getPracticeHoursOfTimesheet(sheet);
-        Date latestEntryDate = getLatestEntry(sheet).getBeginDate();
+        if (updatedTimesheet == null) {
+            return;
+        }
 
-        Timesheet.State state = sheet.getState();
+        int completedHours = updatedTimesheet.calculateTotalHours();
+        int completedPracticeHours = getPracticeHoursOfTimesheet(updatedTimesheet);
+        Date latestEntryDate = getLatestEntry(updatedTimesheet).getBeginDate();
+
+        Timesheet.State state = updatedTimesheet.getState();
         if ((entry.getInactiveEndDate().compareTo(entry.getBeginDate()) > 0)) {
             if (entry.getCategory().getName().equals(SpecialCategories.INACTIVE)) {
                 state = Timesheet.State.INACTIVE;
@@ -123,11 +128,11 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
             }
         }
 
-        if (sheet.getState() == Timesheet.State.AUTO_INACTIVE) {
+        if (updatedTimesheet.getState() == Timesheet.State.AUTO_INACTIVE) {
             state = Timesheet.State.ACTIVE;
         }
 
-        timesheetService.updateTimesheet(sheet.getID(), completedHours, completedPracticeHours, latestEntryDate, state);
+        timesheetService.updateTimesheet(updatedTimesheet.getID(), completedHours, completedPracticeHours, latestEntryDate, state);
     }
 
     private int getPracticeHoursOfTimesheet(Timesheet sheet) {
@@ -175,11 +180,18 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     }
 
     @Override
-    public void delete(TimesheetEntry entry) {
+    public void delete(TimesheetEntry entry) throws ServiceException {
+        Timesheet timesheet = entry.getTimeSheet();
+
+        if (timesheet.getEntries().length == 1) {
+            throw new ServiceException("Can not delete first entry");
+        }
+
         ao.delete(entry);
 
+        TimesheetEntry latestEntry = getLatestEntry(timesheet);
+        updateTimesheet(timesheet, latestEntry);
     }
-
 
     @Override
     public int getHoursOfLastXMonths(Timesheet sheet, int months) {

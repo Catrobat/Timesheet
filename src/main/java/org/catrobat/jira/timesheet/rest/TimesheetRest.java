@@ -783,7 +783,7 @@ public class TimesheetRest {
     @DELETE
     @Path("entries/{entryID}")
     public Response deleteTimesheetEntry(@Context HttpServletRequest request,
-                                         @PathParam("entryID") int entryID) {
+                                         @PathParam("entryID") int entryID) throws ServiceException {
         ApplicationUser user;
         try {
             user = permissionService.checkIfUserExists();
@@ -829,34 +829,31 @@ public class TimesheetRest {
             state = Timesheet.State.ACTIVE;
         }
 
-        int deducted_hours = sheet.calculateTotalHours() - entry.getDurationMinutes() / 60;
+        int deducted_hours = sheet.getHoursCompleted() - entry.getDurationMinutes() / 60;
 
-        entryService.delete(entry);
+        try {
+            entryService.delete(entry);
 
-        //update latest timesheet entry date if latest entry date is < new latest entry in the table
-        if (sheet.getEntries().length > 0) {
-            if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
-                try {
+            //update latest timesheet entry date if latest entry date is < new latest entry in the table
+            if (sheet.getEntries().length > 0) {
+                if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
                     sheetService.editTimesheets(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
                             sheet.getTargetHours(), deducted_hours,
                             sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                             entryService.getLatestEntry(sheet).getBeginDate(), state);
-                } catch (ServiceException e) {
-                    return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
                 }
-            }
-        } else {
-            try {
+            } else {
                 sheetService.editTimesheets(ComponentAccessor.
                                 getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
                         sheet.getTargetHours(), deducted_hours,
                         sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                         new Date(), sheet.getState());
-            } catch (ServiceException e) {
-                return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
             }
+        } catch (ServiceException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
+
         return Response.ok().build();
     }
 

@@ -43,19 +43,18 @@ public class TimesheetImpl {
     }
 
     public final int calculateTotalHours()     {
-        TimesheetEntry[] TimeSheetEntryiesArray = timesheet.getEntries();
+        TimesheetEntry[] entries = timesheet.getEntries();
 
         int sumTotalMinutes = 0;
 
-        if (TimeSheetEntryiesArray == null || TimeSheetEntryiesArray.length == 0) {
+        if (entries == null || entries.length == 0) {
             return 0;
         }
 
-        for (TimesheetEntry entry : TimeSheetEntryiesArray)  {
+        for (TimesheetEntry entry : entries)  {
             sumTotalMinutes = sumTotalMinutes + entry.getDurationMinutes();
         }
 
         return (sumTotalMinutes / 60);
-
     }
 }
