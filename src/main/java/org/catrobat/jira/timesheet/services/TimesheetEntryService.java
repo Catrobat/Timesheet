@@ -40,7 +40,7 @@ public interface TimesheetEntryService {
 
     TimesheetEntry[] getEntriesBySheet(Timesheet sheet);
 
-    void delete(TimesheetEntry entry);
+    void delete(TimesheetEntry entry) throws ServiceException;
 
     int getHoursOfLastXMonths(Timesheet sheet, int months);
 
