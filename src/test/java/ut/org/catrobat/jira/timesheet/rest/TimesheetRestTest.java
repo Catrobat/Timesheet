@@ -121,7 +121,6 @@ public class TimesheetRestTest {
         when(sheet.getLectures()).thenReturn("Mobile Computing");
         Date latestEntryDate = new Date();
         when(sheet.getLatestEntryBeginDate()).thenReturn(latestEntryDate);
-        when(sheet.getHoursPracticeCompleted()).thenReturn(50);
         when(sheet.getTargetHours()).thenReturn(150);
         when(sheet.getHoursCompleted()).thenReturn(50);
         when(sheet.getHoursDeducted()).thenReturn(0);

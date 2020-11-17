@@ -838,14 +838,14 @@ public class TimesheetRest {
             if (sheet.getEntries().length > 0) {
                 if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
                     sheetService.editTimesheets(ComponentAccessor.
-                                    getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
+                                    getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursCompleted(),
                             sheet.getTargetHours(), deducted_hours,
                             sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                             entryService.getLatestEntry(sheet).getBeginDate(), state);
                 }
             } else {
                 sheetService.editTimesheets(ComponentAccessor.
-                                getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
+                                getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursCompleted(),
                         sheet.getTargetHours(), deducted_hours,
                         sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                         new Date(), sheet.getState());

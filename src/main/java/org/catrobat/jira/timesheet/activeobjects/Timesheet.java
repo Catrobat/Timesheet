@@ -36,9 +36,6 @@ public interface Timesheet extends Entity {
     String getDisplayName();
     void setDisplayName(String name);
 
-    int getHoursPracticeCompleted();
-    void setHoursPracticeCompleted(int hours);
-
     int getHoursCompleted();
     void setHoursCompleted(int hours);
 

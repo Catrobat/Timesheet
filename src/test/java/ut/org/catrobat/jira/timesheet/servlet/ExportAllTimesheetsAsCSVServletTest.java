@@ -75,7 +75,7 @@ public class ExportAllTimesheetsAsCSVServletTest {
         when(permissionService.checkIfUserIsGroupMember(PermissionService.JIRA_ADMINISTRATORS)).thenReturn(false);
         when(permissionService.checkIfUserIsGroupMember("Timesheet")).thenReturn(true);
 
-        when(timesheet.getHoursPracticeCompleted()).thenReturn(50);
+        when(timesheet.getHoursCompleted()).thenReturn(50);
         when(timesheet.getTargetHours()).thenReturn(300);
         when(timesheet.getHoursCompleted()).thenReturn(150);
         when(timesheet.getLatestEntryBeginDate()).thenReturn(new Date());

@@ -139,7 +139,7 @@
                             <th id="ti-inactive-end-date">Inactive End Date</th>
                             <th id="ti-remaining-hours">Remaining Hours</th>
                             <th id="ti-target-total-hours">Target Total Hours</th>
-                            <th id="ti-total-practice-hours">Total Practice Hours</th>
+                            <th id="ti-total-practice-hours">Finished Hours</th>
                             <th id="ti-hours-per-half-year">Hours last Half Year</th>
                             <th id="ti-hours-per-month">Hours last Month</th>
                             <th id="ti-latest-entry-date">Date of the Latest Entry</th>

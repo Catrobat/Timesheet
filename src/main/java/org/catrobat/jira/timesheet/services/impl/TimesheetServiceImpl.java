@@ -65,7 +65,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         for(Timesheet sheet : found) {
             //if (isMasterThesisTimesheet == aFound.getIsMasterThesisTimesheet()) {
             //sheet.setDisplayName(user.getDisplayName());
-            sheet.setHoursPracticeCompleted(hoursPracticeCompleted);
+
             sheet.setTargetHours(targetHours);
             sheet.setHoursCompleted(hoursCompleted);
             sheet.setHoursDeducted(hoursDeducted);
@@ -85,7 +85,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     		Date latestEntryDate, Timesheet.State state) {
         Timesheet timesheet = ao.get(Timesheet.class, id);
         timesheet.setHoursCompleted(targetHoursCompleted);
-        timesheet.setHoursPracticeCompleted(targetHoursPractice);
+        timesheet.setHoursCompleted(targetHoursPractice);
         timesheet.setLatestEntryBeginDate(latestEntryDate);
         timesheet.setState(state);
         timesheet.save();
@@ -107,7 +107,6 @@ public class TimesheetServiceImpl implements TimesheetService {
             new DBParam("USER_KEY", userKey)
         );
         sheet.setDisplayName(displayName);
-        sheet.setHoursPracticeCompleted(targetHoursPractice);
         sheet.setTargetHours(targetHours);
         sheet.setHoursCompleted(targetHoursCompleted);
         sheet.setHoursDeducted(targetHoursRemoved);

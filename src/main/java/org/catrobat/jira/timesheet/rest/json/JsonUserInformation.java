@@ -61,7 +61,7 @@ public class JsonUserInformation {
 				+ timesheet.getHoursDeducted());
         this.targetTotalHours = timesheet.getTargetHours();
 
-        this.totalPracticeHours = timesheet.getHoursPracticeCompleted();
+        this.totalPracticeHours = timesheet.getHoursCompleted();
         this.email = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getEmailAddress();
         this.timesheetID = timesheet.getID();
 
