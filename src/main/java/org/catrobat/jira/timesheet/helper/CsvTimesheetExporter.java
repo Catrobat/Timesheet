@@ -51,8 +51,6 @@ public class CsvTimesheetExporter {
 
         sb.append(timesheet.getUserKey()).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getHoursCompleted())).append(DELIMITER);
-
-        sb.append(Integer.toString(timesheet.getHoursCompleted())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getHoursDeducted())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHours())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getHoursCompleted())).append(DELIMITER);
