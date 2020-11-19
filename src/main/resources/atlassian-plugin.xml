@@ -138,6 +138,10 @@
         <url-pattern>/download/timesheet</url-pattern>
     </servlet>
 
+    <servlet key="download-timesheet-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsXlsxServlet">
+        <url-pattern>/download/timesheet/xslx</url-pattern>
+    </servlet>
+
     <servlet key="download-timesheet-json-servlet" class="org.catrobat.jira.timesheet.servlet.ExportTimesheetAsJsonServlet">
         <url-pattern>/download/timesheet/json</url-pattern>
     </servlet>
