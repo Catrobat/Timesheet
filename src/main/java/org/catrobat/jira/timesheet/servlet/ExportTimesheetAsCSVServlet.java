@@ -53,7 +53,7 @@ public class ExportTimesheetAsCSVServlet extends HttpServlet {
                 actualDate.toString().substring(25, 28) +
                 "-" +
                 loggedInUser.getUsername() +
-                "_Timesheet.xlsx\"";
+                "_Timesheet.csv\"";
 
         String id = request.getParameter("id");
 

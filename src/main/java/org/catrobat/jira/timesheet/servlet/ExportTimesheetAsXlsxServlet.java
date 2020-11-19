@@ -22,7 +22,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
-import org.catrobat.jira.timesheet.helper.CsvTimesheetExporter;
+import org.catrobat.jira.timesheet.helper.XlsxTimesheetExporter;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 
@@ -33,11 +33,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import static org.catrobat.jira.timesheet.helper.XlsxTimesheetExporter.getTimeSheetAsWorkSheet;
 
 
 public class ExportTimesheetAsXlsxServlet extends HttpServlet {
@@ -63,48 +66,12 @@ public class ExportTimesheetAsXlsxServlet extends HttpServlet {
                 loggedInUser.getUsername() +
                 "_Timesheet.xlsx\"";
 
+        List<Timesheet> timesheetList = timesheetService.all();
+
         // Exclude in pom.xml required!
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("TimeSheet Export");
-        XSSFSheet sheet1 = workbook.createSheet("TimeSheet Export 2");
-        // TestData
-        Object[][] datatypes = {
-                {"Datatype", "Type", "Size(in bytes)"},
-                {"int", "Primitive", 2},
-                {"float", "Primitive", 4},
-                {"double", "Primitive", 8},
-                {"char", "Primitive", 1},
-                {"String", "Non-Primitive", "No fixed size"}
-        };
-
-        int rowNum = 0;
-        System.out.println("Creating excel");
-
-        for (Object[] datatype : datatypes) {
-            Row row = sheet.createRow(rowNum++);
-            int colNum = 0;
-            for (Object field : datatype) {
-                Cell cell = row.createCell(colNum++);
-                if (field instanceof String) {
-                    cell.setCellValue((String) field);
-                } else if (field instanceof Integer) {
-                    cell.setCellValue((Integer) field);
-                }
-            }
-        }
-        for (Object[] datatype : datatypes) {
-            Row row = sheet1.createRow(rowNum++);
-            int colNum = 0;
-            for (Object field : datatype) {
-                Cell cell = row.createCell(colNum++);
-                if (field instanceof String) {
-                    cell.setCellValue((String) field);
-                } else if (field instanceof Integer) {
-                    cell.setCellValue((Integer) field);
-                }
-            }
-        }
-//  End Test Data
+        XSSFSheet sheetTimeSheet = workbook.createSheet("TimeSheets");
+        XSSFSheet sheetTimeSheetEntries = workbook.createSheet("Timesheet entries");
 
 
         String id = request.getParameter("id");
@@ -123,16 +90,17 @@ public class ExportTimesheetAsXlsxServlet extends HttpServlet {
             e.printStackTrace();
         }
 
+
+        sheetTimeSheet = getTimeSheetAsWorkSheet(sheetTimeSheet,timesheetList );
+
+
         if (!permissionService.userCanViewTimesheet(loggedInUser, timesheet)) {
             response.sendError(HttpServletResponse.SC_CONFLICT, "You are not allowed to see the timesheet.");
         }
 
-        CsvTimesheetExporter csvTimesheetExporterSingle = new CsvTimesheetExporter();
-        //PrintStream printStream = new PrintStream(response.getOutputStream(), false, "UTF-8");
+
         workbook.write(response.getOutputStream());
         workbook.close();
-        //printStream.print(csvTimesheetExporterSingle.getTimesheetCsvData(timesheet));
-        //printStream.flush();
-        //printStream.close();
+
     }
 }

@@ -16,6 +16,9 @@
 
 package org.catrobat.jira.timesheet.helper;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
 
@@ -29,12 +32,52 @@ public class XlsxTimesheetExporter {
     public XlsxTimesheetExporter() {
     }
 
-    public String getTimesheetCsvDataAll(List<Timesheet> timesheetList) {
-        StringBuilder timesheetData = new StringBuilder();
-        for (Timesheet timesheet : timesheetList) {
-            timesheetData.append(getTimesheetCsvData(timesheet));
+
+
+    public static XSSFSheet getTimeSheetAsWorkSheet(XSSFSheet workTimeSheet, List<Timesheet> timesheetList)
+    {
+        String[] header = {"Username","Practical Hours","Hours Done","Subtracted Hours","Total Hours","Remaining Hours","Penalty Text","Lecture"};
+        int rownum = 0;
+        int column = 0;
+        Row headerRow = workTimeSheet.createRow(rownum);
+        for (String headerColumn : header) {
+            Cell cell = headerRow.createCell(column++);
+            cell.setCellValue((String) headerColumn);
         }
-        return timesheetData.toString();
+        rownum++;
+
+        if (timesheetList.size() > 0) {
+            for (Timesheet timesheet : timesheetList) {
+                Row dataRow = workTimeSheet.createRow(rownum);
+                Cell cellUserName = dataRow.createCell(0);
+                cellUserName.setCellValue((String) timesheet.getUserKey());
+
+                Cell cellPracticalHours = dataRow.createCell(1);
+                cellPracticalHours.setCellValue((int) timesheet.getHoursPracticeCompleted());
+
+                Cell cellHoursDone = dataRow.createCell(2);
+                cellHoursDone.setCellValue((int) timesheet.getHoursCompleted());
+
+                Cell cellSubtractedHours = dataRow.createCell(3);
+                cellSubtractedHours.setCellValue((int) timesheet.getHoursDeducted());
+
+                Cell cellTotalHours = dataRow.createCell(4);
+                cellTotalHours.setCellValue((int) timesheet.getTargetHours());
+
+                Cell cellRemaininglHours = dataRow.createCell(5);
+                cellRemaininglHours.setCellValue((int) timesheet.getTargetHours() - timesheet.getHoursCompleted());
+
+                Cell cellPenaltyText = dataRow.createCell(6);
+                cellPenaltyText.setCellValue((String) timesheet.getReason());
+
+                Cell cellLecture = dataRow.createCell(7);
+                cellLecture.setCellValue((String) timesheet.getLectures());
+
+                rownum++;
+            }
+        }
+
+        return workTimeSheet;
     }
 
     public String getTimesheetCsvData(Timesheet timesheet) {
