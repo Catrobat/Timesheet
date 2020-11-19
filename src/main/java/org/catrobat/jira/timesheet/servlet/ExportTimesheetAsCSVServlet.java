@@ -53,7 +53,7 @@ public class ExportTimesheetAsCSVServlet extends HttpServlet {
                 actualDate.toString().substring(25, 28) +
                 "-" +
                 loggedInUser.getUsername() +
-                "_Timesheet.csv\"";
+                "_Timesheet.xlsx\"";
 
         String id = request.getParameter("id");
 
@@ -77,6 +77,7 @@ public class ExportTimesheetAsCSVServlet extends HttpServlet {
 
         CsvTimesheetExporter csvTimesheetExporterSingle = new CsvTimesheetExporter();
         PrintStream printStream = new PrintStream(response.getOutputStream(), false, "UTF-8");
+
         printStream.print(csvTimesheetExporterSingle.getTimesheetCsvData(timesheet));
         printStream.flush();
         printStream.close();
