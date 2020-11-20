@@ -41,6 +41,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import static org.catrobat.jira.timesheet.helper.XlsxTimesheetExporter.getTimeSheetAsWorkSheet;
+import static org.catrobat.jira.timesheet.helper.XlsxTimesheetExporter.getTimeSheetEntityAsWorkSheet;
 
 
 public class ExportTimesheetAsXlsxServlet extends HttpServlet {
@@ -73,7 +74,6 @@ public class ExportTimesheetAsXlsxServlet extends HttpServlet {
         XSSFSheet sheetTimeSheet = workbook.createSheet("TimeSheets");
         XSSFSheet sheetTimeSheetEntries = workbook.createSheet("Timesheet entries");
 
-
         String id = request.getParameter("id");
 
         response.setContentType("application/vnd.ms-excel");
@@ -90,14 +90,12 @@ public class ExportTimesheetAsXlsxServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-
         sheetTimeSheet = getTimeSheetAsWorkSheet(sheetTimeSheet,timesheetList );
-
+        sheetTimeSheetEntries = getTimeSheetEntityAsWorkSheet(sheetTimeSheetEntries, timesheetList);
 
         if (!permissionService.userCanViewTimesheet(loggedInUser, timesheet)) {
             response.sendError(HttpServletResponse.SC_CONFLICT, "You are not allowed to see the timesheet.");
         }
-
 
         workbook.write(response.getOutputStream());
         workbook.close();

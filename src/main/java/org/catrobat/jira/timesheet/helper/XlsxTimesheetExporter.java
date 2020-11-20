@@ -26,16 +26,13 @@ import java.util.List;
 
 public class XlsxTimesheetExporter {
 
-    private static final String DELIMITER = ";";
-    private static final String NEW_LINE = "\n";
 
     public XlsxTimesheetExporter() {
     }
 
 
+    public static XSSFSheet getTimeSheetAsWorkSheet(XSSFSheet workTimeSheet, List<Timesheet> timesheetList)    {
 
-    public static XSSFSheet getTimeSheetAsWorkSheet(XSSFSheet workTimeSheet, List<Timesheet> timesheetList)
-    {
         String[] header = {"Username","Practical Hours","Hours Done","Subtracted Hours","Total Hours","Remaining Hours","Penalty Text","Lecture"};
         int rownum = 0;
         int column = 0;
@@ -80,88 +77,59 @@ public class XlsxTimesheetExporter {
         return workTimeSheet;
     }
 
-    public String getTimesheetCsvData(Timesheet timesheet) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Username" + DELIMITER +
-                "Practical Hours" + DELIMITER +
-                "Hours Done" + DELIMITER +
-                "Subtracted Hours" + DELIMITER +
-                "Total Hours" + DELIMITER +
-                "Remaining Hours" + DELIMITER +
-                "Penalty Text" + DELIMITER +
-                "Lecture" + DELIMITER);
-
-        sb.append(timesheet.getUserKey()).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getHoursPracticeCompleted())).append(DELIMITER);
-
-        sb.append(Integer.toString(timesheet.getHoursCompleted())).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getHoursDeducted())).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHours())).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getHoursCompleted())).append(DELIMITER);
-        sb.append(timesheet.getReason()).append(DELIMITER);
-        sb.append(timesheet.getLectures()).append(DELIMITER);
-
-        sb.append("Inactive Date" + DELIMITER +
-                "Date" + DELIMITER +
-                "Begin" + DELIMITER +
-                "End" + DELIMITER +
-                "Duration Minutes" + DELIMITER +
-                "Pause Minutes" + DELIMITER +
-                "Category" + DELIMITER +
-                "Description" + DELIMITER +
-                "Team" + DELIMITER +
-                "UserKey" + NEW_LINE);
-
-        for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
-            Integer hours = 0;
-            Integer minutes = timesheetEntry.getDurationMinutes();
-            if(minutes < 0)
-                minutes = minutes * (-1);
-            while(minutes > 0) {
-                if(minutes - 60 < 0)
-                    break;
-                minutes = minutes - 60;
-                hours++;
-            }
-            Integer remainingMinutes = timesheetEntry.getDurationMinutes() % 60;
-            if(remainingMinutes < 0)
-                remainingMinutes = remainingMinutes * (-1);
-            String duration = Integer.toString(hours) + ":" + Integer.toString(remainingMinutes);
-
-            Integer pauseHours = 0;
-            Integer pauseMinutes = timesheetEntry.getPauseMinutes();
-            while(pauseMinutes > 0) {
-                if(pauseMinutes - 60 < 0)
-                    break;
-                pauseMinutes = pauseMinutes - 60;
-                pauseHours++;
-            }
-            Integer remainingPauseMinutes = timesheetEntry.getPauseMinutes() % 60;
-            String pauseDuration = Integer.toString(pauseHours) + ":" + Integer.toString(remainingPauseMinutes);
-            sb.append(unescape(timesheetEntry.getInactiveEndDate().toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getBeginDate().toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getEndDate().toString())).append(DELIMITER);
-            //works with google doc import
-            /*
-             sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(0, 10).toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getBeginDate().toString().subSequence(11, 16).toString())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getEndDate().toString().subSequence(11, 16).toString())).append(DELIMITER);
-             */
-            sb.append(unescape(duration)).append(DELIMITER);
-            sb.append(unescape(pauseDuration)).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getCategory().getName())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getDescription())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getTeam().getTeamName())).append(DELIMITER);
-            sb.append(unescape(timesheetEntry.getTimeSheet().getUserKey())).append(NEW_LINE);
+    public static XSSFSheet getTimeSheetEntityAsWorkSheet(XSSFSheet workTimeSheet, List<Timesheet> timesheetList)
+    {
+        String[] header = {"Inactive Date","Date","Begin","End","Duration Minutes","Pause Minutes","Category","Description","Team","UserKey"};
+        int rownum = 0;
+        int column = 0;
+        Row headerRow = workTimeSheet.createRow(rownum);
+        for (String headerColumn : header) {
+            Cell cell = headerRow.createCell(column++);
+            cell.setCellValue((String) headerColumn);
         }
-        sb.append(NEW_LINE);
+        rownum++;
 
-        return sb.toString();
+        if (timesheetList.size() > 0) {
+            for (Timesheet timesheet : timesheetList) {
+                for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
+                    Row dataRow = workTimeSheet.createRow(rownum);
+                    Cell cellInactiveDate = dataRow.createCell(0);
+                    cellInactiveDate.setCellValue((String) timesheetEntry.getInactiveEndDate().toString());
+
+                    Cell cellDate = dataRow.createCell(1);
+                    cellDate.setCellValue((String) timesheetEntry.getBeginDate().toString());
+
+                    Cell cellBegin = dataRow.createCell(2);
+                    cellBegin.setCellValue((String) timesheetEntry.getBeginDate().toString());
+
+                    Cell cellEnd = dataRow.createCell(3);
+                    cellEnd.setCellValue((String) timesheetEntry.getEndDate().toString());
+
+                    Cell cellDurationMinutes = dataRow.createCell(4);
+                    cellDurationMinutes.setCellValue((int) timesheetEntry.getDurationMinutes());
+
+                    Cell cellPauseMinutes = dataRow.createCell(5);
+                    cellPauseMinutes.setCellValue((int) timesheetEntry.getPauseMinutes());
+
+                    Cell cellCategory = dataRow.createCell(6);
+                    cellCategory.setCellValue((String) timesheetEntry.getCategory().getName());
+
+                    Cell cellDescription = dataRow.createCell(7);
+                    cellDescription.setCellValue((String) timesheetEntry.getDescription());
+
+                    Cell cellTeam = dataRow.createCell(8);
+                    cellTeam.setCellValue((String) timesheetEntry.getTeam().getTeamName());
+
+                    Cell cellUserKey = dataRow.createCell(9);
+                    cellUserKey.setCellValue((String) timesheetEntry.getTimeSheet().getUserKey());
+
+                    rownum++;
+                }
+            }
+        }
+
+        return workTimeSheet;
     }
 
-    private String unescape(String escapedHtml4String) {
-        return escapedHtml4String.replace(';', ' ');
-    }
+
 }
