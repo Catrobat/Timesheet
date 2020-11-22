@@ -41,7 +41,6 @@ public class CsvTimesheetExporter {
         StringBuilder sb = new StringBuilder();
 
         sb.append("Username" + DELIMITER +
-                "Practical Hours" + DELIMITER +
                 "Hours Done" + DELIMITER +
                 "Subtracted Hours" + DELIMITER +
                 "Total Hours" + DELIMITER +

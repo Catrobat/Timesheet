@@ -39,7 +39,6 @@ public interface Timesheet extends Entity {
     int getHoursCompleted();
     void setHoursCompleted(int hours);
 
-
     int getTargetHours();
     void setTargetHours(int hours);
 

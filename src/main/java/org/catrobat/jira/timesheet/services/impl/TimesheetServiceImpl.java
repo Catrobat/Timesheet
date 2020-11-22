@@ -46,7 +46,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
 
     @Override
-    public Timesheet editTimesheets(String userKey, int hoursPracticeCompleted, int targetHours, int hoursCompleted,
+    public Timesheet editTimesheets(String userKey,int targetHours, int hoursCompleted,
                                    int hoursDeducted, String lectures, String reason, Date latestEntryDate,
                                    Timesheet.State state) throws ServiceException {
 
@@ -81,11 +81,10 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public Timesheet updateTimesheet(int id, int targetHoursCompleted, int targetHoursPractice, 
+    public Timesheet updateTimesheet(int id, int targetHoursCompleted,
     		Date latestEntryDate, Timesheet.State state) {
         Timesheet timesheet = ao.get(Timesheet.class, id);
         timesheet.setHoursCompleted(targetHoursCompleted);
-        timesheet.setHoursCompleted(targetHoursPractice);
         timesheet.setLatestEntryBeginDate(latestEntryDate);
         timesheet.setState(state);
         timesheet.save();
@@ -94,7 +93,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @NotNull
     @Override
-    public Timesheet add(String userKey, String displayName, int targetHoursPractice,
+    public Timesheet add(String userKey, String displayName,
                          int targetHours, int targetHoursCompleted, int targetHoursRemoved,
                          String lectures, String reason, Timesheet.State state) throws ServiceException {
 

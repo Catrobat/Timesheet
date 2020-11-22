@@ -50,7 +50,7 @@ public class TimesheetServiceImplTest {
         String reason = "Agathe Bauer";
         Date latestEntryDate = new Date();
 
-        service.add(userKey, displayName, targetHoursPractice, targetHours, targetHoursCompleted,
+        service.add(userKey, displayName,  targetHours, targetHoursCompleted,
                 targetHoursRemoved, lectures, reason, Timesheet.State.ACTIVE);
         Timesheet[] timesheet = ao.find(Timesheet.class, "USER_KEY = ?", userKey);
 
@@ -136,23 +136,6 @@ public class TimesheetServiceImplTest {
     }
 
     @Test
-    public void testUpdateTimesheetPractialhours() throws Exception {
-        //Act
-        Timesheet[] sheets = ao.find(Timesheet.class, "USER_KEY = ?", "USER_000");
-        Timesheet refSheet = sheets[0];
-        Timesheet checkSheet = service.getTimesheetByID(refSheet.getID());
-
-        //Assert
-        assertEquals(refSheet, checkSheet);
-
-        //Act
-        final int newPracticalHours = 300;
-        refSheet.setHoursCompleted(newPracticalHours);
-        //Assert
-        assertTrue(refSheet.getHoursCompleted() == 300);
-    }
-
-    @Test
     public void testUpdateTimesheet() {
         Timesheet timesheet = ao.create(Timesheet.class,
             new DBParam("USER_KEY", "USER_000")
@@ -173,7 +156,7 @@ public class TimesheetServiceImplTest {
         Date latestEntryDateNew = new Date(200);
         Timesheet.State stateNew = Timesheet.State.ACTIVE;
 
-        Timesheet updatedTimesheet = service.updateTimesheet(timesheet.getID(), targetHoursCompletedNew,
+        Timesheet updatedTimesheet = service.updateTimesheet(timesheet.getID(),
                 targetHoursCompletedNew, latestEntryDateNew, stateNew);
 
         assertEquals(targetHoursCompletedNew, updatedTimesheet.getHoursCompleted());
@@ -233,13 +216,12 @@ public class TimesheetServiceImplTest {
         timesheet.setState(originalState);
         timesheet.save();
 
-        Timesheet updatedTimesheet = service.editTimesheets(userKey, originalHoursPracticeCompleted,
+        Timesheet updatedTimesheet = service.editTimesheets(userKey,
                 originalTargetHours, originalHoursCompleted, expectedHoursDeducted, lectures,
                 expectedReason, originalLatestEntryDate, expectedState);
 
         assertNotNull(updatedTimesheet);
 
-//        assertEquals(originalHoursPracticeCompleted, updatedTimesheet.getHoursCompleted());
         assertEquals(originalTargetHours, updatedTimesheet.getTargetHours());
         assertEquals(originalHoursCompleted, updatedTimesheet.getHoursCompleted());
         assertEquals(expectedHoursDeducted, updatedTimesheet.getHoursDeducted());
@@ -251,7 +233,7 @@ public class TimesheetServiceImplTest {
 
     @Test(expected = ServiceException.class)
     public void testEditTimesheetsNotAvailable() throws ServiceException {
-        service.editTimesheets("invalidUserKey", 0, 0,
+        service.editTimesheets("invalidUserKey", 0,
                 0, 0, "", "", null, null);
     }
 

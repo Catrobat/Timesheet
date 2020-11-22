@@ -169,7 +169,6 @@ public class ImportTimesheetAsJsonServlet extends HighPrivilegeServlet {
             Timesheet sheet;
             try {
                 sheet = timesheetService.add(jsonTimesheet.getUserKey(), jsonTimesheet.getDisplayName(),
-                        jsonTimesheet.getTargetHourPractice(),
                         jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
                         jsonTimesheet.getState());
