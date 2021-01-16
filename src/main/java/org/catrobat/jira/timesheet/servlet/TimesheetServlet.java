@@ -122,7 +122,7 @@ public class TimesheetServlet extends HttpServlet {
                         paramMap.put("isInit", false);
                 }
                 if (timesheet == null) {
-                    timesheet = sheetService.add(userKey, user.getDisplayName(), 0, 0, 0, 0, "",
+                    timesheet = sheetService.add(userKey, user.getDisplayName(),  0, 0, 0, "",
                             "", Timesheet.State.ACTIVE);
                     LOGGER.error("We created a new Timesheet for user with key: " + userKey);
                     paramMap.put("isInit", true);

@@ -74,7 +74,7 @@ public final class JsonTimesheet {
         this.lectures = timesheet.getLectures();
         this.reason = timesheet.getReason();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
-        this.targetHourPractice = timesheet.getHoursPracticeCompleted();
+        this.targetHourPractice = timesheet.getHoursCompleted();
         this.targetHours = timesheet.getTargetHours();
         this.targetHoursCompleted = timesheet.getHoursCompleted();
         this.targetHoursRemoved = timesheet.getHoursDeducted();

@@ -37,7 +37,7 @@ public class JsonUserInformation {
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date inactiveEndDate;
     @XmlElement
-    private int totalPracticeHours;
+    private int totalHours;
     @XmlElement
     private int latestEntryHours;
     @XmlElement
@@ -61,7 +61,7 @@ public class JsonUserInformation {
 				+ timesheet.getHoursDeducted());
         this.targetTotalHours = timesheet.getTargetHours();
 
-        this.totalPracticeHours = timesheet.getHoursPracticeCompleted();
+        this.totalHours = timesheet.getHoursCompleted();
         this.email = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getEmailAddress();
         this.timesheetID = timesheet.getID();
 
@@ -150,12 +150,12 @@ public class JsonUserInformation {
         this.inactiveEndDate = inactiveEndDate;
     }
 
-    public int getTotalPracticeHours() {
-        return totalPracticeHours;
+    public int getTotalHours() {
+        return totalHours;
     }
 
-    public void setTotalPracticeHours(int totalPracticeHours) {
-        this.totalPracticeHours = totalPracticeHours;
+    public void setTotalHours(int totalHours) {
+        this.totalHours = totalHours;
     }
 
     public int getLatestEntryHours() {

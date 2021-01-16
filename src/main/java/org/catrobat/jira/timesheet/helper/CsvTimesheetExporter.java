@@ -41,23 +41,20 @@ public class CsvTimesheetExporter {
         StringBuilder sb = new StringBuilder();
 
         sb.append("Username" + DELIMITER +
-                "Practical Hours" + DELIMITER +
                 "Hours Done" + DELIMITER +
                 "Subtracted Hours" + DELIMITER +
                 "Total Hours" + DELIMITER +
                 "Remaining Hours" + DELIMITER +
                 "Penalty Text" + DELIMITER +
-                "Lecture" + DELIMITER);
+                "Lecture" + NEW_LINE);
 
         sb.append(timesheet.getUserKey()).append(DELIMITER);
-        sb.append(Integer.toString(timesheet.getHoursPracticeCompleted())).append(DELIMITER);
-
         sb.append(Integer.toString(timesheet.getHoursCompleted())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getHoursDeducted())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHours())).append(DELIMITER);
         sb.append(Integer.toString(timesheet.getTargetHours() - timesheet.getHoursCompleted())).append(DELIMITER);
         sb.append(timesheet.getReason()).append(DELIMITER);
-        sb.append(timesheet.getLectures()).append(DELIMITER);
+        sb.append(timesheet.getLectures()).append(NEW_LINE);
 
         sb.append("Inactive Date" + DELIMITER +
                 "Date" + DELIMITER +

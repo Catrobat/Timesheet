@@ -84,7 +84,9 @@ public class MonitoringServiceImplTest {
 
         LocalDate startDate = LocalDate.now().withDayOfMonth(1).minusMonths(1);
         LocalDate endDate = LocalDate.now();
-        String expectedFormat = startDate.format(DateTimeFormatter.ofPattern("dd.MM.")) + "-" + endDate.format(DateTimeFormatter.ofPattern("dd.MM.yy"));
+
+        String startPattern = startDate.getYear() == endDate.getYear() ? "dd.MM." : "dd.MM.yy";
+        String expectedFormat = startDate.format(DateTimeFormatter.ofPattern(startPattern)) + "-" + endDate.format(DateTimeFormatter.ofPattern("dd.MM.yy"));
 
         assertEquals(expectedFormat, monitoringService.getLastIntervalFormattedAsString());
     }

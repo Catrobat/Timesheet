@@ -132,7 +132,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
             state = Timesheet.State.ACTIVE;
         }
 
-        timesheetService.updateTimesheet(updatedTimesheet.getID(), completedHours, completedPracticeHours, latestEntryDate, state);
+        timesheetService.updateTimesheet(updatedTimesheet.getID(), completedHours,  latestEntryDate, state);
     }
 
     private int getPracticeHoursOfTimesheet(Timesheet sheet) {

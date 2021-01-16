@@ -32,28 +32,24 @@ public interface TimesheetService {
     /**
      * Edits a existing Timesheet
      * @param userKey             identifies the user
-     * @param targetHoursPractice specifies the amount of hours the user has to
-     *                            solve in practical work
      * @param lectures            describes the lecture in which the user is enrolled
      * @return the new Timesheet, or null          */
     @Nullable
-    Timesheet editTimesheets(String userKey, int targetHoursPractice,
+    Timesheet editTimesheets(String userKey,
                             int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
                             String reason, Date latestEntryDate,
                             Timesheet.State state) throws ServiceException;
 
-    Timesheet updateTimesheet(int id, int targetHoursCompleted, int targetHoursPractice, Date latestEntryDate, Timesheet.State state);
+    Timesheet updateTimesheet(int id, int targetHoursCompleted,  Date latestEntryDate, Timesheet.State state);
 
     /**
      * Adds a new Timesheet
      * @param userKey             identifies the user
      * @param displayName           the name displayed for the timesheet
-     * @param targetHoursPractice specifies the amount of hours the user has to
- *                            solve in practical work
      * @param lectures            describes the lecture in which the user is enrolled
      * @return the new Timesheet        */
     @NotNull
-    Timesheet add(String userKey, String displayName, int targetHoursPractice,
+    Timesheet add(String userKey, String displayName,
                   int targetHours, int targetHoursCompleted, int targetHoursRemoved, String lectures,
                   String reason,
                   Timesheet.State state) throws ServiceException;

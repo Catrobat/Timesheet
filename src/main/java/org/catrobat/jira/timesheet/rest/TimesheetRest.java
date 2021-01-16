@@ -641,13 +641,13 @@ public class TimesheetRest {
 
         try {
             if (permissionService.isJiraAdministrator(user)) {
-                sheet = sheetService.editTimesheets(sheet.getUserKey(), jsonTimesheet.getTargetHourPractice(),
+                sheet = sheetService.editTimesheets(sheet.getUserKey(),
                         jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
                         jsonTimesheet.getLatestEntryDate(), jsonTimesheet.getState());
             } else {
                 sheet = sheetService.editTimesheets(ComponentAccessor.
-                                getUserKeyService().getKeyForUsername(user.getUsername()), jsonTimesheet.getTargetHourPractice(),
+                                getUserKeyService().getKeyForUsername(user.getUsername()),
                         jsonTimesheet.getTargetHours(), jsonTimesheet.getTargetHoursCompleted(),
                         jsonTimesheet.getTargetHoursRemoved(), jsonTimesheet.getLectures(), jsonTimesheet.getReason(),
                         jsonTimesheet.getLatestEntryDate(), jsonTimesheet.getState());
@@ -838,14 +838,14 @@ public class TimesheetRest {
             if (sheet.getEntries().length > 0) {
                 if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
                     sheetService.editTimesheets(ComponentAccessor.
-                                    getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
+                                    getUserKeyService().getKeyForUsername(user.getUsername()),
                             sheet.getTargetHours(), deducted_hours,
                             sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                             entryService.getLatestEntry(sheet).getBeginDate(), state);
                 }
             } else {
                 sheetService.editTimesheets(ComponentAccessor.
-                                getUserKeyService().getKeyForUsername(user.getUsername()), sheet.getHoursPracticeCompleted(),
+                                getUserKeyService().getKeyForUsername(user.getUsername()),
                         sheet.getTargetHours(), deducted_hours,
                         sheet.getHoursDeducted(), sheet.getLectures(), sheet.getReason(),
                         new Date(), sheet.getState());
