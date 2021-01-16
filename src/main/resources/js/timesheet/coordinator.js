@@ -37,7 +37,7 @@ function initCoordinatorUserList(userInformation) {
             "</td><td headers='ti-inactive-end-date'>" + inactiveEndDate +
             "</td><td headers='ti-remaining-hours'>" + userInformation[i].remainingHours +
             "</td><td headers='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
-            "</td><td headers='ti-total-practice-hours'>" + userInformation[i].totalPracticeHours +
+            "</td><td headers='ti-total-hours'>" + userInformation[i].totalHours +
             "</td><td headers='ti-hours-per-half-year'>" + userInformation[i].hoursPerHalfYear +
             "</td><td headers='ti-hours-per-month'>" + userInformation[i].hoursPerMonth +
             "</td><td headers='ti-latest-entry-date'>" + latestEntryDate +

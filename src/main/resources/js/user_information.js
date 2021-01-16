@@ -114,7 +114,7 @@ AJS.toInit(function () {
             "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
             "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
             "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
-            "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
+            "</td><td headers='ti-total-hours' class='total-hours'>" + userInformation[i].totalHours +
             "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
             "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
             "</td><td headers='ti-first-entry-date' class='latest-date'>" + firstEntryDate +
