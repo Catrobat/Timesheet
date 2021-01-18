@@ -28,6 +28,7 @@ import java.util.List;
 
 public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
 
+    public static final String CONTENT_TYPE = "text/csv; charset=utf-8";
     private final TimesheetService sheetService;
     private final TimesheetEntryService entryService;
     private final TeamService teamService;
@@ -49,6 +50,10 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
+        if (response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY) {
+            return;
+        }
+
         ApplicationUser loggedInUser;
         try {
             loggedInUser = permissionService.checkIfUserExists();
@@ -64,7 +69,7 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
                 loggedInUser.getUsername() +
                 "_Timesheet_Timesheet.json\"";
 
-        response.setContentType("text/csv; charset=utf-8");
+        response.setContentType(CONTENT_TYPE);
         response.setHeader("Content-Disposition", filename);
 
         List<JsonTimesheetAndEntries> timesheetAndEntriesList = new LinkedList<>();

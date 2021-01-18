@@ -518,7 +518,7 @@
     <div class="tabs-pane" id="tabs-administration">
         <div id="administration-content">
             <h2><font color="green">Export</font></h2>
-            <p>Download 'All Timesheets' as <a href="download/timesheets">CSV</a> or as
+            <p>Download 'All Timesheets' as <a href="download/timesheets/xlsx">XLSX</a>, as <a href="download/timesheets">CSV</a> or as
                 <a href="download/timesheets/json">Json</a>.
             </p>
             <p>Download 'Config' as <a href="download/config/json">Json</a>.</p>

@@ -77,6 +77,7 @@ public class ExportTimesheetAsCSVServlet extends HttpServlet {
 
         CsvTimesheetExporter csvTimesheetExporterSingle = new CsvTimesheetExporter();
         PrintStream printStream = new PrintStream(response.getOutputStream(), false, "UTF-8");
+
         printStream.print(csvTimesheetExporterSingle.getTimesheetCsvData(timesheet));
         printStream.flush();
         printStream.close();
