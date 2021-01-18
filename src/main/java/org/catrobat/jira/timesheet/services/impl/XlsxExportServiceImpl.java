@@ -48,7 +48,7 @@ public class XlsxExportServiceImpl implements XlsxExportService {
     private XSSFSheet generateTimesheetWorksheet(XSSFWorkbook workbook, List<Timesheet> timesheetList) {
         XSSFSheet worksheet = workbook.createSheet(TIMESHEET_WORKBOOK_NAME);
 
-        String[] header = {"Username","Practical Hours","Hours Done","Subtracted Hours","Total Hours","Remaining Hours","Penalty Text","Lecture"};
+        String[] header = {"Username","Hours Done","Subtracted Hours","Total Hours","Remaining Hours","Penalty Text","Lecture"};
         int rownum = 0;
         int column = 0;
         Row headerRow = worksheet.createRow(rownum);
@@ -64,25 +64,22 @@ public class XlsxExportServiceImpl implements XlsxExportService {
                 Cell cellUserName = dataRow.createCell(0);
                 cellUserName.setCellValue(timesheet.getUserKey());
 
-                Cell cellPracticalHours = dataRow.createCell(1);
-                cellPracticalHours.setCellValue(timesheet.getHoursPracticeCompleted());
-
-                Cell cellHoursDone = dataRow.createCell(2);
+                Cell cellHoursDone = dataRow.createCell(1);
                 cellHoursDone.setCellValue(timesheet.getHoursCompleted());
 
-                Cell cellSubtractedHours = dataRow.createCell(3);
+                Cell cellSubtractedHours = dataRow.createCell(2);
                 cellSubtractedHours.setCellValue(timesheet.getHoursDeducted());
 
-                Cell cellTotalHours = dataRow.createCell(4);
+                Cell cellTotalHours = dataRow.createCell(3);
                 cellTotalHours.setCellValue(timesheet.getTargetHours());
 
-                Cell cellRemaininglHours = dataRow.createCell(5);
+                Cell cellRemaininglHours = dataRow.createCell(4);
                 cellRemaininglHours.setCellValue(timesheet.getTargetHours() - timesheet.getHoursCompleted());
 
-                Cell cellPenaltyText = dataRow.createCell(6);
+                Cell cellPenaltyText = dataRow.createCell(5);
                 cellPenaltyText.setCellValue(timesheet.getReason());
 
-                Cell cellLecture = dataRow.createCell(7);
+                Cell cellLecture = dataRow.createCell(6);
                 cellLecture.setCellValue(timesheet.getLectures());
 
                 rownum++;
