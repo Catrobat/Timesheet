@@ -14,122 +14,136 @@
  * limitations under the License.
  */
 
-package org.catrobat.jira.timesheet.helper;
+package org.catrobat.jira.timesheet.services.impl;
 
+import org.springframework.stereotype.Component;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.catrobat.jira.timesheet.services.XlsxExportService;
 
 import java.util.List;
 
-public class XlsxTimesheetExporter {
+@Component
+public class XlsxExportServiceImpl implements XlsxExportService {
 
+    public static final String TIMESHEET_WORKBOOK_NAME = "Timesheets";
+    public static final String TIMESHEET_ENTRIES_WORKBOOK_NAME = "Timesheets entries";
 
-    public XlsxTimesheetExporter() {
+    public XlsxExportServiceImpl() {
     }
 
+    @Override
+    public Workbook exportTimesheets(List<Timesheet> timesheetList) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        generateTimesheetWorksheet(workbook, timesheetList);
+        generateTimesheetEntryWorksheet(workbook, timesheetList);
+        return workbook;
+    }
 
-    public static XSSFSheet getTimeSheetAsWorkSheet(XSSFSheet workTimeSheet, List<Timesheet> timesheetList)    {
+    private XSSFSheet generateTimesheetWorksheet(XSSFWorkbook workbook, List<Timesheet> timesheetList) {
+        XSSFSheet worksheet = workbook.createSheet(TIMESHEET_WORKBOOK_NAME);
 
         String[] header = {"Username","Practical Hours","Hours Done","Subtracted Hours","Total Hours","Remaining Hours","Penalty Text","Lecture"};
         int rownum = 0;
         int column = 0;
-        Row headerRow = workTimeSheet.createRow(rownum);
+        Row headerRow = worksheet.createRow(rownum);
         for (String headerColumn : header) {
             Cell cell = headerRow.createCell(column++);
-            cell.setCellValue((String) headerColumn);
+            cell.setCellValue(headerColumn);
         }
         rownum++;
 
         if (timesheetList.size() > 0) {
             for (Timesheet timesheet : timesheetList) {
-                Row dataRow = workTimeSheet.createRow(rownum);
+                Row dataRow = worksheet.createRow(rownum);
                 Cell cellUserName = dataRow.createCell(0);
-                cellUserName.setCellValue((String) timesheet.getUserKey());
+                cellUserName.setCellValue(timesheet.getUserKey());
 
                 Cell cellPracticalHours = dataRow.createCell(1);
-                cellPracticalHours.setCellValue((int) timesheet.getHoursPracticeCompleted());
+                cellPracticalHours.setCellValue(timesheet.getHoursPracticeCompleted());
 
                 Cell cellHoursDone = dataRow.createCell(2);
-                cellHoursDone.setCellValue((int) timesheet.getHoursCompleted());
+                cellHoursDone.setCellValue(timesheet.getHoursCompleted());
 
                 Cell cellSubtractedHours = dataRow.createCell(3);
-                cellSubtractedHours.setCellValue((int) timesheet.getHoursDeducted());
+                cellSubtractedHours.setCellValue(timesheet.getHoursDeducted());
 
                 Cell cellTotalHours = dataRow.createCell(4);
-                cellTotalHours.setCellValue((int) timesheet.getTargetHours());
+                cellTotalHours.setCellValue(timesheet.getTargetHours());
 
                 Cell cellRemaininglHours = dataRow.createCell(5);
-                cellRemaininglHours.setCellValue((int) timesheet.getTargetHours() - timesheet.getHoursCompleted());
+                cellRemaininglHours.setCellValue(timesheet.getTargetHours() - timesheet.getHoursCompleted());
 
                 Cell cellPenaltyText = dataRow.createCell(6);
-                cellPenaltyText.setCellValue((String) timesheet.getReason());
+                cellPenaltyText.setCellValue(timesheet.getReason());
 
                 Cell cellLecture = dataRow.createCell(7);
-                cellLecture.setCellValue((String) timesheet.getLectures());
+                cellLecture.setCellValue(timesheet.getLectures());
 
                 rownum++;
             }
         }
 
-        return workTimeSheet;
+        return worksheet;
     }
 
-    public static XSSFSheet getTimeSheetEntityAsWorkSheet(XSSFSheet workTimeSheet, List<Timesheet> timesheetList)
-    {
+    private XSSFSheet generateTimesheetEntryWorksheet(XSSFWorkbook workbook, List<Timesheet> timesheetList) {
+        XSSFSheet worksheet = workbook.createSheet(TIMESHEET_ENTRIES_WORKBOOK_NAME);
+
         String[] header = {"Inactive Date","Date","Begin","End","Duration Minutes","Pause Minutes","Category","Description","Team","UserKey"};
         int rownum = 0;
         int column = 0;
-        Row headerRow = workTimeSheet.createRow(rownum);
+        Row headerRow = worksheet.createRow(rownum);
         for (String headerColumn : header) {
             Cell cell = headerRow.createCell(column++);
-            cell.setCellValue((String) headerColumn);
+            cell.setCellValue(headerColumn);
         }
         rownum++;
 
         if (timesheetList.size() > 0) {
             for (Timesheet timesheet : timesheetList) {
                 for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
-                    Row dataRow = workTimeSheet.createRow(rownum);
+                    Row dataRow = worksheet.createRow(rownum);
                     Cell cellInactiveDate = dataRow.createCell(0);
-                    cellInactiveDate.setCellValue((String) timesheetEntry.getInactiveEndDate().toString());
+                    cellInactiveDate.setCellValue(timesheetEntry.getInactiveEndDate().toString());
 
                     Cell cellDate = dataRow.createCell(1);
-                    cellDate.setCellValue((String) timesheetEntry.getBeginDate().toString());
+                    cellDate.setCellValue(timesheetEntry.getBeginDate().toString());
 
                     Cell cellBegin = dataRow.createCell(2);
-                    cellBegin.setCellValue((String) timesheetEntry.getBeginDate().toString());
+                    cellBegin.setCellValue(timesheetEntry.getBeginDate().toString());
 
                     Cell cellEnd = dataRow.createCell(3);
-                    cellEnd.setCellValue((String) timesheetEntry.getEndDate().toString());
+                    cellEnd.setCellValue(timesheetEntry.getEndDate().toString());
 
                     Cell cellDurationMinutes = dataRow.createCell(4);
-                    cellDurationMinutes.setCellValue((int) timesheetEntry.getDurationMinutes());
+                    cellDurationMinutes.setCellValue(timesheetEntry.getDurationMinutes());
 
                     Cell cellPauseMinutes = dataRow.createCell(5);
-                    cellPauseMinutes.setCellValue((int) timesheetEntry.getPauseMinutes());
+                    cellPauseMinutes.setCellValue(timesheetEntry.getPauseMinutes());
 
                     Cell cellCategory = dataRow.createCell(6);
-                    cellCategory.setCellValue((String) timesheetEntry.getCategory().getName());
+                    cellCategory.setCellValue(timesheetEntry.getCategory().getName());
 
                     Cell cellDescription = dataRow.createCell(7);
-                    cellDescription.setCellValue((String) timesheetEntry.getDescription());
+                    cellDescription.setCellValue(timesheetEntry.getDescription());
 
                     Cell cellTeam = dataRow.createCell(8);
-                    cellTeam.setCellValue((String) timesheetEntry.getTeam().getTeamName());
+                    cellTeam.setCellValue(timesheetEntry.getTeam().getTeamName());
 
                     Cell cellUserKey = dataRow.createCell(9);
-                    cellUserKey.setCellValue((String) timesheetEntry.getTimeSheet().getUserKey());
+                    cellUserKey.setCellValue(timesheetEntry.getTimeSheet().getUserKey());
 
                     rownum++;
                 }
             }
         }
 
-        return workTimeSheet;
+        return worksheet;
     }
-
-
 }

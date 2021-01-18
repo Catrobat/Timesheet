@@ -518,11 +518,10 @@
     <div class="tabs-pane" id="tabs-administration">
         <div id="administration-content">
             <h2><font color="green">Export</font></h2>
-            <p>Download 'All Timesheets' as <a href="download/timesheets">CSV</a> or as
-                <a href="download/timesheets/json">Json</a> <br></br>.
+            <p>Download 'All Timesheets' as <a href="download/timesheets/xlsx">XLSX</a>, as <a href="download/timesheets">CSV</a> or as
+                <a href="download/timesheets/json">Json</a>.
             </p>
             <p>Download 'Config' as <a href="download/config/json">Json</a>.</p>
-            <p>Download 'ALL' as <a href="download/config/xlss">XLSs</a>.</p>
 
             <h2><font color="blue">Import</font></h2>
             <p>Upload existing 'Timesheets' from <a href="upload/timesheets/json">Json</a>.</p>

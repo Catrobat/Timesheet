@@ -267,7 +267,6 @@ function setDownloadLink(timesheet) {
 	
     AJS.$("#download-csv").attr("href", "download/timesheet");
     AJS.$("#download-json").attr("href", "download/timesheet/json");
-    AJS.$("#download-xlsx").attr("href", "download/timesheet/xlsx");
 }
 
 function fetchData(timesheetID) {

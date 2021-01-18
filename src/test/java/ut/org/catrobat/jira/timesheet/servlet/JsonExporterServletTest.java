@@ -95,14 +95,6 @@ public class JsonExporterServletTest {
     }
 
     @Test
-    public void testDoGetAllTimesheets() throws IOException, ServletException {
-        ExportAllTimesheetsAsJsonServlet exportAllTimesheetsAsJsonServlet = new ExportAllTimesheetsAsJsonServlet(
-                loginUriProvider, webSudoManager, permissionService, configService, timesheetService, entryService, categoryService, teamService);
-
-        exportAllTimesheetsAsJsonServlet.doGet(request, response);
-    }
-
-    @Test
     public void testDoGetConfig() throws IOException, ServletException{
         ExportConfigAsJsonServlet exportConfigAsJsonServlet = new ExportConfigAsJsonServlet(loginUriProvider, webSudoManager, configService, permissionService, teamService);
 

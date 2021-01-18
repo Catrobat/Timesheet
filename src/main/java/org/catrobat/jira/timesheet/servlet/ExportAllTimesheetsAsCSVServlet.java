@@ -34,6 +34,7 @@ import java.util.List;
 
 public class ExportAllTimesheetsAsCSVServlet extends HighPrivilegeServlet {
 
+    public static final String CONTENT_TYPE = "text/csv; charset=utf-8";
     private final TimesheetService timesheetService;
 
     public ExportAllTimesheetsAsCSVServlet(LoginUriProvider loginUriProvider, WebSudoManager webSudoManager,
@@ -47,6 +48,10 @@ public class ExportAllTimesheetsAsCSVServlet extends HighPrivilegeServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doGet(request, response);
 
+        if (response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY) {
+            return;
+        }
+
         Date actualDate =  new Date();
         String filename = "attachment; filename=\"" +
                 actualDate.toString().substring(0,10) +
@@ -54,7 +59,7 @@ public class ExportAllTimesheetsAsCSVServlet extends HighPrivilegeServlet {
                 actualDate.toString().substring(25,28) +
                 "_Timesheet_Timesheets.csv\"";
 
-        response.setContentType("text/csv; charset=utf-8");
+        response.setContentType(CONTENT_TYPE);
         response.setHeader("Content-Disposition", filename);
 
         List<Timesheet> timesheetList = timesheetService.all();

@@ -252,7 +252,7 @@
         <form id="timesheet-information" class="aui">
             <div class="field-group" id="timesheet-export-csv-link">
                 <label>Export</label>
-                <div>Download timesheet as <a id="download-csv" href="download/timesheet">CSV</a>,TimeSheet and entries as <a id="download-csv" href="download/timesheet/xlsx"> XLSX</a> or only Entries as
+                <div>Download timesheet as <a id="download-csv" href="download/timesheet">CSV</a> or only Entries as
                 <a id="download-json" href="download/timesheet/json">Json</a>.</div>
                 <div class="description">
                     Link for downloading your timesheet.
