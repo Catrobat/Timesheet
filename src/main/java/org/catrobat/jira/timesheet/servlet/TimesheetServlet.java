@@ -83,13 +83,18 @@ public class TimesheetServlet extends HttpServlet {
                     response.setStatus(Response.Status.UNAUTHORIZED.getStatusCode());
                     return;
                 }
-                if(request.getParameterMap().get("timesheetID").length != 1) {
+
+                Object timesheetIdParameter = request.getParameterMap().get("timesheetID");
+                if(timesheetIdParameter != null && String.valueOf(timesheetIdParameter) != null && String.valueOf(timesheetIdParameter).length() != 1) {
                     response.setStatus(Response.Status.CONFLICT.getStatusCode());
                     return;
                 }
-                try{
-                    LOGGER.error("we have got a timesheet Request for: " + request.getParameterMap().get("timesheetID")[0]);
-                    timesheet = sheetService.getTimesheetByID(Integer.parseInt(request.getParameterMap().get("timesheetID")[0]));
+
+                try {
+                    int timesheetId = Integer.parseInt(String.valueOf(timesheetIdParameter));
+
+                    LOGGER.error("we have got a timesheet Request for: " + timesheetId);
+                    timesheet = sheetService.getTimesheetByID(timesheetId);
 
                     if(timesheet == null){
                         response.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
@@ -106,11 +111,11 @@ public class TimesheetServlet extends HttpServlet {
 
                     paramMap.put("external", true);
 
-                }catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     response.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
                     return;
                 }
-            }else {
+            } else {
                 //getting sheet for current user
                 if (sheetService.userHasTimesheet(userKey)) {
                     timesheet = sheetService.getTimesheetByUser(userKey);
