@@ -24,6 +24,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.rest.TimesheetRest;
+import org.catrobat.jira.timesheet.services.MonitoringService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.slf4j.Logger;
@@ -43,15 +44,18 @@ public class TimesheetServlet extends HttpServlet {
     private final LoginUriProvider loginUriProvider;
     private final TemplateRenderer templateRenderer;
     private final TimesheetService sheetService;
+    private final MonitoringService monitoringService;
     private final PermissionService permissionService;
     private static final Logger logger = LoggerFactory.getLogger(TimesheetServlet.class);
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TimesheetServlet.class);
 
     public TimesheetServlet(final LoginUriProvider loginUriProvider, final TemplateRenderer templateRenderer,
-            final TimesheetService sheetService, final PermissionService permissionService) {
+                            final TimesheetService sheetService, final MonitoringService monitoringService,
+                            final PermissionService permissionService) {
         this.loginUriProvider = loginUriProvider;
         this.templateRenderer = templateRenderer;
         this.sheetService = sheetService;
+        this.monitoringService = monitoringService;
         this.permissionService = permissionService;
     }
 
@@ -141,6 +145,7 @@ public class TimesheetServlet extends HttpServlet {
                 paramMap.put("isAdmin", permissionService.isJiraAdministrator(user));
             }
 
+            paramMap.put("monitoringPeriod", monitoringService.getLastIntervalFormattedAsString());
             paramMap.put("isCoordinator", permissionService.isUserTeamCoordinator(user));
             paramMap.put("isReadOnlyUser", permissionService.isReadOnlyUser(user));
             paramMap.put("timesheetID", timesheet.getID());

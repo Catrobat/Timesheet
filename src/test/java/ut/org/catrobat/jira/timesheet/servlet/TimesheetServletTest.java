@@ -5,6 +5,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
+import org.catrobat.jira.timesheet.services.MonitoringService;
 import org.catrobat.jira.timesheet.services.PermissionService;
 import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.catrobat.jira.timesheet.servlet.TimesheetServlet;
@@ -29,6 +30,7 @@ public class TimesheetServletTest {
         LoginUriProvider loginUriProvider = mock(LoginUriProvider.class);
         TemplateRenderer templateRenderer = mock(TemplateRenderer.class);
         TimesheetService sheetService = mock(TimesheetService.class);
+        MonitoringService monitoringService = mock(MonitoringService.class);
         PermissionService permissionService = mock(PermissionService.class);
 
         Timesheet timeSheet = mock(Timesheet.class);
@@ -36,7 +38,8 @@ public class TimesheetServletTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
 
-        timesheetServlet = new TimesheetServlet(loginUriProvider, templateRenderer, sheetService, permissionService);
+        timesheetServlet = new TimesheetServlet(loginUriProvider, templateRenderer, sheetService,
+                monitoringService, permissionService);
 
         ApplicationUser admin = mock(ApplicationUser.class);
         String admin_key = "admin_key";

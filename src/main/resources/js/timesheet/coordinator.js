@@ -24,13 +24,11 @@ function initCoordinatorUserList(userInformation) {
         } else {
             inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
         }
-        thisUsersName = userInformation[i].userName;
-        
         var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
         "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
         
         var row = "<tr>" +
-            "<td headers='ti-users'>" + thisUsersName +
+            "<td headers='ti-users'>" + userInformation[i].userName +
             "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +
             "</td><td headers='ti-teams'>" + userInformation[i].teams +
             "</td><td headers='ti-state'>" + userInformation[i].state +
@@ -39,7 +37,7 @@ function initCoordinatorUserList(userInformation) {
             "</td><td headers='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
             "</td><td headers='ti-total-hours'>" + userInformation[i].totalHours +
             "</td><td headers='ti-hours-per-half-year'>" + userInformation[i].hoursPerHalfYear +
-            "</td><td headers='ti-hours-per-month'>" + userInformation[i].hoursPerMonth +
+            "</td><td headers='ti-hours-per-monitoring-period'>" + userInformation[i].hoursPerMonitoringPeriod +
             "</td><td headers='ti-latest-entry-date'>" + latestEntryDate +
             "</td><td headers='ti-latest-entry-description'>" + userInformation[i].latestEntryDescription +
             "</td></tr>";
