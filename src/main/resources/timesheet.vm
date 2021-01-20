@@ -112,7 +112,7 @@
         <div id="timesheet-table" class="aui aui-table-interactive aui-table-sortable table">
             <div class="tr">
                 <span class="td">
-                    <span class="aui-icon aui-icon-wait">Loading...</span>
+                    <aui-spinner></aui-spinner>
                 </span>
             </div>
         </div>

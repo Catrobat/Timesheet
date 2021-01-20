@@ -70,7 +70,7 @@
 
 	<h1><b>Timesheet - User Information</b></h1>
 	<div id="aui-message-bar"></div>
-	<div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
+	<div class="loadingDiv"><aui-spinner></aui-spinner></div>
 		
 #*Tabs view*#
 
