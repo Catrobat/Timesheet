@@ -73,6 +73,11 @@
     width: 130px;
 }
 
+#timesheet-table .th.teamroom,
+#timesheet-table .td.room {
+    width: 160px;
+}
+
 .select2-container {
     min-width: 80px;
     width: 150px;
