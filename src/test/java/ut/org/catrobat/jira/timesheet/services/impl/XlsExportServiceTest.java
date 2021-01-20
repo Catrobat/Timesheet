@@ -1,5 +1,8 @@
 package ut.org.catrobat.jira.timesheet.services.impl;
 
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.mock.component.MockComponentWorker;
+import com.atlassian.jira.user.util.UserManager;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.catrobat.jira.timesheet.activeobjects.Category;
@@ -10,6 +13,7 @@ import org.catrobat.jira.timesheet.services.XlsxExportService;
 import org.catrobat.jira.timesheet.services.impl.XlsxExportServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
+import org.powermock.api.mockito.PowerMockito;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +28,14 @@ public class XlsExportServiceTest {
 
     @Before
     public void setUp() {
+        UserManager userManager = mock(UserManager.class);
+
+        MockComponentWorker mockComponentWorker = new MockComponentWorker();
+        mockComponentWorker.addMock(UserManager.class, userManager);
+        mockComponentWorker.init();
+
+        ComponentAccessor.initialiseWorker(mockComponentWorker);
+
         xlsxExportService = new XlsxExportServiceImpl();
     }
 

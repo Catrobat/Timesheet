@@ -439,6 +439,11 @@ function prepareForm(entry, timesheetData, isModified) {
         width: 'resolve'
     });
 
+    form.teamroomField.auiSelect2({
+        width: '90px',
+        minimumResultsForSearch: -1
+    });
+
     var baseUrl = AJS.params.baseURL; // we have to reassign it otherwise it would be undefined
     var tickets = [];
     var queryString = "/rest/api/2/issue/picker";

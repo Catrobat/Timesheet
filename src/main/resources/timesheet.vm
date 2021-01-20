@@ -112,7 +112,7 @@
         <div id="timesheet-table" class="aui aui-table-interactive aui-table-sortable table">
             <div class="tr">
                 <span class="td">
-                    <span class="aui-icon aui-icon-wait">Loading...</span>
+                    <aui-spinner></aui-spinner>
                 </span>
             </div>
         </div>
@@ -141,7 +141,7 @@
                             <th id="ti-target-total-hours">Target Total Hours</th>
                             <th id="ti-total-hours">Finished Hours</th>
                             <th id="ti-hours-per-half-year">Hours last Half Year</th>
-                            <th id="ti-hours-per-month">Hours last Month</th>
+                            <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
                             <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                             <th id="ti-latest-entry-description">Description of the Latest Entry</th>
                         </tr>

@@ -24,7 +24,7 @@
 <body>
 <a name="top"></a>
 <div id="aui-message-bar"></div>
-<div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
+<div class="loadingDiv"><aui-spinner></aui-spinner></div>
 <div class="aui-tabs horizontal-tabs">
     <ul class="tabs-menu">
         <li class="menu-item">
