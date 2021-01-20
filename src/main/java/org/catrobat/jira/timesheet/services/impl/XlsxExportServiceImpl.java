@@ -16,6 +16,8 @@
 
 package org.catrobat.jira.timesheet.services.impl;
 
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.user.ApplicationUser;
 import org.springframework.stereotype.Component;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -33,6 +35,7 @@ public class XlsxExportServiceImpl implements XlsxExportService {
 
     public static final String TIMESHEET_WORKBOOK_NAME = "Timesheets";
     public static final String TIMESHEET_ENTRIES_WORKBOOK_NAME = "Timesheets entries";
+    public static final String INVALID_USER_NAME = "User does not exist anymore";
 
     public XlsxExportServiceImpl() {
     }
@@ -48,7 +51,7 @@ public class XlsxExportServiceImpl implements XlsxExportService {
     private XSSFSheet generateTimesheetWorksheet(XSSFWorkbook workbook, List<Timesheet> timesheetList) {
         XSSFSheet worksheet = workbook.createSheet(TIMESHEET_WORKBOOK_NAME);
 
-        String[] header = {"Username","Hours Done","Subtracted Hours","Total Hours","Remaining Hours","Penalty Text","Lecture"};
+        String[] header = {"UserKey","Name","Hours Done","Subtracted Hours","Total Hours","Remaining Hours","Penalty Text","Lecture"};
         int rownum = 0;
         int column = 0;
         Row headerRow = worksheet.createRow(rownum);
@@ -60,26 +63,33 @@ public class XlsxExportServiceImpl implements XlsxExportService {
 
         if (timesheetList.size() > 0) {
             for (Timesheet timesheet : timesheetList) {
+                String userKey = timesheet.getUserKey();
+                ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
+                String name = user == null ? INVALID_USER_NAME : user.getDisplayName();
+
                 Row dataRow = worksheet.createRow(rownum);
                 Cell cellUserName = dataRow.createCell(0);
-                cellUserName.setCellValue(timesheet.getUserKey());
+                cellUserName.setCellValue(userKey);
 
-                Cell cellHoursDone = dataRow.createCell(1);
+                Cell cellName = dataRow.createCell(1);
+                cellName.setCellValue(name);
+
+                Cell cellHoursDone = dataRow.createCell(2);
                 cellHoursDone.setCellValue(timesheet.getHoursCompleted());
 
-                Cell cellSubtractedHours = dataRow.createCell(2);
+                Cell cellSubtractedHours = dataRow.createCell(3);
                 cellSubtractedHours.setCellValue(timesheet.getHoursDeducted());
 
-                Cell cellTotalHours = dataRow.createCell(3);
+                Cell cellTotalHours = dataRow.createCell(4);
                 cellTotalHours.setCellValue(timesheet.getTargetHours());
 
-                Cell cellRemaininglHours = dataRow.createCell(4);
+                Cell cellRemaininglHours = dataRow.createCell(5);
                 cellRemaininglHours.setCellValue(timesheet.getTargetHours() - timesheet.getHoursCompleted());
 
-                Cell cellPenaltyText = dataRow.createCell(5);
+                Cell cellPenaltyText = dataRow.createCell(6);
                 cellPenaltyText.setCellValue(timesheet.getReason());
 
-                Cell cellLecture = dataRow.createCell(6);
+                Cell cellLecture = dataRow.createCell(7);
                 cellLecture.setCellValue(timesheet.getLectures());
 
                 rownum++;
@@ -92,7 +102,7 @@ public class XlsxExportServiceImpl implements XlsxExportService {
     private XSSFSheet generateTimesheetEntryWorksheet(XSSFWorkbook workbook, List<Timesheet> timesheetList) {
         XSSFSheet worksheet = workbook.createSheet(TIMESHEET_ENTRIES_WORKBOOK_NAME);
 
-        String[] header = {"Inactive Date","Date","Begin","End","Duration Minutes","Pause Minutes","Category","Description","Team","UserKey"};
+        String[] header = {"Inactive Date","Date","Begin","End","Duration Minutes","Pause Minutes","Category","Description","Team","UserKey","Name"};
         int rownum = 0;
         int column = 0;
         Row headerRow = worksheet.createRow(rownum);
@@ -105,6 +115,10 @@ public class XlsxExportServiceImpl implements XlsxExportService {
         if (timesheetList.size() > 0) {
             for (Timesheet timesheet : timesheetList) {
                 for (TimesheetEntry timesheetEntry : timesheet.getEntries()) {
+                    String userKey = timesheetEntry.getTimeSheet().getUserKey();
+                    ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
+                    String name = user == null ? INVALID_USER_NAME : user.getDisplayName();
+
                     Row dataRow = worksheet.createRow(rownum);
                     Cell cellInactiveDate = dataRow.createCell(0);
                     cellInactiveDate.setCellValue(timesheetEntry.getInactiveEndDate().toString());
@@ -134,7 +148,10 @@ public class XlsxExportServiceImpl implements XlsxExportService {
                     cellTeam.setCellValue(timesheetEntry.getTeam().getTeamName());
 
                     Cell cellUserKey = dataRow.createCell(9);
-                    cellUserKey.setCellValue(timesheetEntry.getTimeSheet().getUserKey());
+                    cellUserKey.setCellValue(userKey);
+
+                    Cell cellName = dataRow.createCell(10);
+                    cellName.setCellValue(name);
 
                     rownum++;
                 }
