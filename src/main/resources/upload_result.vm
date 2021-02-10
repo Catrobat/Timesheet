@@ -53,7 +53,7 @@
             });
 
             function redirectToTimesheet() {
-                window.open("$applicationProperties.getBaseUrl()/plugins/servlet/timesheet","_self");
+                window.open(AJS.params.baseURL + "/plugins/servlet/timesheet/administration","_self");
             }
 
             function displayFaultyEntries(json) {
@@ -107,7 +107,7 @@
 
         <br><br>
         <div class ="field-group">
-            <input type="button" value="redirect to Timesheet" class="aui-button aui-button-primary"
+            <input type="button" value="Back to Timesheet Configuration" class="aui-button aui-button-primary"
                    onclick="redirectToTimesheet()"/>
         </div>
     </body>
