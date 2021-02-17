@@ -20,7 +20,6 @@
                 document.getElementById("status-des").style.color = 0;
 
                 document.getElementById("status-header").innerHTML = "Success";
-                document.getElementById("error-header").style =
             }
             else if("$status" === "Failure") {
                 if(unsuccessfulImportMessage)
