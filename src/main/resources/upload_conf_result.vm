@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>Upload Result</title>
+    <meta name="decorator" content="atl.general"/>
+    <script type="text/javascript">
+        AJS.toInit(function () {
+            debugger;
+            var unsuccessfulImportMessage;
+            if("$status" === "Success"){
+                if(unsuccessfulImportMessage)
+                    unsuccessfulImportMessage.closeMessage();
+                AJS.messages.success({
+                    title:"Success",
+                    body:"The timesheet configuration import was successful",
+                    fadeout: true,
+                    delay: 5000,
+                    duration: 5000
+                });
+                document.getElementById("status-des").innerHTML = "Timesheet configuration was successfully imported!";
+                document.getElementById("status-header").innerHTML = "Success";
+            }
+            else if("$status" === "Failure") {
+                if(unsuccessfulImportMessage)
+                    unsuccessfulImportMessage.closeMessage();
+
+                unsuccessfulImportMessage = AJS.messages.error({
+                    title:"Failure",
+                    body:"The timesheet configuration import was UNSUCCESSFUL!"
+                });
+                document.getElementById("status-header").innerHTML = "Failure";
+                AJS.$("#errors").html("$error_string");
+                AJS.$("#errors").trigger("update");
+            }
+        });
+
+        function redirectToTimesheet() {
+            window.open(AJS.params.baseURL + "/plugins/servlet/timesheet/administration","_self");
+        }
+    </script>
+</head>
+<body>
+<div id="aui-message-bar"></div>
+<h1 id="status-header"></h1>
+
+<h3 id="status-des" style="color: green;"></h3>
+<h2 id="error-header">Following errors occured:</h2>
+<div id="errors"></div>
+
+<br><br>
+<div class ="field-group">
+    <input type="button" value="Back to Timesheet Configuration" class="aui-button aui-button-primary"
+           onclick="redirectToTimesheet()"/>
+</div>
+</body>
+</html>
