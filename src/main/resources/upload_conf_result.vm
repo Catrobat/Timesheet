@@ -17,8 +17,6 @@
                     duration: 5000
                 });
                 document.getElementById("status-des").innerHTML = "Timesheet configuration was successfully imported!";
-                document.getElementById("status-des").style.color = 0;
-
                 document.getElementById("status-header").innerHTML = "Success";
             }
             else if("$status" === "Failure") {
@@ -44,7 +42,7 @@
 <div id="aui-message-bar"></div>
 <h1 id="status-header"></h1>
 
-<h3 id="status-des" style="color: red;"></h3>
+<h3 id="status-des" style="color: green;"></h3>
 <h2 id="error-header">Following errors occured:</h2>
 <div id="errors"></div>
 
