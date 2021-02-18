@@ -28,8 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
 
@@ -96,17 +98,30 @@ public class ImportConfigAsJsonServlet extends HighPrivilegeServlet {
         }
 
         Gson gson = new Gson();
-
-        JsonReader jsonReader = new JsonReader(new FileReader(new File(temp.getAbsolutePath())));
-        JsonConfig jsonConfig = gson.fromJson(jsonReader, JsonConfig.class);
         String errorString = "";
+        String status = "Success";
 
-        jsonToConfig(jsonConfig, configService);
+        try {
+            JsonReader jsonReader = new JsonReader(new FileReader(new File(temp.getAbsolutePath())));
+            JsonConfig jsonConfig = gson.fromJson(jsonReader, JsonConfig.class);
+            jsonToConfig(jsonConfig, configService);
+        }
+        catch (Exception e)
+        {
+            errorString = e.toString();
+            status = "Failure";
+        }
 
-        response.getWriter().print("Successfully executed following string:<br />" +
-                "<textarea rows=\"20\" cols=\"200\" wrap=\"off\" disabled>" + gson.toJson(jsonConfig) + "</textarea>" +
-                "<br /><br />" +
-                "Following errors occurred:<br />" + errorString);
+
+
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("status", status);
+        params.put("error_string", errorString);
+
+        renderer.render("upload_conf_result.vm", params, response.getWriter());
+
     }
 
     private void jsonToConfig(JsonConfig jsonConfig, ConfigService configService) throws ServletException {
