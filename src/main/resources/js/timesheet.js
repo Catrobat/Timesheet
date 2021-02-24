@@ -248,6 +248,10 @@ function projectedFinishDate(timesheetData, entryData) {
             sumLast30Days += entry.endDate - entry.beginDate;
         }
     }
+    if(sumLast30Days === 0) {
+        AJS.$("#timesheet-finish-date").val("Not enough entries to compute");
+        return;
+    }
     var hoursLast30Days = sumLast30Days / (1000 * 60 * 60);
     var remDays = rem * 30 / hoursLast30Days;
     var finishDate = new Date();
