@@ -127,6 +127,7 @@
             </div>
         </div>
         <div class="aui-page-panel">
+            <div class="loadingDiv"><aui-spinner></aui-spinner></div>
             <div class="aui-page-panel-inner">
                 <section class="aui-page-panel-content">
                     <table id="team-information-table" class="aui aui-table-interactive aui-table-sortable">

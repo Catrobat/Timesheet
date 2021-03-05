@@ -51,28 +51,26 @@ AJS.toInit(function () {
         for (var i = 0; i < userInformation.length; i++) {
 
             var firstEntryDate;
-            if (new Date(userInformation[i].firstEntryDate).getTime() == new Date(0).getTime()) {
+            if (new Date(userInformation[i].firstEntryDate).getTime() === new Date(0).getTime()) {
                 firstEntryDate = "none";
             } else {
                 firstEntryDate = (new Date(userInformation[i].firstEntryDate)).toLocaleDateString("en-US");
             }
 
             var latestEntryDate;
-            if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
+            if (new Date(userInformation[i].latestEntryDate).getTime() === new Date(0).getTime()) {
                 latestEntryDate = "none";
             } else {
                 latestEntryDate = (new Date(userInformation[i].latestEntryDate)).toLocaleDateString("en-US");
             }
             var inactiveEndDate;
-            if (userInformation[i].inactiveEndDate == null || new Date(userInformation[i].inactiveEndDate).getTime() == new Date(0).getTime()) {
+            if (userInformation[i].inactiveEndDate == null || new Date(userInformation[i].inactiveEndDate).getTime() === new Date(0).getTime()) {
                 inactiveEndDate = "";
             } else {
                 inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
             }
 
             var enabled = userInformation[i].state !== "DISABLED";
-
-            var done = userInformation[i].state === "DONE";
 
             var timesheetId = userInformation[i].timesheetID;
             var dropdown =  "<aui-button id='button" + timesheetId + "' class='aui-button aui-dropdown2-trigger' aria-controls='active-timesheet" + timesheetId + "'>Actions</aui-button>";
@@ -103,8 +101,6 @@ AJS.toInit(function () {
                     break;
             }
 
-            var profile_link = AJS.params.baseURL + "\/secure\/ViewProfile.jspa?name=" ;
-
         	var enabledColumn = "</td><td headers='ti-actions'>" + dropdown;
         	var row = "<tr>" +
             "<td headers='ti-users' class='users'>" +
@@ -132,13 +128,9 @@ AJS.toInit(function () {
         		AJS.$("#user-information-table-content").append(row);
         	}
 
-
             var timesheetID = userInformation[i].timesheetID;
 
             setupDropdownButton(timesheetID, enabled);
-
-
-            AJS.$("[name=user-" + userInformation[i].userName + "-profile]").attr("href" , profile_link);
         }
 
         AJS.$(".view-timesheet-button").on("click", function (e) {
