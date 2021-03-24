@@ -43,6 +43,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -135,9 +136,21 @@ public class UserRest {
             return response;
         }
 
+        List<JsonUserInformation> jsonUserInformationList = timesheetsToJson(timesheetService.all());
+
+        Date date1 = new Date();
+        long diffInMillies = date1.getTime() - date.getTime();
+        TimeUnit timeUnit = TimeUnit.SECONDS;
+        logger.debug("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS));
+
+        return Response.ok(jsonUserInformationList).build();
+    }
+
+    private List<JsonUserInformation> timesheetsToJson(List<Timesheet> timesheetList)
+    {
         List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
 
-        for (Timesheet timesheet : timesheetService.all()) {
+        for (Timesheet timesheet : timesheetList) {
 
             ApplicationUser u = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey());
             if (u == null) {
@@ -191,14 +204,43 @@ public class UserRest {
 
             jsonUserInformationList.add(jsonUserInformation);
         }
+        return jsonUserInformationList;
+    }
 
-        Date date1 = new Date();
-        long diffInMillies = date1.getTime() - date.getTime();
-        TimeUnit timeUnit = TimeUnit.SECONDS;
-        logger.debug("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS));
+    @GET
+    @Path("/getUserInformation/{State}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserInformationWithState(@Context HttpServletRequest request, @PathParam("State") String state) {
+        Response response = permissionService.checkRootPermission();
+        if (response != null) {
+            return response;
+        }
+
+        List<JsonUserInformation> jsonUserInformationList = timesheetsToJson(timesheetService.allWithState(state));
 
         return Response.ok(jsonUserInformationList).build();
     }
+
+    @GET
+    @Path("/getUserInformationStats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserInformationStats(@Context HttpServletRequest request) {
+        Response response = permissionService.checkRootPermission();
+        if (response != null) {
+            return response;
+        }
+
+        List<String> states = Arrays.asList("ACTIVE", "INACTIVE", "AUTO_INACTIVE", "INACTIVE_OFFLINE", "DISABLED", "DONE");
+
+        List<Integer> userInformationStats = new ArrayList<>();
+
+        for (String state : states) {
+            userInformationStats.add(timesheetService.getStateAmount(state));
+        }
+
+        return Response.ok(userInformationStats).build();
+    }
+
 
     @GET
     @Path("/getUsersForCoordinator/{currentTimesheetID}")

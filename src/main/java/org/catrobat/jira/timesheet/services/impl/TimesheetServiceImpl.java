@@ -132,6 +132,18 @@ public class TimesheetServiceImpl implements TimesheetService {
         return newArrayList(ao.find(Timesheet.class));
     }
 
+    @NotNull
+    @Override
+    public List<Timesheet> allWithState(String state) {
+        return newArrayList(ao.find(Timesheet.class, "STATE = ?", state));
+    }
+
+    @NotNull
+    @Override
+    public int getStateAmount(String state) {
+        return ao.find(Timesheet.class, "STATE = ?", state).length;
+    }
+
     @Nullable
     @Override
     public Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException {
