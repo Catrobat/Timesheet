@@ -123,6 +123,37 @@ public class UserRestTest {
         Mockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
     }
 
+
+    @Test
+    public void testUserInformationStates() {
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+        Response response_active = spyUserRest.getUserInformationWithState(httpRequestMock, "ACTIVE");
+        List<JsonUserInformation> list_active = (List<JsonUserInformation>) response_active.getEntity();
+        assertEquals(1, list_active.size());
+        assertEquals("chris", list_active.get(0).getUserName());
+        assertEquals(Timesheet.State.ACTIVE, list_active.get(0).getState());
+
+        Response response_inactive = spyUserRest.getUserInformationWithState(httpRequestMock, "INACTIVE");
+        List<JsonUserInformation> list_inactive = (List<JsonUserInformation>) response_inactive.getEntity();
+        assertEquals(1, list_inactive.size());
+        assertEquals("joh", list_inactive.get(0).getUserName());
+        assertEquals(Timesheet.State.INACTIVE, list_inactive.get(0).getState());
+    }
+
+    @Test
+    public void testUserInformationCount() {
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+        Response response = spyUserRest.getUserInformationStats(httpRequestMock);
+        List<Integer> counts = (List<Integer>) response.getEntity();
+        assertEquals(6, counts.size());
+        assertEquals(1, (int) counts.get(0));
+        assertEquals(1, (int) counts.get(1));
+        assertEquals(0, (int) counts.get(2));
+        assertEquals(0, (int) counts.get(3));
+        assertEquals(0, (int) counts.get(4));
+        assertEquals(0, (int) counts.get(5));
+    }
+
     @Test
     public void testGetUsersUnauthorized() {
         doReturn(false).when(permissionServiceMock).isTimesheetAdmin(userMock);

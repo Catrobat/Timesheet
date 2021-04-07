@@ -23,11 +23,13 @@ public class MySampleDatabaseUpdater implements DatabaseUpdater {
         em.migrate(TimesheetEntry.class);
 
         Timesheet chrisSheet = em.create(Timesheet.class,
-            new DBParam("USER_KEY", "chris")
+            new DBParam("USER_KEY", "chris"),
+            new DBParam("STATE", Timesheet.State.ACTIVE)
         );
 
         Timesheet jsonSheet = em.create(Timesheet.class,
-            new DBParam("USER_KEY", "joh")
+            new DBParam("USER_KEY", "joh"),
+            new DBParam("STATE", Timesheet.State.INACTIVE)
         );
 
         Team scratchTeam = em.create(Team.class,
