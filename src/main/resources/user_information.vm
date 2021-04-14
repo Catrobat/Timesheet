@@ -58,7 +58,7 @@
 
     <ul class="tabs-menu nav nav-tabs" id="tabs">
     	<li class="menu-item active-tab" id="li-stats-tab">
-            <a href="#tabs-statistic"><strong>Statistic</strong></a>
+            <a href="#tabs-statistic"><strong>Statistics</strong></a>
         </li>
         <li class="menu-item" id="li-active-tab">
             <a href="#tabs-active-users"><strong>Active</strong></a>
@@ -83,12 +83,20 @@
     #*content of the tab Statistic*#
     <div class="tabs-pane active-pane" id="tabs-statistic">     
         
-            <h2><b> Timesheet User Statistics</b></h2>
             <p>
-            <table id ="user-information-statistics-table" frame="void" cellspacing="5" cellpadding="5">
-              <tbody id="timesheet-user-statistics">
-                #* will be filled out by JavaScript *#
-              </tbody>
+            <table id ="user-information-statistics-table" frame="void" cellspacing="5" cellpadding="5" class="aui aui-table-list" style="width: 400px;">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th style="text-align: right;">Number of Timesheets</th>
+                    </tr>
+                </thead>
+                <tbody id="timesheet-user-statistics">
+                    #* will be filled out by JavaScript *#
+                </tbody>
+                <tfoot id="timesheet-user-statistics-total">
+                    #* will be filled out by JavaScript *#
+                </tfoot>
             </table>
 
    </div>

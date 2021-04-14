@@ -251,8 +251,8 @@ AJS.toInit(function () {
     function populateStats(amounts) {
         var sum = 0;
         var style = " style=\"text-align:right\"";
-        var stat_list = ["Active Timesheets: ", "Inactive Timesheets: ", "Auto-Inactive Timesheets: ",
-            "Inactive-Offline Timesheets: ", "Disabled Timesheets: ", "Done Timesheets: ", "Total Number of Timesheets: "]
+        var stat_list = ["Active: ", "Inactive: ", "Auto-Inactive: ",
+            "Inactive-Offline: ", "Disabled: ", "Done: ", "Total Number of Timesheets: "]
 
         for (var i = 0; i < amounts.length; i++) {
             console.log(amounts[i]);
@@ -260,8 +260,8 @@ AJS.toInit(function () {
             AJS.$("#timesheet-user-statistics").append(row_stat);
             sum += amounts[i];
         }
-        row_stat = "<tr><td>" + stat_list[stat_list.length - 1] + "</td><td" + style + ">" + sum +  "</td></tr>";
-        AJS.$("#timesheet-user-statistics").append(row_stat);
+
+        AJS.$("#timesheet-user-statistics-total").append("<tr><th>" + stat_list[stat_list.length - 1] + "</th><th" + style + ">" + sum +  "</th></tr>");
     }
 
     function fetchMonitoring() {
