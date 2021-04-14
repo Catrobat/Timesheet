@@ -251,8 +251,8 @@ AJS.toInit(function () {
     function populateStats(amounts) {
         var sum = 0;
         var style = " style=\"text-align:right\"";
-        var stat_list = ["Active: ", "Inactive: ", "Auto-Inactive: ",
-            "Inactive-Offline: ", "Disabled: ", "Done: ", "Total Number of Timesheets: "]
+        var stat_list = ["Active", "Inactive", "Auto-Inactive",
+            "Inactive-Offline", "Disabled", "Done", "Total Number of Timesheets"]
 
         for (var i = 0; i < amounts.length; i++) {
             console.log(amounts[i]);
