@@ -4,7 +4,7 @@ var coordUsersList = "";
 var idOfCurrentTimesheet = "";
 
 function initCoordinatorUserList(userInformation) {
-	
+    AJS.$(".loadingDiv").show();
     var userListToSort = [];
 	
     for (var i = 0; i < userInformation.length; i++) {
@@ -56,6 +56,7 @@ function initCoordinatorUserList(userInformation) {
         var timesheet_id = e.target.getAttribute("data-timesheet-id");
         window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheet_id, "_blank");
     });
+    AJS.$(".loadingDiv").hide();
 }
 
 function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
