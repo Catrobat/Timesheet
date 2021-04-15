@@ -32,6 +32,26 @@ public class MySampleDatabaseUpdater implements DatabaseUpdater {
             new DBParam("STATE", Timesheet.State.INACTIVE)
         );
 
+        em.create(Timesheet.class,
+                new DBParam("USER_KEY", "flo"),
+                new DBParam("STATE", Timesheet.State.AUTO_INACTIVE)
+        );
+
+        em.create(Timesheet.class,
+                new DBParam("USER_KEY", "leo"),
+                new DBParam("STATE", Timesheet.State.INACTIVE_OFFLINE)
+        );
+
+        em.create(Timesheet.class,
+                new DBParam("USER_KEY", "bob"),
+                new DBParam("STATE", Timesheet.State.DISABLED)
+        );
+
+        em.create(Timesheet.class,
+                new DBParam("USER_KEY", "mike"),
+                new DBParam("STATE", Timesheet.State.DONE)
+        );
+
         Team scratchTeam = em.create(Team.class,
             new DBParam("TEAM_NAME", "SCRATCH")
         );

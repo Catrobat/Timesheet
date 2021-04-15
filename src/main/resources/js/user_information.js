@@ -107,7 +107,7 @@ AJS.toInit(function () {
             }
 
             var enabledColumn = "</td><td headers='ti-actions'>" + dropdown;
-            var row = "<tr>" +
+            var row = "<tr id='tr" + timesheetId + "'>" +
                 "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
@@ -190,11 +190,8 @@ AJS.toInit(function () {
 
                 setupDropdownButton(timesheetID, enabled);
 
-                if (enabled) {
-                    AJS.$("#state" + timesheetID).text("ACTIVE");
-                } else {
-                    AJS.$("#state" + timesheetID).text("DISABLED");
-                }
+                AJS.$("#tr" + timesheetID).remove();
+
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
@@ -284,52 +281,47 @@ AJS.toInit(function () {
     }
 
     function setupClickListeners() {
-        AJS.$("#active-spinner").hide();
+        AJS.$(".loadingDiv").hide();
         AJS.$("#li-active-tab").click(function(){
-            AJS.$("#active-spinner").show();
+            AJS.$(".loadingDiv").show();
             AJS.$("#active-user-table-content").empty()
             populateTableWrapper("ACTIVE");
-            AJS.$("#active-spinner").hide();
+            AJS.$(".loadingDiv").hide();
         })
 
-        AJS.$("#inactive-spinner").hide();
         AJS.$("#li-inactive-tab").click(function(){
-            AJS.$("#inactive-spinner").show();
+            AJS.$(".loadingDiv").show();
             AJS.$("#inactive-user-table-content").empty()
             populateTableWrapper("INACTIVE");
-            AJS.$("#inactive-spinner").hide();
+            AJS.$(".loadingDiv").hide();
         })
 
-        AJS.$("#autoinactive-spinner").hide();
         AJS.$("#li-autoinactive-tab").click(function(){
-            AJS.$("#autoinanctive-spinner").show();
-            AJS.$("#autoinanctive-user-table-content").empty()
+            AJS.$(".loadingDiv").show();
+            AJS.$("#autoinactive-user-table-content").empty()
             populateTableWrapper("AUTO_INACTIVE");
-            AJS.$("#autoinactive-spinner").hide();
+            AJS.$(".loadingDiv").hide();
         })
 
-        AJS.$("#inactiveoffline-spinner").hide();
         AJS.$("#li-inactiveoffline-tab").click(function(){
-            AJS.$("#inactiveoffline-spinner").show();
+            AJS.$(".loadingDiv").show();
             AJS.$("#inactiveoffline-user-table-content").empty()
             populateTableWrapper("INACTIVE_OFFLINE");
-            AJS.$("#inactiveoffline-spinner").hide();
+            AJS.$(".loadingDiv").hide();
         })
 
-        AJS.$("#disabled-spinner").hide();
         AJS.$("#li-disabled-tab").click(function(){
-            AJS.$("#disabled-spinner").show();
+            AJS.$(".loadingDiv").show();
             AJS.$("#disabled-user-table-content").empty()
             populateTableWrapper("DISABLED");
-            AJS.$("#disabled-spinner").hide();
+            AJS.$(".loadingDiv").hide();
         })
 
-        AJS.$("#done-spinner").hide();
         AJS.$("#li-done-tab").click(function(){
-            AJS.$("#done-spinner").show();
+            AJS.$(".loadingDiv").show();
             AJS.$("#done-user-table-content").empty()
             populateTableWrapper("DONE");
-            AJS.$("#done-spinner").hide();
+            AJS.$(".loadingDiv").hide();
         })
     }
 

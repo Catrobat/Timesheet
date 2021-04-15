@@ -51,6 +51,7 @@
 
 	<h1><b>Timesheet - User Information</b></h1>
 	<div id="aui-message-bar"></div>
+    <div class="loadingDiv"><aui-spinner></aui-spinner></div>
 		
 #*Tabs view*#
 
@@ -106,7 +107,6 @@
     #*content of the tab Active*#
     <div class="tabs-pane" id="tabs-active-users">
         <div class="loadingDiv" id="active-spinner"><aui-spinner></aui-spinner></div>
-        <h2><b> Active Timesheets</b></h2>
         <p>
         <input type="text" id="searchInputNamesActive" onkeyup="searchFunction('searchInputNamesActive', 'active-user-table', 0)" placeholder="Search for Users or Teams...">
         <p>
@@ -137,7 +137,6 @@
     #*content of the tab Inactive*#
     <div class="tabs-pane" id="tabs-inactive-users">
         <div class="loadingDiv" id="inactive-spinner"><aui-spinner></aui-spinner></div>
-        <h2><b> Inactive Timesheets</b></h2>
         <p>
             <input type="text" id="searchInputNamesInactive" onkeyup="searchFunction('searchInputNamesInactive', 'inactive-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
@@ -159,7 +158,7 @@
                 <th id="ti-actions">Actions</th>
             </tr>
             </thead>
-            <tbody class="list" id="inactive-users-table-content">
+            <tbody class="list" id="inactive-user-table-content">
                 #* will be filled out by JavaScript *#
             </tbody>
         </table>
@@ -168,7 +167,6 @@
     #*content of the tab Auto-inactive*#
     <div class="tabs-pane" id="tabs-autoinactive-users">
         <div class="loadingDiv" id="autoinactive-spinner"><aui-spinner></aui-spinner></div>
-        <h2><b> Auto-inactive Timesheets</b></h2>
         <p>
             <input type="text" id="searchInputNamesAutoinactive" onkeyup="searchFunction('searchInputNamesAutoinactive', 'autoinactive-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
@@ -190,7 +188,7 @@
                 <th id="ti-actions">Actions</th>
             </tr>
             </thead>
-            <tbody class="list" id="autoinactive-users-table-content">
+            <tbody class="list" id="autoinactive-user-table-content">
                 #* will be filled out by JavaScript *#
             </tbody>
         </table>
@@ -199,7 +197,6 @@
     #*content of the tab Inactive-Offline*#
     <div class="tabs-pane" id="tabs-inactiveoffline-users">
         <div class="loadingDiv" id="inactiveoffline-spinner"><aui-spinner></aui-spinner></div>
-        <h2><b> Inactive-Offline Timesheets</b></h2>
         <p>
             <input type="text" id="searchInputNamesInactiveoffline" onkeyup="searchFunction('searchInputNamesInactiveoffline', 'inactiveoffline-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
@@ -221,7 +218,7 @@
                 <th id="ti-actions">Actions</th>
             </tr>
             </thead>
-            <tbody class="list" id="inactiveoffline-users-table-content">
+            <tbody class="list" id="inactiveoffline-user-table-content">
                 #* will be filled out by JavaScript *#
             </tbody>
         </table>
@@ -230,7 +227,6 @@
     #*content of the tab Disabled*#
     <div class="tabs-pane" id="tabs-disabled-users">
         <div class="loadingDiv" id="disabled-spinner"><aui-spinner></aui-spinner></div>
-		<h2><b>Disabled Users</b></h2>
         <p>
         <input type="text" id="searchInputNamesDisabled" onkeyup="searchFunction('searchInputNamesDisabled', 'disabled-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
@@ -261,7 +257,6 @@
     #*content of the tab Done*#
     <div class="tabs-pane" id="tabs-done-users">
         <div class="loadingDiv" id="done-spinner"><aui-spinner></aui-spinner></div>
-		<h2><b>Done Users </b></h2>
         <p>
         <input type="text" id="searchInputNamesDone" onkeyup="searchFunction('searchInputNamesDone', 'done-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>

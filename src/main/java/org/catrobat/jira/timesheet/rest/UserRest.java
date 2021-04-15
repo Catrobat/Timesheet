@@ -127,21 +127,11 @@ public class UserRest {
     @Path("/getUserInformation")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserInformation(@Context HttpServletRequest request) {
-
-        logger.debug("1 /getUserInformation reached");
-        Date date = new Date();
-
         Response response = permissionService.checkRootPermission();
         if (response != null) {
             return response;
         }
-
         List<JsonUserInformation> jsonUserInformationList = timesheetsToJson(timesheetService.all());
-
-        Date date1 = new Date();
-        long diffInMillies = date1.getTime() - date.getTime();
-        TimeUnit timeUnit = TimeUnit.SECONDS;
-        logger.debug("2 /getUserInformation diffInMillies/diffInSeconds: " + diffInMillies + "/" + timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS));
 
         return Response.ok(jsonUserInformationList).build();
     }
@@ -215,7 +205,6 @@ public class UserRest {
         if (response != null) {
             return response;
         }
-
         List<JsonUserInformation> jsonUserInformationList = timesheetsToJson(timesheetService.allWithState(state));
 
         return Response.ok(jsonUserInformationList).build();
