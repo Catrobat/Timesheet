@@ -40,6 +40,7 @@ AJS.toInit(function () {
     }
 
     function populateTable(userInformation) {
+        AJS.$(".loadingDiv").show();
         //sort by username
         userInformation.sort(dynamicSort("userName"));
 
@@ -139,6 +140,7 @@ AJS.toInit(function () {
 
             window.open(AJS.params.baseURL + "/secure/ViewProfile.jspa?name=" + user_name, "_blank");
         });
+        AJS.$(".loadingDiv").hide();
     }
 
     function setupDropdownButton(timesheetID, enabled) {
@@ -246,6 +248,7 @@ AJS.toInit(function () {
     }
 
     function populateStats(amounts) {
+        AJS.$(".loadingDiv").show();
         var sum = 0;
         var style = " style=\"text-align:right\"";
         var stat_list = ["Active", "Inactive", "Auto-Inactive",
@@ -259,6 +262,7 @@ AJS.toInit(function () {
         }
 
         AJS.$("#timesheet-user-statistics-total").append("<tr><th>" + stat_list[stat_list.length - 1] + "</th><th" + style + ">" + sum +  "</th></tr>");
+        AJS.$(".loadingDiv").hide();
     }
 
     function fetchMonitoring() {
@@ -283,45 +287,33 @@ AJS.toInit(function () {
     function setupClickListeners() {
         AJS.$(".loadingDiv").hide();
         AJS.$("#li-active-tab").click(function(){
-            AJS.$(".loadingDiv").show();
             AJS.$("#active-user-table-content").empty()
             populateTableWrapper("ACTIVE");
-            AJS.$(".loadingDiv").hide();
         })
 
         AJS.$("#li-inactive-tab").click(function(){
-            AJS.$(".loadingDiv").show();
             AJS.$("#inactive-user-table-content").empty()
             populateTableWrapper("INACTIVE");
-            AJS.$(".loadingDiv").hide();
         })
 
         AJS.$("#li-autoinactive-tab").click(function(){
-            AJS.$(".loadingDiv").show();
             AJS.$("#autoinactive-user-table-content").empty()
             populateTableWrapper("AUTO_INACTIVE");
-            AJS.$(".loadingDiv").hide();
         })
 
         AJS.$("#li-inactiveoffline-tab").click(function(){
-            AJS.$(".loadingDiv").show();
             AJS.$("#inactiveoffline-user-table-content").empty()
             populateTableWrapper("INACTIVE_OFFLINE");
-            AJS.$(".loadingDiv").hide();
         })
 
         AJS.$("#li-disabled-tab").click(function(){
-            AJS.$(".loadingDiv").show();
             AJS.$("#disabled-user-table-content").empty()
             populateTableWrapper("DISABLED");
-            AJS.$(".loadingDiv").hide();
         })
 
         AJS.$("#li-done-tab").click(function(){
-            AJS.$(".loadingDiv").show();
             AJS.$("#done-user-table-content").empty()
             populateTableWrapper("DONE");
-            AJS.$(".loadingDiv").hide();
         })
     }
 
