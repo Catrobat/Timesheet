@@ -146,7 +146,7 @@ AJS.toInit(function () {
             .done(fillSchedulingData);
 
         AJS.$.when(monitoringFetched)
-            .done(fillSchedulingData);
+            .done(fillMonitoringData);
 
         AJS.$.when(allUsersFetched, categoriesFetched, groupsFetched)
             .done(populateForm)
