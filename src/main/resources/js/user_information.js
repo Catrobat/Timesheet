@@ -40,7 +40,6 @@ AJS.toInit(function () {
     }
 
     function populateTable(userInformation) {
-        AJS.$(".loadingDiv").show();
         //sort by username
         userInformation.sort(dynamicSort("userName"));
 
@@ -209,6 +208,7 @@ AJS.toInit(function () {
     }
 
     function populateTableWrapper(state) {
+        AJS.$(".loadingDiv").show();
         var userInformationFetched = AJS.$.ajax({
             type: 'GET',
             url: restBaseUrl + 'user/getUserInformation/' + state,
@@ -228,6 +228,7 @@ AJS.toInit(function () {
     }
 
     function populateStatsWrapper() {
+        AJS.$(".loadingDiv").show();
         var stateAmounts = AJS.$.ajax({
             type: 'GET',
             url: restBaseUrl + 'user/getUserInformationStats',
@@ -248,7 +249,6 @@ AJS.toInit(function () {
     }
 
     function populateStats(amounts) {
-        AJS.$(".loadingDiv").show();
         var sum = 0;
         var style = " style=\"text-align:right\"";
         var stat_list = ["Active", "Inactive", "Auto-Inactive",
@@ -286,6 +286,13 @@ AJS.toInit(function () {
 
     function setupClickListeners() {
         AJS.$(".loadingDiv").hide();
+
+        AJS.$("#li-stats-tab").click(function(){
+            AJS.$("#timesheet-user-statistics").empty()
+            AJS.$("#timesheet-user-statistics-total").empty()
+            populateStatsWrapper();
+        })
+
         AJS.$("#li-active-tab").click(function(){
             AJS.$("#active-user-table-content").empty()
             populateTableWrapper("ACTIVE");
