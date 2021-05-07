@@ -20,30 +20,11 @@
     <meta name="decorator" content="atl.admin"/>
     <meta name="application-base-url" content="$applicationProperties.getBaseUrl()">
     $webResourceManager.requireResource("org.catrobat.jira.timesheet:user-information-resources")
-
 </head>
 
 <body class="aui-layout aui-theme-default">
 
-	<script type="application/javascript">
-	    function showDoneUsers() {
-	        document.getElementById("done-users-table").style.visibility = "visible";
-	    }
-	</script>
-	
-	<script type="application/javascript">
-	    function showDisabledUsers() {
-	        document.getElementById("disabled-users-table").style.visibility = "visible";
-	    }
-	</script>
-	
-	<script type="application/javascript">
-	    function showActiveInactiveUsers() {
-	        document.getElementById("user-information-table").style.visibility = "visible";
-	    }
-	</script>
-
-	<script type="application/javascript">
+<script type="application/javascript">
 		function searchFunction(element, tablename, id) {
 		  // Declare variables
 		  var input, filter, table, tr, td, i;
@@ -70,50 +51,64 @@
 
 	<h1><b>Timesheet - User Information</b></h1>
 	<div id="aui-message-bar"></div>
-	<div class="loadingDiv"><aui-spinner></aui-spinner></div>
+    <div class="loadingDiv"><aui-spinner></aui-spinner></div>
 		
 #*Tabs view*#
 
 <div class="aui-tabs horizontal-tabs" id="table-header">
 
     <ul class="tabs-menu nav nav-tabs" id="tabs">
-    	<li class="menu-item active-tab">
-            <a href="#tabs-statistic"><strong>Statistic</strong></a>
+    	<li class="menu-item active-tab" id="li-stats-tab">
+            <a href="#tabs-statistic"><strong>Statistics</strong></a>
         </li>
-        <li class="menu-item">
-            <a href="#tabs-users" onclick="showActiveInactiveUsers();"><strong>Active & Inactive</strong></a>
+        <li class="menu-item" id="li-active-tab">
+            <a href="#tabs-active-users"><strong>Active</strong></a>
         </li>
-        <li class="menu-item">
-            <a href="#tabs-disabled-users" onclick="showDisabledUsers();">Disabled Timesheets</a>
+        <li class="menu-item" id="li-inactive-tab">
+            <a href="#tabs-inactive-users"><strong>Inactive</strong></a>
         </li>
-        <li class="menu-item">
-            <a href="#tabs-done-users" onclick="showDoneUsers();">Done Timesheets</a>
+        <li class="menu-item" id="li-autoinactive-tab">
+            <a href="#tabs-autoinactive-users"><strong>Auto-Inactive</strong></a>
+        </li>
+        <li class="menu-item" id="li-inactiveoffline-tab">
+            <a href="#tabs-inactiveoffline-users"><strong>Inactive-Offline</strong></a>
+        </li>
+        <li class="menu-item" id="li-disabled-tab">
+            <a href="#tabs-disabled-users">Disabled</a>
+        </li>
+        <li class="menu-item" id="li-done-tab">
+            <a href="#tabs-done-users">Done</a>
         </li>
     </ul>
 
-#*content of the first tab User Statistics*#
-    <div class="tabs-pane active-pane" id="tabs-statistic">     
-        
-            <h2><b> Timesheet User Statistics</b></h2>
-            
+    #*content of the tab Statistic*#
+    <div class="tabs-pane active-pane" id="tabs-statistic">
             <p>
-            <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
-              <tbody id="timesheet-user-statistics">
-                #* will be filled out by JavaScript *#
-              </tbody>
+            <table id ="user-information-statistics-table" frame="void" cellspacing="5" cellpadding="5" class="aui aui-table-list" style="width: 400px;">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th style="text-align: right;">Number of Timesheets</th>
+                    </tr>
+                </thead>
+                <tbody id="timesheet-user-statistics">
+                    #* will be filled out by JavaScript *#
+                </tbody>
+                <tfoot id="timesheet-user-statistics-total">
+                    #* will be filled out by JavaScript *#
+                </tfoot>
             </table>
 
    </div>
 
+    #*enum State {ACTIVE, INACTIVE, AUTO_INACTIVE, INACTIVE_OFFLINE, DISABLED, DONE}*#
 
-#*content of the tab Active & Inactive*#
-    <div class="tabs-pane" id="tabs-users">     
-		                
-        <h2><b> Active and Inactive Timesheets</b></h2>
+    #*content of the tab Active*#
+    <div class="tabs-pane" id="tabs-active-users">
         <p>
-        <input type="text" id="searchInputNamesActive" onkeyup="searchFunction('searchInputNamesActive', 'user-information-table', 0)" placeholder="Search for Users or Teams...">
+        <input type="text" id="searchInputNamesActive" onkeyup="searchFunction('searchInputNamesActive', 'active-user-table', 0)" placeholder="Search for Users or Teams...">
         <p>
-        <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
+        <table id="active-user-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
                 <th id="ti-users">User</th>
@@ -131,17 +126,101 @@
                 <th id="ti-actions">Actions</th>
             </tr>
             </thead>
-            <tbody class="list" id="user-information-table-content">
+            <tbody class="list" id="active-user-table-content">
             #* will be filled out by JavaScript *#
             </tbody>
         </table>		                		                	                
    </div>
 
+    #*content of the tab Inactive*#
+    <div class="tabs-pane" id="tabs-inactive-users">
+        <p>
+            <input type="text" id="searchInputNamesInactive" onkeyup="searchFunction('searchInputNamesInactive', 'inactive-users-table', 0)" placeholder="Search for Users or Teams...">
+        <p>
+        <table id="inactive-users-table" class="aui aui-table-interactive aui-table-sortable">
+            <thead>
+            <tr>
+                <th id="ti-users">User</th>
+                <th id="ti-team">Team</th>
+                <th id="ti-state">State</th>
+                <th id="ti-inactive-end-date">Inactive End Date</th>
+                <th id="ti-remaining-hours">Remaining Hours</th>
+                <th id="ti-target-total-hours">Target Total Hours</th>
+                <th id="ti-total-hours">Finished Hours</th>
+                <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
+                <th id="ti-first-entry-date">Date of the First Entry</th>
+                <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+                <th id="ti-actions">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="list" id="inactive-user-table-content">
+                #* will be filled out by JavaScript *#
+            </tbody>
+        </table>
+    </div>
 
-#* content of the 2nd tab "Disabled Users"*#
+    #*content of the tab Auto-inactive*#
+    <div class="tabs-pane" id="tabs-autoinactive-users">
+        <p>
+            <input type="text" id="searchInputNamesAutoinactive" onkeyup="searchFunction('searchInputNamesAutoinactive', 'autoinactive-users-table', 0)" placeholder="Search for Users or Teams...">
+        <p>
+        <table id="autoinactive-users-table" class="aui aui-table-interactive aui-table-sortable">
+            <thead>
+            <tr>
+                <th id="ti-users">User</th>
+                <th id="ti-team">Team</th>
+                <th id="ti-state">State</th>
+                <th id="ti-inactive-end-date">Inactive End Date</th>
+                <th id="ti-remaining-hours">Remaining Hours</th>
+                <th id="ti-target-total-hours">Target Total Hours</th>
+                <th id="ti-total-hours">Finished Hours</th>
+                <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
+                <th id="ti-first-entry-date">Date of the First Entry</th>
+                <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+                <th id="ti-actions">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="list" id="autoinactive-user-table-content">
+                #* will be filled out by JavaScript *#
+            </tbody>
+        </table>
+    </div>
 
-    <div class="tabs-pane" id="tabs-disabled-users">   
-		<h2><b>Disabled Users</b></h2>
+    #*content of the tab Inactive-Offline*#
+    <div class="tabs-pane" id="tabs-inactiveoffline-users">
+        <p>
+            <input type="text" id="searchInputNamesInactiveoffline" onkeyup="searchFunction('searchInputNamesInactiveoffline', 'inactiveoffline-users-table', 0)" placeholder="Search for Users or Teams...">
+        <p>
+        <table id="inactiveoffline-users-table" class="aui aui-table-interactive aui-table-sortable">
+            <thead>
+            <tr>
+                <th id="ti-users">User</th>
+                <th id="ti-team">Team</th>
+                <th id="ti-state">State</th>
+                <th id="ti-inactive-end-date">Inactive End Date</th>
+                <th id="ti-remaining-hours">Remaining Hours</th>
+                <th id="ti-target-total-hours">Target Total Hours</th>
+                <th id="ti-total-hours">Finished Hours</th>
+                <th id="ti-hours-per-half-year">Hours last Half Year</th>
+                <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
+                <th id="ti-first-entry-date">Date of the First Entry</th>
+                <th id="ti-latest-entry-date">Date of the Latest Entry</th>
+                <th id="ti-latest-entry-description">Description of the Latest Entry</th>
+                <th id="ti-actions">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="list" id="inactiveoffline-user-table-content">
+                #* will be filled out by JavaScript *#
+            </tbody>
+        </table>
+    </div>
+
+    #*content of the tab Disabled*#
+    <div class="tabs-pane" id="tabs-disabled-users">
         <p>
         <input type="text" id="searchInputNamesDisabled" onkeyup="searchFunction('searchInputNamesDisabled', 'disabled-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
@@ -163,17 +242,14 @@
                 <th id="ti-actions">Actions</th>
             </tr>
             </thead>
-            <tbody class="list" id="disabled-user-info-table-content">
+            <tbody class="list" id="disabled-user-table-content">
             #* will be filled out by JavaScript *#
             </tbody>
         </table>
     </div>
 
-
-#*    content of the 3rd tab "Done Users"*#
+    #*content of the tab Done*#
     <div class="tabs-pane" id="tabs-done-users">
-    
-		<h2><b>Done Users </b></h2>
         <p>
         <input type="text" id="searchInputNamesDone" onkeyup="searchFunction('searchInputNamesDone', 'done-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
@@ -195,7 +271,7 @@
                 <th id="ti-enabled">Timesheet Enabled</th>
             </tr>
             </thead>
-            <tbody class="list" id="done-user-info-table-content">
+            <tbody class="list" id="done-user-table-content">
             #* will be filled out by JavaScript *#
             </tbody>
         </table>
