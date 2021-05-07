@@ -57,6 +57,12 @@ public interface TimesheetService {
     @NotNull
     List<Timesheet> all();
 
+    @NotNull
+    List<Timesheet> allWithState(String state);
+
+    @NotNull
+    int getStateAmount(String state);
+
     @Nullable
     Timesheet updateTimesheetEnableState(int timesheetID, Boolean isEnabled) throws ServiceException;
 

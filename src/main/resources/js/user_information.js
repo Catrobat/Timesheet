@@ -40,11 +40,6 @@ AJS.toInit(function () {
     }
 
     function populateTable(userInformation) {
-        AJS.$(".loadingDiv").show();
-        AJS.$("#user-information-table-content").empty();
-        AJS.$("#done-user-info-table-content").empty();
-        AJS.$("#disabled-user-info-table-content").empty();
-
         //sort by username
         userInformation.sort(dynamicSort("userName"));
 
@@ -82,55 +77,55 @@ AJS.toInit(function () {
 
             var current_state = userInformation[i].state;
             var current_state_color = "black";
+            var table = "";
 
             switch(current_state){
                 case "ACTIVE":
                     current_state_color = "green";
+                    table = "#active-user-table-content";
                     break;
                 case "DISABLED":
                     current_state_color = "red";
+                    table = "#disabled-user-table-content";
                     break;
                 case "INACTIVE" :
                     current_state_color = "goldenRod";
+                    table = "#inactive-user-table-content";
                     break;
                 case "AUTO_INACTIVE":
                     current_state_color = "goldenRod";
+                    table = "#autoinactive-user-table-content";
                     break;
                 case "DONE":
                     current_state_color = "grey";
+                    table = "#done-user-table-content";
+                    break;
+                case "INACTIVE_OFFLINE":
+                    current_state_color = "goldenRod";
+                    table = "#inactiveoffline-user-table-content";
                     break;
             }
 
-        	var enabledColumn = "</td><td headers='ti-actions'>" + dropdown;
-        	var row = "<tr>" +
-            "<td headers='ti-users' class='users'>" +
+            var enabledColumn = "</td><td headers='ti-actions'>" + dropdown;
+            var row = "<tr id='tr" + timesheetId + "'>" +
+                "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
-            "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
+                "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
                 "</td><td headers='ti-state' class='state' id='state"+ timesheetId + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
-            "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
-            "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
-            "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
-            "</td><td headers='ti-total-hours' class='total-hours'>" + userInformation[i].totalHours +
-            "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
-            "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
-            "</td><td headers='ti-first-entry-date' class='latest-date'>" + firstEntryDate +
-            "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
-            "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
+                "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
+                "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
+                "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
+                "</td><td headers='ti-total-hours' class='total-hours'>" + userInformation[i].totalHours +
+                "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
+                "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
+                "</td><td headers='ti-first-entry-date' class='latest-date'>" + firstEntryDate +
+                "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
+                "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
                 enabledColumn +  "</td></tr>";
-        	
-        	if (userInformation[i].state === "DONE") {
-        		AJS.$("#done-user-info-table-content").append(row);
-        	}
-        	else if (userInformation[i].state === "DISABLED") {
-        		AJS.$("#disabled-user-info-table-content").append(row);
-        	}
-        	else {
-        		AJS.$("#user-information-table-content").append(row);
-        	}
 
-            var timesheetID = userInformation[i].timesheetID;
+            AJS.$(table).append(row);
 
-            setupDropdownButton(timesheetID, enabled);
+            setupDropdownButton(userInformation[i].timesheetID, enabled);
         }
 
         AJS.$(".view-timesheet-button").on("click", function (e) {
@@ -144,53 +139,6 @@ AJS.toInit(function () {
 
             window.open(AJS.params.baseURL + "/secure/ViewProfile.jspa?name=" + user_name, "_blank");
         });
-
-        AJS.$("#user-information-table").trigger("update");
-        AJS.$("#disabled-users-table").trigger("update");
-        AJS.$("#done-users-table").trigger("update");
-
-        AJS.$("#timesheet-user-statistics").empty();
-
-        var numberTotal = 0;
-        var numberActive = 0;
-        var numberInActive = 0;
-        var numberAutoInActive = 0;
-        var numberInActiveOffline = 0;
-        var numberDisabled = 0;
-        var numberDone = 0;
-
-        for (var i = 0; i < userInformation.length; i++) {
-
-        	numberTotal++;
-
-        	if (userInformation[i].state === "ACTIVE")
-        		numberActive++;
-        	else if (userInformation[i].state === "INACTIVE")
-        		numberInActive++;
-        	else if (userInformation[i].state === "AUTO_INACTIVE")
-        		numberAutoInActive++;
-        	else if (userInformation[i].state === "INACTIVE_OFFLINE")
-        		numberInActiveOffline++;
-        	else if (userInformation[i].state === "DISABLED")
-        		numberDisabled++;
-        	else if (userInformation[i].state === "DONE")
-        		numberDone++;
-
-        }
-
-        var row = "<tr><td>" + "Total Number of Timesheets: " + numberTotal + "</td>" +
-        				"<td>" + "Active Timesheets: " + numberActive + "</td>" +
-                  		"<td>" + "Auto Inactive Timesheets: " + numberAutoInActive + "</td>" +
-                  		"<td>" + "Inactive Timesheets: " + numberInActive + "</td>" +
-                  "</tr>" +
-
-                  "<tr><td>" + "Disabled Timesheets: " + numberDisabled + "</td>" +
-                  		"<td>" + "InactiveOffline Timesheets: " + numberInActiveOffline + "</td>" +
-                  		"<td>" + "Done Timesheets: " + numberDone + "</td>" +
-                  "</tr>";
-
-        AJS.$("#timesheet-user-statistics").append(row);
-
         AJS.$(".loadingDiv").hide();
     }
 
@@ -243,11 +191,8 @@ AJS.toInit(function () {
 
                 setupDropdownButton(timesheetID, enabled);
 
-                if (enabled) {
-                    AJS.$("#state" + timesheetID).text("ACTIVE");
-                } else {
-                    AJS.$("#state" + timesheetID).text("DISABLED");
-                }
+                AJS.$("#tr" + timesheetID).remove();
+
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
@@ -262,76 +207,70 @@ AJS.toInit(function () {
         });
     }
 
-    function updateTimesheetStatus() {
-
-        var data = [];
-
-        for (var i = 0; i < users.length; i++) {
-            var tempData = {};
-            tempData.timesheetID = users[i].timesheetID;
-            var tmpCheckBox = AJS.$("#checkBox" + users[i].timesheetID);
-            tempData.isEnabled = tmpCheckBox.prop("checked");
-
-            data.push(tempData);
-        }
-
+    function populateTableWrapper(state) {
         AJS.$(".loadingDiv").show();
-        AJS.$.ajax({
-            url: restBaseUrl + 'timesheets/updateEnableStates',
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            processData: false,
-            success: function () {
-            	if(fetchingErrorMessage)
-            		fetchingErrorMessage.closeMessage();
-            	if(errorMessage)
-            		errorMessage.closeMessage();
-                AJS.messages.success({
-                    title: "Success!",
-                    body: "Timesheet 'enabled states' updated.",
-                    fadeout: true,
-                    delay: 5000,
-                    duration: 5000
-                });
-                AJS.$(".loadingDiv").hide();
-            },
-            error: function (error) {
-            	if(errorMessage)
-            		errorMessage.closeMessage();
-                errorMessage = AJS.messages.error({
-                    title: "Error!",
-                    body: error.responseText
-                });
-                AJS.$(".loadingDiv").hide();
-            }
-        });
-    }
-
-    function fetchData() {
         var userInformationFetched = AJS.$.ajax({
             type: 'GET',
-            url: restBaseUrl + 'user/getUserInformation',
+            url: restBaseUrl + 'user/getUserInformation/' + state,
             contentType: "application/json"
         });
-
-        var monitoringFetched = AJS.$.ajax({
-            type: 'GET',
-            url: restBaseUrl + 'monitoring/getMonitoring',
-            contentType: "application/json"
-        });
-
         AJS.$.when(userInformationFetched)
             .done(populateTable)
             .fail(function (error) {
-            	if(fetchingErrorMessage)
-            		fetchingErrorMessage.closeMessage();
+                if(fetchingErrorMessage)
+                    fetchingErrorMessage.closeMessage();
                 fetchingErrorMessage = AJS.messages.error({
                     title: 'There was an error while fetching the required data.',
                     body: '<p>Reason: ' + error.responseText + '</p>'
                 });
                 console.log(error);
             });
+    }
+
+    function populateStatsWrapper() {
+        AJS.$(".loadingDiv").show();
+        var stateAmounts = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'user/getUserInformationStats',
+            contentType: "text/plain"
+        });
+
+        AJS.$.when(stateAmounts)
+            .done(populateStats)
+            .fail(function (error) {
+                if(fetchingErrorMessage)
+                    fetchingErrorMessage.closeMessage();
+                fetchingErrorMessage = AJS.messages.error({
+                    title: 'There was an error while fetching the required data.',
+                    body: '<p>Reason: ' + error.responseText + '</p>'
+                });
+                console.log(error);
+            });
+    }
+
+    function populateStats(amounts) {
+        var sum = 0;
+        var style = " style=\"text-align:right\"";
+        var stat_list = ["Active", "Inactive", "Auto-Inactive",
+            "Inactive-Offline", "Disabled", "Done", "Total Number of Timesheets"]
+
+        for (var i = 0; i < amounts.length; i++) {
+            console.log(amounts[i]);
+            var row_stat = "<tr><td>" + stat_list[i] + "</td><td" + style + ">" + amounts[i] +  "</td></tr>";
+            AJS.$("#timesheet-user-statistics").append(row_stat);
+            sum += amounts[i];
+        }
+
+        AJS.$("#timesheet-user-statistics-total").append("<tr><th>" + stat_list[stat_list.length - 1] + "</th><th" + style + ">" + sum +  "</th></tr>");
+        AJS.$(".loadingDiv").hide();
+    }
+
+    function fetchMonitoring() {
+        var monitoringFetched = AJS.$.ajax({
+            type: 'GET',
+            url: restBaseUrl + 'monitoring/getMonitoring',
+            contentType: "application/json"
+        });
 
         AJS.$.when(monitoringFetched)
             .fail(function (error) {
@@ -345,5 +284,48 @@ AJS.toInit(function () {
             });
     }
 
-    fetchData();
+    function setupClickListeners() {
+        AJS.$(".loadingDiv").hide();
+
+        AJS.$("#li-stats-tab").click(function(){
+            AJS.$("#timesheet-user-statistics").empty()
+            AJS.$("#timesheet-user-statistics-total").empty()
+            populateStatsWrapper();
+        })
+
+        AJS.$("#li-active-tab").click(function(){
+            AJS.$("#active-user-table-content").empty()
+            populateTableWrapper("ACTIVE");
+        })
+
+        AJS.$("#li-inactive-tab").click(function(){
+            AJS.$("#inactive-user-table-content").empty()
+            populateTableWrapper("INACTIVE");
+        })
+
+        AJS.$("#li-autoinactive-tab").click(function(){
+            AJS.$("#autoinactive-user-table-content").empty()
+            populateTableWrapper("AUTO_INACTIVE");
+        })
+
+        AJS.$("#li-inactiveoffline-tab").click(function(){
+            AJS.$("#inactiveoffline-user-table-content").empty()
+            populateTableWrapper("INACTIVE_OFFLINE");
+        })
+
+        AJS.$("#li-disabled-tab").click(function(){
+            AJS.$("#disabled-user-table-content").empty()
+            populateTableWrapper("DISABLED");
+        })
+
+        AJS.$("#li-done-tab").click(function(){
+            AJS.$("#done-user-table-content").empty()
+            populateTableWrapper("DONE");
+        })
+    }
+
+    setupClickListeners();
+    populateStatsWrapper();
+    fetchMonitoring();
+
 });

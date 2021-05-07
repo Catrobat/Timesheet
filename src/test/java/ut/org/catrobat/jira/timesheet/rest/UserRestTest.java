@@ -65,6 +65,10 @@ public class UserRestTest {
     private ApplicationUser user2;
     private ApplicationUser chris;
     private ApplicationUser joh;
+    private ApplicationUser flo;
+    private ApplicationUser leo;
+    private ApplicationUser bob;
+    private ApplicationUser mike;
     private String timesheetId = "125";
 
 
@@ -109,9 +113,17 @@ public class UserRestTest {
         PowerMockito.when(ComponentAccessor.getGroupManager()).thenReturn(groupManager);
         chris = mock(ApplicationUser.class);
         joh = mock(ApplicationUser.class);
+        flo = mock(ApplicationUser.class);
+        leo = mock(ApplicationUser.class);
+        bob = mock(ApplicationUser.class);
+        mike = mock(ApplicationUser.class);
         when(userMock.getUsername()).thenReturn("userMock");
         when(userManager.getUserByKey("chris")).thenReturn(chris);
         when(userManager.getUserByKey("joh")).thenReturn(joh);
+        when(userManager.getUserByKey("flo")).thenReturn(flo);
+        when(userManager.getUserByKey("leo")).thenReturn(leo);
+        when(userManager.getUserByKey("bob")).thenReturn(bob);
+        when(userManager.getUserByKey("mike")).thenReturn(mike);
         when(userManager.getUserByName("chris")).thenReturn(chris);
         when(userManager.getUserByName("joh")).thenReturn(joh);
         when(chris.getUsername()).thenReturn("chris");
@@ -121,6 +133,55 @@ public class UserRestTest {
         when(chris.getEmailAddress()).thenReturn("chris@example.com");
         when(joh.getEmailAddress()).thenReturn("joh@example.com");
         Mockito.when(permissionServiceMock.checkUserPermission()).thenReturn(null);
+    }
+
+
+    @Test
+    public void testUserInformationStates() {
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+        Response response = spyUserRest.getUserInformationWithState(httpRequestMock, "ACTIVE");
+        List<JsonUserInformation> list = (List<JsonUserInformation>) response.getEntity();
+        assertEquals(1, list.size());
+        assertEquals(Timesheet.State.ACTIVE, list.get(0).getState());
+
+        response = spyUserRest.getUserInformationWithState(httpRequestMock, "INACTIVE");
+        list = (List<JsonUserInformation>) response.getEntity();
+        assertEquals(1, list.size());
+        assertEquals(Timesheet.State.INACTIVE, list.get(0).getState());
+
+        response = spyUserRest.getUserInformationWithState(httpRequestMock, "AUTO_INACTIVE");
+        list = (List<JsonUserInformation>) response.getEntity();
+        assertEquals(1, list.size());
+        assertEquals(Timesheet.State.AUTO_INACTIVE, list.get(0).getState());
+
+        response = spyUserRest.getUserInformationWithState(httpRequestMock, "INACTIVE_OFFLINE");
+        list = (List<JsonUserInformation>) response.getEntity();
+        assertEquals(1, list.size());
+        assertEquals(Timesheet.State.INACTIVE_OFFLINE, list.get(0).getState());
+
+        response = spyUserRest.getUserInformationWithState(httpRequestMock, "DISABLED");
+        list = (List<JsonUserInformation>) response.getEntity();
+        assertEquals(1, list.size());
+        assertEquals(Timesheet.State.DISABLED, list.get(0).getState());
+
+        response = spyUserRest.getUserInformationWithState(httpRequestMock, "DONE");
+        list = (List<JsonUserInformation>) response.getEntity();
+        assertEquals(1, list.size());
+        assertEquals(Timesheet.State.DONE, list.get(0).getState());
+    }
+
+    @Test
+    public void testUserInformationCount() {
+        when(permissionServiceMock.checkRootPermission()).thenReturn(null);
+        Response response = spyUserRest.getUserInformationStats(httpRequestMock);
+        List<Integer> counts = (List<Integer>) response.getEntity();
+        assertEquals(6, counts.size());
+        assertEquals(1, (int) counts.get(0));
+        assertEquals(1, (int) counts.get(1));
+        assertEquals(1, (int) counts.get(2));
+        assertEquals(1, (int) counts.get(3));
+        assertEquals(1, (int) counts.get(4));
+        assertEquals(1, (int) counts.get(5));
     }
 
     @Test
@@ -182,7 +243,7 @@ public class UserRestTest {
         when(permissionServiceMock.checkRootPermission()).thenReturn(null);
 
         Response response = spyUserRest.getUserInformation(httpRequestMock);
-        assertEquals(1, ((List<JsonUserInformation>) response.getEntity()).size());
+        assertEquals(5, ((List<JsonUserInformation>) response.getEntity()).size());
     }
 
     @Test
@@ -201,7 +262,7 @@ public class UserRestTest {
     public void testUserInformation() {
         when(permissionServiceMock.checkRootPermission()).thenReturn(null);
         Response response = spyUserRest.getUserInformation(httpRequestMock);
-        assertEquals(2, ((List<JsonUserInformation>)response.getEntity()).size());
+        assertEquals(6, ((List<JsonUserInformation>)response.getEntity()).size());
     }
 
     @Test
