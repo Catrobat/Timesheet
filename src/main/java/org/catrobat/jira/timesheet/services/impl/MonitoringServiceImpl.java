@@ -59,7 +59,7 @@ public class MonitoringServiceImpl implements MonitoringService {
     }
 
     @Override
-    public Map.Entry<LocalDate, LocalDate> getLastInterval() {
+    public Map.Entry<LocalDate, LocalDate> getCurrentInterval() {
         LocalDate begin = LocalDate.now().withDayOfMonth(1);
         LocalDate end = LocalDate.now();
         if (getMonitoring().getPeriod() > 1) {
@@ -68,10 +68,18 @@ public class MonitoringServiceImpl implements MonitoringService {
         return new AbstractMap.SimpleEntry<>(begin, end);
     }
 
-    @Override
-    public String getLastIntervalFormattedAsString() {
+    public Map.Entry<LocalDate, LocalDate> getLastInterval() {
+        Map.Entry<LocalDate, LocalDate> current_interval = getCurrentInterval();
+        LocalDate begin = current_interval.getKey().minusMonths(getMonitoring().getPeriod());
+        LocalDate end = current_interval.getKey().minusDays(1);
+        if (getMonitoring().getPeriod() < 1) {
+            begin = end.withDayOfMonth(1);
+        }
+        return new AbstractMap.SimpleEntry<>(begin, end);
+    }
+
+    public String formatIntervalToString(Map.Entry<LocalDate, LocalDate> interval) {
         DateTimeFormatter formatter;
-        Map.Entry<LocalDate, LocalDate> interval = getLastInterval();
         if (interval.getKey().getYear() != interval.getValue().getYear()) {
             formatter = DateTimeFormatter.ofPattern("dd.MM.yy");
         }  else if(interval.getKey().getMonth() != interval.getValue().getMonth()){

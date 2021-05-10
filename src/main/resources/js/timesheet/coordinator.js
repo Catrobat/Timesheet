@@ -38,6 +38,7 @@ function initCoordinatorUserList(userInformation) {
             "</td><td headers='ti-total-hours'>" + userInformation[i].totalHours +
             "</td><td headers='ti-hours-per-half-year'>" + userInformation[i].hoursPerHalfYear +
             "</td><td headers='ti-hours-per-monitoring-period'>" + userInformation[i].hoursPerMonitoringPeriod +
+            "</td><td headers='ti-hours-per-last-monitoring-period'>" + userInformation[i].hoursPerLastMonitoringPeriod +
             "</td><td headers='ti-latest-entry-date'>" + latestEntryDate +
             "</td><td headers='ti-latest-entry-description'>" + userInformation[i].latestEntryDescription +
             "</td></tr>";

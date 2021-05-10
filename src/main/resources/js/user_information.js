@@ -118,6 +118,7 @@ AJS.toInit(function () {
                 "</td><td headers='ti-total-hours' class='total-hours'>" + userInformation[i].totalHours +
                 "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
                 "</td><td headers='ti-hours-per-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerMonitoringPeriod +
+                "</td><td headers='ti-hours-per-last-monitoring-period' class='hours-half-year'>" + userInformation[i].hoursPerLastMonitoringPeriod +
                 "</td><td headers='ti-first-entry-date' class='latest-date'>" + firstEntryDate +
                 "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
                 "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +

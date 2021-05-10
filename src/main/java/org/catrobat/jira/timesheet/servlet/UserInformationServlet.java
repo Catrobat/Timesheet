@@ -81,7 +81,8 @@ public class UserInformationServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> context = new HashMap<>();
-        context.put("monitoringPeriod", monitoringService.getLastIntervalFormattedAsString());
+        context.put("monitoringPeriod", monitoringService.formatIntervalToString(monitoringService.getCurrentInterval()));
+        context.put("lastMonitoringPeriod", monitoringService.formatIntervalToString(monitoringService.getLastInterval()));
         templateRenderer.render("user_information.vm", context, response.getWriter());
     }
 }

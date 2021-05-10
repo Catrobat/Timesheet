@@ -55,7 +55,7 @@ public class MonitoringRest {
 
         Monitoring monitoring = monitoringService.getMonitoring();
         JsonMonitoring jsonMonitoring = new JsonMonitoring(monitoring);
-        jsonMonitoring.setPeriodTime(monitoringService.getLastIntervalFormattedAsString());
+        jsonMonitoring.setPeriodTime(monitoringService.formatIntervalToString(monitoringService.getCurrentInterval()));
 
         return Response.ok(jsonMonitoring).build();
     }
