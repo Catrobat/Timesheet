@@ -16,15 +16,14 @@
 
 package org.catrobat.jira.timesheet.activeobjects;
 
-import net.java.ao.Entity;
-import net.java.ao.Implementation;
-import net.java.ao.OneToMany;
-import net.java.ao.Transient;
+import net.java.ao.*;
 import net.java.ao.schema.Ignore;
 import net.java.ao.schema.NotNull;
 import org.catrobat.jira.timesheet.activeobjects.impl.TimesheetImpl;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Map;
 
 @Implementation(TimesheetImpl.class)
 public interface Timesheet extends Entity {
@@ -57,6 +56,18 @@ public interface Timesheet extends Entity {
     void setState(State state);
     State getState();
 
+    int getHoursCurrentPeriod();
+    void setHoursCurrentPeriod(int hoursCurrentMonitoringPeriod);
+
+    int getHoursLastPeriod();
+    void setHoursLastPeriod(int hoursLastMonitoringPeriod);
+
+    int getHoursLastMonth();
+    void setHoursLastMonth(int hoursLastMonth);
+
+    int getHoursLastHalfYear();
+    void setHoursLastHalfYear(int hoursLastYear);
+
     enum State {
         ACTIVE, INACTIVE, AUTO_INACTIVE, INACTIVE_OFFLINE, DISABLED, DONE
     }
@@ -69,5 +80,8 @@ public interface Timesheet extends Entity {
 
     @Ignore
     int calculateTotalHours();
+
+    @Ignore
+    void updateHoursAllPeriods(LocalDate cur_interval_begin, LocalDate cur_interval_end, LocalDate prev_interval_begin, LocalDate prev_interval_end);
 
 }

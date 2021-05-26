@@ -361,6 +361,8 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
+        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
+
         int completeTime = sheet.getHoursCompleted();
         int targetTime = sheet.getTargetHours();
 
@@ -370,7 +372,6 @@ public class TimesheetRest {
             emailUtil.buildEmailOutOfTime(user.getEmailAddress(), sheet, user);
         }
 
-        JsonTimesheet jsonTimesheet = new JsonTimesheet(sheet);
         return Response.ok(jsonTimesheet).build();
     }
 

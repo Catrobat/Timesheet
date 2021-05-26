@@ -59,17 +59,21 @@ public class JsonUserInformation {
     	this.state = timesheet.getState();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
 
-        this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted() 
-				+ timesheet.getHoursDeducted());
         this.targetTotalHours = timesheet.getTargetHours();
 
-        this.totalHours = timesheet.getHoursCompleted();
         this.email = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getEmailAddress();
         this.timesheetID = timesheet.getID();
 
         if (timesheet.firstEntry() != null) {
             this.firstEntryDate = timesheet.firstEntry().getBeginDate();
         }
+        this.totalHours = timesheet.getHoursCompleted();
+        this.hoursPerHalfYear = timesheet.getHoursLastHalfYear();
+        this.hoursPerMonth = timesheet.getHoursLastMonth();
+        this.hoursPerMonitoringPeriod = timesheet.getHoursCurrentPeriod();
+        this.hoursPerLastMonitoringPeriod = timesheet.getHoursLastPeriod();
+        this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted()
+                + timesheet.getHoursDeducted());
     }
 
     public String getUserName() {
