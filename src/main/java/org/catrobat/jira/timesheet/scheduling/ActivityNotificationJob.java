@@ -41,7 +41,7 @@ public class ActivityNotificationJob implements PluginJob {
             String userKey = timesheet.getUserKey();
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
             
-            if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
+            if (timesheet.getEntries().length == 0) { // nothing to do
                 continue;
             }
             if (timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE) {  // user is offline

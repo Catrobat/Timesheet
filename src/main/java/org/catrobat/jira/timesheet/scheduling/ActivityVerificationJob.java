@@ -41,7 +41,7 @@ public class ActivityVerificationJob implements PluginJob {
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
             String statusFlagMessage = "nothing changed";
             
-            TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
+            TimesheetEntry[] entries = timesheet.getEntries();
             if (entries.length == 0) {
                 continue;
             }

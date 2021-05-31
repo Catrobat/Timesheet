@@ -351,7 +351,7 @@ public class TimesheetRestTest {
         TimesheetEntry[] timesheetEntries = {timesheetEntry};
 
         when(timesheetServiceMock.getTimesheetByUser(userKey)).thenReturn(timesheetMock);
-        when(timesheetEntryServiceMock.getEntriesBySheet(timesheetMock)).thenReturn(timesheetEntries);
+        when(timesheetMock.getEntries()).thenReturn(timesheetEntries);
         when(permissionServiceMock.userCanViewTimesheet(userMock, timesheetMock)).thenReturn(true);
         when(timesheetServiceMock.getTimesheetByID(timesheetID)).thenReturn(timesheetMock);
 
@@ -718,7 +718,6 @@ public class TimesheetRestTest {
         when(userMock.getEmailAddress()).thenReturn("test@test.at");
         when(ComponentAccessor.getMailQueue()).thenReturn(mailQueueMock);
         when(timesheetMock.getEntries()).thenReturn(timesheetEntries);
-        when(timesheetEntryServiceMock.getEntriesBySheet(timesheetMock)).thenReturn(timesheetEntries);
         when(ComponentAccessor.getUserManager().getUserByKey(any()).getEmailAddress()).thenReturn("user@test.at");
         when(categoryMock.getName()).thenReturn("category 1");
 
