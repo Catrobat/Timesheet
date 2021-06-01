@@ -417,6 +417,149 @@ public class TimesheetEntryServiceImplTest {
         Assert.assertEquals(2,result);
     }
 
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsTeam() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        Team team = null;
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsCategory() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Team team = createTestTeam();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        Category category = null;
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsDescription() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        // 350 characters
+        String desc = "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789";
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsTicket() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        // 350 characters
+        String jiraTicketID = "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789";
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsBeginEnd() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() - oneHourInMS);
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsPause() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        String desc = "Debugged this thingy...";
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        int pauseMinutes = 2 * 60;
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pauseMinutes, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 
         @Override
