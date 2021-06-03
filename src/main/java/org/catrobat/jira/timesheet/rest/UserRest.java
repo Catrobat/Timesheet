@@ -151,7 +151,6 @@ public class UserRest {
             JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
 
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
-            jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
             jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, cur_interval.getKey(), cur_interval.getValue()));
             jsonUserInformation.setHoursPerLastMonitoringPeriod(timesheetEntryService.getHours(timesheet, last_interval.getKey(), last_interval.getValue()));
 
@@ -345,7 +344,6 @@ public class UserRest {
             jsonUserInformation.setTeams(teamString.toString());
 
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
-            jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
             jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, cur_interval.getKey(), cur_interval.getValue()));
             jsonUserInformation.setHoursPerLastMonitoringPeriod(timesheetEntryService.getHours(timesheet, last_interval.getKey(), last_interval.getValue()));
 
