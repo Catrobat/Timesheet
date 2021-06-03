@@ -76,7 +76,7 @@ public class ExportAllTimesheetsAsJsonServlet extends HighPrivilegeServlet {
 
         List<Timesheet> timesheetList = sheetService.all();
         for (Timesheet timesheet : timesheetList) {
-            TimesheetEntry[] entries = timesheet.getEntries();
+            TimesheetEntry[] entries = timesheet.getEntriesDesc();
 
             List<JsonTimesheetEntry> jsonEntries = new ArrayList<>();
 

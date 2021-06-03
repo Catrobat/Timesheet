@@ -210,7 +210,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     @Override
     public TimesheetEntry getLatestEntry(Timesheet timesheet) {
-        TimesheetEntry[] entries = timesheet.getEntries();
+        TimesheetEntry[] entries = timesheet.getEntriesDesc();
         if (entries.length == 0) {
             return null;
         }

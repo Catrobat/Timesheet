@@ -116,7 +116,7 @@ public class EmailUtil {
 
         mailBody = mailBody.replaceAll("\\{\\{name\\}\\}", user.getDisplayName());
         if (sheet.getEntries().length > 0) {
-            mailBody = mailBody.replaceAll("\\{\\{date\\}\\}", sheet.getEntries()[0].getBeginDate().toString());
+            mailBody = mailBody.replaceAll("\\{\\{date\\}\\}", sheet.getEntriesDesc()[0].getBeginDate().toString());
         }
 
         sendEmail(emailTo, mailSubject, mailBody);
