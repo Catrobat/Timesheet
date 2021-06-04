@@ -9,6 +9,7 @@ var ppFlag;
 var dateRangeFlag;
 var dateFlag;
 var descrFlag;
+var pauseFlag;
 
 function populateTable(timesheetDataReply) {
     var timesheetData = timesheetDataReply[0];
@@ -398,6 +399,10 @@ function prepareForm(entry, timesheetData, isModified) {
     form.descriptionField.change(function () {
         form.saveButton.prop('disabled', false);
         validation(form.descriptionField);
+    });
+
+    form.pauseTimeField.change(function () {
+        form.saveButton.prop('disabled', false);
     });
 
     row.find('input.time.start, input.time.end')
@@ -1139,6 +1144,29 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
 
     var inactiveEndDate = form.inactiveEndDateField.val();
     var validInactiveDateFormat = new Date(inactiveEndDate);
+
+    var workMin = (endDate.getTime() - beginDate.getTime()) / (1000 * 60);
+
+    if(workMin < pauseMin) {
+        if (pauseFlag)
+            pauseFlag.close();
+        pauseFlag = AJS.flag({
+            type: 'warning',
+            title: 'Invalid break duration',
+            body: 'The break duration should not be larger than the working time.',
+            close: 'auto'
+        });
+
+        form.pauseTimeField.css({
+            "border-color": "red"
+        });
+        return;
+    }
+    else {
+        form.pauseTimeField.css({
+            "border-color": "#DCDCDC"
+        });
+    }
 
     if ((inactiveEndDate == "") || (!isValidDate(validInactiveDateFormat))) {
         inactiveEndDate = beginDate;

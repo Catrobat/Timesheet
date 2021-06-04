@@ -13,8 +13,10 @@ public interface MonitoringService {
 
     void setMonitoring(int period, int requiredHours, int exceptions);
 
+    Map.Entry<LocalDate, LocalDate> getCurrentInterval();
+
     Map.Entry<LocalDate, LocalDate> getLastInterval();
 
-    String getLastIntervalFormattedAsString();
+    String formatIntervalToString(Map.Entry<LocalDate, LocalDate> interval);
 
 }

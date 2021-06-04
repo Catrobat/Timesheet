@@ -18,11 +18,11 @@ public class JsonUserInformation {
     @XmlElement
     private Timesheet.State state;
     @XmlElement
-    private int hoursPerMonth;
-    @XmlElement
     private int hoursPerHalfYear;
     @XmlElement
     private int hoursPerMonitoringPeriod;
+    @XmlElement
+    private int hoursPerLastMonitoringPeriod;
     @XmlElement
     private int remainingHours;
     @XmlElement
@@ -86,20 +86,20 @@ public class JsonUserInformation {
         this.state = state;
     }
 
-    public int getHoursPerMonth() {
-        return hoursPerMonth;
-    }
-
-    public void setHoursPerMonth(int hoursPerMonth) {
-        this.hoursPerMonth = hoursPerMonth;
-    }
-
     public int getHoursPerMonitoringPeriod(){
         return  hoursPerMonitoringPeriod;
     }
 
     public void setHoursPerMonitoringPeriod(int hoursPerMonitoringPeriod) {
         this.hoursPerMonitoringPeriod = hoursPerMonitoringPeriod;
+    }
+
+    public int getHoursPerLastMonitoringPeriod(){
+        return  hoursPerLastMonitoringPeriod;
+    }
+
+    public void setHoursPerLastMonitoringPeriod(int hoursPerLastMonitoringPeriod) {
+        this.hoursPerLastMonitoringPeriod = hoursPerLastMonitoringPeriod;
     }
 
     public int getHoursPerHalfYear() {

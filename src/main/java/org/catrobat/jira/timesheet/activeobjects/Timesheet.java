@@ -70,4 +70,7 @@ public interface Timesheet extends Entity {
     @Ignore
     int calculateTotalHours();
 
+    @Ignore
+    TimesheetEntry[] getEntriesDesc();
+
 }

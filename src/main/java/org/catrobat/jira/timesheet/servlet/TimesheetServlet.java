@@ -140,7 +140,8 @@ public class TimesheetServlet extends HttpServlet {
                 paramMap.put("isAdmin", permissionService.isJiraAdministrator(user));
             }
 
-            paramMap.put("monitoringPeriod", monitoringService.getLastIntervalFormattedAsString());
+            paramMap.put("monitoringPeriod", monitoringService.formatIntervalToString(monitoringService.getCurrentInterval()));
+            paramMap.put("lastMonitoringPeriod", monitoringService.formatIntervalToString(monitoringService.getLastInterval()));
             paramMap.put("isCoordinator", permissionService.isUserTeamCoordinator(user));
             paramMap.put("isReadOnlyUser", permissionService.isReadOnlyUser(user));
             paramMap.put("timesheetID", timesheet.getID());

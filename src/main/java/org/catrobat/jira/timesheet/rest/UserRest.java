@@ -43,7 +43,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -139,6 +138,8 @@ public class UserRest {
     private List<JsonUserInformation> timesheetsToJson(List<Timesheet> timesheetList)
     {
         List<JsonUserInformation> jsonUserInformationList = new ArrayList<>();
+        Map.Entry<LocalDate, LocalDate> cur_interval = monitoringService.getCurrentInterval();
+        Map.Entry<LocalDate, LocalDate> last_interval = monitoringService.getLastInterval();
 
         for (Timesheet timesheet : timesheetList) {
 
@@ -149,11 +150,9 @@ public class UserRest {
 
             JsonUserInformation jsonUserInformation = new JsonUserInformation(timesheet);
 
-            Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
-
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
-            jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, interval.getKey(), interval.getValue()));
+            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, cur_interval.getKey(), cur_interval.getValue()));
+            jsonUserInformation.setHoursPerLastMonitoringPeriod(timesheetEntryService.getHours(timesheet, last_interval.getKey(), last_interval.getValue()));
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
@@ -295,6 +294,8 @@ public class UserRest {
 
 
         List<JsonUserInformation> jsonUserInformationListForCoordinator = new ArrayList<>();
+        Map.Entry<LocalDate, LocalDate> cur_interval = monitoringService.getCurrentInterval();
+        Map.Entry<LocalDate, LocalDate> last_interval = monitoringService.getLastInterval();
 
         for (Timesheet timesheet : timesheetService.all()) {
 
@@ -342,11 +343,9 @@ public class UserRest {
 
             jsonUserInformation.setTeams(teamString.toString());
 
-            Map.Entry<LocalDate, LocalDate> interval = monitoringService.getLastInterval();
-
             jsonUserInformation.setHoursPerHalfYear(timesheetEntryService.getHoursOfLastXMonths(timesheet, 6));
-            jsonUserInformation.setHoursPerMonth(timesheetEntryService.getHoursOfLastXMonths(timesheet, 1));
-            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, interval.getKey(), interval.getValue()));
+            jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, cur_interval.getKey(), cur_interval.getValue()));
+            jsonUserInformation.setHoursPerLastMonitoringPeriod(timesheetEntryService.getHours(timesheet, last_interval.getKey(), last_interval.getValue()));
 
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
