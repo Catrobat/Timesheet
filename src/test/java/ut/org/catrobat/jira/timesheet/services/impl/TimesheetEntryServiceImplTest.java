@@ -161,7 +161,7 @@ public class TimesheetEntryServiceImplTest {
         //Act
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
-        TimesheetEntry[] entries = service.getEntriesBySheet(sheet);
+        TimesheetEntry[] entries = sheet.getEntries();
 
         //Assert
         assertEquals(1, entries.length);
@@ -326,7 +326,7 @@ public class TimesheetEntryServiceImplTest {
         //Act
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
-        Assert.assertNotNull(service.getEntriesBySheet(sheet));
+        Assert.assertNotNull(sheet.getEntries());
 
         long newOneHourInMS = 60 * 60 * 1000;
         Date newBegin = new Date();
@@ -334,7 +334,7 @@ public class TimesheetEntryServiceImplTest {
         String newDesc = "Changed this thingy...";
         int newPause = 100;
 
-        TimesheetEntry[] changedEntry = service.getEntriesBySheet(sheet);
+        TimesheetEntry[] changedEntry = sheet.getEntries();
 
         changedEntry[0].setBeginDate(newBegin);
         changedEntry[0].setEndDate(newEnd);
@@ -368,7 +368,7 @@ public class TimesheetEntryServiceImplTest {
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
 
-        TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
+        TimesheetEntry[] entryList = sheet.getEntries();
         TimesheetEntry receivedEntry = service.getEntryByID(entryList[0].getID());
 
         //Assert
@@ -411,8 +411,6 @@ public class TimesheetEntryServiceImplTest {
 
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
 
-        TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
-        
         int result = service.getHours(sheet, LocalDate.now().minusMonths(2),LocalDate.now() );
         Assert.assertEquals(2,result);
     }

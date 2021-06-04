@@ -106,9 +106,9 @@ public class ActivityVerificationJobTest {
         TimesheetEntry[] sheet3Entries = {};
 
         Mockito.when(sheetService.all()).thenReturn(timesheetList);
-        Mockito.when(entryService.getEntriesBySheet(timesheet1)).thenReturn(sheet1Entries);
-        Mockito.when(entryService.getEntriesBySheet(timesheet2)).thenReturn(sheet2Entries);
-        Mockito.when(entryService.getEntriesBySheet(timesheet3)).thenReturn(sheet3Entries);
+        Mockito.when(timesheet1.getEntries()).thenReturn(sheet1Entries);
+        Mockito.when(timesheet2.getEntries()).thenReturn(sheet2Entries);
+        Mockito.when(timesheet3.getEntries()).thenReturn(sheet3Entries);
 
         max = mock(ApplicationUser.class);
         when(userManagerJiraMock.getUserByKey("max")).thenReturn(max);

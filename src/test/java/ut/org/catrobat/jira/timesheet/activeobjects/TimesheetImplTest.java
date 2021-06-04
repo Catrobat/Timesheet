@@ -90,4 +90,25 @@ public class TimesheetImplTest {
         assertEquals((Float.compare(totalHours, compareValue) == 0), true);
 
     }
+
+    @Test
+    public void testGetEntriesDesc() {
+        TimesheetEntry entryA = mock(TimesheetEntry.class);
+        when(entryA.getBeginDate()).thenReturn(new Date());
+
+        TimesheetEntry entryB = mock(TimesheetEntry.class);
+        when(entryB.getBeginDate()).thenReturn(new Date(0));
+
+        TimesheetEntry entryC = mock(TimesheetEntry.class);
+        when(entryC.getBeginDate()).thenReturn(new Date(1000));
+
+        Timesheet timesheetMock = mock(Timesheet.class);
+        when(timesheetMock.getEntries()).thenReturn(new TimesheetEntry[] {entryA, entryB, entryC});
+        TimesheetImpl timesheet = new TimesheetImpl(timesheetMock);
+
+        TimesheetEntry[] entries = timesheet.getEntriesDesc();
+        assertEquals(entryA, entries[0]);
+        assertEquals(entryC, entries[1]);
+        assertEquals(entryB, entries[2]);
+    }
 }
