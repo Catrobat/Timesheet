@@ -18,7 +18,6 @@ package org.catrobat.jira.timesheet.services.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.service.ServiceException;
-import net.java.ao.Query;
 import org.catrobat.jira.timesheet.activeobjects.Category;
 import org.catrobat.jira.timesheet.activeobjects.Team;
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
@@ -28,7 +27,6 @@ import org.catrobat.jira.timesheet.services.TimesheetService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.sql.Time;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -61,17 +59,17 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     }
 
     private TimesheetEntry setTimesheetEntryData(Timesheet sheet, Date begin, Date end, Category category, String description,
-            int pause, Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID, String userName,
+            int pauseMin, Team team, boolean isGoogleDocImport, Date inactiveEndDate, String jiraTicketID, String userName,
             boolean teamroom, TimesheetEntry entry) throws ServiceException {
 
-        checkParams(begin, end, category, description, team, jiraTicketID, userName);
+        checkParams(begin, end, category, description, team, jiraTicketID, userName, pauseMin);
 
         entry.setTimeSheet(sheet);
         entry.setBeginDate(begin);
         entry.setEndDate(end);
         entry.setCategory(category);
         entry.setDescription(description);
-        entry.setPauseMinutes(pause);
+        entry.setPauseMinutes(pauseMin);
         entry.setTeam(team);
         entry.setIsGoogleDocImport(isGoogleDocImport);
         entry.setTeamroom(teamroom);
@@ -85,7 +83,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     private void checkParams(Date begin, Date end, Category category, String description,
             Team team, String jiraTicketID,
-            String userName) throws ServiceException {
+            String userName, int pauseMin) throws ServiceException {
         if (team == null) {
             throw new ServiceException("TimesheetEntry is not allowed with null Team.");
         }
@@ -103,6 +101,10 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
         }
         if (begin.compareTo(end) > 0) {
             throw new ServiceException("Begin Date must be before End Date.");
+        }
+        long workMin = (end.getTime() - begin.getTime()) / (1000 * 60);
+        if(pauseMin > workMin) {
+            throw new ServiceException("The break duration should not be larger than the working time.");
         }
     }
 
@@ -169,17 +171,6 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     }
 
     @Override
-    public TimesheetEntry[] getEntriesBySheet(Timesheet sheet) {
-        if (sheet == null) return new TimesheetEntry[0];
-        return ao.find(
-                TimesheetEntry.class,
-                Query.select()
-                        .where("TIME_SHEET_ID = ?", sheet.getID())
-                        .order("BEGIN_DATE DESC")
-        );
-    }
-
-    @Override
     public void delete(TimesheetEntry entry) throws ServiceException {
         Timesheet timesheet = entry.getTimeSheet();
 
@@ -197,7 +188,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     public int getHoursOfLastXMonths(Timesheet sheet, int months) {
         ZonedDateTime xMonthsAgo = ZonedDateTime.now().minusMonths(months);
         int minutes = 0;
-        for (TimesheetEntry entry : getEntriesBySheet(sheet)) {
+        for (TimesheetEntry entry : sheet.getEntries()) {
             Instant instant = entry.getBeginDate().toInstant();
             ZonedDateTime beginDate = instant.atZone(ZoneId.systemDefault());
             if (beginDate.isAfter(xMonthsAgo)) {
@@ -210,7 +201,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
     @Override
     public int getHours(Timesheet sheet, LocalDate begin, LocalDate end){
         int minutes = 0;
-        for (TimesheetEntry entry : getEntriesBySheet(sheet)) {
+        for (TimesheetEntry entry : sheet.getEntries()) {
             Instant instant = entry.getBeginDate().toInstant();
             LocalDate beginDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
@@ -223,7 +214,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     @Override
     public TimesheetEntry getLatestEntry(Timesheet timesheet) {
-        TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
+        TimesheetEntry[] entries = timesheet.getEntriesDesc();
         if (entries.length == 0) {
             return null;
         }
@@ -232,7 +223,7 @@ public class TimesheetEntryServiceImpl implements TimesheetEntryService {
 
     @Override
     public TimesheetEntry getLatestInactiveEntry(Timesheet timesheet) {
-        TimesheetEntry[] entries = this.getEntriesBySheet(timesheet);
+        TimesheetEntry[] entries = timesheet.getEntries();
         for (TimesheetEntry entry : entries) {
             String categoryName = entry.getCategory().getName();
             if ((categoryName.equals(SpecialCategories.INACTIVE) || categoryName.equals(SpecialCategories.INACTIVE_OFFLINE))

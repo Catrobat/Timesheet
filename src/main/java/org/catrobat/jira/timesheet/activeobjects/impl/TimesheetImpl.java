@@ -57,4 +57,10 @@ public class TimesheetImpl {
 
         return (sumTotalMinutes / 60);
     }
+
+    public final TimesheetEntry[] getEntriesDesc() {
+        TimesheetEntry[] entries = timesheet.getEntries();
+        Arrays.sort(entries, Comparator.comparing(TimesheetEntry::getBeginDate).reversed());
+        return entries;
+    }
 }

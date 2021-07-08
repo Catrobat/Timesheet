@@ -181,7 +181,7 @@ public class TimesheetRest {
                     Timesheet sheet = sheetService.getTimesheetByUser(userKey);
 
                     //all entries of each user
-                    TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
+                    TimesheetEntry[] entries = sheet.getEntriesDesc();
 
                     // Add entries anonymously
                     for (TimesheetEntry entry : entries) {
@@ -234,7 +234,7 @@ public class TimesheetRest {
                 if (!permissionService.userCanViewTimesheet(user, timesheetByUser)) {
                     return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
                 }
-                timesheetEntries = timesheetByUser.getEntries();
+                timesheetEntries = timesheetByUser.getEntriesDesc();
             } catch (ServiceException e) {
                 return Response.serverError().entity("At least one Team Member has no valid Timesheet Entries.").build();
             }
@@ -391,7 +391,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not allowed to see the timesheet.").build();
         }
 
-        TimesheetEntry[] entries = entryService.getEntriesBySheet(sheet);
+        TimesheetEntry[] entries = sheet.getEntriesDesc();
 
         List<JsonTimesheetEntry> jsonEntries = new ArrayList<>(entries.length);
 
@@ -836,7 +836,7 @@ public class TimesheetRest {
 
             //update latest timesheet entry date if latest entry date is < new latest entry in the table
             if (sheet.getEntries().length > 0) {
-                if (entry.getBeginDate().compareTo(entryService.getEntriesBySheet(sheet)[0].getBeginDate()) > 0) {
+                if (entry.getBeginDate().compareTo(sheet.getEntriesDesc()[0].getBeginDate()) > 0) {
                     sheetService.editTimesheets(ComponentAccessor.
                                     getUserKeyService().getKeyForUsername(user.getUsername()),
                             sheet.getTargetHours(), deducted_hours,
@@ -921,7 +921,7 @@ public class TimesheetRest {
         ArrayList<Timesheet> timesheets = new ArrayList<>();
 
         for (Timesheet timesheet : timesheetList) {
-            if (entryService.getEntriesBySheet(timesheet).length == 0) { // nothing to do
+            if (timesheet.getEntries().length == 0) { // nothing to do
                 continue;
             }
             if (timesheet.getState() != Timesheet.State.ACTIVE) {

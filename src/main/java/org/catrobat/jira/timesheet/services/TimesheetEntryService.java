@@ -38,8 +38,6 @@ public interface TimesheetEntryService {
 
     TimesheetEntry getEntryByID(int entryID);
 
-    TimesheetEntry[] getEntriesBySheet(Timesheet sheet);
-
     void delete(TimesheetEntry entry) throws ServiceException;
 
     int getHoursOfLastXMonths(Timesheet sheet, int months);

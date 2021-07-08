@@ -83,7 +83,7 @@ public class ExportTimesheetAsJsonServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_CONFLICT, "You are not allowed to see the timesheet.");
         }
 
-        TimesheetEntry[] entries = entryService.getEntriesBySheet(timesheet);
+        TimesheetEntry[] entries = timesheet.getEntriesDesc();
 
         List<JsonTimesheetEntry> jsonEntries = new ArrayList<>();
 

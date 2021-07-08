@@ -161,7 +161,7 @@ public class TimesheetEntryServiceImplTest {
         //Act
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
-        TimesheetEntry[] entries = service.getEntriesBySheet(sheet);
+        TimesheetEntry[] entries = sheet.getEntries();
 
         //Assert
         assertEquals(1, entries.length);
@@ -326,7 +326,7 @@ public class TimesheetEntryServiceImplTest {
         //Act
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
-        Assert.assertNotNull(service.getEntriesBySheet(sheet));
+        Assert.assertNotNull(sheet.getEntries());
 
         long newOneHourInMS = 60 * 60 * 1000;
         Date newBegin = new Date();
@@ -334,7 +334,7 @@ public class TimesheetEntryServiceImplTest {
         String newDesc = "Changed this thingy...";
         int newPause = 100;
 
-        TimesheetEntry[] changedEntry = service.getEntriesBySheet(sheet);
+        TimesheetEntry[] changedEntry = sheet.getEntries();
 
         changedEntry[0].setBeginDate(newBegin);
         changedEntry[0].setEndDate(newEnd);
@@ -368,7 +368,7 @@ public class TimesheetEntryServiceImplTest {
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
                 pairProgrammingUserName, teamroom);
 
-        TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
+        TimesheetEntry[] entryList = sheet.getEntries();
         TimesheetEntry receivedEntry = service.getEntryByID(entryList[0].getID());
 
         //Assert
@@ -411,11 +411,152 @@ public class TimesheetEntryServiceImplTest {
 
         service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
 
-        TimesheetEntry[] entryList = service.getEntriesBySheet(sheet);
-        
         int result = service.getHours(sheet, LocalDate.now().minusMonths(2),LocalDate.now() );
         Assert.assertEquals(2,result);
     }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsTeam() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        Team team = null;
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsCategory() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Team team = createTestTeam();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        Category category = null;
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsDescription() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        // 350 characters
+        String desc = "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789";
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsTicket() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        // 350 characters
+        String jiraTicketID = "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789" +
+                "0123456789012345678901234567890123456789012345678901234567890123456789";
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsBeginEnd() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() - oneHourInMS);
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testCheckParamsPause() throws Exception {
+        //Arrange
+        long oneHourInMS = 60 * 60 * 1000;
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+        String desc = "Debugged this thingy...";
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "CAT-1530";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = true;
+
+        Date begin = new Date();
+        Date end = new Date(begin.getTime() + oneHourInMS);
+        int pauseMinutes = 2 * 60;
+
+        //Act
+        service.add(sheet, begin, end, category, desc, pauseMinutes, team, isGoogleDocImport, TODAY, jiraTicketID,
+                pairProgrammingUserName, teamroom);
+    }
+
 
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 
