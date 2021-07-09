@@ -128,6 +128,7 @@ AJS.toInit(function () {
 
             setupDropdownButton(userInformation[i].timesheetID, enabled);
         }
+        AJS.$(table).trigger("update", [true]);
 
         AJS.$(".view-timesheet-button").on("click", function (e) {
             var timesheet_id = e.target.getAttribute("data-timesheet-id");
