@@ -203,6 +203,7 @@ AJS.toInit(function () {
                 setupDropdownButton(timesheetID, enabled);
 
                 AJS.$("#tr" + timesheetID).remove();
+                setAllReloadTrue();
 
                 AJS.$(".loadingDiv").hide();
             },
@@ -295,6 +296,22 @@ AJS.toInit(function () {
             });
     }
 
+    var reload_active = true
+    var reload_inactive = true
+    var reload_autoinactive = true
+    var reload_inactiveoffline = true
+    var reload_disabled = true
+    var reload_done = true
+
+    function setAllReloadTrue() {
+        reload_active = true
+        reload_inactive = true
+        reload_autoinactive = true
+        reload_inactiveoffline = true
+        reload_disabled = true
+        reload_done = true
+    }
+
     function setupClickListeners() {
         AJS.$(".loadingDiv").hide();
 
@@ -305,33 +322,51 @@ AJS.toInit(function () {
         })
 
         AJS.$("#li-active-tab").click(function(){
-            AJS.$("#active-user-table-content").empty()
-            populateTableWrapper("ACTIVE");
+            if(reload_active) {
+                AJS.$("#active-user-table-content").empty()
+                populateTableWrapper("ACTIVE");
+                reload_active = false;
+            }
         })
 
         AJS.$("#li-inactive-tab").click(function(){
-            AJS.$("#inactive-user-table-content").empty()
-            populateTableWrapper("INACTIVE");
+            if(reload_inactive) {
+                AJS.$("#inactive-user-table-content").empty()
+                populateTableWrapper("INACTIVE");
+                reload_inactive = false;
+            }
         })
 
         AJS.$("#li-autoinactive-tab").click(function(){
-            AJS.$("#autoinactive-user-table-content").empty()
-            populateTableWrapper("AUTO_INACTIVE");
+            if(reload_autoinactive) {
+                AJS.$("#autoinactive-user-table-content").empty()
+                populateTableWrapper("AUTO_INACTIVE");
+                reload_autoinactive = false;
+            }
         })
 
         AJS.$("#li-inactiveoffline-tab").click(function(){
-            AJS.$("#inactiveoffline-user-table-content").empty()
-            populateTableWrapper("INACTIVE_OFFLINE");
+            if(reload_inactiveoffline) {
+                AJS.$("#inactiveoffline-user-table-content").empty()
+                populateTableWrapper("INACTIVE_OFFLINE");
+                reload_inactiveoffline = false;
+            }
         })
 
         AJS.$("#li-disabled-tab").click(function(){
-            AJS.$("#disabled-user-table-content").empty()
-            populateTableWrapper("DISABLED");
+            if(reload_disabled) {
+                AJS.$("#disabled-user-table-content").empty()
+                populateTableWrapper("DISABLED");
+                reload_disabled = false;
+            }
         })
 
         AJS.$("#li-done-tab").click(function(){
-            AJS.$("#done-user-table-content").empty()
-            populateTableWrapper("DONE");
+            if(reload_done) {
+                AJS.$("#done-user-table-content").empty()
+                populateTableWrapper("DONE");
+                reload_done = false;
+            }
         })
     }
 
