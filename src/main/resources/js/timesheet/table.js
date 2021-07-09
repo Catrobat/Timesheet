@@ -727,12 +727,12 @@ function showInitTimesheetReasonDialog(isInit){
         "<h3 style='color:#1980EC' >" + content_header + "</h3>" +
         "<form class='aui'>" +
                 "<div class='field-group'>" +
-                    "<input type='text' class='text' id ='timesheet-reason' name='timesheet-reason' placeholder='Reason'>" +
+                    "<input type='text' class='text' id ='timesheet-reason' name='timesheet-reason' placeholder='Lecture title'>" +
                     "<label for='timesheet-reason'>" +
                         "Lecture <span class='aui-icon icon-required'>Required</span>" +
                     "</label>" +
                     "<div class='description'>" +
-                        "Please give the Lecture for your Timesheet (Bachelor Thesis, Master Thesis, Mobile Applications etc."+
+                        "Please enter the lecture title for your timesheet (e.g., Bachelor Thesis, Master Thesis, Mobile Applications, ...)"+
                     "</div>" +
                     "<div class='error' style='display:none' id='reason-error'>" +
                         "You need to give a Reason for your Timesheet!" +
@@ -747,7 +747,7 @@ function showInitTimesheetReasonDialog(isInit){
                         "Hours (ECTS * 30) <span class='aui-icon icon-required'>Required</span>"+
                     "</label>" +
                     "<div class='description'>" +
-                        "Give the amount of Hours the lecture takes to complete (ECTS * 30)" +
+                        "Enter the amount of hours the lecture takes to complete (ECTS * 30)" +
                     "</div>" +
                     "<div class='error' style='display:none' id='hours-error'>" +
                         "You need to give the desired Hours for your lecture!" +
