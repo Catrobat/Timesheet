@@ -102,7 +102,7 @@ public class XlsxExportServiceImpl implements XlsxExportService {
     private XSSFSheet generateTimesheetEntryWorksheet(XSSFWorkbook workbook, List<Timesheet> timesheetList) {
         XSSFSheet worksheet = workbook.createSheet(TIMESHEET_ENTRIES_WORKBOOK_NAME);
 
-        String[] header = {"Inactive Date","Date","Begin","End","Duration Minutes","Pause Minutes","Category","Description","Team","UserKey","Name"};
+        String[] header = {"Inactive Date","Date","Begin","End","Duration Minutes","Break Minutes","Category","Description","Team","UserKey","Name"};
         int rownum = 0;
         int column = 0;
         Row headerRow = worksheet.createRow(rownum);

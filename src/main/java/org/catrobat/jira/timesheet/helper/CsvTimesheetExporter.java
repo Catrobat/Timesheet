@@ -61,7 +61,7 @@ public class CsvTimesheetExporter {
                 "Begin" + DELIMITER +
                 "End" + DELIMITER +
                 "Duration Minutes" + DELIMITER +
-                "Pause Minutes" + DELIMITER +
+                "Break Minutes" + DELIMITER +
                 "Category" + DELIMITER +
                 "Description" + DELIMITER +
                 "Team" + DELIMITER +
