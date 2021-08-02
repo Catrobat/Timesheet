@@ -39,6 +39,15 @@ AJS.toInit(function () {
         }
     }
 
+    function formatDate(date) {
+        try {
+            return date.toISOString().slice(0, 10).replaceAll("-", "/");
+        }
+        catch (e) {
+            return "Invalid Date"
+        }
+    }
+
     function populateTable(userInformation) {
         //sort by username
         userInformation.sort(dynamicSort("userName"));
@@ -49,20 +58,20 @@ AJS.toInit(function () {
             if (new Date(userInformation[i].firstEntryDate).getTime() === new Date(0).getTime()) {
                 firstEntryDate = "none";
             } else {
-                firstEntryDate = (new Date(userInformation[i].firstEntryDate)).toLocaleDateString("en-US");
+                firstEntryDate = formatDate(new Date(userInformation[i].firstEntryDate))
             }
 
             var latestEntryDate;
             if (new Date(userInformation[i].latestEntryDate).getTime() === new Date(0).getTime()) {
                 latestEntryDate = "none";
             } else {
-                latestEntryDate = (new Date(userInformation[i].latestEntryDate)).toLocaleDateString("en-US");
+                latestEntryDate = formatDate(new Date(userInformation[i].latestEntryDate))
             }
             var inactiveEndDate;
             if (userInformation[i].inactiveEndDate == null || new Date(userInformation[i].inactiveEndDate).getTime() === new Date(0).getTime()) {
                 inactiveEndDate = "";
             } else {
-                inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
+                inactiveEndDate = formatDate(new Date(userInformation[i].inactiveEndDate))
             }
 
             var enabled = userInformation[i].state !== "DISABLED";
@@ -128,6 +137,7 @@ AJS.toInit(function () {
 
             setupDropdownButton(userInformation[i].timesheetID, enabled);
         }
+        AJS.$(table).trigger("update", [true]);
 
         AJS.$(".view-timesheet-button").on("click", function (e) {
             var timesheet_id = e.target.getAttribute("data-timesheet-id");

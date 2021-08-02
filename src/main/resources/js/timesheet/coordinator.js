@@ -16,13 +16,13 @@ function initCoordinatorUserList(userInformation) {
         if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
             latestEntryDate = "none";
         } else {
-            latestEntryDate = (new Date(userInformation[i].latestEntryDate)).toLocaleDateString("en-US");
+            latestEntryDate = formatDate(new Date(userInformation[i].latestEntryDate))
         }
         var inactiveEndDate;
         if (userInformation[i].inactiveEndDate == null || new Date(userInformation[i].inactiveEndDate).getTime() == new Date(0).getTime()) {
             inactiveEndDate = "";
         } else {
-            inactiveEndDate = (new Date(userInformation[i].inactiveEndDate)).toLocaleDateString("en-US");
+            inactiveEndDate = formatDate(new Date(userInformation[i].inactiveEndDate))
         }
         var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
         "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
@@ -58,6 +58,15 @@ function initCoordinatorUserList(userInformation) {
         window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheet_id, "_blank");
     });
     AJS.$(".loadingDiv").hide();
+}
+
+function formatDate(date) {
+    try {
+        return date.toISOString().slice(0, 10).replaceAll("-", "/");
+    }
+    catch (e) {
+        return "Invalid Date"
+    }
 }
 
 function initCoordinatorTimesheetSelect(jsonConfig, jsonUser, userInformation) {
