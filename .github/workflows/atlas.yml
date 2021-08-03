@@ -1,0 +1,16 @@
+name: Atlassian CI
+
+on: [pull_request, push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name : Checkout repo
+        uses: actions/checkout@v2
+      - name: Check Java Version
+        run: echo $JAVA_HOME && java -version
+      - name: Run tests in Docker
+        uses: tirasu/jira-test-action@master

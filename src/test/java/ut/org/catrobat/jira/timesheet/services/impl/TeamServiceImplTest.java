@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.*;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@PowerMockIgnore("jdk.internal.reflect.*")
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(ActiveObjectsJUnitRunner.class)
 @Data(TeamServiceImplTest.MyDatabaseUpdater.class)
