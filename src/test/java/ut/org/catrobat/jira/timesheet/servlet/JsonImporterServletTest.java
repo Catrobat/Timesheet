@@ -9,6 +9,7 @@ import com.atlassian.sal.api.websudo.WebSudoManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webresource.api.assembler.PageBuilderService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -121,7 +122,7 @@ public class JsonImporterServletTest {
                 renderer);
 
         File file = new File("src/test/resources/export/timesheets-export-1.json");
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy HH:mm:ss").create();
         JsonTimesheetAndEntries[] result = importTimesheetAsJsonServlet.parseJSONToEntries(file, response, gson);
 
         assertNotNull(result);
@@ -135,7 +136,7 @@ public class JsonImporterServletTest {
                 renderer);
 
         File file = new File("src/test/resources/export/timesheets-export-2.json");
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy HH:mm:ss").create();
         JsonTimesheetAndEntries[] result = importTimesheetAsJsonServlet.parseJSONToEntries(file, response, gson);
 
         assertNotNull(result);

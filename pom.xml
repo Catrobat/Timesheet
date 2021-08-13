@@ -328,7 +328,7 @@
         <!-- TestKit version 8.x for JIRA 8.x -->
         <testkit.version>8.1.26</testkit.version>
         <mockito.version>1.10.19</mockito.version>
-        <powermock.version>1.6.4</powermock.version>
+        <powermock.version>1.7.4</powermock.version>
         <compressJs>true</compressJs>
     </properties>
 
