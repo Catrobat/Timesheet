@@ -14,3 +14,6 @@ jobs:
         run: echo $JAVA_HOME && java -version
       - name: Run tests in Docker
         uses: tirasu/jira-test-action@master
+      - name: Publish Test Report
+        if: ${{ always() }}
+        uses: scacap/action-surefire-report@v1
