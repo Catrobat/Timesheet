@@ -126,6 +126,11 @@ public class CategoryServiceImplTest {
         Assert.assertFalse(categoryService.all().contains(inserted));
     }
 
+    @Test
+    public void testFail() {
+        assertTrue(false);
+    }
+
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 
         @Override
