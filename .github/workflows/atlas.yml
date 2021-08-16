@@ -14,3 +14,9 @@ jobs:
         run: echo $JAVA_HOME && java -version
       - name: Run tests in Docker
         uses: tirasu/jira-test-action@master
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-reports
+          path: '**/surefire-reports/TEST-*.xml'
