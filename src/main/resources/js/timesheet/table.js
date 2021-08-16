@@ -782,23 +782,33 @@ function checkLectureInputAndSendDataToServer(dialog){
     var reason = AJS.$("#timesheet-reason").val();
     var hours = AJS.$("#timesheet-ects").val();
 
-    if(reason !== "" && hours !== ""){
-        if(checkLectureInput(reason))
-            sendLectureDataToServer(reason, hours, dialog);
-        else
-            document.getElementById("reason-input-error").style.display = "block";
-    }else{
-        if(reason == "")
-            document.getElementById("reason-error").style.display = "block";
-        if(hours == "")
-            document.getElementById("hours-error").style.display = "block";
+    if(reason === "") {
+        document.getElementById("reason-error").style.display = "block";
+        return;
     }
+    if(!lectureInputOkay(reason)) {
+        document.getElementById("reason-input-error").style.display = "block";
+        return;
+    }
+    if(hours === "" || !hoursInputOkay(hours)) {
+        document.getElementById("hours-error").style.display = "block";
+        return;
+    }
+    sendLectureDataToServer(reason, hours, dialog);
 }
 
-function checkLectureInput(reason){
+function lectureInputOkay(reason){
     var pattern = new RegExp(/[~`!()#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/);
 
     return !pattern.test(reason);
+}
+
+function hoursInputOkay(hours){
+    var parsed_hours = Number(hours);
+    if(isNaN(parsed_hours) || !Number.isInteger(parsed_hours) || parsed_hours < 0) {
+        return false;
+    }
+    return true;
 }
 
 function sendLectureDataToServer(reason, hours, dialog) {
