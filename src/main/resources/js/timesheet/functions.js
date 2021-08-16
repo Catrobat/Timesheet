@@ -277,12 +277,19 @@ function setProgressBar(total, done){
 
     var percent = Math.round(done * 100 / total);
     var percent_string = "" + percent + "%";
+    var fill;
+    if (percent > 100) {
+        fill = "100%"
+    }
+    else {
+        fill = percent_string
+    }
 
     var progress_bars = document.getElementsByClassName("progress");
     var texts = document.getElementsByClassName("progress-percentage-text");
 
     for(var i = 0; i < progress_bars.length; i ++ ){
-        progress_bars[i].style.width = percent_string;
+        progress_bars[i].style.width = fill;
         texts[i].innerHTML = percent_string + " done";
     }
 }
