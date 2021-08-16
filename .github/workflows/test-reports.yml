@@ -33,3 +33,5 @@ jobs:
       - run: unzip test-reports.zip
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
+        with:
+          commit: ${{ github.event.workflow_run.head_sha }}
