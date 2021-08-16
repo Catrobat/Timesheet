@@ -8,10 +8,10 @@ on:
 
 jobs:
   publish-test-reports:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Download artifact
-        uses: actions/github-script@v3.1.1
+        uses: actions/github-script@v4.0
         with:
           script: |
             var artifacts = await github.actions.listWorkflowRunArtifacts({
