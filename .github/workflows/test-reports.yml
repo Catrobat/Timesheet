@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  publish-check-ci:
+  publish-test-reports:
     runs-on: ubuntu-20.04
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
@@ -26,7 +26,7 @@ jobs:
             var download = await github.actions.downloadArtifact({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               artifact_id: matchArtifact.id,test-reports
+               artifact_id: matchArtifact.id,
                archive_format: 'zip',
             });
             var fs = require('fs');
