@@ -26,11 +26,11 @@ jobs:
             var download = await github.actions.downloadArtifact({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
+               artifact_id: matchArtifact.id,test-reports
                archive_format: 'zip',
             });
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/test-reports.zip', Buffer.from(download.data));
-      - run: unzip check-ci-results.zip
+      - run: unzip test-reports.zip
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
