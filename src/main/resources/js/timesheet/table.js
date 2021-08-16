@@ -74,7 +74,7 @@ function populateTable(timesheetDataReply) {
         AJS.$("#inactive-header").hide();
     }
 
-    if(isInit && timesheetData_.targetHours == 0){
+    if(isInit && timesheetData_.lectures === ""){
         console.log("We created a new Dialog showing Init Dialog");
         showInitTimesheetReasonDialog(true);
     }
