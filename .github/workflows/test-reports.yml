@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  publish-check-ci:
+  publish-test-reports:
     runs-on: ubuntu-20.04
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
@@ -31,6 +31,6 @@ jobs:
             });
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/test-reports.zip', Buffer.from(download.data));
-      - run: unzip check-ci-results.zip
+      - run: unzip test-reports.zip
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
