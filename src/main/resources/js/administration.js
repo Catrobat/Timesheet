@@ -499,6 +499,7 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
+                fetchData();
                 //empty the team name text field
                 AJS.$("#team-name").val("");
                 AJS.$(".loadingDiv").hide();
@@ -532,6 +533,7 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
+                fetchData();
                 //empty the category name text field
                 AJS.$("#category-name").val("");
                 AJS.$(".loadingDiv").hide();
@@ -720,6 +722,7 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
+                fetchData();
                 //empty the team name text field
                 AJS.$("#team-name").val("");
                 AJS.$(".loadingDiv").hide();
@@ -764,7 +767,8 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
-                //empty the team name text field
+                fetchData();
+                //empty the category name text field
                 AJS.$("#category-name").val("");
                 AJS.$(".loadingDiv").hide();
             },
