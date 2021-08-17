@@ -80,11 +80,6 @@ function initTimesheetInformationValues(timesheetData) {
     AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours
         - AJS.$("#timesheet-hours-practical").val() - timesheetData.targetHoursRemoved, 2));
 
-    AJS.$("#edit-total-hours").on("click", function (e) {
-        AJS.$("#timesheet-hours-text").removeAttr("disabled");
-        AJS.$("#submit-total-hours").css("visibility" , "visible");
-    });
-
     AJS.$("#submit-total-hours").on("click", function (e) {
         console.log("submitting new total hours");
         var value;
@@ -170,7 +165,13 @@ function initTimesheetInformationValues(timesheetData) {
         //load values
         AJS.$("#timesheet-substract-hours-text").val(timesheetData.reason);
         AJS.$("#timesheet-hours-substract").val(toFixed(timesheetData.targetHoursRemoved, 2));
+
+        AJS.$("#edit-total-hours").on("click", function (e) {
+            AJS.$("#timesheet-hours-text").removeAttr("disabled");
+            AJS.$("#submit-total-hours").css("visibility" , "visible");
+        });
     } else {
+        AJS.$("#edit-total-hours").hide();
         AJS.$("#substractTimesheetHours").empty();
         AJS.$("#substractTimesheetHours").append("<fieldset>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
