@@ -57,8 +57,7 @@ public class JsonUserInformation {
     	this.state = timesheet.getState();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
 
-        this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted() 
-				+ timesheet.getHoursDeducted());
+        this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted());
         this.targetTotalHours = timesheet.getTargetHours();
 
         this.totalHours = timesheet.getHoursCompleted();

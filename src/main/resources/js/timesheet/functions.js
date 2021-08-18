@@ -68,17 +68,15 @@ function calculateTime(timesheetData) {
 
 function initTimesheetInformationValues(timesheetData) {
     var target_hours_rounded = toFixed(timesheetData.targetHours, 2);
-    var hours_done_rounded = toFixed(timesheetData.targetHoursCompleted, 2)
-        + toFixed(timesheetData.targetHoursRemoved, 2);
+    var hours_done_rounded = toFixed(calculateTime(timesheetData), 2)- toFixed(timesheetData.targetHoursRemoved, 2)
 
     setProgressBar(target_hours_rounded, hours_done_rounded);
 
     AJS.$("#timesheet-hours-text").val(target_hours_rounded);
     AJS.$("#timesheet-hours-ects").val(timesheetData.ects);
-    AJS.$("#timesheet-hours-practical").val(toFixed(calculateTime(timesheetData), 2));
+    AJS.$("#timesheet-hours-practical").val(hours_done_rounded);
 
-    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours
-        - AJS.$("#timesheet-hours-practical").val() - timesheetData.targetHoursRemoved, 2));
+    AJS.$("#timesheet-hours-remain").val(toFixed(timesheetData.targetHours - AJS.$("#timesheet-hours-practical").val()));
 
     AJS.$("#edit-total-hours").on("click", function (e) {
         AJS.$("#timesheet-hours-text").removeAttr("disabled");
@@ -159,9 +157,8 @@ function initTimesheetInformationValues(timesheetData) {
         AJS.$("#substractTimesheetHours").append("<fieldset>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-hours-substract\">Substracted Timesheet Hours</label>");
         AJS.$("#substractTimesheetHours").append("<input class=\"text\" type=\"text\" id=\"timesheet-hours-substract\" name=\"timesheet-hours-substract\" title=\"timesheet-hours-substract\">");
-        AJS.$("#substractTimesheetHours").append("<div class=\"description\">Shows your subtracted timesheet hours " +
-            "(only integers are supported)." +
-            "<br>The Remaining Timesheet Hours are increased by the value entered above.</div>");
+        AJS.$("#substractTimesheetHours").append("<div class=\"description\">The finished hours are decreased by the subtracted hours. " +
+            " Note that only integer values are allowed.</div>");
         AJS.$("#substractTimesheetHours").append("<label for=\"timesheet-substract-hours-text\">Description Text Field</label>");
         AJS.$("#substractTimesheetHours").append("<textarea name=\"timesheet-substract-hours-text\" id=\"timesheet-substract-hours-text\" rows=\"8\" cols=\"32\" placeholder=\"No timesheet hours have been subtracted yet.\"></textarea>");
         AJS.$("#substractTimesheetHours").append("<div class=\"description\">Reason(s) why some hours of your timesheet <br> have been \'terminated\'.</div>");
