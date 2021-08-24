@@ -1182,7 +1182,7 @@ public class TimesheetRest {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
 
-        Response response = permissionService.checkUserPermission();
+        Response response = permissionService.checkRootPermission();
         if (response != null)
             return response;
 
@@ -1191,6 +1191,36 @@ public class TimesheetRest {
 
             if(sheet != null) {
                 sheet.setTargetHours(hours);
+                sheet.save();
+            }
+
+            return Response.ok(new JsonTimesheet(sheet)).build();
+        }
+        catch (ServiceException e){
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
+    }
+
+    @POST
+    @Path("updateSubtractedHours/{hours}")
+    public Response updateSubtractedHours(@Context HttpServletRequest request, @PathParam("hours") int hours){
+        ApplicationUser user;
+
+        try {
+            user = permissionService.checkIfUserExists();
+        } catch (PermissionException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        Response response = permissionService.checkRootPermission();
+        if (response != null)
+            return response;
+
+        try{
+            Timesheet sheet = sheetService.getTimesheetByUser(user.getKey());
+
+            if(sheet != null) {
+                sheet.setHoursDeducted(hours);
                 sheet.save();
             }
 

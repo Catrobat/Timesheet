@@ -215,3 +215,14 @@ code {
     color: forestgreen;
     margin-left: 6px;
 }
+
+#edit-subtracted-hours{
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+#submit-subtracted-hours{
+    cursor: pointer;
+    color: forestgreen;
+    margin-left: 6px;
+}

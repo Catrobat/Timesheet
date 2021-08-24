@@ -51,7 +51,7 @@ public final class JsonTimesheet {
     @JsonDeserialize(using = DateAndTimeDeserialize.class)
     private Date latestEntryDate;
     @XmlElement
-    private int targetHourPractice;
+    private int targetHoursRemaining;
     @XmlElement
     private int targetHours;
     @XmlElement
@@ -71,16 +71,18 @@ public final class JsonTimesheet {
     public  JsonTimesheet(Timesheet timesheet) {
         this.timesheetID = timesheet.getID();
         this.userKey = timesheet.getUserKey();
-        this.lectures = timesheet.getLectures();
-        this.reason = timesheet.getReason();
-        this.latestEntryDate = timesheet.getLatestEntryBeginDate();
-        this.targetHourPractice = timesheet.getHoursCompleted();
-        this.targetHours = timesheet.getTargetHours();
-        this.targetHoursCompleted = timesheet.getHoursCompleted();
-        this.targetHoursRemoved = timesheet.getHoursDeducted();
-        this.state = timesheet.getState();
         this.displayName = timesheet.getDisplayName();
+        this.state = timesheet.getState();
 
+        this.targetHours = timesheet.getTargetHours();
+        this.lectures = timesheet.getLectures();
+        this.targetHoursRemoved = timesheet.getHoursDeducted();
+        this.reason = timesheet.getReason();
+
+        this.targetHoursCompleted = timesheet.getHoursCompleted() - this.targetHoursRemoved;
+        this.targetHoursRemaining = this.targetHours - this.targetHoursCompleted;
+
+        this.latestEntryDate = timesheet.getLatestEntryBeginDate();
         if (timesheet.firstEntry() != null) {
             this.firstEntryDate = timesheet.firstEntry().getBeginDate();
         }
@@ -133,12 +135,12 @@ public final class JsonTimesheet {
         this.latestEntryDate = latestEntryDate;
     }
 
-    public int getTargetHourPractice() {
-        return targetHourPractice;
+    public int getTargetHoursRemaining() {
+        return targetHoursRemaining;
     }
 
-    public void setTargetHourPractice(int targetHourPractice) {
-        this.targetHourPractice = targetHourPractice;
+    public void setTargetHoursRemaining(int targetHoursRemaining) {
+        this.targetHoursRemaining = targetHoursRemaining;
     }
 
 
@@ -203,7 +205,7 @@ public final class JsonTimesheet {
         if (latestEntryDate != that.latestEntryDate) {
             return false;
         }
-        if (targetHourPractice != that.targetHourPractice) {
+        if (targetHoursRemaining != that.targetHoursRemaining) {
             return false;
         }
         if (targetHours != that.targetHours) {
@@ -231,7 +233,7 @@ public final class JsonTimesheet {
         result = 31 * result + lectures.hashCode();
         result = 31 * result + reason.hashCode();
         //result = 31 * result + latestEntryDate.hashCode();
-        result = 31 * result + targetHourPractice;
+        result = 31 * result + targetHoursRemaining;
         result = 31 * result + targetHours;
         result = 31 * result + targetHoursCompleted;
         result = 31 * result + targetHoursRemoved;
