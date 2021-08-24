@@ -50,6 +50,8 @@ public class JsonUserInformation {
     private int timesheetID;
     @XmlElement
     private boolean isEnabled;
+    @XmlElement
+    private int violations;
 
     public JsonUserInformation (Timesheet timesheet) {
     	
@@ -204,5 +206,13 @@ public class JsonUserInformation {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public int getViolations() {
+        return violations;
+    }
+
+    public void setViolations(int violations) {
+        this.violations = violations;
     }
 }

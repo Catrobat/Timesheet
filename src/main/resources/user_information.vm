@@ -121,6 +121,7 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
                 <th id="ti-hours-per-last-monitoring-period">Hours ($lastMonitoringPeriod)</th>
+                <th id="ti-violations">Violations</th>
                 <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
@@ -151,6 +152,7 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
                 <th id="ti-hours-per-last-monitoring-period">Hours ($lastMonitoringPeriod)</th>
+                <th id="ti-violations">Violations</th>
                 <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
@@ -181,6 +183,7 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
                 <th id="ti-hours-per-last-monitoring-period">Hours ($lastMonitoringPeriod)</th>
+                <th id="ti-violations">Violations</th>
                 <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
@@ -211,6 +214,7 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
                 <th id="ti-hours-per-last-monitoring-period">Hours ($lastMonitoringPeriod)</th>
+                <th id="ti-violations">Violations</th>
                 <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
@@ -241,6 +245,7 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
                 <th id="ti-hours-per-last-monitoring-period">Hours ($lastMonitoringPeriod)</th>
+                <th id="ti-violations">Violations</th>
                 <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>
@@ -271,6 +276,7 @@
                 <th id="ti-hours-per-half-year">Hours last Half Year</th>
                 <th id="ti-hours-per-monitoring-period">Hours ($monitoringPeriod)</th>
                 <th id="ti-hours-per-last-monitoring-period">Hours ($lastMonitoringPeriod)</th>
+                <th id="ti-violations">Violations</th>
                 <th id="ti-first-entry-date">Date of the First Entry</th>
                 <th id="ti-latest-entry-date">Date of the Latest Entry</th>
                 <th id="ti-latest-entry-description">Description of the Latest Entry</th>

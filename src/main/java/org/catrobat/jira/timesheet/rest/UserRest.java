@@ -154,6 +154,8 @@ public class UserRest {
             jsonUserInformation.setHoursPerMonitoringPeriod(timesheetEntryService.getHours(timesheet, cur_interval.getKey(), cur_interval.getValue()));
             jsonUserInformation.setHoursPerLastMonitoringPeriod(timesheetEntryService.getHours(timesheet, last_interval.getKey(), last_interval.getValue()));
 
+            jsonUserInformation.setViolations(timesheet.calculateViolations(monitoringService.getMonitoring().getPeriod(),monitoringService.getMonitoring().getRequiredHours()));
+
             TimesheetEntry latestInactiveEntry = timesheetEntryService.getLatestInactiveEntry(timesheet);
             if (latestInactiveEntry != null && (timesheet.getState() == Timesheet.State.INACTIVE
                     || timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE)) {
