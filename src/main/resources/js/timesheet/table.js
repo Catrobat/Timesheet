@@ -8,6 +8,8 @@ var savingError;
 var ppFlag;
 var dateRangeFlag;
 var dateFlag;
+var timeStartFlag;
+var timeEndFlag;
 var descrFlag;
 var pauseFlag;
 
@@ -402,6 +404,14 @@ function prepareForm(entry, timesheetData, isModified) {
     });
 
     form.pauseTimeField.change(function () {
+        form.saveButton.prop('disabled', false);
+    });
+
+    form.beginTimeField.change(function () {
+        form.saveButton.prop('disabled', false);
+    });
+
+    form.endTimeField.change(function () {
         form.saveButton.prop('disabled', false);
     });
 
@@ -1130,17 +1140,51 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
     if ((date == "") || (!isValidDate(validDateFormat))) {
         date = new Date().toJSON().slice(0, 10);
     }
-
+    
     var beginTime = form.beginTimeField.timepicker('getTime');
 
     if (beginTime === null) {
-        beginTime = new Date();
+        if (timeStartFlag)
+            timeStartFlag.close();
+        timeStartFlag = AJS.flag({
+            type: 'warning',
+            title: 'Invalid start time format',
+            body: 'The start time should be a valid time.',
+            close: 'auto'
+        });
+
+        form.beginTimeField.css({
+            "border-color": "red"
+        });
+        return;
+    }
+    else {
+        form.beginTimeField.css({
+            "border-color": "#DCDCDC"
+        });
     }
 
     var endTime = form.endTimeField.timepicker('getTime');
 
     if (endTime === null) {
-        endTime = new Date();
+        if (timeStartFlag)
+            timeStartFlag.close();
+        timeStartFlag = AJS.flag({
+            type: 'warning',
+            title: 'Invalid end time format',
+            body: 'The end time should be a valid time.',
+            close: 'auto'
+        });
+
+        form.endTimeField.css({
+            "border-color": "red"
+        });
+        return;
+    }
+    else {
+        form.endTimeField.css({
+            "border-color": "#DCDCDC"
+        });
     }
 
     date = date.replace(/-/g, "/");
