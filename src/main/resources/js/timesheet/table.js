@@ -1148,6 +1148,11 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
         });
         return;
     }
+    else {
+        form.beginTimeField.css({
+            "border-color": "#DCDCDC"
+        });
+    }
 
     var endTime = form.endTimeField.timepicker('getTime');
 
@@ -1165,6 +1170,11 @@ function submit(timesheetData, saveOptions, form, existingEntryID,
             "border-color": "red"
         });
         return;
+    }
+    else {
+        form.endTimeField.css({
+            "border-color": "#DCDCDC"
+        });
     }
 
     date = date.replace(/-/g, "/");
