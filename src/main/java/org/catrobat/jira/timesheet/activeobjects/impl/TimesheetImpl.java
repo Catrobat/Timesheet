@@ -18,7 +18,9 @@ package org.catrobat.jira.timesheet.activeobjects.impl;
 
 import org.catrobat.jira.timesheet.activeobjects.Timesheet;
 import org.catrobat.jira.timesheet.activeobjects.TimesheetEntry;
+import org.joda.time.DateTime;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class TimesheetImpl {
@@ -62,5 +64,55 @@ public class TimesheetImpl {
         TimesheetEntry[] entries = timesheet.getEntries();
         Arrays.sort(entries, Comparator.comparing(TimesheetEntry::getBeginDate).reversed());
         return entries;
+    }
+
+    public final TimesheetEntry[] getEntriesAsc() {
+        TimesheetEntry[] entries = timesheet.getEntries();
+        Arrays.sort(entries, Comparator.comparing(TimesheetEntry::getBeginDate));
+        return entries;
+    }
+
+
+    public final int calculateViolations(int monitoring_period, int required_hours) {
+        TimesheetEntry[] entries = getEntriesAsc();
+        //TODO: add some checks here
+        if(entries.length == 0 || monitoring_period == 0) {
+            return 0;
+        }
+        DateTime first_entry_date = new DateTime(entries[0].getBeginDate());
+        DateTime last_entry_date = new DateTime(entries[entries.length - 1].getBeginDate());
+
+        DateTime start = first_entry_date.withDayOfMonth(1).plusMonths(1).withTimeAtStartOfDay();
+        DateTime end = last_entry_date.withDayOfMonth(1).withTimeAtStartOfDay();
+
+        DateTime start_t = start.minusMillis(1);
+        DateTime end_t = start.plusMonths(monitoring_period);
+
+        int required_minutes = required_hours * 60;
+        int violations = 0;
+        int i = 0;
+        DateTime date;
+
+        while(end_t.isBefore(end) || end_t.isEqual(end)) {
+            int minutes = 0;
+
+            do {
+                date = new DateTime(entries[i].getBeginDate());
+                if(date.isAfter(start_t) && date.isBefore(end_t)) {
+                    minutes += entries[i].getDurationMinutes();
+                }
+                i++;
+            }
+            while(date.isBefore(end_t));
+            i--;
+
+            if(minutes < required_minutes) {
+                violations++;
+            }
+
+            start_t =  end_t.minusMillis(1);
+            end_t = end_t.plusMonths(monitoring_period);
+        }
+        return violations;
     }
 }

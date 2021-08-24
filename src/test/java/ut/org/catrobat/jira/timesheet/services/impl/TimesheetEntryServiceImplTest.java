@@ -557,6 +557,116 @@ public class TimesheetEntryServiceImplTest {
                 pairProgrammingUserName, teamroom);
     }
 
+    @Test
+    public void TestCalculateViolations() throws ServiceException {
+
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+
+        Date inactiveEnd = Date.from(ZonedDateTime.now().minusMonths(6).toInstant());
+
+        Date begin = Date.from(ZonedDateTime.now().toInstant());
+        Date end = Date.from(ZonedDateTime.now().plusHours(1).toInstant());
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "ATLDEV-287";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = false;
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        begin = Date.from(ZonedDateTime.now().minusMonths(1).toInstant());
+        end = Date.from(ZonedDateTime.now().minusMonths(1).plusHours(1).toInstant());
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        begin = Date.from(ZonedDateTime.now().minusMonths(2).toInstant());
+        end = Date.from(ZonedDateTime.now().minusMonths(2).plusHours(1).toInstant());
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        begin = Date.from(ZonedDateTime.now().minusMonths(3).toInstant());
+        end = Date.from(ZonedDateTime.now().minusMonths(3).plusHours(1).toInstant());
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        int monitoring_period = 1;
+        int required_hours = 25;
+        int result = sheet.calculateViolations(monitoring_period, required_hours);
+        Assert.assertEquals(2, result);
+    }
+
+    @Test
+    public void TestCalculateViolationsOneEntry() throws ServiceException {
+
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+
+        Date inactiveEnd = Date.from(ZonedDateTime.now().minusMonths(6).toInstant());
+
+        Date begin = Date.from(ZonedDateTime.now().toInstant());
+        Date end = Date.from(ZonedDateTime.now().plusHours(1).toInstant());
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "ATLDEV-287";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = false;
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        int monitoring_period = 1;
+        int required_hours = 25;
+        int result = sheet.calculateViolations(monitoring_period, required_hours);
+        Assert.assertEquals(0, result);
+    }
+
+    @Test
+    public void TestCalculateViolationsNoTimeBetween() throws ServiceException {
+
+        Timesheet sheet = createTestTimesheet();
+        Category category = createTestCategory();
+        Team team = createTestTeam();
+
+        Date inactiveEnd = Date.from(ZonedDateTime.now().minusMonths(6).toInstant());
+
+        Date begin = Date.from(ZonedDateTime.now().toInstant());
+        Date end = Date.from(ZonedDateTime.now().plusHours(1).toInstant());
+        String desc = "Debugged this thingy...";
+        int pause = 0;
+        boolean isGoogleDocImport = false;
+        String jiraTicketID = "ATLDEV-287";
+        String pairProgrammingUserName = "TestUser";
+        boolean teamroom = false;
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        end = begin;
+        begin = Date.from(ZonedDateTime.now().minusHours(1).toInstant());
+
+        service.add(sheet, begin, end, category, desc, pause, team, isGoogleDocImport, inactiveEnd, jiraTicketID, pairProgrammingUserName, teamroom);
+
+        int monitoring_period = 1;
+        int required_hours = 25;
+        int result = sheet.calculateViolations(monitoring_period, required_hours);
+        Assert.assertEquals(0, result);
+    }
+
+    @Test
+    public void TestCalculateViolationsNoMonitoring() {
+
+        Timesheet sheet = createTestTimesheet();
+
+        int monitoring_period = 0;
+        int required_hours = 25;
+        int result = sheet.calculateViolations(monitoring_period, required_hours);
+        Assert.assertEquals(0, result);
+    }
+
+
 
     public static class MyDatabaseUpdater implements DatabaseUpdater {
 

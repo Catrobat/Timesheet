@@ -73,4 +73,9 @@ public interface Timesheet extends Entity {
     @Ignore
     TimesheetEntry[] getEntriesDesc();
 
+    @Ignore
+    TimesheetEntry[] getEntriesAsc();
+
+    @Ignore
+    int calculateViolations(int monitoring_period, int required_hours);
 }
