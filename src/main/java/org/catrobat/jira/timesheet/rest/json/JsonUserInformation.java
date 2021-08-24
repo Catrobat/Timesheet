@@ -57,11 +57,10 @@ public class JsonUserInformation {
     	this.state = timesheet.getState();
         this.latestEntryDate = timesheet.getLatestEntryBeginDate();
 
-        this.remainingHours = (timesheet.getTargetHours() - timesheet.getHoursCompleted() 
-				+ timesheet.getHoursDeducted());
         this.targetTotalHours = timesheet.getTargetHours();
+        this.totalHours = timesheet.getHoursCompleted() - timesheet.getHoursDeducted();
+        this.remainingHours = this.targetTotalHours - this.totalHours;
 
-        this.totalHours = timesheet.getHoursCompleted();
         this.email = ComponentAccessor.getUserManager().getUserByKey(timesheet.getUserKey()).getEmailAddress();
         this.timesheetID = timesheet.getID();
 

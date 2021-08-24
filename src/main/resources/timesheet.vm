@@ -262,10 +262,10 @@
             </div>
 
             <div class="field-group">
-                <label for="timesheet-hours-remain">Remaining Timesheet Hours</label>
-                <input disabled="disabled" class="text" type="text" id="timesheet-hours-remain"
-                       name="timesheet-hours-remain"
-                       title="timesheet-hours-remain">
+                <label for="timesheet-remaining-hours">Remaining Timesheet Hours</label>
+                <input disabled="disabled" class="text" type="text" id="timesheet-remaining-hours"
+                       name="timesheet-remaining-hours"
+                       title="timesheet-remaining-hours">
 
                 <div class="description">
                     Shows your remaining timesheet hours.
@@ -273,10 +273,10 @@
             </div>
 
             <div class="field-group">
-                <label for="timesheet-hours-practical">Finished Practical Hours</label>
-                <input disabled="disabled" class="text" type="text" id="timesheet-hours-practical"
-                       name="timesheet-hours-practical"
-                       title="timesheet-hours-practical">
+                <label for="timesheet-finished-hours">Finished Practical Hours</label>
+                <input disabled="disabled" class="text" type="text" id="timesheet-finished-hours"
+                       name="timesheet-finished-hours"
+                       title="timesheet-finished-hours">
 
                 <div class="description">
                     Shows your finished practical hours.
@@ -284,10 +284,10 @@
             </div>
 
             <div class="field-group">
-                <label for="timesheet-finish-date">Projected Finish Date</label>
-                <input disabled="disabled" class="text" type="text" id="timesheet-finish-date"
-                       name="timesheet-finish-date"
-                       title="timesheet-finish-date">
+                <label for="timesheet-projected-finish">Projected Finish Date</label>
+                <input disabled="disabled" class="text" type="text" id="timesheet-projected-finish"
+                       name="timesheet-projected-finish"
+                       title="timesheet-projected-finish">
 
                 <div class="description">
                     Shows your projected finish date based
@@ -295,10 +295,10 @@
                 </div>
             </div>
             <div class="field-group">
-                <label for="timesheet-hours-text">Target Total Timesheet Hours</label>
-                <input class="text" type="text" id="timesheet-hours-text" disabled="disabled"
-                       name="timesheet-hours-text"
-                       title="timesheet-hours-text">
+                <label for="timesheet-target-hours">Target Total Timesheet Hours</label>
+                <input class="text" type="text" id="timesheet-target-hours" disabled="disabled"
+                       name="timesheet-target-hours"
+                       title="timesheet-target-hours">
                 
                 <span id="edit-total-hours" class="aui-icon aui-icon-small aui-iconfont-edit">Edit Total hours</span>
                 <span style="visibility: hidden;" id="submit-total-hours" class="aui-icon aui-icon-small aui-iconfont-approve">Submit changes</span>
@@ -321,7 +321,24 @@
                 </div>
             </div>
 
-            <div class="field-group" id="substractTimesheetHours"></div>
+            <div class="field-group" id="substractTimesheetHours">
+
+                <label for="timesheet-subtracted-hours">Subtracted Timesheet Hours</label>
+                <input class="text" type="text" id="timesheet-subtracted-hours" disabled="disabled"
+                       name="timesheet-subtracted-hours"
+                       title="timesheet-subtracted-hours">
+
+                <span id="edit-subtracted-hours" class="aui-icon aui-icon-small aui-iconfont-edit">Edit Subtracted hours</span>
+                <span style="visibility: hidden;" id="submit-subtracted-hours" class="aui-icon aui-icon-small aui-iconfont-approve">Submit changes</span>
+
+                <div class="description">
+                    The finished hours are decreased by the subtracted hours. Note that only integer values are allowed.
+                </div>
+                <label for="timesheet-subtracted-hours-text">Description Text Field</label>
+                <textarea name="timesheet-subtracted-hours-text" id="timesheet-subtracted-hours-text" rows="8" cols="32" placeholder="No timesheet hours have been subtracted yet."></textarea>
+                <div class="description">Reason(s) why some hours of your timesheet <br> have been 'terminated'.</div>
+
+            </div>
 
             <div class="field-group">
                 <div class="timesheet-hours" id="timesheet-hours-save-button">

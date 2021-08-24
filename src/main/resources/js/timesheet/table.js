@@ -848,7 +848,7 @@ function handleTimesheetReasonDataSuccess(data){
 
     updateCurrentTimesheetData(data);
     updateProgressBar();
-    updateTimesheetInformationValues(timesheetData_);
+    initTimesheetInformationValues(timesheetData_);
 
     console.log("handling init Success");
 

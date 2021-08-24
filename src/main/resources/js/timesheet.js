@@ -94,13 +94,14 @@ AJS.toInit(function () {
                     timesheetID: existingTimesheetData.timesheetID,
                     lectures: lectures,
                     reason: AJS.$("#timesheet-substract-hours-text").val(),
-                    targetHourPractice: toFixed(AJS.$("#timesheet-hours-practical").val(), 2),
-                    targetHours: AJS.$("#timesheet-hours-text").val(),
-                    targetHoursCompleted: toFixed(AJS.$("#timesheet-hours-practical").val() - AJS.$("#timesheet-hours-substract").val(), 2),
+                    targetHourPractice: toFixed(AJS.$("#timesheet-finished-hours").val(), 2),
+                    targetHours: AJS.$("#timesheet-target-hours").val(),
+                    targetHoursCompleted: toFixed(AJS.$("#timesheet-finished-hours").val() - AJS.$("#timesheet-hours-substract").val(), 2),
                     targetHoursRemoved: toFixed(AJS.$("#timesheet-hours-substract").val(), 2),
                     firstEntryDate: existingTimesheetData.firstEntryDate,
                     latestEntryDate: existingTimesheetData.latestEntryDate,
-                    state: existingTimesheetData.state
+                    state: existingTimesheetData.state,
+                    targetHoursRemaining: existingTimesheetData.targetHoursRemaining
                 };
 
                 var timesheetUpdated = AJS.$.ajax({
@@ -235,7 +236,7 @@ function projectedFinishDate(timesheetData, entryData) {
     var entries = entryData[0];
     var rem = timesheet.targetHours - timesheet.targetHoursCompleted + timesheet.targetHoursRemoved;
     if (rem <= 0) {
-        AJS.$("#timesheet-finish-date").val(new Date().toLocaleDateString("en-US"));
+        AJS.$("#timesheet-projected-finish").val(new Date().toLocaleDateString("en-US"));
         return;
         // already finished...
     }
@@ -249,14 +250,14 @@ function projectedFinishDate(timesheetData, entryData) {
         }
     }
     if(sumLast30Days === 0) {
-        AJS.$("#timesheet-finish-date").val("Not enough entries to compute");
+        AJS.$("#timesheet-projected-finish").val("Not enough entries to compute");
         return;
     }
     var hoursLast30Days = sumLast30Days / (1000 * 60 * 60);
     var remDays = rem * 30 / hoursLast30Days;
     var finishDate = new Date();
     finishDate.setDate(finishDate.getDate() + remDays);
-    AJS.$("#timesheet-finish-date").val(finishDate.toLocaleDateString("en-US"));
+    AJS.$("#timesheet-projected-finish").val(finishDate.toLocaleDateString("en-US"));
 }
 
 function setOwnerLabel(timesheet) {
