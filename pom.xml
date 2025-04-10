@@ -180,7 +180,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
+            <version>5.4.0</version>
             <!-- Poi Exclude needed to avoid Jira-bug on xlsx (WstxEventFactory)  creation-->
             <exclusions>
                 <exclusion>
