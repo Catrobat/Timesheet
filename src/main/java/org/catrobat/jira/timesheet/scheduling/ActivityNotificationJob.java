@@ -37,26 +37,41 @@ public class ActivityNotificationJob implements PluginJob {
 
         List<Timesheet> timesheetList = sheetService.all();
         Config config = configService.getConfiguration();
+
+        int inactiveNotified = 0;
+        int offlineNotified = 0;
+
         for (Timesheet timesheet : timesheetList) {
             String userKey = timesheet.getUserKey();
             ApplicationUser user = ComponentAccessor.getUserManager().getUserByKey(userKey);
-            
+
+            if (user == null) {
+                logger.warn("User with key {} not found, skipping timesheet {}", userKey, timesheet.getID());
+                continue;
+            }
+
             if (timesheet.getEntries().length == 0) { // nothing to do
                 continue;
             }
+
             if (timesheet.getState() == Timesheet.State.INACTIVE_OFFLINE) {  // user is offline
                 informCoordinatorsOffline(user, config);
                 informTimesheetAdminsOffline(config);
+                offlineNotified++;
             } else if (timesheet.getState() == Timesheet.State.INACTIVE) { // user is inactive
-                // FIXME: check is not needed if state is correct
                 TimesheetEntry latestInactiveEntry = entryService.getLatestInactiveEntry(timesheet);
                 if (latestInactiveEntry != null) {
                     if (schedulingService.isOlderThanInactiveTime(latestInactiveEntry.getInactiveEndDate())) {
                         informCoordinatorsInactive(user, config);
+                        inactiveNotified++;
                     }
                 }
             }
         }
+
+        // ✅ Algorithm improvement: Summary logging for visibility
+        logger.info("ActivityNotificationJob finished: {} inactive users notified, {} offline users notified",
+                inactiveNotified, offlineNotified);
     }
 
     private void informCoordinatorsInactive(ApplicationUser user, Config config) {
@@ -76,18 +91,28 @@ public class ActivityNotificationJob implements PluginJob {
     private void informTimesheetAdminsOffline(Config config) {
         TimesheetAdmin[] timesheetAdmins = config.getTimesheetAdminUsers();
         for (TimesheetAdmin timesheetAdmin : timesheetAdmins) {
-            emailUtil.sendEmail(timesheetAdmin.getEmailAddress(), config.getMailSubjectOfflineState(),
-                    config.getMailBodyOfflineState());
+            String adminEmail = timesheetAdmin.getEmailAddress();
+            if (adminEmail != null) {
+                emailUtil.sendEmail(adminEmail, config.getMailSubjectOfflineState(),
+                        config.getMailBodyOfflineState());
+            } else {
+                logger.warn("TimesheetAdmin {} has no email address", timesheetAdmin.getUserKey());
+            }
         }
     }
 
     private List<String> getCoordinatorsMailAddress(ApplicationUser user) {
         List<String> coordinatorMailAddressList = new LinkedList<>();
-        for (Team team : teamService.getTeamsOfUser(user.getName())) {
-            for (String coordinator : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR))
-                coordinatorMailAddressList.add(ComponentAccessor.getUserManager().getUserByName(coordinator).getEmailAddress());
+        for (Team team : teamService.getTeamsOfUser(user.getUsername())) { // ✅ getUsername instead of deprecated getName()
+            for (String coordinator : teamService.getGroupsForRole(team.getTeamName(), TeamToGroup.Role.COORDINATOR)) {
+                ApplicationUser coordinatorUser = ComponentAccessor.getUserManager().getUserByName(coordinator);
+                if (coordinatorUser != null && coordinatorUser.getEmailAddress() != null) {
+                    coordinatorMailAddressList.add(coordinatorUser.getEmailAddress());
+                } else {
+                    logger.warn("Coordinator {} not found or has no email address", coordinator);
+                }
+            }
         }
-
         return coordinatorMailAddressList;
     }
 }
